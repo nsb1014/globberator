@@ -1,0 +1,435 @@
+"""Build the first PolyForge character. Run with Blender in background mode."""
+import argparse
+import json
+import math
+import sys
+from pathlib import Path
+
+import bpy
+import numpy as np
+from mathutils import Vector, Quaternion
+from scipy.interpolate import PchipInterpolator
+
+sys.path.insert(0,str(Path(__file__).resolve().parent))
+from horns import horn_profile
+
+parser = argparse.ArgumentParser()
+root = Path(__file__).resolve().parents[1]
+parser.add_argument("--recipe", type=Path, default=root / "models/minotaur.json")
+parser.add_argument("--output", type=Path, default=root / "godot/minotaur.glb")
+parser.add_argument("--review", type=Path)
+args = parser.parse_args(sys.argv[sys.argv.index("--")+1:] if "--" in sys.argv else [])
+recipe = json.loads(args.recipe.read_text())
+shape = recipe["shape"]
+for key, value in shape.items():
+    if not 0.7 <= value <= 1.3:
+        raise ValueError(f"{key} outside supported range [0.7, 1.3]")
+parts = {"body":"heavy_biped", "head":"bull", "horns":"swept_pair", "feet":"split_hoof", "tail":"tufted"}
+if recipe["parts"] != parts or recipe["rest_pose"] != "neutral":
+    raise ValueError("Unsupported part or pose in recipe")
+bpy.ops.wm.read_factory_settings(use_empty=True)
+scene = bpy.context.scene
+clay = bpy.data.materials.new("Matte clay")
+clay.diffuse_color = (0.40, 0.40, 0.40, 1)
+clay.use_nodes = True
+shader = clay.node_tree.nodes.get("Principled BSDF")
+shader.inputs["Base Color"].default_value = clay.diffuse_color
+shader.inputs["Roughness"].default_value = 0.87
+body = []
+details = []
+pi = math.pi
+SW = shape["shoulder_width"]
+CD = shape["chest_depth"]
+MU = shape["muzzle_length"]
+
+def mesh(name, vertices, faces, group=None):
+    data = bpy.data.meshes.new(name)
+    data.from_pydata(vertices, [], faces)
+    data.update()
+    obj = bpy.data.objects.new(name, data)
+    bpy.context.collection.objects.link(obj)
+    data.materials.append(clay)
+    for poly in data.polygons:
+        poly.use_smooth = True
+    if group is None:
+        body.append(obj)
+    else:
+        details.append((obj, group))
+    return obj
+
+def rings(name, rows, group=None):
+    sides = len(rows[0])
+    faces = []
+    for i in range(len(rows)-1):
+        for j in range(sides):
+            k = (j+1) % sides
+            faces.append((i*sides+j, i*sides+k, (i+1)*sides+k, (i+1)*sides+j))
+    faces += [tuple(reversed(range(sides))), tuple(range((len(rows)-1)*sides, len(rows)*sides))]
+    return mesh(name, np.vstack(rows).tolist(), faces, group)
+
+def interp(keys, density=4):
+    values = np.asarray(keys, dtype=float)
+    return PchipInterpolator(np.arange(len(keys)), values)(np.linspace(0, len(keys)-1, (len(keys)-1)*density+1))
+
+def sections(name, keys, group=None, exponent=1., sides=32):
+    # z, centre x/y, transverse radius, front-to-back radius
+    t = np.arange(sides)*2*pi/sides
+    cx = np.sign(np.cos(t))*np.abs(np.cos(t))**exponent
+    cy = np.sign(np.sin(t))*np.abs(np.sin(t))**exponent
+    rows = [np.column_stack((x+w*cx,y+d*cy,np.full(sides,z))) for z,x,y,w,d in interp(keys)]
+    return rings(name, rows, group)
+
+def tube(name, keys, group=None, front=(0,-1,0), sides=22):
+    # Each cross-section stays perpendicular to its centreline.
+    values = interp(keys)
+    path = values[:,:3]
+    dirs = np.gradient(path, axis=0)
+    dirs /= np.linalg.norm(dirs, axis=1)[:,None]
+    a = np.cross(np.broadcast_to(front,dirs.shape),dirs)
+    a /= np.maximum(np.linalg.norm(a,axis=1)[:,None],1e-9)
+    b = np.cross(dirs,a)
+    t = np.arange(sides)*2*pi/sides
+    rows = [point+np.outer(np.cos(t)*w,u)+np.outer(np.sin(t)*d,v)
+            for point,w,d,u,v in zip(path,values[:,3],values[:,4],a,b)]
+    return rings(name, rows, group)
+
+def oval(name, loc, scale, group=None, tilt=0):
+    bpy.ops.mesh.primitive_uv_sphere_add(segments=28, ring_count=16, location=loc)
+    obj = bpy.context.object
+    obj.name = name
+    obj.scale = scale
+    obj.rotation_euler[1] = tilt
+    obj.data.materials.append(clay)
+    for poly in obj.data.polygons:
+        poly.use_smooth = True
+    if group is None:
+        body.append(obj)
+    else:
+        details.append((obj,group))
+    return obj
+
+def mirrored(keys, sign):
+    return [(sign*x,y,z,w,d) for x,y,z,w,d in keys]
+
+def sculpt_core():
+    keys = [(1.78,.24,.24),(1.90,.47,.38),(2.08,.59,.41),(2.28,.56,.36),
+            (2.43,.51,.34),(2.66,.58,.375),(2.92,.72,.45),(3.16,.87,.51),
+            (3.38,.91,.49),(3.53,.79,.43),(3.66,.52,.36),(3.82,.37,.32),(3.97,.31,.25)]
+    sections("Trunk",[(z,0,.06,w*(1+(SW-1)*min(1,max(0,(z-2.4)/.8))),d*CD) for z,w,d in keys])
+    for s in (-1,1):
+        for name,loc,sc,angle in [
+            ("Pectoral",(.39*SW,-.285*CD,3.23),(.50*SW,.23*CD,.23),-.13),
+            ("Trapezius",(.42*SW,.10,3.61),(.52*SW,.34,.20),.29),
+            ("Latissimus",(.52*SW,.18,3.05),(.22,.255,.36),.22),
+            ("Gluteal",(.285,.24,2.02),(.32,.28,.32),0)]:
+            oval(name,(s*loc[0],loc[1],loc[2]),sc,tilt=s*angle)
+        for i in range(3):
+            oval("Abdominal plane",(s*(.16-i*.011),(-.315+i*.015)*CD,2.92-i*.165),
+                 (.19-i*.014,.083,.131),tilt=-s*.07)
+        tube("Oblique",mirrored([(.48,-.225,2.85,.085,.070),(.413,-.233,2.61,.083,.072),
+                                 (.32,-.205,2.4,.027,.026)],s))
+    oval("Neck",(0,.015,3.77),(.43,.39,.46))
+    oval("Skull",(0,-.12,4.03),(.445,.40,.49))
+    oval("Jaw",(0,-.33,3.90),(.33,.35,.26))
+    oval("Nasal bridge",(0,-.38,4.03),(.265,.37*MU,.286))
+    for s in (-1,1):
+        oval("Cheek",(s*.279,-.302,4.02),(.192,.217,.24),tilt=s*.22)
+        tube("Orbital ridge",mirrored([(.055,-.50,4.22,.078,.085),(.19,-.50,4.26,.105,.11),
+            (.315,-.43,4.31,.098,.115),(.408,-.28,4.28,.06,.08)],s))
+        oval("Brow crest",(s*.19,-.20,4.38),(.19,.22,.15),tilt=s*.24)
+
+def sculpt_limbs(s):
+    off=(SW-1)*.85
+    def arm(keys):
+        return mirrored([(x+off,y,z,w,d) for x,y,z,w,d in keys],s)
+    tube("Arm",arm([(.80,.04,3.46,.26,.25),(.97,.035,3.43,.345,.355),
+        (1.10,.04,3.20,.30,.285),(1.17,.03,3.03,.253,.26),(1.22,.025,2.82,.193,.19),
+        (1.27,-.045,2.68,.247,.235),(1.32,-.105,2.53,.224,.20),
+        (1.37,-.145,2.29,.145,.155),(1.38,-.16,2.19,.135,.134)]))
+    oval("Biceps",(s*(1.12+off),-.085,3.05),(.237,.225,.341),tilt=-s*.26)
+    oval("Deltoid",(s*(.96+off),.01,3.41),(.345,.337,.337),tilt=-s*.18)
+    oval("Palm",(s*(1.39+off),-.16,2.12),(.15,.19,.245),tilt=-s*.065)
+    for j,(y,drop) in enumerate([(-.289,.23),(-.205,.275),(-.117,.252),(-.036,.194)]):
+        tube("Finger",arm([(1.407,y,2.08,.068,.057),(1.418,y-.015,1.99,.064,.048),
+                            (1.395,y-.02,2.02-drop,.051,.044),(1.35,y-.033,1.98-drop,.036,.031)]))
+    tube("Thumb",arm([(1.327,-.267,2.21,.082,.082),(1.294,-.32,2.12,.084,.074),
+                       (1.267,-.348,2.015,.065,.062),(1.278,-.349,1.967,.045,.043)]))
+    tube("Leg",mirrored([(.37,.085,2.17,.32,.32),(.42,.072,1.99,.36,.37),
+        (.46,.01,1.78,.335,.36),(.50,-.085,1.55,.265,.291),(.515,-.154,1.34,.205,.226),
+        (.53,-.065,1.19,.198,.216),(.55,.12,1.03,.215,.230),
+        (.57,.255,.825,.158,.175),(.58,.27,.666,.118,.131),
+        (.587,.19,.54,.128,.14),(.598,.032,.335,.163,.17),(.598,-.035,.24,.18,.175)],s))
+    oval("Kneecap",(s*.515,-.273,1.34),(.158,.111,.185))
+    oval("Hip crest",(s*.465,.09,2.02),(.255,.28,.30))
+    for j in (-1,1):
+        foot = "Foot."+("L" if s==1 else "R")
+        # Each toe widens at the ground; the central cleft stays open.
+        data=[(.025,.110,-.10,.104,.260),(.058,.111,-.109,.108,.268),
+              (.145,.103,-.082,.108,.237),(.23,.086,-.038,.095,.192),
+              (.30,.068,-.004,.075,.144),(.336,.050,.019,.05,.09)]
+        sections("Cloven toe",[(z,s*(.60+j*x*1.22),y,w*1.23,d*1.10) for z,x,y,w,d in data],foot,.72)
+
+def apply_modifier(obj, modifier):
+    bpy.context.view_layer.objects.active = obj
+    bpy.ops.object.modifier_apply(modifier=modifier.name)
+
+def head_details():
+    front_y = -.41-.19*MU
+    snout = oval("Bovine nose pad",(0,front_y,3.99),(.284,.191,.156),"Head")
+    for s in (-1,1):
+        cutter = oval("Nostril cutter",(s*.14,front_y-.160,4.024),(.067,.094,.050),"temp",tilt=-s*.43)
+        details.pop()
+        cut = snout.modifiers.new("Sculpt nostril","BOOLEAN")
+        cut.operation="DIFFERENCE"
+        cut.object=cutter
+        apply_modifier(snout,cut)
+        bpy.data.objects.remove(cutter,do_unlink=True)
+        oval("Eye",(s*.245,-.505,4.185),(.107,.070,.066),"Head",tilt=-s*.19)
+        oval("Iris relief",(s*.247,-.567,4.186),(.046,.012,.035),"Head")
+        oval("Pupil relief",(s*.247,-.577,4.187),(.025,.007,.014),"Head")
+        tube("Upper eyelid",mirrored([(.142,-.536,4.188,.025,.025),(.212,-.562,4.215,.038,.027),
+            (.278,-.543,4.229,.036,.036),(.346,-.463,4.209,.025,.028)],s),"Head")
+        tube("Lower eyelid",mirrored([(.14,-.526,4.177,.018,.021),(.211,-.536,4.143,.028,.026),
+            (.286,-.494,4.151,.030,.028),(.328,-.443,4.193,.02,.024)],s),"Head")
+        # Flattened leaf-shaped ears with a recessed front surface.
+        outer = np.asarray([(.34,-.02,4.22),(.45,-.045,4.29),(.62,-.028,4.28),
+                            (.792,-.065,4.227),(.672,-.035,4.13),(.50,-.04,4.080),(.383,-.05,4.144)])
+        center=np.array([.525,-.028,4.201])
+        rows=[outer,center+(outer-center)*.74+[0,-.042,0],center+(outer-center)*.48+[0,-.013,0],center+(outer-center)*.10]
+        verts=np.vstack(rows+[np.array([[.51,.082,4.20]])]); verts[:,0]*=s
+        faces=[(i,(i+1)%7,(i+1)%7+7,7+i) for i in range(7)]
+        faces += [tuple(x+k for x in f) for k in (7,14) for f in faces[:7]]
+        faces += [tuple(range(21,28))]+[(28,(i+1)%7,i) for i in range(7)]
+        ear=mesh("Lobed ear",verts.tolist(),faces,"Head")
+        sub=ear.modifiers.new("Round pinna","SUBSURF");sub.levels=2;apply_modifier(ear,sub)
+        span=shape["horn_span"];rise=shape["horn_rise"]
+        horn=horn_profile(span,rise)
+        tube("Swept horn",mirrored(horn,s),"Head",sides=32)
+        for x,y,z,dx,dz,size in [(.29,-.30,4.11,.125,-.25,.095),(.36,-.19,4.15,.135,-.27,.092),
+                 (.38,-.03,4.14,.13,-.26,.107),(.33,.11,4.14,.14,-.25,.11),
+                 (.33,.20,4.02,.15,-.27,.12),(.34,.16,3.92,.15,-.27,.105)]:
+            tube("Cheek ruff",mirrored([(x,y,z,size,size*.65),(x+dx*.55,y+.01,z+dz*.35,size*.86,size*.70),
+                (x+dx,y+.015,z+dz,.009,.009)],s),"Head")
+    oval("Lower lip",(0,front_y+.031,3.841),(.231,.154,.064),"Head")
+    for x,y,z,dx,dy,h in [(0,-.27,4.38,.018,-.06,.18),(-.13,-.17,4.39,-.08,.0,.126),
+             (.13,-.16,4.39,.067,0,.122),(0,-.011,4.42,.04,.12,.14),
+             (0,.136,4.40,-.025,.16,.115),(0,.25,4.30,0,.17,.065)]:
+        tube("Forelock",[(x,y,z-.065,.125,.105),(x+dx*.5,y+dy*.5,z+.06,.104,.084),
+                          (x+dx,y+dy,z+h,.014,.014)],"Head")
+    tube("Tail",[(0,.34,2.10,.09,.093),(.10,.54,1.96,.086,.08),(.22,.71,1.69,.068,.068),
+                 (.41,.83,1.42,.056,.058),(.64,.83,1.22,.05,.05),(.79,.77,1.08,.042,.045)],"Tail")
+    for x,y,z,d in [(.79,.77,1.108,.107),(.81,.79,1.12,.073),(.76,.742,1.10,.066)]:
+        tube("Tail tuft",[(x,y,z,.05,.048),(x+.066,y,z-.125,d,d*.74),
+                          (x+.074,y-.035,z-.219,d*.75,d*.55),(x+.044,y-.072,z-.32,.005,.006)],"Tail")
+
+sculpt_core()
+for sign in (-1,1):
+    sculpt_limbs(sign)
+head_details()
+bpy.ops.object.select_all(action="DESELECT")
+for obj in body:
+    obj.select_set(True)
+bpy.context.view_layer.objects.active = body[0]
+bpy.ops.object.join()
+skin=bpy.context.object
+skin.name="Sculpted anatomy"
+remesh=skin.modifiers.new("Unify anatomical volumes","REMESH")
+remesh.mode="VOXEL";remesh.voxel_size=.022
+remesh.use_smooth_shade=True
+apply_modifier(skin,remesh)
+smooth=skin.modifiers.new("Soften anatomical transitions","SMOOTH")
+smooth.factor=.58;smooth.iterations=6;apply_modifier(skin,smooth)
+dec=skin.modifiers.new("Reduce surface","DECIMATE");dec.ratio=.34;apply_modifier(skin,dec)
+
+bones={}
+def bone(name,start,end,parent=None):
+    bones[name]=(Vector(start),Vector(end),parent)
+bone("Pelvis",(0,.06,1.88),(0,.06,2.31))
+bone("Spine",(0,.06,2.31),(0,.07,2.87),"Pelvis")
+bone("Chest",(0,.07,2.87),(0,.06,3.57),"Spine")
+bone("Neck",(0,.06,3.57),(0,-.02,3.84),"Chest")
+bone("Head",(0,-.02,3.84),(0,-.11,4.42),"Neck")
+bone("Tail",(0,.34,2.10),(.43,.83,1.43),"Pelvis")
+for s,side in [(1,"L"),(-1,"R")]:
+    off=(SW-1)*.85
+    def limb(name,start,end,parent):
+        bone(name+"."+side,(s*start[0],*start[1:]),(s*end[0],*end[1:]),parent)
+    shoulder=(.94+off,.035,3.45);elbow=(1.22+off,.025,2.82);wrist=(1.38+off,-.15,2.23)
+    limb("Clavicle",(.14,.05,3.49),shoulder,"Chest")
+    limb("UpperArm",shoulder,elbow,"Clavicle."+side)
+    limb("Forearm",elbow,wrist,"UpperArm."+side)
+    limb("Hand",wrist,(1.39+off,-.16,1.84),"Forearm."+side)
+    hip=(.40,.06,2.05); knee=(.51,-.155,1.34); hock=(.58,.26,.665); foot=(.60,-.01,.29)
+    limb("Thigh",hip,knee,"Pelvis")
+    limb("Shin",knee,hock,"Thigh."+side)
+    limb("Pastern",hock,foot,"Shin."+side)
+    limb("Foot",foot,(.60,-.27,.08),"Pastern."+side)
+
+armdata=bpy.data.armatures.new("Humanoid skeleton")
+rig=bpy.data.objects.new("Minotaur skeleton",armdata)
+bpy.context.collection.objects.link(rig)
+bpy.context.view_layer.objects.active=rig
+bpy.ops.object.mode_set(mode="EDIT")
+for name,(head,tail,parent) in bones.items():
+    b=armdata.edit_bones.new(name);b.head=head;b.tail=tail
+    if parent:
+        b.parent=armdata.edit_bones[parent]
+bpy.ops.object.mode_set(mode="OBJECT")
+
+def attach(obj):
+    obj.parent=rig
+    mod=obj.modifiers.new("Skeleton","ARMATURE");mod.object=rig
+
+# Blend the nearest four appropriate bones at each anatomical seam.
+v=np.asarray([tuple(v.co) for v in skin.data.vertices])
+names=[name for name in bones if name!="Tail"]
+distances=[]
+for name in names:
+    a,b,_=bones[name];a=np.asarray(a);vec=np.asarray(b)-a
+    param=np.clip((v-a)@vec/(vec@vec),0,1)
+    dist=np.linalg.norm(v-a-param[:,None]*vec,axis=1)
+    if "." in name:
+        sign=1 if name.endswith(".L") else -1
+        dist[v[:,0]*sign<-.015]+=2
+        if name.split(".")[0] in ["UpperArm","Forearm","Hand","Clavicle"]:
+            dist[(abs(v[:,0])<.75*SW)&(v[:,2]<3.0)]+=1
+        else:
+            dist[(abs(v[:,0])>1.0+(SW-1)*.85)&(v[:,2]>1.62)]+=2
+    distances.append(dist)
+ds=np.column_stack(distances)
+idx=np.argsort(ds,axis=1)[:,:4]
+best=np.take_along_axis(ds,idx,axis=1)
+weights=np.exp(-(best-best[:,:1])/.068);weights/=weights.sum(axis=1)[:,None]
+groups=[skin.vertex_groups.new(name=n) for n in names]
+for i,(row,ws) in enumerate(zip(idx,weights)):
+    for j,w in zip(row,ws):
+        groups[j].add([i],float(w),"REPLACE")
+attach(skin)
+for obj,name in details:
+    group=obj.vertex_groups.new(name=name)
+    group.add(list(range(len(obj.data.vertices))),1.0,"REPLACE")
+    attach(obj)
+# Merge detail objects into the same skinned mesh; each keeps its weights.
+bpy.ops.object.select_all(action="DESELECT")
+skin.select_set(True)
+for obj,_ in details:obj.select_set(True)
+bpy.context.view_layer.objects.active=skin
+bpy.ops.object.join()
+skin.name="Minotaur clay"
+
+# Editable shape targets use the joined mesh's neutral coordinates.
+# The rig and the walk are shared by every variation.
+skin.shape_key_add(name="Basis")
+def add_shape(name, displacement):
+    key=skin.shape_key_add(name=name)
+    xyz=np.empty(len(key.data)*3,dtype=np.float32)
+    key.data.foreach_get("co",xyz)
+    coords=xyz.reshape(-1,3)
+    coords+=displacement(coords)
+    key.data.foreach_set("co",xyz)
+    key.slider_min=-1.0
+    key.slider_max=1.0
+
+def morph(coords,feature):
+    x,y,z=coords.T
+    delta=np.zeros_like(coords)
+    if feature=="Horn span":
+        delta[:,0]=np.sign(x)*np.maximum(abs(x)-.37,0)*.36*np.clip((z-4.275)/.07,0,1)
+    elif feature=="Muzzle length":
+        delta[:,1]=-np.maximum(-y-.32,0)*.42*np.clip((4.21-z)/.08,0,1)*np.clip((z-3.67)/.08,0,1)
+    elif feature=="Chest depth":
+        delta[:,1]=(y-.06)*.23*np.clip((z-2.38)/.42,0,1)*np.clip((3.76-z)/.28,0,1)*np.clip((1.0-abs(x))/.25,0,1)
+    return delta
+for feature in ("Horn span","Muzzle length","Chest depth"):
+    add_shape(feature,lambda coords: morph(coords,feature))
+
+def axis(axis,angle):
+    return Quaternion(Vector(axis),angle)
+
+def reset_pose():
+    for p in rig.pose.bones:
+        p.rotation_mode='QUATERNION';p.rotation_quaternion=Quaternion()
+        p.location=(0,0,0);p.scale=(1,1,1)
+
+def pose_delta(delta,offset,frame):
+    orientations={}
+    for n in bones:
+        parent=bones[n][2]
+        inherited=orientations.get(parent,Quaternion())
+        desired=delta.get(n,inherited)
+        rest=armdata.bones[n].matrix_local.to_quaternion()
+        p=rig.pose.bones[n]
+        q=rest.inverted() @ inherited.inverted() @ desired @ rest
+        if q.w < 0:q.negate()
+        p.rotation_quaternion=q
+        p.keyframe_insert("rotation_quaternion",frame=frame,group=n)
+        orientations[n]=desired
+    p=rig.pose.bones["Pelvis"]
+    p.location=armdata.bones["Pelvis"].matrix_local.to_quaternion().inverted() @ Vector(offset)
+    p.keyframe_insert("location",frame=frame,group="Pelvis")
+
+def walk_pose(t):
+    phase=2*pi*t
+    shift=Vector((.05*math.sin(phase),0,-.050-.027*math.cos(phase*2)))
+    delta={"Chest":axis((0,0,1),.045*math.sin(phase)),
+           "Head":axis((0,1,0),.017*math.sin(phase)),
+           "Tail":axis((0,0,1),.16*math.cos(phase))}
+    for s,side in [(1,"L"),(-1,"R")]:
+        f=(t+(0 if s==1 else .5))%1
+        if f<.5:
+            y=-.227+.454*(f/.5); lift=0.
+        else:
+            u=(f-.5)/.5
+            y=.227-.454*(u-math.sin(2*pi*u)/(2*pi))
+            lift=.172*math.sin(pi*u)**2
+        thigh,shin,lower=["%s.%s"%(n,side) for n in ("Thigh","Shin","Pastern")]
+        hip,knee,_=bones[thigh]; _,hock,_=bones[shin]
+        hip_now=hip+shift
+        target=hock+Vector((0,y,lift))
+        line=target-hip_now;distance=line.length;line.normalize()
+        length1=(knee-hip).length;length2=(hock-knee).length
+        pole=knee-hip
+        pole=(pole-line*line.dot(pole)).normalized()
+        proj=(length1**2-length2**2+distance**2)/(2*distance)
+        knee_now=hip_now+line*proj+pole*math.sqrt(max(0,length1**2-proj**2))
+        delta[thigh]=(knee-hip).rotation_difference(knee_now-hip_now)
+        delta[shin]=(hock-knee).rotation_difference(target-knee_now)
+        delta[lower]=Quaternion()
+        delta["UpperArm."+side]=axis((1,0,0),.18*math.cos(2*pi*f))
+        delta["Forearm."+side]=axis((1,0,0),.18*math.cos(2*pi*f)-.085)
+    return delta,shift
+
+scene.render.fps=24
+actions={}
+rig.animation_data_create()
+for name,end in [("Idle",73),("Walk",33)]:
+    act=bpy.data.actions.new(name);act.use_fake_user=True
+    rig.animation_data.action=act;actions[name]=act
+    for frame in range(1,end+1):
+        t=(frame-1)/(end-1)
+        if name=="Walk":
+            ds,offset=walk_pose(t)
+        else:
+            breath=math.sin(2*pi*t)
+            ds={"Chest":axis((1,0,0),.020*breath),"Head":axis((0,0,1),.032*breath),
+                "Tail":axis((0,0,1),.082*breath)}
+            offset=(0,0,.009*breath)
+        pose_delta(ds,offset,frame)
+    for curve in act.fcurves:
+        for key in curve.keyframe_points:key.interpolation="LINEAR"
+rig.animation_data.action=None
+reset_pose()
+scene.frame_set(1)
+bpy.context.view_layer.update()
+args.output.parent.mkdir(parents=True,exist_ok=True)
+bpy.ops.object.select_all(action="DESELECT")
+rig.select_set(True);skin.select_set(True)
+bpy.context.view_layer.objects.active=rig
+bpy.ops.export_scene.gltf(filepath=str(args.output.resolve()),export_format="GLB",use_selection=True,
+    export_animations=True,export_animation_mode="ACTIONS",export_anim_single_armature=True,
+    export_rest_position_armature=True,export_yup=True,export_texcoords=False,export_cameras=False,
+    export_lights=False)
+print("WROTE",args.output,"mesh vertices", len(skin.data.vertices),"bones",len(bones))
+if args.review:
+    args.review.mkdir(parents=True,exist_ok=True)
+    bpy.ops.wm.save_as_mainfile(filepath=str((args.review/"Minotaur.blend").resolve()))

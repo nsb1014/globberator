@@ -93,7 +93,7 @@ func make_controls() -> void:
 	box.add_child(motion)
 	button(motion, "Neutral", neutral)
 	button(motion, "Idle", play_motion.bind("Idle"))
-	button(motion, "Walk", play_motion.bind("Walk"))
+	button(motion, "Step in place", play_motion.bind("Walk"))
 	button(box, "Rotate view", toggle_orbit)
 	button(box, "Save proportions", save_shapes)
 	button(box, "Reset proportions", reset_shapes)

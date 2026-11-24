@@ -164,7 +164,7 @@ def sculpt_limbs(s):
     for j in (-1,1):
         foot = "Foot."+("L" if s==1 else "R")
         # Each toe widens at the ground; the central cleft stays open.
-        data=[(.025,.110,-.10,.104,.260),(.058,.111,-.109,.108,.268),
+        data=[(.000,.110,-.10,.104,.260),(.058,.111,-.109,.108,.268),
               (.145,.103,-.082,.108,.237),(.23,.086,-.038,.095,.192),
               (.30,.068,-.004,.075,.144),(.336,.050,.019,.05,.09)]
         sections("Cloven toe",[(z,s*(.60+j*x*1.22),y,w*1.23,d*1.10) for z,x,y,w,d in data],foot,.72)
@@ -369,57 +369,83 @@ def pose_delta(delta,offset,frame):
     p.keyframe_insert("location",frame=frame,group="Pelvis")
 
 def walk_pose(t):
-    phase=2*pi*t
-    shift=Vector((.05*math.sin(phase),0,-.050-.027*math.cos(phase*2)))
-    delta={"Chest":axis((0,0,1),.045*math.sin(phase)),
-           "Head":axis((0,1,0),.017*math.sin(phase)),
-           "Tail":axis((0,0,1),.16*math.cos(phase))}
-    for s,side in [(1,"L"),(-1,"R")]:
-        f=(t+(0 if s==1 else .5))%1
-        if f<.5:
-            y=-.227+.454*(f/.5); lift=0.
-        else:
-            u=(f-.5)/.5
-            y=.227-.454*(u-math.sin(2*pi*u)/(2*pi))
-            lift=.172*math.sin(pi*u)**2
-        thigh,shin,lower=["%s.%s"%(n,side) for n in ("Thigh","Shin","Pastern")]
-        hip,knee,_=bones[thigh]; _,hock,_=bones[shin]
-        hip_now=hip+shift
-        target=hock+Vector((0,y,lift))
-        line=target-hip_now;distance=line.length;line.normalize()
-        length1=(knee-hip).length;length2=(hock-knee).length
-        pole=knee-hip
-        pole=(pole-line*line.dot(pole)).normalized()
-        proj=(length1**2-length2**2+distance**2)/(2*distance)
-        knee_now=hip_now+line*proj+pole*math.sqrt(max(0,length1**2-proj**2))
-        delta[thigh]=(knee-hip).rotation_difference(knee_now-hip_now)
-        delta[shin]=(hock-knee).rotation_difference(target-knee_now)
-        delta[lower]=Quaternion()
-        delta["UpperArm."+side]=axis((1,0,0),.18*math.cos(2*pi*f))
-        delta["Forearm."+side]=axis((1,0,0),.18*math.cos(2*pi*f)-.085)
-    return delta,shift
+    phase = 2 * pi * t
+    # The centre of the support interval is 30 percent into each side's cycle.
+    weight = math.cos(phase - .60*pi)
+    load = math.cos(2*phase)
+    shift = Vector((.175*weight, -.017*load, -.073-.032*load))
+    pelvis = axis((0,0,1), .074*weight) @ axis((0,1,0), -.043*weight)
+    chest = axis((0,0,1), -.113*weight) @ axis((0,1,0), .038*weight)
+    chest @= axis((1,0,0), -.026+.022*math.sin(2*phase-.35))
+    delta = {
+        "Pelvis": pelvis,
+        "Spine": pelvis.slerp(chest, .45),
+        "Chest": chest,
+        "Neck": chest.slerp(Quaternion(), .58),
+        "Head": axis((0,0,1), -.033*math.cos(phase-.75*pi))
+                @ axis((1,0,0), -.026*math.cos(2*phase-.42)),
+        "Tail": axis((0,0,1), .23*math.cos(phase-.90*pi))
+                @ axis((1,0,0), .064*math.sin(2*phase-.8)),
+    }
+    pivot = bones["Pelvis"][0]
+    for sign, side in [(1, "L"), (-1, "R")]:
+        f = (t + (0 if sign == 1 else .5)) % 1
+        # A full-foot hold, then a rounded swing back to the same footprint.
+        u = max(0.0, (f-.60)/.40)
+        arc = math.sin(pi*u)**2
+        lift = .285*arc
+        forward = -.16*arc*(1+.35*math.cos(pi*u))
+        pastern = axis((1,0,0), .17*arc*math.cos(pi*u))
+        thigh, shin, lower, hoof = [n+"."+side for n in ("Thigh","Shin","Pastern","Foot")]
+        hip, knee, _ = bones[thigh]
+        hock, foot, _ = bones[lower]
+        hip_now = pivot + shift + pelvis @ (hip-pivot)
+        foot_goal = foot + Vector((0,forward,lift))
+        hock_goal = foot_goal - pastern @ (foot-hock)
+        line = hock_goal-hip_now
+        distance = line.length
+        line.normalize()
+        pole = knee-hip
+        pole = (pole-line*line.dot(pole)).normalized()
+        upper_length = (knee-hip).length
+        lower_length = (hock-knee).length
+        projection = (upper_length**2-lower_length**2+distance**2)/(2*distance)
+        knee_now = hip_now + line*projection + pole*math.sqrt(max(0,upper_length**2-projection**2))
+        delta[thigh] = (knee-hip).rotation_difference(knee_now-hip_now)
+        delta[shin] = (hock-knee).rotation_difference(hock_goal-knee_now)
+        delta[lower] = pastern
+        delta[hoof] = axis((1,0,0), .08*arc*math.cos(pi*u))
 
+        # Each distal segment follows the shoulder a little later.
+        arm_phase = 2*pi*f-.60*pi
+        delta["Clavicle."+side] = chest @ axis((0,1,0), sign*.035*math.cos(arm_phase))
+        delta["UpperArm."+side] = chest @ axis((1,0,0), -.32*math.cos(arm_phase-.12))
+        delta["Forearm."+side] = chest @ axis((1,0,0), -.14-.39*math.cos(arm_phase-.30))
+        delta["Hand."+side] = chest @ axis((1,0,0), -.11-.34*math.cos(arm_phase-.43))
+    return delta, shift
+
+scene.frame_start=0
 scene.render.fps=24
 actions={}
 rig.animation_data_create()
-for name,end in [("Idle",73),("Walk",33)]:
+for name,end in [("Idle",73),("Walk",49)]:
     act=bpy.data.actions.new(name);act.use_fake_user=True
     rig.animation_data.action=act;actions[name]=act
-    for frame in range(1,end+1):
-        t=(frame-1)/(end-1)
+    for frame in range(end):
+        t=frame/(end-1)
         if name=="Walk":
             ds,offset=walk_pose(t)
         else:
             breath=math.sin(2*pi*t)
             ds={"Chest":axis((1,0,0),.020*breath),"Head":axis((0,0,1),.032*breath),
                 "Tail":axis((0,0,1),.082*breath)}
-            offset=(0,0,.009*breath)
+            offset=(0,0,0)
         pose_delta(ds,offset,frame)
     for curve in act.fcurves:
         for key in curve.keyframe_points:key.interpolation="LINEAR"
 rig.animation_data.action=None
 reset_pose()
-scene.frame_set(1)
+scene.frame_set(0)
 bpy.context.view_layer.update()
 args.output.parent.mkdir(parents=True,exist_ok=True)
 bpy.ops.object.select_all(action="DESELECT")

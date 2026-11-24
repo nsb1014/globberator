@@ -111,18 +111,50 @@ def oval(name, loc, scale, group=None, tilt=0):
 def mirrored(keys, sign):
     return [(sign*x,y,z,w,d) for x,y,z,w,d in keys]
 
+def sculpt_trunk():
+    # Each ring shares one posterior surface from the sacrum to the nape.
+    # The first three columns retain the anterior torso and its proportions.
+    profile = [
+        # height, half width, front depth, rear depth
+        (1.63,.04,.04,.06), (1.71,.20,.16,.22), (1.81,.38,.27,.34), (1.93,.52,.39,.43),
+        (2.08,.60,.41,.43), (2.28,.56,.36,.38), (2.43,.53,.34,.33),
+        (2.66,.60,.375,.37), (2.92,.73,.45,.45), (3.16,.86,.51,.47),
+        (3.38,.91,.49,.45), (3.53,.83,.43,.40), (3.66,.56,.36,.35),
+        (3.82,.37,.32,.32), (3.97,.31,.25,.26),
+    ]
+    heights = np.array(profile)[:,0]
+    dimensions = PchipInterpolator(heights,np.array(profile)[:,1:],axis=0)
+    angle = np.arange(96)*2*pi/96
+    flank, depth = np.cos(angle), np.sin(angle)
+    back = np.maximum(depth,0)
+    rows = []
+    for z in np.linspace(heights[0],heights[-1],108):
+        width,front_depth,rear_depth = dimensions(z)
+        width *= 1+(SW-1)*np.clip((z-2.4)/.8,0,1)
+        x = width*flank
+        # Mirrored, oblique planes give a broad blade and a tapering lat.
+        # Dimensionless transverse positions follow shoulder-width edits.
+        u = np.abs(x)/SW
+        scapula = .105*np.exp(-((u-.44-.28*(z-3.32))/.245)**2-((z-3.34)/.25)**2)
+        lat = .115*np.exp(-((u-.43-.46*(z-2.99))/.245)**2-((z-2.98)/.39)**2)
+        erectors = .062*np.exp(-((u-.15)/.115)**2-((z-2.64)/.46)**2)
+        groove = -.046*np.exp(-(u/.104)**2-((z-3.08)/.62)**2)
+        glutes = .106*np.exp(-((u-.30)/.24)**2-((z-1.99)/.30)**2)
+        sacrum = .032*np.exp(-(u/.11)**2-((z-2.19)/.17)**2)
+        y = .06 + CD*(np.minimum(depth,0)*front_depth + back*rear_depth
+                        + back**1.5*(scapula+lat+erectors+groove+glutes+sacrum))
+        rows.append(np.column_stack((x,y,np.full_like(x,z))))
+    rings("Trunk",rows)
+
 def sculpt_core():
-    keys = [(1.78,.24,.24),(1.90,.47,.38),(2.08,.59,.41),(2.28,.56,.36),
-            (2.43,.51,.34),(2.66,.58,.375),(2.92,.72,.45),(3.16,.87,.51),
-            (3.38,.91,.49),(3.53,.79,.43),(3.66,.52,.36),(3.82,.37,.32),(3.97,.31,.25)]
-    sections("Trunk",[(z,0,.06,w*(1+(SW-1)*min(1,max(0,(z-2.4)/.8))),d*CD) for z,w,d in keys])
+    sculpt_trunk()
     for s in (-1,1):
-        for name,loc,sc,angle in [
-            ("Pectoral",(.39*SW,-.285*CD,3.23),(.50*SW,.23*CD,.23),-.13),
-            ("Trapezius",(.42*SW,.10,3.61),(.52*SW,.34,.20),.29),
-            ("Latissimus",(.52*SW,.18,3.05),(.22,.255,.36),.22),
-            ("Gluteal",(.285,.24,2.02),(.32,.28,.32),0)]:
-            oval(name,(s*loc[0],loc[1],loc[2]),sc,tilt=s*angle)
+        oval("Pectoral",(s*.39*SW,-.285*CD,3.23),(.50*SW,.23*CD,.23),tilt=-s*.13)
+        # The upper trapezius slopes into the shoulder and sits under the
+        # trunk surface at its medial edge.
+        tube("Shoulder slope",mirrored([(.18*SW,.09,3.76,.145,.195),
+             (.39*SW,.10,3.65,.163,.216),(.67*SW,.095,3.54,.156,.21),
+             (.87*SW,.06,3.49,.10,.145)],s))
         for i in range(3):
             oval("Abdominal plane",(s*(.16-i*.011),(-.315+i*.015)*CD,2.92-i*.165),
                  (.19-i*.014,.083,.131),tilt=-s*.07)
@@ -130,6 +162,10 @@ def sculpt_core():
                                  (.32,-.205,2.4,.027,.026)],s))
     oval("Neck",(0,.015,3.77),(.43,.39,.46))
     oval("Skull",(0,-.12,4.03),(.445,.40,.49))
+    tube("Nape crest",[(0,.035,4.45,.15,.105),(0,.155,4.37,.145,.145),
+                       (0,.235,4.19,.14,.145),(0,.282,4.01,.105,.12),
+                       (0,.317,3.85,.065,.075),(0,.32,3.73,.025,.035)],
+         front=(1,0,0))
     oval("Jaw",(0,-.33,3.90),(.33,.35,.26))
     oval("Nasal bridge",(0,-.38,4.03),(.265,.37*MU,.286))
     for s in (-1,1):
@@ -154,13 +190,14 @@ def sculpt_limbs(s):
                             (1.395,y-.02,2.02-drop,.051,.044),(1.35,y-.033,1.98-drop,.036,.031)]))
     tube("Thumb",arm([(1.327,-.267,2.21,.082,.082),(1.294,-.32,2.12,.084,.074),
                        (1.267,-.348,2.015,.065,.062),(1.278,-.349,1.967,.045,.043)]))
-    tube("Leg",mirrored([(.37,.085,2.17,.32,.32),(.42,.072,1.99,.36,.37),
-        (.46,.01,1.78,.335,.36),(.50,-.085,1.55,.265,.291),(.515,-.154,1.34,.205,.226),
+    tube("Leg",mirrored([(.29,.12,2.32,.095,.12),(.34,.125,2.20,.23,.26),
+        (.395,.118,2.06,.313,.344),(.435,.087,1.92,.344,.376),
+        (.46,.038,1.78,.335,.36),(.50,-.085,1.55,.265,.291),(.515,-.154,1.34,.205,.226),
         (.53,-.065,1.19,.198,.216),(.55,.12,1.03,.215,.230),
         (.57,.255,.825,.158,.175),(.58,.27,.666,.118,.131),
         (.587,.19,.54,.128,.14),(.598,.032,.335,.163,.17),(.598,-.035,.24,.18,.175)],s))
     oval("Kneecap",(s*.515,-.273,1.34),(.158,.111,.185))
-    oval("Hip crest",(s*.465,.09,2.02),(.255,.28,.30))
+
     for j in (-1,1):
         foot = "Foot."+("L" if s==1 else "R")
         # Each toe widens at the ground; the central cleft stays open.
@@ -207,13 +244,12 @@ def head_details():
         tube("Swept horn",mirrored(horn,s),"Head",sides=32)
         for x,y,z,dx,dz,size in [(.29,-.30,4.11,.125,-.25,.095),(.36,-.19,4.15,.135,-.27,.092),
                  (.38,-.03,4.14,.13,-.26,.107),(.33,.11,4.14,.14,-.25,.11),
-                 (.33,.20,4.02,.15,-.27,.12),(.34,.16,3.92,.15,-.27,.105)]:
+                 (.34,.16,4.04,.10,-.30,.105)]:
             tube("Cheek ruff",mirrored([(x,y,z,size,size*.65),(x+dx*.55,y+.01,z+dz*.35,size*.86,size*.70),
                 (x+dx,y+.015,z+dz,.009,.009)],s),"Head")
     oval("Lower lip",(0,front_y+.031,3.841),(.231,.154,.064),"Head")
     for x,y,z,dx,dy,h in [(0,-.27,4.38,.018,-.06,.18),(-.13,-.17,4.39,-.08,.0,.126),
-             (.13,-.16,4.39,.067,0,.122),(0,-.011,4.42,.04,.12,.14),
-             (0,.136,4.40,-.025,.16,.115),(0,.25,4.30,0,.17,.065)]:
+             (.13,-.16,4.39,.067,0,.122),(0,-.011,4.42,.04,.12,.14)]:
         tube("Forelock",[(x,y,z-.065,.125,.105),(x+dx*.5,y+dy*.5,z+.06,.104,.084),
                           (x+dx,y+dy,z+h,.014,.014)],"Head")
     tube("Tail",[(0,.34,2.10,.09,.093),(.10,.54,1.96,.086,.08),(.22,.71,1.69,.068,.068),
@@ -239,6 +275,19 @@ remesh.use_smooth_shade=True
 apply_modifier(skin,remesh)
 smooth=skin.modifiers.new("Soften anatomical transitions","SMOOTH")
 smooth.factor=.58;smooth.iterations=6;apply_modifier(skin,smooth)
+# Relax the union only across the seat and hamstring junction.
+seat = skin.vertex_groups.new(name="Pelvic blend")
+for vertex in skin.data.vertices:
+    x,y,z = vertex.co
+    influence = np.clip((y+.01)/.29,0,1)*np.exp(-((z-1.95)/.34)**4)
+    if influence > .005:
+        seat.add([vertex.index],float(influence),"REPLACE")
+blend = skin.modifiers.new("Pelvic transition","SMOOTH")
+blend.vertex_group = seat.name
+blend.factor = .64
+blend.iterations = 21
+apply_modifier(skin,blend)
+skin.vertex_groups.remove(skin.vertex_groups["Pelvic blend"])
 dec=skin.modifiers.new("Reduce surface","DECIMATE");dec.ratio=.34;apply_modifier(skin,dec)
 
 bones={}
@@ -283,6 +332,16 @@ def attach(obj):
 # Blend the nearest four appropriate bones at each anatomical seam.
 v=np.asarray([tuple(v.co) for v in skin.data.vertices])
 names=[name for name in bones if name!="Tail"]
+def smooth_band(values, low, high):
+    t = np.clip((values-low)/(high-low),0,1)
+    return t*t*(3-2*t)
+
+# Let arm influence fade across the outer ribs. A hard height cutoff here
+# folds the lat into a horizontal crease when the upper arm swings.
+arm_offset = .85*(SW-1)
+inner_ribs = 1-smooth_band(abs(v[:,0])-arm_offset,.78,1.01)
+below_shoulder = 1-smooth_band(v[:,2],3.05,3.52)
+arm_penalty = .95*inner_ribs*below_shoulder
 distances=[]
 for name in names:
     a,b,_=bones[name];a=np.asarray(a);vec=np.asarray(b)-a
@@ -292,7 +351,7 @@ for name in names:
         sign=1 if name.endswith(".L") else -1
         dist[v[:,0]*sign<-.015]+=2
         if name.split(".")[0] in ["UpperArm","Forearm","Hand","Clavicle"]:
-            dist[(abs(v[:,0])<.75*SW)&(v[:,2]<3.0)]+=1
+            dist += arm_penalty
         else:
             dist[(abs(v[:,0])>1.0+(SW-1)*.85)&(v[:,2]>1.62)]+=2
     distances.append(dist)
@@ -300,6 +359,37 @@ ds=np.column_stack(distances)
 idx=np.argsort(ds,axis=1)[:,:4]
 best=np.take_along_axis(ds,idx,axis=1)
 weights=np.exp(-(best-best[:,:1])/.068);weights/=weights.sum(axis=1)[:,None]
+def bind_back(vertices, names, indices, weights):
+    # The rib cage carries the blades below the shoulder joint. Blend that
+    # continuous sheet into the clavicle and deltoid across the outer border.
+    x,y,z = vertices.T
+    lateral = abs(x)-.85*(SW-1)
+    region = (smooth_band(y,-.03,.175)*(1-smooth_band(lateral,.86,1.10))
+              *smooth_band(z,2.46,2.75)*(1-smooth_band(z,3.54,3.82)))
+    rows = np.flatnonzero(region>0)
+    if not len(rows):
+        return indices,weights
+    original = np.zeros((len(rows),len(names)))
+    np.put_along_axis(original,indices[rows],weights[rows],axis=1)
+    desired = np.zeros_like(original)
+    lateral,z = lateral[rows],z[rows]
+    arm = .58*smooth_band(lateral,.68,1.04)*smooth_band(z,3.04,3.51)
+    collar = .60*smooth_band(lateral,.25,.78)*smooth_band(z,3.13,3.60)*(1-arm)
+    rib = smooth_band(z,2.69,3.20)
+    desired[:,names.index("Chest")] = rib*(1-arm-collar)
+    desired[:,names.index("Spine")] = (1-rib)*(1-arm-collar)
+    for sign,side in ((1,"L"),(-1,"R")):
+        on_side = x[rows]*sign>0
+        desired[:,names.index("Clavicle."+side)] = collar*on_side
+        desired[:,names.index("UpperArm."+side)] = arm*on_side
+    result = original+(desired-original)*region[rows,None]
+    selected = np.argsort(result,axis=1)[:,-4:][:,::-1]
+    values = np.take_along_axis(result,selected,axis=1)
+    indices[rows] = selected
+    weights[rows] = values/values.sum(axis=1)[:,None]
+    return indices,weights
+
+idx,weights = bind_back(v,names,idx,weights)
 groups=[skin.vertex_groups.new(name=n) for n in names]
 for i,(row,ws) in enumerate(zip(idx,weights)):
     for j,w in zip(row,ws):

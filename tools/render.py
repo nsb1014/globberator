@@ -14,6 +14,7 @@ parser.add_argument("model",type=Path)
 parser.add_argument("folder",type=Path)
 parser.add_argument("--clip",choices=["still","turn","walk"],default="still")
 parser.add_argument("--oidn",type=Path,help="Optional oidnDenoise executable for linear-light CPU denoising")
+parser.add_argument("--azimuth",type=float,help="Camera angle in degrees from the front, or starting angle for a turntable")
 args=parser.parse_args(sys.argv[sys.argv.index("--")+1:])
 args.folder.mkdir(parents=True,exist_ok=True)
 bpy.ops.wm.read_factory_settings(use_empty=True)
@@ -95,7 +96,9 @@ if args.clip=="walk":
 for i in range(length):
     if args.clip=="walk":
         scene.frame_set(round(action.frame_range[0])+i)
-    angle={"still":.18,"turn":.18+2*math.pi*i/72,"walk":.54}[args.clip]
+    angle = math.radians(args.azimuth) if args.azimuth is not None else (.54 if args.clip=="walk" else .18)
+    if args.clip=="turn":
+        angle += 2*math.pi*i/length
     cam.location=(10*math.sin(angle),-10*math.cos(angle),3.66)
     aim(cam,(0,0,2.42))
     render_frame((args.folder/f"{args.clip}-{i:03}.png").resolve())

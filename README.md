@@ -4,7 +4,7 @@ A runnable Godot character study of the far-right minotaur in the supplied lineu
 
 ![Neutral minotaur](preview/minotaur.jpg)
 
-[Rear shape comparison](preview/minotaur-back.jpg) · [Step in place from behind](preview/minotaur-motion.mp4) · [Neutral turntable](preview/minotaur-turntable.mp4) · [Rigged 3D model](godot/minotaur.glb)
+[Rear mane detail](preview/minotaur-mane.jpg) · [Rear shape comparison](preview/minotaur-back.jpg) · [Step in place from behind](preview/minotaur-motion.mp4) · [Neutral turntable](preview/minotaur-turntable.mp4) · [Rigged 3D model](godot/minotaur.glb)
 
 ## Open the studio
 

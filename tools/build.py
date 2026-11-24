@@ -210,6 +210,74 @@ def apply_modifier(obj, modifier):
     bpy.context.view_layer.objects.active = obj
     bpy.ops.object.modifier_apply(modifier=modifier.name)
 
+def nape_mane():
+    # A continuous sheet hugs the rear skull; its lower edge breaks into
+    # tapered locks that meet the cheek ruff just behind each ear.
+    angles = np.linspace(-1.56,1.56,145)
+    profile = np.array([
+        # height, transverse radius, depth centre, rear radius
+        (3.50,.45,.042,.396), (3.74,.448,.039,.398),
+        (3.92,.454,.010,.405), (4.12,.446,-.072,.419),
+        (4.28,.406,-.111,.395), (4.41,.305,-.120,.332),
+        (4.51,.155,-.125,.19), (4.55,.055,-.13,.11),
+    ])
+    surface = PchipInterpolator(profile[:,0],profile[:,1:],axis=0)
+    divisions = np.array([-1.56,-1.18,-.77,-.33,.15,.61,1.04,1.56])
+    tips = np.array([.12,.13,.15,.21,.16,.12,.14])
+    sections = np.clip(np.searchsorted(divisions,angles,side="right")-1,0,len(tips)-1)
+    across = (angles-divisions[sections])/(divisions[sections+1]-divisions[sections])
+    lock = np.sin(np.pi*np.clip(across,0,1))**1.35
+    top = 4.51-.23*(abs(angles)/1.56)**1.5
+    hem = 3.84+.10*(abs(angles)/1.56)**1.7-tips[sections]*lock
+    outer, inner = [], []
+    for t in np.linspace(0,1,32):
+        z = top+(hem-top)*t
+        width,centre,depth = surface(z).T
+        # Sweep the locks toward the sides as they descend, with a slight
+        # off-centre part to avoid a row of parallel grooves.
+        theta = angles+.24*np.sin(1.9*angles+.58)*np.sin(np.pi*t*.78)
+        theta += .115*t*t*lock
+        edge = np.clip((1.56-abs(angles))/.22,0,1)
+        swell = np.sin(np.pi*t)**.66
+        relief = .018+.044*swell+.055*lock*(.16+.84*np.sin(np.pi*t*.78))
+        outer_radius = edge*relief-(1-edge)*.035
+        for rows,radius in ((outer,outer_radius),(inner,outer_radius-.077)):
+            rows.append(np.column_stack(((width+radius)*np.sin(theta),
+                         centre+(depth+radius)*np.cos(theta),z)))
+    height,columns = len(outer),len(angles)
+    layer_size = height*columns
+    faces = []
+    for i in range(height-1):
+        for j in range(columns-1):
+            a=i*columns+j
+            face=(a,a+1,a+1+columns,a+columns)
+            faces.append(face)
+            faces.append(tuple(v+layer_size for v in reversed(face)))
+    border = (list(range(columns)) + list(range(2*columns-1,layer_size,columns))
+              + list(range(layer_size-2,layer_size-columns-1,-1))
+              + list(range(layer_size-2*columns,0,-columns)))
+    for a,b in zip(border,border[1:]+border[:1]):
+        faces.append((b,a,a+layer_size,b+layer_size))
+    mesh("Swept nape mane",np.vstack(outer+inner).tolist(),faces,"Head")
+
+    # Shorter crown locks overlap the longer nape locks. Their ends fall at
+    # different heights and follow the sweep of the existing forelock.
+    for root_angle, sweep, start, drop, half_width in [
+        (-1.07,-.26,4.34,.37,.095), (-.49,-.29,4.44,.42,.127),
+        (-.05,.24,4.49,.39,.124), (.56,.34,4.42,.43,.119),
+        (1.13,.22,4.32,.33,.088),
+    ]:
+        keys = []
+        for t,w,thickness,offset in [(0,.52,.024,-.024),(.29,1,.048,.046),
+                (.65,.83,.042,.097),(.85,.48,.027,.106),(1,.032,.004,.100)]:
+            z = start-drop*t
+            width,centre,depth = surface(z)
+            phi = root_angle+sweep*t*t
+            keys.append(((width+offset)*math.sin(phi),centre+(depth+offset)*math.cos(phi),
+                         z,half_width*w,thickness))
+        tube("Crown sweep",keys,"Head",front=(math.sin(root_angle),math.cos(root_angle),0))
+
+
 def head_details():
     front_y = -.41-.19*MU
     snout = oval("Bovine nose pad",(0,front_y,3.99),(.284,.191,.156),"Head")
@@ -247,6 +315,7 @@ def head_details():
                  (.34,.16,4.04,.10,-.30,.105)]:
             tube("Cheek ruff",mirrored([(x,y,z,size,size*.65),(x+dx*.55,y+.01,z+dz*.35,size*.86,size*.70),
                 (x+dx,y+.015,z+dz,.009,.009)],s),"Head")
+    nape_mane()
     oval("Lower lip",(0,front_y+.031,3.841),(.231,.154,.064),"Head")
     for x,y,z,dx,dy,h in [(0,-.27,4.38,.018,-.06,.18),(-.13,-.17,4.39,-.08,.0,.126),
              (.13,-.16,4.39,.067,0,.122),(0,-.011,4.42,.04,.12,.14)]:

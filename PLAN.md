@@ -16,7 +16,7 @@ Use the far-right minotaur in the five-character lineup (1000012403.png) as the 
 
 - **Visible landmarks.** Match the thick horns that sweep outward and curl up, the heavy brow and broad blunt muzzle, the substantial upper arms and hands, the wide-set split hooves, and the tufted tail. Give the mane and tail tuft simple sculpted masses.
 - **Hidden anatomy.** Estimate shoulder joints from the visible upper arms and neck. The outer edges of the shoulder plates are an unreliable guide to body width. Keep chest depth, waist, and the lower-leg profile adjustable. Mark areas covered by equipment as unknown when comparing the render to the reference.
-- **Review pose.** Use a relaxed stance with the hands clear of the torso so the chest, waist, and arm joins can be seen. For the likeness check, temporarily pose the model to align visible landmarks with the reference. Review the inferred volumes from the side and back.
+- **Neutral stance.** Save and export the character standing upright, facing forward, with level shoulders and weight evenly distributed over both hooves. Set the hooves about hip-width apart and keep a natural bend in the legs. Let the arms hang slightly away from the torso, elbows soft and hands relaxed. Use this pose for the editor and the full turntable. Apply the reference pose only to a temporary copy for image fitting.
 
 First assemble the target by hand. Render a turntable and try a walk. Then give the AI the same reference and part controls. This gives us a direct comparison for likeness and motion. Buildings and vehicles remain interaction references.
 
@@ -47,7 +47,7 @@ Keep the reuse checks as rough assemblies. The first finished character is the m
 3. Pose each candidate to match the reference and render it from the estimated camera. Compare exposed contours, proportions, and landmark positions. Exclude hidden contours from the fit. Refine camera, shape controls, and part choices in a bounded loop. Use a fixed human-made example to check whether the scoring favors recognizable results.
 4. Give the user the closest valid candidate with a turntable and walking preview. When two plausible interpretations differ meaningfully, show the alternative or accept a second view. Keep uncertain features editable. On this target both horns are visible. Torso depth is inferred, so its shape should stay easy to revise.
 
-**Style tolerance.** Let the library simplify the shapes while preserving the horn span, muzzle proportions, and stance. Judge the turntable at thumbnail size and close up in neutral lighting.
+**Style tolerance.** Let the library simplify the shapes while preserving the horn span, muzzle proportions, and limb proportions. Judge the turntable at thumbnail size and close up in neutral lighting.
 
 Single-image part assembly has been demonstrated for furniture using a known, complete set of parts. PolyForge must additionally select suitable parts, vary their shapes, and produce a moving creature. Validate those capabilities on our own references before choosing a model provider or investing in training. [Li et al., ECCV 2020](https://cs.stanford.edu/~liyichen/projects/assembly/)
 
@@ -70,4 +70,4 @@ Use held-out renders of known recipes alongside real references. Known recipes r
 
 ## First visual review
 
-Show a gray turntable in a relaxed pose and a reference-aligned front view. Check horn span, muzzle width, upper-arm mass, and hoof spacing against visible anatomy. Review the estimated chest and pelvis in profile, then inspect the weight shift and hoof contact in a short walk.
+Show a gray turntable in the neutral stance. Check horn span, muzzle width, upper-arm mass, and hoof shape against visible anatomy. Review the estimated chest and pelvis in profile, then inspect the weight shift and hoof contact in a short walk.

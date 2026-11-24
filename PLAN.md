@@ -12,7 +12,12 @@ Spore carried information about anatomy into animation. Parts declared capabilit
 
 ## First character: a minotaur
 
-Build a bull-headed, two-legged humanoid in a standalone Godot character editor. Use one full-body minotaur reference to set the target silhouette. A separate style reference is helpful if the source and finished looks differ. Head size, horns, leg anatomy, clothing, and surface treatment follow the chosen art. Hooves are a working assumption until we see it.
+The target is the far-right figure in the supplied five-character lineup (1000012403.png). Use the same image as the initial style target. When fitting the image, isolate the figure and its equipment; the adjacent fighter overlaps the left edge of the target area. Compare in the near-frontal reference pose.
+
+- **Silhouette.** Thick ivory horns extend sideways before curling upward to dark tips. A heavy brow, blunt muzzle, broad armored shoulders, large hands, and widely spaced split hooves give the character its shape. A tufted tail appears on the viewer’s right.
+- **Finish.** Large, sculpted forms, warm brown fur, dark steel with gold edging, a red hanging cloth panel, and bright cyan eyes. Repeat the cyan accent on the carried prop. Preserve these large color shapes when simplifying small surface marks.
+- **Equipment and pose.** Include the nose ring, horn bands, layered shoulder armor, bracers, belt, cloth panel, and removable fantasy axe. The diagonal two-handed pose obscures part of the torso. Store the reference pose separately from the neutral body and render both equipped and unequipped previews.
+- **Depth and motion.** The view establishes hoof spacing and the visible outline. Torso depth, rear armor, and the side profile of the lower legs are inferred. Keep those dimensions adjustable and judge the profile in motion.
 
 First assemble the target by hand. Render a turntable and try a walk. Then give the AI the same reference and part controls. This gives us a direct comparison for likeness and motion. Buildings and vehicles remain interaction references.
 
@@ -25,9 +30,10 @@ Choose part boundaries around edits a creator would actually want to make. Keep 
 | Humanoid torso and pelvis | Shoulder span, chest depth, waist width | Make a broad minotaur and a lean hornless biped with the same body. Watch the shoulder and hip joins through a stride. |
 | Arms, hands, and two-legged skeleton | Segment lengths, thickness, resting pose | Reuse the arms on the lean biped. Change forearm length and verify the hand still reaches a common target. Keep body-specific lower-leg bends and foot contacts adjustable. |
 | Paired horns | Base position, sweep, taper, length | Use the same horn on the minotaur and on a horned-helmet mock-up. Judge the silhouette in profile and from the front. |
-| Bull head and foot ends | Muzzle shape, ear angle, footprint and contact | Spend a dedicated part where it earns recognition or a convincing walk. If the reference has hooves, verify that the hoof can plant while the heel stays raised. |
+| Bull head and foot ends | Muzzle shape, ear angle, footprint and contact | Spend a dedicated part where it earns recognition or a convincing walk. Check the split hoof in front view and test stable contact through the stride. |
+| Shoulder armor and bracers | Width, depth, attachment angle, edge finish | Fit the same shoulder shell to the smaller shield-bearing fighter immediately to the left in the lineup. Compare both silhouettes and lift the arm to check clearance. |
 
-Keep the reuse checks as rough assemblies. The first finished character is the minotaur. For each prospective part, first try fitting an existing part with its allowed controls. Record which reference feature or motion fails, what a new part would fix, and where else it might be useful. If making a part more generic spoils the likeness or its movement, keep the specialized shape. Defer accessories until the reference shows they carry the character's identity.
+Keep the reuse checks as rough assemblies. The first finished character is the minotaur. For each prospective part, first try fitting an existing part with its allowed controls. Record which reference feature or motion fails, what a new part would fix, and where else it might be useful. If making a part more generic spoils the likeness or its movement, keep the specialized shape. Use the selected equipment for the likeness review. Prototype the axe as one removable prop; an interchangeable weapon catalog can wait.
 
 ## The builder and its part library
 
@@ -41,15 +47,15 @@ Keep the reuse checks as rough assemblies. The first finished character is the m
 1. Isolate the figure and estimate its camera angle and pose. Mark visible landmarks, broad colors, and distinctive features. Record hidden or ambiguous features as guesses. A raised arm belongs to the reference pose, while the character still needs a neutral stance for walking.
 2. Have a vision model propose a small set of recipes from the actual catalog, using part previews and allowed settings. The builder checks attachments, joint ranges, and part identities. Reject an invalid recipe before scoring it.
 3. Pose each candidate to match the reference and render it from the estimated camera. Compare outline, proportions, landmark positions, and the agreed signature features. Refine camera, shape controls, and part choices in a bounded loop. Use a fixed human-made example to check whether the scoring favors recognizable results.
-4. Give the user the closest valid candidate with a turntable and walking preview. When two plausible interpretations differ meaningfully, show the alternative or accept a second view. Keep uncertain features editable. A far horn hidden behind the head can start as a mirrored guess. Match the visible horn to the image.
+4. Give the user the closest valid candidate with a turntable and walking preview. When two plausible interpretations differ meaningfully, show the alternative or accept a second view. Keep uncertain features editable. On this target both horns are visible. The back armor is inferred, so its shape should stay easy to revise.
 
-**Style tolerance.** Keep the library's surface treatment, palette rules, and allowed deformations consistent. Favor silhouette and feature placement over matching lighting or fine texture. A painterly minotaur can retain its low brow, short muzzle, and forward-swept horns in a simplified model. If a broken horn defines the subject, preserve the asymmetry and flag any gap the library cannot express.
+**Style tolerance.** Keep the library's surface treatment, palette rules, and allowed deformations consistent. Favor silhouette and feature placement over matching lighting or fine texture. For this minotaur, preserve the horns’ outward span and upturned tips, the brow over the cyan eyes, and the broad shoulder silhouette. Scratches on the steel can vary with the library style.
 
 Single-image part assembly has been demonstrated for furniture using a known, complete set of parts. PolyForge must additionally select suitable parts, vary their shapes, and produce a moving creature. Validate those capabilities on our own references before choosing a model provider or investing in training. [Li et al., ECCV 2020](https://cs.stanford.edu/~liyichen/projects/assembly/)
 
 ## Motion and export
 
-Start with idle, look, and a level-ground walk. Start with a biped shifting its pelvis toward the supporting leg. Hold the planted foot in world space while the opposite leg swings toward its next reachable contact. Coordinate the arms with the stride. Bend hips, knees, and ankles within their limits. Adapt stride and body height to limb length. Add authored timing for weight shifts and head motion so character survives the procedural adjustments. Extend to a second body family after these rules work across very different proportions.
+Start with idle, look, and a level-ground walk. Animate a biped shifting its pelvis toward the supporting leg. Hold the planted foot in world space while the opposite leg swings toward its next reachable contact. Coordinate the arms with the unequipped stride. With the prop equipped, use two hand targets on the handle and check that changing shoulder width preserves both contacts. Bend hips, knees, and ankles within their limits. Adapt stride and body height to limb length. Add authored timing for weight shifts and head motion so character survives the procedural adjustments. Extend to a second body family after these rules work across very different proportions.
 
 Deliver both the editable recipe and a rigged GLB model with materials and baked idle and walk clips. Baking records the resulting movement so another 3D application can play it. The Godot builder retains the adaptive controller for live changes. Check the export by opening it in a fresh project and a second viewer.
 
@@ -64,6 +70,6 @@ Deliver both the editable recipe and a rigged GLB model with materials and baked
 
 Use held-out renders of known recipes alongside real references. Known recipes reveal camera, attachment, and fitting errors. Real references reveal gaps in the library. When the best hand-built example misses the target, improve the parts; when the hand-built example succeeds and the AI falls short, improve selection and fitting.
 
-## Decision for the first review
+## First visual review
 
-Choose one full-body minotaur image. A three-quarter view showing the head, hands, and feet would settle the most design choices. If the desired finish differs from that image, choose one example of the finish as well.
+Show the reference beside a flat-shaded front view at the same height. Toggle the equipment and check the span of the horns, the width of the armored shoulders, and the stance of the hooves. Then show a side view and a short walk to review the inferred depth and weight shift before detailing fur or metal.

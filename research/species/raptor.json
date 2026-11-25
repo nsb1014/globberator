@@ -1,0 +1,196 @@
+{
+  "species_id": "raptor",
+  "label": "Red-tailed hawk (Buteo jamaicensis), perched adult",
+  "taxon": {
+    "common": "Red-tailed hawk",
+    "scientific": "Buteo jamaicensis",
+    "order": "Accipitriformes",
+    "class": "Aves"
+  },
+  "image": {
+    "file_page": null,
+    "direct_url": null,
+    "author": null,
+    "license": null,
+    "species_shown": "Buteo jamaicensis (no photo sourced)",
+    "view": "none: no image sourced or viewed; anatomy written from reference text and general avian anatomy",
+    "image_viewed": false
+  },
+  "physical_parsing": {
+    "bounding_box_m": {"width_x": 0.3, "height_y": 0.5, "length_z": 0.6},
+    "approx_volume_m3": 0.0012,
+    "volume_method": "Mass / density estimate: adult body mass ~1.1 kg (midpoint of female and male ranges) divided by ~950 kg/m3 (average density of a feathered bird). Bounding box is the perched pose with wings folded, tail included in length_z; the folded wings are not part of the volume, and the feathered wing and tail volumes are included in the mass estimate.",
+    "shape_class": "perched bird: a compact, forward-leaning ellipsoidal trunk with a head on a short neck, folded wings along the flanks, a fan-shaped tail behind, and two short feathered legs ending in talons",
+    "core": {
+      "description": "Trunk = head/neck segment (forward, upper), thorax with keel (middle, widest), abdomen plus pygostyle and tail base (rear, lower). The thorax carries the shoulder girdle and the pelvis is at the rear underside. The core is an elliptical solid whose long axis tilts forward.",
+      "segments": 3,
+      "cross_section": "elliptical, wider than tall; the thorax is slightly flattened dorsoventrally and keeled on the midline"
+    },
+    "size_source": "Cornell Lab of Ornithology, All About Birds, Red-tailed Hawk: adult length ~50-65 cm (female) and ~45-56 cm (male), wingspan ~114-133 cm, weight ~690-1460 g across sexes (https://www.allaboutbirds.org/guide/Red-tailed_Hawk/id). Audubon field guide gives a similar size and wingspan range (https://www.audubon.org/field-guide/bird/red-tailed-hawk). Perched height, folded-wing width and part lengths are estimates from general avian anatomy, not measured."
+  },
+  "parts": [
+    {
+      "id": "wing_L",
+      "name": "Wing (left)",
+      "category": "locomotion",
+      "symmetry": "pair",
+      "count": 2,
+      "attach_pos": [0.167, 0.6, 0.033],
+      "joints": [
+        {"name": "shoulder (glenohumeral)", "pos": [0.167, 0.6, 0.033], "type": "ball", "pivot_axes": ["x", "y", "z"], "range_deg": [0, 150]},
+        {"name": "elbow", "pos": [0.333, 0.54, -0.033], "type": "hinge", "pivot_axes": ["x"], "range_deg": [0, 140]},
+        {"name": "wrist (carpus)", "pos": [0.333, 0.44, -0.267], "type": "hinge", "pivot_axes": ["x"], "range_deg": [0, 60]}
+      ],
+      "root_radius_m": 0.05,
+      "length_m": 0.40,
+      "penetration": {"depth_m": 0.03, "fraction_of_root_radius": 0.6, "overlap_region": "shoulder girdle (scapula, coracoid, clavicle furcula) and the lateral thoracic wall beside the keel"},
+      "library_hint": "wing_feather",
+      "notes": "Folded-wing pose when perched; full span ~1.14-1.32 m in flight. Humerus-radius-ulna plus long primary/secondary feathers. Shoulder is a ball joint, elbow and wrist are hinges with the wrist the flexing point for folding. Flight feathers should be a separate sub-mesh. Wing chord ~0.40 m is an estimate."
+    },
+    {
+      "id": "wing_R",
+      "mirror_of": "wing_L"
+    },
+    {
+      "id": "leg_L",
+      "name": "Leg (left)",
+      "category": "locomotion",
+      "symmetry": "pair",
+      "count": 2,
+      "attach_pos": [0.133, 0.44, -0.033],
+      "joints": [
+        {"name": "hip (acetabular)", "pos": [0.133, 0.44, -0.033], "type": "ball", "pivot_axes": ["x", "y", "z"], "range_deg": [-30, 60]},
+        {"name": "ankle (tarsometatarsal)", "pos": [0.167, 0.1, 0.05], "type": "hinge", "pivot_axes": ["x"], "range_deg": [0, 70]},
+        {"name": "toe base", "pos": [0.167, 0.02, 0.117], "type": "hinge", "pivot_axes": ["x"], "range_deg": [0, 90]}
+      ],
+      "root_radius_m": 0.035,
+      "length_m": 0.12,
+      "penetration": {"depth_m": 0.03, "fraction_of_root_radius": 0.86, "overlap_region": "pelvis (ilium/ischium) and the rear underside of the abdomen core"},
+      "library_hint": null,
+      "notes": "Feathered thigh, then a bare scaled tarsus (digitigrade bird leg). The knee is hidden in the thigh feathers and is not modelled; the visible joint is the ankle (intertarsal). Length is hip to toe base, estimated. The tarsus is an unfeathered cylinder with scutes and is the main gap in the library."
+    },
+    {
+      "id": "leg_R",
+      "mirror_of": "leg_L"
+    },
+    {
+      "id": "talon_L",
+      "name": "Talons (left foot)",
+      "category": "manipulation",
+      "symmetry": "pair",
+      "count": 2,
+      "attach_pos": [0.167, 0.02, 0.117],
+      "joints": [
+        {"name": "toe base (digit hinge)", "pos": [0.167, 0.02, 0.117], "type": "hinge", "pivot_axes": ["x"], "range_deg": [0, 90]}
+      ],
+      "root_radius_m": 0.012,
+      "length_m": 0.035,
+      "penetration": {"depth_m": 0.008, "fraction_of_root_radius": 0.67, "overlap_region": "distal tarsus and toe bones at the foot end of leg_L"},
+      "library_hint": "foot_claw",
+      "notes": "Four digits (three forward, one hallux back); hallux talon is the largest. Talons are curved, sharp keratin claws, used to grip and kill prey. Lengths are estimates (~3-4 cm). Good fit for foot_claw, but there are four or five per foot instead of one."
+    },
+    {
+      "id": "talon_R",
+      "mirror_of": "talon_L"
+    },
+    {
+      "id": "eye_L",
+      "name": "Eye (left)",
+      "category": "sensory",
+      "symmetry": "pair",
+      "count": 2,
+      "attach_pos": [0.117, 0.88, 0.283],
+      "joints": [
+        {"name": "orbit (fixed globe)", "pos": [0.117, 0.88, 0.283], "type": "fixed", "pivot_axes": [], "range_deg": [0, 0]}
+      ],
+      "root_radius_m": 0.0125,
+      "length_m": 0.025,
+      "penetration": {"depth_m": 0.005, "fraction_of_root_radius": 0.42, "overlap_region": "orbit of the skull, front and upper head"},
+      "library_hint": "eye_round",
+      "notes": "Large forward-facing eyes give binocular vision for hunting; the globe is fixed in the orbit, so the head moves instead of the eyes. Diameter ~2.5 cm estimated. Eyes are set front-to-side with a bony sclerotic ring, so eye_round is close but not exact."
+    },
+    {
+      "id": "eye_R",
+      "mirror_of": "eye_L"
+    },
+    {
+      "id": "brow_ridge_L",
+      "name": "Brow (supraorbital) ridge (left)",
+      "category": "sensory",
+      "symmetry": "pair",
+      "count": 2,
+      "attach_pos": [0.1, 0.9, 0.267],
+      "joints": [
+        {"name": "skull fixed", "pos": [0.1, 0.9, 0.267], "type": "fixed", "pivot_axes": [], "range_deg": [0, 0]}
+      ],
+      "root_radius_m": 0.01,
+      "length_m": 0.03,
+      "penetration": {"depth_m": 0.004, "fraction_of_root_radius": 0.4, "overlap_region": "upper rim of the orbit on the skull"},
+      "library_hint": "brow_ridge",
+      "notes": "Bony supraorbital shelf above each eye, strongly developed in Buteo, shades the eye from sun and glare. Treated as sensory support. Its visual effect is the fierce brow shelf that is typical of hawks. Could also be aesthetics, but the function is eye protection."
+    },
+    {
+      "id": "brow_ridge_R",
+      "mirror_of": "brow_ridge_L"
+    },
+    {
+      "id": "beak",
+      "name": "Beak (hooked bill)",
+      "category": "feeding",
+      "symmetry": "centre",
+      "count": 1,
+      "attach_pos": [0, 0.86, 0.333],
+      "joints": [
+        {"name": "skull fixed (cere / upper mandible)", "pos": [0, 0.86, 0.333], "type": "fixed", "pivot_axes": [], "range_deg": [0, 0]},
+        {"name": "mandible hinge (lower jaw)", "pos": [0, 0.84, 0.3], "type": "hinge", "pivot_axes": ["x"], "range_deg": [0, 25]}
+      ],
+      "root_radius_m": 0.012,
+      "length_m": 0.04,
+      "penetration": {"depth_m": 0.01, "fraction_of_root_radius": 0.83, "overlap_region": "front of the skull and upper head core, at the cere"},
+      "library_hint": "mouth_beak",
+      "notes": "Strongly hooked upper mandible with a tomial tooth, used to tear meat. The waxy cere sits at its base. Culmen ~3-4 cm estimated. mouth_beak is generic and lacks the hook, so the hook is a library gap."
+    },
+    {
+      "id": "tail_fan",
+      "name": "Tail (fan of 12 rectrices)",
+      "category": "locomotion",
+      "symmetry": "centre",
+      "count": 1,
+      "attach_pos": [0, 0.52, -0.167],
+      "joints": [
+        {"name": "tail base (pygostyle saddle)", "pos": [0, 0.52, -0.167], "type": "saddle", "pivot_axes": ["x", "y"], "range_deg": [-30, 30]}
+      ],
+      "root_radius_m": 0.03,
+      "length_m": 0.20,
+      "penetration": {"depth_m": 0.02, "fraction_of_root_radius": 0.67, "overlap_region": "rear end of the abdomen core and the pygostyle"},
+      "library_hint": "tail_fan",
+      "notes": "Broad, rounded tail of 12 rectrices, fanned in flight for steering and braking and folded when perched. Rusty red upper tail in adults. Length ~0.2 m estimated. The tail is a mostly flat fan lying in the z-y plane."
+    }
+  ],
+  "category_summary": {"locomotion": 3, "sensory": 2, "feeding": 1, "manipulation": 1, "aesthetics": 0},
+  "constraints": {
+    "symmetry": "bilateral mirror across x = 0 for wings, legs, talons, eyes and brow ridges; the beak and tail are on the midline",
+    "gait": "perched static pose; in flight the wings flap then glide (flap-glide), and when walking the bird hops or steps. No gait is modelled here.",
+    "other": [
+      "Perched pose: wings folded along the flanks, tail down behind, feet gripping a perch.",
+      "Wing span in flight is 1.14-1.32 m; the folded perched width is about 0.3 m, which is the bounding box width_x.",
+      "The eyes are fixed in the skull, so the head turns instead.",
+      "The brow ridge is a bony shelf over each eye.",
+      "Talons are on four digits per foot, with the hallux the largest.",
+      "The bird's hooked beak and tarsus are the main library gaps."
+    ]
+  },
+  "library_gaps": [
+    {"feature": "Hooked raptor beak (tomial tooth, hook)", "why": "mouth_beak is a generic beak with no downward hook and no cere; mouth_jaws and mouth_mandibles are not bird-like."},
+    {"feature": "Bird leg with scaled tarsus and digitigrade ankle", "why": "No library part for a bare scaled bird leg; foot_claw and foot_paw are stubby and not a long tarsus with a hinged ankle."},
+    {"feature": "Folded wing pose with separate flight feathers", "why": "wing_feather is a single feathered appendage, not a joint-driven wing with shoulder/elbow/wrist and primaries that can fold."},
+    {"feature": "Multi-digit talon set (four talons per foot, hallux)", "why": "foot_claw is one claw; a grasping set of four curved talons would need an array or a custom part."}
+  ],
+  "sources": [
+    "Cornell Lab of Ornithology, All About Birds, Red-tailed Hawk (size, wingspan, weight): https://www.allaboutbirds.org/guide/Red-tailed_Hawk/id",
+    "National Audubon Society, Bird Guide, Red-tailed Hawk (size, wingspan): https://www.audubon.org/field-guide/bird/red-tailed-hawk",
+    "Anatomy (wing/leg joints, eyes, beak, brow ridge, tail): general avian anatomy knowledge, not checked against a fetched source",
+    "Image: not sourced. Wikimedia Commons (commons.wikimedia.org, upload.wikimedia.org) and en.wikipedia.org returned HTTP 403 from the egress proxy, so no photo was downloaded or viewed."
+  ],
+  "confidence": 0.6
+}

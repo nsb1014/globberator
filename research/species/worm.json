@@ -1,0 +1,144 @@
+{
+  "species_id": "worm",
+  "label": "Earthworm (Lumbricus terrestris)",
+  "taxon": {
+    "common": "Common earthworm",
+    "scientific": "Lumbricus terrestris",
+    "order": "Haplotaxida",
+    "class": "Clitellata"
+  },
+  "image": {
+    "file_page": "https://commons.wikimedia.org/wiki/File:Lumbricus.terrestris.jpg",
+    "direct_url": null,
+    "author": null,
+    "license": "CC BY-SA 3.0 (from search-result snippet; not verified on the file page)",
+    "species_shown": "Lumbricus terrestris (per file title; not verified)",
+    "view": "unknown: not viewed; whole-body and clitellum visibility unconfirmed",
+    "image_viewed": false
+  },
+  "physical_parsing": {
+    "bounding_box_m": {"width_x": 0.006, "height_y": 0.006, "length_z": 0.15},
+    "approx_volume_m3": 0.0000042,
+    "volume_method": "Cylinder of length 0.15 m and radius 0.003 m: pi * r^2 * L = 4.2e-6 m^3 (~4.2 mL, consistent with ~4 g wet mass for an adult). Body is idealised as a uniform cylinder; the anterior and posterior tapers are ignored.",
+    "shape_class": "elongated cylinder (vermiform), slightly tapered at both ends, resting on ground in a lateral-to-ventral orientation",
+    "core": {
+      "description": "Single continuous hydrostatic body (coelomic fluid under muscular pressure) made of ~150 metameric segments, each with septa, longitudinal and circular musculature, and paired setal sacs. Gut runs the full length; the extra-body region sits on the axis with the head at +Z.",
+      "segments": 150,
+      "cross_section": "circular, slightly flattened ventrally; approx. 6 mm diameter in the mid-body"
+    },
+    "size_source": "Length 90-300 mm and diameter 5-8 mm for adult L. terrestris: Edwards & Bohlen (1996), Biology and Ecology of Earthworms, 3rd ed., Chapman & Hall (cited from memory; not checked in this session). Segment count ~150 for adult L. terrestris: same source, approximate."
+  },
+  "parts": [
+    {
+      "id": "prostomium",
+      "name": "Prostomium (head lobe)",
+      "category": "sensory",
+      "symmetry": "centre",
+      "count": 1,
+      "attach_pos": [0, 0.5, 0.49],
+      "joints": [
+        {"name": "prostomium_base", "pos": [0, 0.5, 0.49], "type": "hydrostatic", "pivot_axes": [], "range_deg": null}
+      ],
+      "root_radius_m": 0.001,
+      "length_m": 0.001,
+      "penetration": {"depth_m": 0.001, "fraction_of_root_radius": 1.0, "overlap_region": "anterior-most (peristomial) segment, dorsal to the mouth"},
+      "library_hint": null,
+      "notes": "Fleshy lobe that overhangs the mouth. Mainly a tactile and chemosensory organ and also used to probe and push into soil during burrowing. Dorsal of the mouth, no discrete eyes or antennae."
+    },
+    {
+      "id": "mouth",
+      "name": "Mouth (buccal opening)",
+      "category": "feeding",
+      "symmetry": "centre",
+      "count": 1,
+      "attach_pos": [0, 0.2, 0.49],
+      "joints": [
+        {"name": "buccal_opening", "pos": [0, 0.2, 0.49], "type": "fixed", "pivot_axes": [], "range_deg": null}
+      ],
+      "root_radius_m": 0.0015,
+      "length_m": 0.0,
+      "penetration": {"depth_m": 0.0, "fraction_of_root_radius": 0.0, "overlap_region": "ventral aperture in the peristomium, opening into the pharynx; an opening, not a protrusion"},
+      "library_hint": null,
+      "notes": "Ventral terminal opening under the prostomium. Leads to a muscular pharynx that draws in soil and leaf litter."
+    },
+    {
+      "id": "setae_L",
+      "name": "Setae (ventrolateral chaetae, left)",
+      "category": "locomotion",
+      "symmetry": "pair",
+      "count": 600,
+      "attach_pos": [0.45, 0.2, 0.0],
+      "joints": [
+        {"name": "setal_follicle (per segment)", "pos": [0.45, 0.2, 0.0], "type": "hydrostatic", "pivot_axes": [], "range_deg": null}
+      ],
+      "root_radius_m": 0.00005,
+      "length_m": 0.0007,
+      "penetration": {"depth_m": 0.00005, "fraction_of_root_radius": 1.0, "overlap_region": "epidermis and body wall of each segment, in the setal sac"},
+      "library_hint": null,
+      "notes": "About 4 setae per side per segment, so ~600 on the left over ~150 segments (approximate). Stiff chitinous bristles that anchor the worm against the soil. Each is driven by protractor and retractor muscles to grip during peristalsis. Count is an estimate; Edwards & Bohlen (1996) gives the setal arrangement."
+    },
+    {
+      "id": "setae_R",
+      "mirror_of": "setae_L"
+    },
+    {
+      "id": "photoreceptor_cells",
+      "name": "Light-sensitive epidermal cells",
+      "category": "sensory",
+      "symmetry": "centre",
+      "count": 1,
+      "attach_pos": [0, 0.95, 0.3],
+      "joints": [
+        {"name": "epidermal_surface", "pos": [0, 0.95, 0.3], "type": "fixed", "pivot_axes": [], "range_deg": null}
+      ],
+      "root_radius_m": 0.00005,
+      "length_m": 0.00001,
+      "penetration": {"depth_m": 0.00001, "fraction_of_root_radius": 0.2, "overlap_region": "epidermis, dorsal surface of the anterior segments"},
+      "library_hint": null,
+      "notes": "Scattered photoreceptor cells in the epidermis, concentrated on the dorsal surface and anterior segments, without a lens or eye structure. Detect light intensity only; no image forming. Distributed over the surface rather than a single organ. Represented as one centre entry for the dorsal distribution."
+    },
+    {
+      "id": "anus_pygidium",
+      "name": "Anus (pygidium)",
+      "category": "feeding",
+      "symmetry": "centre",
+      "count": 1,
+      "attach_pos": [0, 0.5, -0.5],
+      "joints": [
+        {"name": "pygidial_opening", "pos": [0, 0.5, -0.5], "type": "fixed", "pivot_axes": [], "range_deg": null}
+      ],
+      "root_radius_m": 0.002,
+      "length_m": 0.0,
+      "penetration": {"depth_m": 0.0, "fraction_of_root_radius": 0.0, "overlap_region": "terminal (pygidial) segment, an opening, not a protrusion"},
+      "library_hint": null,
+      "notes": "Posterior terminal opening that egests faeces. Classed as feeding because it is the exit of the digestive tract. Not an ingestion structure."
+    }
+  ],
+  "category_summary": {"locomotion": 2, "sensory": 2, "feeding": 2, "manipulation": 0, "aesthetics": 0},
+  "constraints": {
+    "symmetry": "Bilateral externally (setae pairs on left and right, lateral to the ventral midline); segmentally repeated along +Z (metamerism). Dorsal-ventral asymmetry from the ventral mouth and dorsal photoreceptors.",
+    "gait": "Peristaltic: longitudinal and circular muscle waves in the hydrostatic body. Setae anchor each segment in turn. Not a rigid-joint gait; no discrete bending points. Bending is produced by segment-by-segment muscle contraction.",
+    "other": [
+      "Body is a hydrostatic skeleton with no rigid joints. All joint entries are type 'hydrostatic' or 'fixed', and range_deg is null because the bending range is not a fixed angle.",
+      "The clitellum (segments ~32-37 in adult L. terrestris, approximate) is a glandular reproductive band that secretes the cocoon. It is not locomotor, sensory, feeding, manipulation or aesthetic, so it has no taxonomy category and is recorded here and in library_gaps rather than in parts.",
+      "Internal organs (gizzard, typhlosole, nephridia, dorsal blood vessels, ventral nerve cord) are not external parts and are omitted from parts.",
+      "Penetration into the core: the worm is itself the core body, so every external part is an epidermal or body-wall feature and penetrates only the outer cuticle or epidermis (on the order of 0.01-1 mm).",
+      "Dimensions are normalised to the bounding box: x and z in [-0.5, 0.5], y in [0, 1] with 0 = ground. Head at z = +0.5, tail at z = -0.5."
+    ]
+  },
+  "library_gaps": [
+    {"feature": "Setae (paired ventrolateral bristle bundles, ~4 per side per segment)", "why": "No library part for many small chitinous bristles along a segmented body. foot_spike is a single large spike and would be the wrong scale and count."},
+    {"feature": "Prostomium (fleshy head lobe overhanging the mouth)", "why": "No library part for a non-eye, non-antenna sensory lobe. antenna and nose_button are not functionally or shape-equivalent."},
+    {"feature": "Distributed epidermal photoreceptor cells (no eye structure)", "why": "eye_bead implies a discrete eye with a lens. Photoreceptors here are an unlocalised epidermal sheet with no lens."},
+    {"feature": "Clitellum (reproductive glandular band, cocoon secretion)", "why": "Reproductive function does not fit any of the five taxonomy categories (locomotion, sensory, feeding, manipulation, aesthetics), and nothing in the library covers it."},
+    {"feature": "Hydrostatic segmented body with peristaltic bending", "why": "The library joint model assumes ball, hinge or saddle joints. A metameric hydrostatic body with no discrete bending points has no equivalent."},
+    {"feature": "Terminal anus (pygidium) as egestion opening", "why": "No library part for an egestion-only opening. mouth_* parts are ingestion structures."}
+  ],
+  "sources": [
+    "https://commons.wikimedia.org/wiki/File:Lumbricus.terrestris.jpg (candidate image file page; metadata from search snippet, not fetched)",
+    "https://commons.wikimedia.org/wiki/File:Lumbricus_terrestris_(26559560801).jpg (alternative candidate; not used)",
+    "Edwards CA, Bohlen PJ (1996). Biology and Ecology of Earthworms, 3rd ed. Chapman & Hall (size, segment count, setal arrangement, clitellum position; cited from memory, not checked in this session)",
+    "Sims RW, Gerard BM (1985). Earthworms. Synopses of the British Fauna No. 31 (taxonomy and morphology; cited from memory, not checked in this session)"
+  ],
+  "confidence": 0.55
+}

@@ -1,0 +1,261 @@
+{
+  "species_id": "feline",
+  "label": "Feline (domestic cat)",
+  "taxon": {
+    "common": "Domestic cat",
+    "scientific": "Felis catus",
+    "order": "Carnivora",
+    "class": "Mammalia"
+  },
+  "image": {
+    "file_page": null,
+    "direct_url": null,
+    "author": null,
+    "license": null,
+    "species_shown": "Felis catus (not verified: no image was obtained)",
+    "view": "Target: standing side or three-quarter view showing all four legs and tail. Not obtained.",
+    "image_viewed": false
+  },
+  "physical_parsing": {
+    "bounding_box_m": {"width_x": 0.13, "height_y": 0.27, "length_z": 0.76},
+    "approx_volume_m3": 0.006,
+    "volume_method": "Torso as a solid ellipsoid with semi-axes 0.23 m (length), 0.11 m (height), 0.055 m (width): 4/3 * pi * a * b * c = 0.0058 m3, rounded up for limbs, head and tail. Dimensions are from the size source, not from an image.",
+    "shape_class": "Quadruped, digitigrade, elongate torso on four slender legs, with a long tail and a rounded head. Plantigrade hindfoot is not assumed: the hock is raised and only the toes contact the ground.",
+    "core": {
+      "description": "Elongate torso ellipsoid spanning the thorax (forelimb girdle) to the pelvis (hindlimb girdle). Head is a separate rounded mass on a short neck, attached at the anterior end of the core. Tail base is a posterior extension of the sacrum.",
+      "segments": 3,
+      "cross_section": "Elliptical, about 0.11 m wide by 0.22 m deep at the thorax, narrowing slightly at the lumbar region"
+    },
+    "size_source": "Wikipedia 'Cat' (https://en.wikipedia.org/wiki/Cat): adult head-body length about 46 cm, height at shoulder 23-25 cm, tail about 30 cm, weight 4-5 kg. Cross-checked with Felidae Fund (https://felidaefund.org/learn/cats/domestic-cat): length 46-51 cm, shoulder height 20-25 cm. Values are approximate; adult sizes vary by breed and sex. Bounding box uses the head-body length plus tail, so length_z is 0.46 + 0.30 = 0.76 m."
+  },
+  "parts": [
+    {
+      "id": "forelimb_L",
+      "name": "Forelimb (left)",
+      "category": "locomotion",
+      "symmetry": "pair",
+      "count": 1,
+      "attach_pos": [0.31, 0.85, 0.30],
+      "joints": [
+        {"name": "shoulder (scapulohumeral)", "pos": [0.31, 0.85, 0.30], "type": "ball", "pivot_axes": ["x", "y", "z"], "range_deg": [-30, 40]},
+        {"name": "elbow", "pos": [0.31, 0.57, 0.30], "type": "hinge", "pivot_axes": ["x"], "range_deg": [0, 130]},
+        {"name": "carpus (wrist)", "pos": [0.31, 0.22, 0.31], "type": "hinge", "pivot_axes": ["x"], "range_deg": [0, 50]}
+      ],
+      "root_radius_m": 0.02,
+      "length_m": 0.23,
+      "penetration": {"depth_m": 0.02, "fraction_of_root_radius": 1.0, "overlap_region": "Lateral thoracic wall and scapular region of the core, roughly 0.02 m inboard of the core's +X surface at z 0.27-0.33"},
+      "library_hint": null,
+      "notes": "Digitigrade: the carpus is raised about 0.06 m off the ground and only the digits contact the floor, so the lower leg behaves like a short lever. Shoulder has no bony clavicle; the scapula floats on muscle and is attached by a ball-like muscular joint. Joint ranges are approximate, from published cat gait kinematics and general mammal anatomy, not measured."
+    },
+    {
+      "id": "forelimb_R",
+      "mirror_of": "forelimb_L"
+    },
+    {
+      "id": "hindlimb_L",
+      "name": "Hindlimb (left)",
+      "category": "locomotion",
+      "symmetry": "pair",
+      "count": 1,
+      "attach_pos": [0.31, 0.90, -0.03],
+      "joints": [
+        {"name": "hip (coxofemoral)", "pos": [0.31, 0.90, -0.03], "type": "ball", "pivot_axes": ["x", "y", "z"], "range_deg": [-40, 60]},
+        {"name": "knee (stifle)", "pos": [0.31, 0.55, 0.02], "type": "hinge", "pivot_axes": ["x"], "range_deg": [0, 140]},
+        {"name": "hock (tarsal)", "pos": [0.31, 0.30, -0.12], "type": "hinge", "pivot_axes": ["x"], "range_deg": [0, 90]}
+      ],
+      "root_radius_m": 0.03,
+      "length_m": 0.24,
+      "penetration": {"depth_m": 0.025, "fraction_of_root_radius": 0.83, "overlap_region": "Pelvic girdle and lateral flank of the core, roughly 0.025 m inboard of the core's +X surface at z -0.08 to 0.02"},
+      "library_hint": null,
+      "notes": "Digitigrade hindleg with the hock raised about 0.08 m off the ground. The hock is the high joint behind the knee, and the foot contacts ground only through the toes. The hip is a deep ball joint inside the pelvis, so the thigh is the thickest part of the leg. The stifle is largely hidden in the flank, and its range is approximate."
+    },
+    {
+      "id": "hindlimb_R",
+      "mirror_of": "hindlimb_L"
+    },
+    {
+      "id": "paw_pads_L",
+      "name": "Paw pads (left)",
+      "category": "locomotion",
+      "symmetry": "pair",
+      "count": 2,
+      "attach_pos": [0.31, 0.0, 0.30],
+      "joints": [
+        {"name": "paw sole contact", "pos": [0.31, 0.0, 0.30], "type": "fixed", "pivot_axes": [], "range_deg": [0, 0]}
+      ],
+      "root_radius_m": 0.015,
+      "length_m": 0.03,
+      "penetration": {"depth_m": 0.004, "fraction_of_root_radius": 0.27, "overlap_region": "Distal metapodials at the sole of the foot, not the core. Pads are a surface feature with a shallow seat."},
+      "library_hint": "foot_pad",
+      "notes": "Count is 2 per side: one fore paw and one hind paw pad group. Each pad group has a central metacarpal/metatarsal pad and digital pads, and the cushions take impact and give grip. They are modelled as one surface per paw. Count 2 per side is an assumption based on the two paws on each side of the body."
+    },
+    {
+      "id": "paw_pads_R",
+      "mirror_of": "paw_pads_L"
+    },
+    {
+      "id": "claws_L",
+      "name": "Retractable claws (left)",
+      "category": "manipulation",
+      "symmetry": "pair",
+      "count": 5,
+      "attach_pos": [0.31, 0.02, 0.36],
+      "joints": [
+        {"name": "phalangeal joint (claw retraction)", "pos": [0.31, 0.02, 0.36], "type": "hinge", "pivot_axes": ["x"], "range_deg": [0, 60]}
+      ],
+      "root_radius_m": 0.002,
+      "length_m": 0.012,
+      "penetration": {"depth_m": 0.002, "fraction_of_root_radius": 1.0, "overlap_region": "Distal phalanx tip of each digit, not the core"},
+      "library_hint": "foot_claw",
+      "notes": "Forefoot has 5 digits and the hindfoot has 4 (the dewclaw is on the forelimb). Claws retract by a ligament mechanism, so the claw is folded inside a sheath unless extended. The count shown is forefoot only; the hindfoot has 4 claws. Claw length is about 1 cm. Used for grasping prey and climbing."
+    },
+    {
+      "id": "claws_R",
+      "mirror_of": "claws_L"
+    },
+    {
+      "id": "tail",
+      "name": "Tail",
+      "category": "locomotion",
+      "symmetry": "centre",
+      "count": 1,
+      "attach_pos": [0.0, 0.74, -0.12],
+      "joints": [
+        {"name": "tail base (sacrocaudal)", "pos": [0.0, 0.74, -0.12], "type": "ball", "pivot_axes": ["x", "y", "z"], "range_deg": [-60, 60]}
+      ],
+      "root_radius_m": 0.015,
+      "length_m": 0.30,
+      "penetration": {"depth_m": 0.01, "fraction_of_root_radius": 0.67, "overlap_region": "Posterior-dorsal sacral end of the core, z -0.12 to -0.14"},
+      "library_hint": null,
+      "notes": "Balance tail used for steering while running and climbing. Mobile base, with most of the length free. Range is approximate. No library tail fits a slim, flexible tail; tail_tuft is fluffy and tail_club is blunt, so both were rejected."
+    },
+    {
+      "id": "eye_L",
+      "name": "Eye (left)",
+      "category": "sensory",
+      "symmetry": "pair",
+      "count": 1,
+      "attach_pos": [0.23, 0.81, 0.41],
+      "joints": [
+        {"name": "eye socket (orbit)", "pos": [0.23, 0.81, 0.41], "type": "ball", "pivot_axes": ["x", "y"], "range_deg": [-20, 20]}
+      ],
+      "root_radius_m": 0.01,
+      "length_m": 0.02,
+      "penetration": {"depth_m": 0.01, "fraction_of_root_radius": 1.0, "overlap_region": "Orbit in the head mass, set into the forward-facing face of the head"},
+      "library_hint": "eye_slit",
+      "notes": "Forward-facing with binocular overlap for depth. Pupil is a vertical slit in bright light and round in dim light. Eye is very large relative to the head. Visible on the front of the head."
+    },
+    {
+      "id": "eye_R",
+      "mirror_of": "eye_L"
+    },
+    {
+      "id": "ear_L",
+      "name": "Ear (left)",
+      "category": "sensory",
+      "symmetry": "pair",
+      "count": 1,
+      "attach_pos": [0.19, 0.89, 0.40],
+      "joints": [
+        {"name": "pinna base", "pos": [0.19, 0.89, 0.40], "type": "ball", "pivot_axes": ["x", "y", "z"], "range_deg": [-45, 45]}
+      ],
+      "root_radius_m": 0.012,
+      "length_m": 0.045,
+      "penetration": {"depth_m": 0.008, "fraction_of_root_radius": 0.67, "overlap_region": "Top corner of the head mass, cartilaginous base"},
+      "library_hint": "ear_leaf",
+      "notes": "Upright, mobile, triangular pinnae that can rotate independently for directional hearing. Closest library fit is ear_leaf, although the cat ear is a rigid cartilage cone rather than a leaf. The pinna base is mobile at the ball joint."
+    },
+    {
+      "id": "ear_R",
+      "mirror_of": "ear_L"
+    },
+    {
+      "id": "whiskers_L",
+      "name": "Whiskers (vibrissae, left)",
+      "category": "sensory",
+      "symmetry": "pair",
+      "count": 1,
+      "attach_pos": [0.12, 0.77, 0.47],
+      "joints": [
+        {"name": "vibrissal follicle", "pos": [0.12, 0.77, 0.47], "type": "ball", "pivot_axes": ["x", "y", "z"], "range_deg": [-30, 30]}
+      ],
+      "root_radius_m": 0.002,
+      "length_m": 0.05,
+      "penetration": {"depth_m": 0.003, "fraction_of_root_radius": 1.5, "overlap_region": "Follicle seated in the muzzle pad at the front of the head"},
+      "library_hint": null,
+      "notes": "Several rows of long, stiff vibrissae on each side of the muzzle, each seated in a follicle with a dense nerve supply. They sense touch and air movement. No library part for thin radiating whiskers. Count is per side, with several whiskers per row."
+    },
+    {
+      "id": "whiskers_R",
+      "mirror_of": "whiskers_L"
+    },
+    {
+      "id": "nose",
+      "name": "Nose (rhinarium)",
+      "category": "sensory",
+      "symmetry": "centre",
+      "count": 1,
+      "attach_pos": [0.0, 0.78, 0.50],
+      "joints": [
+        {"name": "nasal bone attachment", "pos": [0.0, 0.78, 0.50], "type": "fixed", "pivot_axes": [], "range_deg": [0, 0]}
+      ],
+      "root_radius_m": 0.01,
+      "length_m": 0.01,
+      "penetration": {"depth_m": 0.005, "fraction_of_root_radius": 0.5, "overlap_region": "Nasal bone and anterior tip of the skull, at the front of the head"},
+      "library_hint": "nose_button",
+      "notes": "Moist, pigmented rhinarium at the front of the muzzle. It is part of the olfactory system, not a separate mechanical feature. Cat nose is a small pad, not a snout."
+    },
+    {
+      "id": "jaws",
+      "name": "Jaws and canines",
+      "category": "feeding",
+      "symmetry": "centre",
+      "count": 1,
+      "attach_pos": [0.0, 0.76, 0.46],
+      "joints": [
+        {"name": "mandibular joint (temporomandibular)", "pos": [0.0, 0.76, 0.42], "type": "hinge", "pivot_axes": ["x"], "range_deg": [0, 60]}
+      ],
+      "root_radius_m": 0.015,
+      "length_m": 0.04,
+      "penetration": {"depth_m": 0.01, "fraction_of_root_radius": 0.67, "overlap_region": "Mandibular condyle and jaw musculature in the head mass"},
+      "library_hint": "mouth_jaws",
+      "notes": "Short skull with a strong hinge jaw. Long upper and lower canines for piercing and holding prey, and carnassial teeth for shearing meat, used in a vertical bite. Gape is limited, and the hinge is a simple up-down joint. Canines are the main prey-killing structure."
+    },
+    {
+      "id": "fur_coat",
+      "name": "Fur coat and patterning",
+      "category": "aesthetics",
+      "symmetry": "centre",
+      "count": 0,
+      "attach_pos": [0.0, 0.5, 0.0],
+      "joints": [],
+      "root_radius_m": null,
+      "length_m": null,
+      "penetration": {"depth_m": null, "fraction_of_root_radius": null, "overlap_region": "Surface skin layer over the whole body, not a separate mesh"},
+      "library_hint": null,
+      "notes": "Patterning and coat length are surface detail, not a structure. Listed here only so the aesthetics category is documented. Not a mesh part and not counted in the summary."
+    }
+  ],
+  "category_summary": {"locomotion": 4, "sensory": 4, "feeding": 1, "manipulation": 1, "aesthetics": 0},
+  "constraints": {
+    "symmetry": "Bilateral about the sagittal plane (X=0). Limbs, eyes, ears and whiskers are mirrored. Tail, nose and jaws are on the midline.",
+    "gait": "Walk and trot as diagonal-couplet pacing; gallop is rotary with a flexible spine. Digitigrade legs with the hock and carpus raised off the ground, so only the toes contact the floor.",
+    "other": [
+      "Hindfoot has 4 claws and forefoot 5; claw count is recorded once per limb side.",
+      "Joint ranges are approximate and come from general mammalian kinematics; they are not measured from a cat gait study.",
+      "Size and proportions are for a typical adult domestic cat and do not match large felids such as tiger or leopard."
+    ]
+  },
+  "library_gaps": [
+    {"feature": "Tail (slim, flexible, long)", "why": "No library tail fits. tail_tuft is fluffy and tail_club is blunt."},
+    {"feature": "Whiskers (vibrissae)", "why": "No library part for thin, radiating, stiff whiskers."},
+    {"feature": "Head (rounded skull with forward eyes, mounted on a short neck)", "why": "No library head/cranium part. Only eyes, ears and jaws are represented."}
+  ],
+  "sources": [
+    "https://en.wikipedia.org/wiki/Cat (adult size: head-body about 46 cm, shoulder height 23-25 cm, tail about 30 cm, weight 4-5 kg)",
+    "https://felidaefund.org/learn/cats/domestic-cat (length 46-51 cm, shoulder height 20-25 cm, weight 2.3-9.0 kg)",
+    "https://animaldiversity.org/accounts/Felis_catus/ (adult mass 4.1-5.4 kg)",
+    "Anatomy (joint types, digitigrade stance, retractable claws, vibrissae, canines and carnassials, pupil shape): general knowledge, not verified against a specific reference in this session"
+  ],
+  "confidence": 0.55
+}

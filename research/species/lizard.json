@@ -1,0 +1,239 @@
+{
+  "species_id": "lizard",
+  "label": "Lizard (Squamata, Lacertilia) - representative: green iguana",
+  "taxon": {
+    "common": "Green iguana",
+    "scientific": "Iguana iguana",
+    "order": "Squamata",
+    "class": "Reptilia"
+  },
+  "image": {
+    "file_page": null,
+    "direct_url": null,
+    "author": null,
+    "license": null,
+    "species_shown": null,
+    "view": null,
+    "image_viewed": false
+  },
+  "physical_parsing": {
+    "bounding_box_m": {"width_x": 0.4, "height_y": 0.3, "length_z": 1.4},
+    "approx_volume_m3": 0.004,
+    "volume_method": "Mass-density estimate for the whole animal, not a bounding-box fill: adult mass ~3-5 kg at ~1000 kg/m3 (midpoint 4 kg -> 0.004 m3). Cross-checked loosely against a ~0.06 x 0.06 m trunk section over ~0.3 m of trunk length plus limbs and tail. Not derived from an image because no image was viewed.",
+    "shape_class": "elongate quadruped with long tapering tail; sprawling (semi-erect) limbs; laterally compressed tail; flattened-dorsoventrally body in cross section",
+    "core": {
+      "description": "Axial core is a three-segment body: (1) head and neck, z from +0.5 to about +0.39 (snout to occiput, ~0.15 m); (2) trunk, z from about +0.39 to +0.07 (~0.45 m including neck, with shoulder girdle near z=+0.32 and pelvic girdle near z=+0.07); (3) pelvic and tail-base segment, z from +0.07 to +0.03 where the tail joins. Trunk is ~0.07 m wide and ~0.06 m high, sitting ~0.04 m above the ground on splayed limbs. The tail is a separate part attached at the pelvic segment and is not part of the core.",
+      "segments": 3,
+      "cross_section": "rounded-to-oval (dorsoventrally flattened), ~0.07 m wide x ~0.06 m high in trunk; head roughly ovoid ~0.06 m wide x ~0.05 m high; tail base laterally compressed"
+    },
+    "size_source": "Typical adult green iguana total length ~1.2-1.6 m (up to ~1.8 m in large males), body mass ~3-5 kg. Source: Wikipedia 'Green iguana' article (size section), recalled from memory and NOT verified online (wikipedia.org and wikimedia hosts were blocked by the session's network policy). Body proportions (tail ~55-60% of total length, limb-to-body ratios) from general squamate morphology, Pianka & Vitt (2003) 'Lizards: Windows to the Evolution of Diversity' (UC Press), recalled from memory, not verified."
+  },
+  "parts": [
+    {
+      "id": "leg_fore_L",
+      "name": "Forelimb (left)",
+      "category": "locomotion",
+      "symmetry": "pair",
+      "count": 2,
+      "attach_pos": [0.08, 0.15, 0.32],
+      "joints": [
+        {"name": "shoulder", "pos": [0.08, 0.15, 0.32], "type": "ball", "pivot_axes": ["x", "y", "z"], "range_deg": [-40, 50]},
+        {"name": "elbow", "pos": [0.2, 0.13, 0.3], "type": "hinge", "pivot_axes": ["x"], "range_deg": [-20, 90]},
+        {"name": "wrist", "pos": [0.26, 0.12, 0.25], "type": "fixed", "pivot_axes": [], "range_deg": [0, 0]}
+      ],
+      "root_radius_m": 0.012,
+      "length_m": 0.2,
+      "penetration": {"depth_m": 0.02, "fraction_of_root_radius": 1.67, "overlap_region": "shoulder girdle (scapula/coracoid) and trunk wall at z ~ +0.32, x ~ +0.05 to +0.08 m from midline"},
+      "library_hint": "foot_claw",
+      "notes": "Sprawling forelimb: upper arm and forearm lie nearly horizontal, elbow kept out to the side. Five-digit hand with long curved claws (used for grip on branches and for digging). Closest library fit is foot_claw, which is a foot not a hand; it is locomotion, not manipulation. Hand_claw would fit the claws but would misfile the category."
+    },
+    {
+      "id": "leg_hind_L",
+      "name": "Hindlimb (left)",
+      "category": "locomotion",
+      "symmetry": "pair",
+      "count": 2,
+      "attach_pos": [0.08, 0.15, 0.07],
+      "joints": [
+        {"name": "hip", "pos": [0.08, 0.15, 0.07], "type": "ball", "pivot_axes": ["x", "y", "z"], "range_deg": [-35, 45]},
+        {"name": "knee", "pos": [0.22, 0.14, 0.02], "type": "hinge", "pivot_axes": ["x"], "range_deg": [-10, 90]},
+        {"name": "ankle", "pos": [0.27, 0.12, -0.02], "type": "hinge", "pivot_axes": ["x"], "range_deg": [-20, 60]}
+      ],
+      "root_radius_m": 0.018,
+      "length_m": 0.25,
+      "penetration": {"depth_m": 0.025, "fraction_of_root_radius": 1.39, "overlap_region": "pelvic girdle (ilium/ischium) and pelvic segment of core at z ~ +0.07, x ~ +0.05 to +0.08 m"},
+      "library_hint": "foot_claw",
+      "notes": "Hindlimb is larger and more muscular than the forelimb, with a sprawling stance. Five clawed toes. Used for propulsion (lateral-sequence walk) and for jumping in escape. Hint is foot_claw as the nearest fit."
+    },
+    {
+      "id": "tail",
+      "name": "Tail",
+      "category": "locomotion",
+      "symmetry": "centre",
+      "count": 1,
+      "attach_pos": [0, 0.18, 0.04],
+      "joints": [
+        {"name": "tail_base", "pos": [0, 0.18, 0.04], "type": "ball", "pivot_axes": ["x", "y", "z"], "range_deg": [-30, 30]},
+        {"name": "tail_mid", "pos": [0, 0.16, -0.25], "type": "ball", "pivot_axes": ["x", "y", "z"], "range_deg": [-40, 40]},
+        {"name": "autotomy_plane", "pos": [0, 0.14, -0.35], "type": "fixed", "pivot_axes": [], "range_deg": [0, 0]}
+      ],
+      "root_radius_m": 0.03,
+      "length_m": 0.85,
+      "penetration": {"depth_m": 0.04, "fraction_of_root_radius": 1.33, "overlap_region": "pelvic segment of the core, z from +0.07 to +0.03; the caudal vertebrae run into the pelvis"},
+      "library_hint": null,
+      "notes": "Long, laterally compressed, tapering tail, about 55-60% of total length. Used for balance, lateral-undulation swimming and as a defensive whip. Caudal autotomy plane sits about 0.35 normalized-z from the base (near the middle of the tail); tail can break there and regenerate partially. No library part fits a long tapering tail: tail_tuft and tail_fan are too small or too different in shape, tail_club is the wrong shape (club, not taper). Left as null."
+    },
+    {
+      "id": "eye_L",
+      "name": "Eye (left)",
+      "category": "sensory",
+      "symmetry": "pair",
+      "count": 2,
+      "attach_pos": [0.09, 0.41, 0.44],
+      "joints": [
+        {"name": "eyeball_socket", "pos": [0.09, 0.41, 0.44], "type": "ball", "pivot_axes": ["x", "y"], "range_deg": [-20, 20]}
+      ],
+      "root_radius_m": 0.008,
+      "length_m": 0.02,
+      "penetration": {"depth_m": 0.005, "fraction_of_root_radius": 0.63, "overlap_region": "orbit of the skull, lateral side of the head segment"},
+      "library_hint": "eye_round",
+      "notes": "Round eye with a movable upper and lower eyelid and a nictitating membrane. Located on the sides of the head, giving binocular-to-lateral vision. Eyes sit in orbits and can be slightly moved within the socket."
+    },
+    {
+      "id": "ear_opening_L",
+      "name": "Ear opening (tympanum, left)",
+      "category": "sensory",
+      "symmetry": "pair",
+      "count": 2,
+      "attach_pos": [0.1, 0.38, 0.40],
+      "joints": [
+        {"name": "tympanic_membrane", "pos": [0.1, 0.38, 0.40], "type": "fixed", "pivot_axes": [], "range_deg": [0, 0]}
+      ],
+      "root_radius_m": 0.004,
+      "length_m": 0.005,
+      "penetration": {"depth_m": 0.002, "fraction_of_root_radius": 0.5, "overlap_region": "skin flush with the side of the head; the middle ear sits behind it"},
+      "library_hint": null,
+      "notes": "Green iguanas have no external ear flap, only a flush tympanum, a round membrane behind the eye. It is a shallow surface feature, not a protruding ear; no library ear fits (ear_leaf is a protruding leaf-shape)."
+    },
+    {
+      "id": "parietal_eye",
+      "name": "Parietal (third) eye",
+      "category": "sensory",
+      "symmetry": "centre",
+      "count": 1,
+      "attach_pos": [0, 0.46, 0.44],
+      "joints": [
+        {"name": "parietal_foramen", "pos": [0, 0.46, 0.44], "type": "fixed", "pivot_axes": [], "range_deg": [0, 0]}
+      ],
+      "root_radius_m": 0.002,
+      "length_m": 0.003,
+      "penetration": {"depth_m": 0.003, "fraction_of_root_radius": 1.5, "overlap_region": "parietal foramen through the skull roof to the pineal/parietal organ beneath"},
+      "library_hint": null,
+      "notes": "Photosensitive parietal organ on the top of the head, visible as a small pale spot through a foramen in the skull in many iguanids. It responds to light and helps regulate circadian rhythms. Not a true eye; too small to be a library eye part."
+    },
+    {
+      "id": "jaws",
+      "name": "Jaws with teeth",
+      "category": "feeding",
+      "symmetry": "centre",
+      "count": 1,
+      "attach_pos": [0, 0.36, 0.49],
+      "joints": [
+        {"name": "quadrate_jaw_joint", "pos": [0, 0.36, 0.42], "type": "hinge", "pivot_axes": ["x"], "range_deg": [0, 30]}
+      ],
+      "root_radius_m": 0.015,
+      "length_m": 0.07,
+      "penetration": {"depth_m": 0.02, "fraction_of_root_radius": 1.33, "overlap_region": "quadrate-articular jaw joint at the back of the skull, z ~ +0.42"},
+      "library_hint": "mouth_jaws",
+      "notes": "Herbivorous adult green iguana: broad, serrated molariform teeth at the back of the jaw and sharp pleurodont teeth in front. Lower jaw hinge is a kinetic quadrate-type joint. mouth_jaws is the nearest fit (jaws, not a beak or snout)."
+    },
+    {
+      "id": "tongue",
+      "name": "Tongue",
+      "category": "feeding",
+      "symmetry": "centre",
+      "count": 1,
+      "attach_pos": [0, 0.35, 0.47],
+      "joints": [
+        {"name": "hyoid_base", "pos": [0, 0.33, 0.4], "type": "hydrostatic", "pivot_axes": [], "range_deg": [0, 30]}
+      ],
+      "root_radius_m": 0.004,
+      "length_m": 0.05,
+      "penetration": {"depth_m": 0.01, "fraction_of_root_radius": 2.5, "overlap_region": "hyoid apparatus and floor of the mouth/throat"},
+      "library_hint": null,
+      "notes": "Forked, fleshy tongue; used mainly for chemosensation (Jacobson's organ) and manipulating food, rather than for prey capture. Hydrostatic, so no true joint. No library part fits; tongue could be filed under mouth_* but none matches."
+    },
+    {
+      "id": "dorsal_crest",
+      "name": "Dorsal crest",
+      "category": "aesthetics",
+      "symmetry": "centre",
+      "count": 1,
+      "attach_pos": [0, 0.26, 0.05],
+      "joints": [
+        {"name": "crest_root", "pos": [0, 0.26, 0.05], "type": "fixed", "pivot_axes": [], "range_deg": [0, 0]}
+      ],
+      "root_radius_m": 0.006,
+      "length_m": 0.6,
+      "penetration": {"depth_m": 0.003, "fraction_of_root_radius": 0.5, "overlap_region": "dorsal skin of neck and back to the base of the tail, surface only"},
+      "library_hint": "crest",
+      "notes": "Row of enlarged, pointed dorsal scales running from the nape to the tail, largest over the neck and shoulders and decreasing toward the tail. Partly used for display and thermoregulation. Crest is the closest library fit."
+    },
+    {
+      "id": "dewlap",
+      "name": "Dewlap (throat fan)",
+      "category": "aesthetics",
+      "symmetry": "centre",
+      "count": 1,
+      "attach_pos": [0, 0.3, 0.44],
+      "joints": [
+        {"name": "hyoid_throat_hinge", "pos": [0, 0.3, 0.44], "type": "hinge", "pivot_axes": ["x"], "range_deg": [0, 40]}
+      ],
+      "root_radius_m": 0.01,
+      "length_m": 0.04,
+      "penetration": {"depth_m": 0.005, "fraction_of_root_radius": 0.5, "overlap_region": "throat skin over the hyoid, front of the neck segment"},
+      "library_hint": null,
+      "notes": "Ventral throat fold of skin, raised and extended during display. Not a frill in the library sense (frill is a neck collar); no good library match."
+    },
+    {
+      "id": "body_scales",
+      "name": "Body scales (keeled)",
+      "category": "aesthetics",
+      "symmetry": "centre",
+      "count": 1,
+      "attach_pos": [0, 0.2, 0],
+      "joints": [
+        {"name": "skin_surface", "pos": [0, 0.2, 0], "type": "fixed", "pivot_axes": [], "range_deg": [0, 0]}
+      ],
+      "root_radius_m": 0.001,
+      "length_m": 0.0,
+      "penetration": {"depth_m": 0.0, "fraction_of_root_radius": 0, "overlap_region": "surface skin layer only; no penetration"},
+      "library_hint": null,
+      "notes": "Overlapping, keeled scales over the whole body, limbs and tail. Surface texture rather than a separate structure. No library part fits."
+    }
+  ],
+  "category_summary": {"locomotion": 3, "sensory": 3, "feeding": 2, "manipulation": 0, "aesthetics": 3},
+  "constraints": {
+    "symmetry": "Bilateral: limbs and eyes and ear openings are paired and mirrored across +X (left to right). Jaws, tongue, tail, crest, dewlap and parietal eye are on the midline.",
+    "gait": "Sprawling quadruped; lateral-sequence walk with tail used for balance. Forelimbs and hindlimbs swing roughly in phase on each side. Escape can be bipedal-style sprint with the tail lifted.",
+    "other": [
+      "Tail autotomy plane near normalized z ~ -0.35; tail is not an articulated, fully rigid part.",
+      "Limb bones are short relative to the trunk; limb ranges are approximate and from general squamate morphology.",
+      "Numbers and positions are estimates from anatomy, not from a measured image."
+    ]
+  },
+  "library_gaps": [
+    {"feature": "Long tapering tail (locomotion + balance + autotomy)", "why": "tail_club, tail_tuft and tail_fan are the wrong shape; none is a long tapering limb-like tail."},
+    {"feature": "Dewlap (ventral throat fan)", "why": "frill is a neck collar and does not match a throat fan; no throat-display part."},
+    {"feature": "Tympanic ear opening (flush, not protruding)", "why": "ear_leaf is a protruding leaf-shaped ear; a flush tympanum has no library part."},
+    {"feature": "Parietal (third) eye", "why": "eye_* parts are for eyes in sockets, not a small photosensitive organ in a skull foramen."},
+    {"feature": "Forked chemosensory tongue", "why": "mouth_* parts are for the mouth/beak/jaw, not for a protruding forked sensory tongue."},
+    {"feature": "Keeled body scales", "why": "no part is a surface-texture scale covering; plate and spike are too large."}
+  ],
+  "sources": [
+    "Wikipedia, 'Green iguana' (Iguana iguana) article: size, mass and diet statements. Recalled from memory; NOT verified online (Wikipedia/Wikimedia hosts blocked by session network policy).",
+    "Pianka, E.R. & Vitt, L.J. (2003). Lizards: Windows to the Evolution of Diversity. University of California Press. General squamate anatomy (sprawling gait, tail autotomy, parietal eye, tympanum). Recalled from memory; not verified.",
+    "No image was downloaded or viewed. Image source fields are null because all Wikimedia Commons URLs were refused by the session network proxy (HTTP 403, policy)."
+  ],
+  "confidence": 0.45
+}

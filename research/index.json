@@ -1,0 +1,434 @@
+{
+  "species": [
+    {
+      "species_id": "beetle",
+      "label": "Beetle (Coleoptera), representative: European stag beetle, Lucanus cervus (male)",
+      "scientific": "Lucanus cervus",
+      "image": "https://commons.wikimedia.org/wiki/File:Lucanus_cervus_male_Orchi_010.jpg",
+      "license": "CC BY-SA 3.0 / GFDL 1.2+ (per Commons search snippet; not verified on the file page)",
+      "image_viewed": false,
+      "bounding_box_m": {
+        "width_x": 0.02,
+        "height_y": 0.016,
+        "length_z": 0.055
+      },
+      "parts": 20,
+      "category_summary": {
+        "locomotion": 10,
+        "sensory": 5,
+        "feeding": 4,
+        "manipulation": 0,
+        "aesthetics": 1
+      },
+      "library_gaps": [
+        "folded membranous hind wing under elytra",
+        "geniculate (elbowed) segmented antenna with short club",
+        "toothed tibia (digging/grip)",
+        "paired elytra opening along a midline hinge"
+      ],
+      "confidence": 0.5,
+      "problems": []
+    },
+    {
+      "species_id": "canine",
+      "label": "Red fox (Canidae, canine representative)",
+      "scientific": "Vulpes vulpes",
+      "image": null,
+      "license": null,
+      "image_viewed": false,
+      "bounding_box_m": {
+        "width_x": 0.25,
+        "height_y": 0.48,
+        "length_z": 1.1
+      },
+      "parts": 12,
+      "category_summary": {
+        "locomotion": 6,
+        "sensory": 4,
+        "feeding": 2,
+        "manipulation": 0,
+        "aesthetics": 0
+      },
+      "library_gaps": [
+        "Digitigrade leg segments (shoulder, elbow, carpus; hip, stifle, hock)",
+        "Non-retractable claws as a standalone digit structure",
+        "Bushy brush tail with a taper and terminal tip",
+        "Vibrissae (whisker pads)",
+        "Digitigrade paw pads and digit set"
+      ],
+      "confidence": 0.5,
+      "problems": [
+        "no image source",
+        "image licence not recorded as open: None"
+      ]
+    },
+    {
+      "species_id": "crab",
+      "label": "Crab (Brachyura)",
+      "scientific": "Carcinus maenas",
+      "image": "https://commons.wikimedia.org/wiki/File:Green_shore_crab_(Carcinus_maenas)_in_the_Baltic_Sea.jpg",
+      "license": "CC BY-SA 4.0 (per search summary; not verified on the file page)",
+      "image_viewed": false,
+      "bounding_box_m": {
+        "width_x": 0.14,
+        "height_y": 0.04,
+        "length_z": 0.1
+      },
+      "parts": 13,
+      "category_summary": {
+        "locomotion": 2,
+        "sensory": 6,
+        "feeding": 1,
+        "manipulation": 2,
+        "aesthetics": 2
+      },
+      "library_gaps": [
+        "Tucked ventral abdomen with brood (female) or narrow T-shaped (male) form",
+        "Carapace as a protective dorsal shell",
+        "Retractable stalked compound eyes that sink into orbits",
+        "Mouthpart set (three pairs of maxillipeds forming a ventral lid)",
+        "Lateral-walking leg set (four pairs splayed laterally)"
+      ],
+      "confidence": 0.55,
+      "problems": [
+        "cheliped_R: bad category None",
+        "walking_leg_R: bad category None",
+        "eye_stalk_R: bad category None",
+        "antennule_R: bad category None",
+        "antenna_R: bad category None"
+      ]
+    },
+    {
+      "species_id": "feline",
+      "label": "Feline (domestic cat)",
+      "scientific": "Felis catus",
+      "image": null,
+      "license": null,
+      "image_viewed": false,
+      "bounding_box_m": {
+        "width_x": 0.13,
+        "height_y": 0.27,
+        "length_z": 0.76
+      },
+      "parts": 18,
+      "category_summary": {
+        "locomotion": 4,
+        "sensory": 4,
+        "feeding": 1,
+        "manipulation": 1,
+        "aesthetics": 0
+      },
+      "library_gaps": [
+        "Tail (slim, flexible, long)",
+        "Whiskers (vibrissae)",
+        "Head (rounded skull with forward eyes, mounted on a short neck)"
+      ],
+      "confidence": 0.55,
+      "problems": [
+        "no image source",
+        "image licence not recorded as open: None",
+        "fur_coat: no penetration depth"
+      ]
+    },
+    {
+      "species_id": "frog",
+      "label": "Amphibian / Frog (order Anura), representative: American bullfrog",
+      "scientific": "Lithobates catesbeianus",
+      "image": "https://commons.wikimedia.org/wiki/File:Lithobates_catesbeianus_PP.jpg",
+      "license": "CC BY-SA 3.0 (as reported by search-result metadata; not confirmed on the file page)",
+      "image_viewed": false,
+      "bounding_box_m": {
+        "width_x": 0.12,
+        "height_y": 0.07,
+        "length_z": 0.2
+      },
+      "parts": 8,
+      "category_summary": {
+        "locomotion": 2,
+        "sensory": 3,
+        "feeding": 2,
+        "manipulation": 1,
+        "aesthetics": 0
+      },
+      "library_gaps": [
+        "Hind leg (long jumping limb)",
+        "Tympanum (external eardrum disc)",
+        "Projectile tongue",
+        "Vocal sac (throat resonator)"
+      ],
+      "confidence": 0.45,
+      "problems": []
+    },
+    {
+      "species_id": "jellyfish",
+      "label": "Moon jellyfish (Aurelia aurita), adult medusa",
+      "scientific": "Aurelia aurita",
+      "image": "https://commons.wikimedia.org/wiki/File:Moon_Jellies_(Aurelia_aurita)_(7153399193).jpg",
+      "license": "CC BY 2.0 per search snippet, not verified on the file page",
+      "image_viewed": false,
+      "bounding_box_m": {
+        "width_x": 0.25,
+        "height_y": 0.1,
+        "length_z": 0.25
+      },
+      "parts": 7,
+      "category_summary": {
+        "locomotion": 1,
+        "sensory": 1,
+        "feeding": 4,
+        "manipulation": 0,
+        "aesthetics": 1
+      },
+      "library_gaps": [
+        "Radial (4-fold and 8-fold) symmetry",
+        "Translucent gelatinous bell as the core",
+        "Annular coronal muscle ring",
+        "Many small marginal tentacles (about 80 to 100)",
+        "Reproductive gonads",
+        "Rhopalia (sense club with statocysts)",
+        "Manubrium mouth on a radial body"
+      ],
+      "confidence": 0.4,
+      "problems": []
+    },
+    {
+      "species_id": "lizard",
+      "label": "Lizard (Squamata, Lacertilia) - representative: green iguana",
+      "scientific": "Iguana iguana",
+      "image": null,
+      "license": null,
+      "image_viewed": false,
+      "bounding_box_m": {
+        "width_x": 0.4,
+        "height_y": 0.3,
+        "length_z": 1.4
+      },
+      "parts": 11,
+      "category_summary": {
+        "locomotion": 3,
+        "sensory": 3,
+        "feeding": 2,
+        "manipulation": 0,
+        "aesthetics": 3
+      },
+      "library_gaps": [
+        "Long tapering tail (locomotion + balance + autotomy)",
+        "Dewlap (ventral throat fan)",
+        "Tympanic ear opening (flush, not protruding)",
+        "Parietal (third) eye",
+        "Forked chemosensory tongue",
+        "Keeled body scales"
+      ],
+      "confidence": 0.45,
+      "problems": [
+        "no image source",
+        "image licence not recorded as open: None"
+      ]
+    },
+    {
+      "species_id": "octopus",
+      "label": "Common octopus (Octopus vulgaris)",
+      "scientific": "Octopus vulgaris Cuvier, 1797",
+      "image": null,
+      "license": null,
+      "image_viewed": false,
+      "bounding_box_m": {
+        "width_x": 0.72,
+        "height_y": 0.15,
+        "length_z": 0.7
+      },
+      "parts": 13,
+      "category_summary": {
+        "locomotion": 2,
+        "sensory": 2,
+        "feeding": 1,
+        "manipulation": 8,
+        "aesthetics": 0
+      },
+      "library_gaps": [
+        "Suckers (two rows per arm, with chemosensory tips)",
+        "Hydrostatic arm (muscular hydrostat, no rigid joints)",
+        "Funnel / siphon (steerable jet nozzle)",
+        "Chromatophore skin / dermal papillae",
+        "Radula and beak mechanics",
+        "Mantle (large soft visceral sac)"
+      ],
+      "confidence": 0.45,
+      "problems": [
+        "no image source",
+        "image licence not recorded as open: None"
+      ]
+    },
+    {
+      "species_id": "primate",
+      "label": "Chimpanzee (Pan troglodytes), quadrupedal knuckle-walking posture",
+      "scientific": "Pan troglodytes",
+      "image": null,
+      "license": null,
+      "image_viewed": false,
+      "bounding_box_m": {
+        "width_x": 0.5,
+        "height_y": 0.9,
+        "length_z": 1.0
+      },
+      "parts": 15,
+      "category_summary": {
+        "locomotion": 4,
+        "sensory": 5,
+        "feeding": 1,
+        "manipulation": 4,
+        "aesthetics": 1
+      },
+      "library_gaps": [
+        "Forelimb (shoulder, elbow, wrist, knuckle-walking)",
+        "Hindlimb (hip, knee, ankle)",
+        "Opposable hallux (grasping foot)",
+        "Knuckle-walking hand posture",
+        "Flat, close-set rounded ear"
+      ],
+      "confidence": 0.55,
+      "problems": [
+        "no image source",
+        "image licence not recorded as open: None"
+      ]
+    },
+    {
+      "species_id": "raptor",
+      "label": "Red-tailed hawk (Buteo jamaicensis), perched adult",
+      "scientific": "Buteo jamaicensis",
+      "image": null,
+      "license": null,
+      "image_viewed": false,
+      "bounding_box_m": {
+        "width_x": 0.3,
+        "height_y": 0.5,
+        "length_z": 0.6
+      },
+      "parts": 12,
+      "category_summary": {
+        "locomotion": 3,
+        "sensory": 2,
+        "feeding": 1,
+        "manipulation": 1,
+        "aesthetics": 0
+      },
+      "library_gaps": [
+        "Hooked raptor beak (tomial tooth, hook)",
+        "Bird leg with scaled tarsus and digitigrade ankle",
+        "Folded wing pose with separate flight feathers",
+        "Multi-digit talon set (four talons per foot, hallux)"
+      ],
+      "confidence": 0.6,
+      "problems": [
+        "no image source",
+        "image licence not recorded as open: None"
+      ]
+    },
+    {
+      "species_id": "scorpion",
+      "label": "Scorpion (typical adult, medium-sized Buthid-type body plan)",
+      "scientific": "Scorpiones (representative: Buthus spp. for size)",
+      "image": "https://commons.wikimedia.org/wiki/File:Emporer_scorpion.jpg (candidate only, not verified; Wikimedia Commons was unreachable)",
+      "license": "CC BY 2.0 (from search index metadata, not verified)",
+      "image_viewed": false,
+      "bounding_box_m": {
+        "width_x": 0.03,
+        "height_y": 0.025,
+        "length_z": 0.065
+      },
+      "parts": 8,
+      "category_summary": {
+        "locomotion": 2,
+        "sensory": 3,
+        "feeding": 1,
+        "manipulation": 2,
+        "aesthetics": 0
+      },
+      "library_gaps": [
+        "Pectines (comb-shaped sensory organs on the mesosoma underside)",
+        "Segmented metasoma tail (five hinged segments ending in a telson)",
+        "Eight articulated walking legs as a set",
+        "Curved venomous telson/aculeus"
+      ],
+      "confidence": 0.55,
+      "problems": [
+        "pedipalp_L.chela (pincer closure, fixed finger vs movable finger): joint outside normalized box [0.42, 0.25, 0.7]"
+      ]
+    },
+    {
+      "species_id": "shark",
+      "label": "Blacktip reef shark (Carcharhinus melanopterus), typical adult, side view",
+      "scientific": "Carcharhinus melanopterus",
+      "image": "https://commons.wikimedia.org/wiki/File:Blacktip_reef_shark._(Tsumaguro).jpg",
+      "license": "UNVERIFIED. The file page could not be opened from this session, so the licence is unknown. Check the file page before reusing the image.",
+      "image_viewed": false,
+      "bounding_box_m": {
+        "width_x": 0.35,
+        "height_y": 0.45,
+        "length_z": 1.6
+      },
+      "parts": 22,
+      "category_summary": {
+        "locomotion": 6,
+        "sensory": 4,
+        "feeding": 3,
+        "manipulation": 1,
+        "aesthetics": 0
+      },
+      "library_gaps": [
+        "Ampullae of Lorenzini (electroreceptive pores)",
+        "Lateral line canal",
+        "Nostrils (ventral nasal capsules)",
+        "Gill slits (five per side)",
+        "Teeth (multi-row, replaced in series)",
+        "Dermal denticles (placoid scales)",
+        "Heterocercal caudal fin (asymmetric upper lobe)",
+        "Male pelvic claspers"
+      ],
+      "confidence": 0.4,
+      "problems": [
+        "image licence not recorded as open: 'UNVERIFIED. The file page could not be opened from this session, so the licence is unknown. Check the file page before reusing the image.'",
+        "pectoral_fin_R: no penetration depth",
+        "pelvic_fin_R: no penetration depth",
+        "eye_R: no penetration depth",
+        "nostril_R: no penetration depth",
+        "ampullae_of_lorenzini_R: no penetration depth",
+        "lateral_line_R: no penetration depth",
+        "gill_slits_R: no penetration depth",
+        "claspers_R: no penetration depth"
+      ]
+    },
+    {
+      "species_id": "worm",
+      "label": "Earthworm (Lumbricus terrestris)",
+      "scientific": "Lumbricus terrestris",
+      "image": "https://commons.wikimedia.org/wiki/File:Lumbricus.terrestris.jpg",
+      "license": "CC BY-SA 3.0 (from search-result snippet; not verified on the file page)",
+      "image_viewed": false,
+      "bounding_box_m": {
+        "width_x": 0.006,
+        "height_y": 0.006,
+        "length_z": 0.15
+      },
+      "parts": 6,
+      "category_summary": {
+        "locomotion": 2,
+        "sensory": 2,
+        "feeding": 2,
+        "manipulation": 0,
+        "aesthetics": 0
+      },
+      "library_gaps": [
+        "Setae (paired ventrolateral bristle bundles, ~4 per side per segment)",
+        "Prostomium (fleshy head lobe overhanging the mouth)",
+        "Distributed epidermal photoreceptor cells (no eye structure)",
+        "Clitellum (reproductive glandular band, cocoon secretion)",
+        "Hydrostatic segmented body with peristaltic bending",
+        "Terminal anus (pygidium) as egestion opening"
+      ],
+      "confidence": 0.55,
+      "problems": []
+    }
+  ],
+  "missing": []
+}

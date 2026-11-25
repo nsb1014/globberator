@@ -1,0 +1,198 @@
+{
+  "species_id": "scorpion",
+  "label": "Scorpion (typical adult, medium-sized Buthid-type body plan)",
+  "taxon": {
+    "common": "Scorpion",
+    "scientific": "Scorpiones (representative: Buthus spp. for size)",
+    "order": "Scorpiones",
+    "class": "Arachnida"
+  },
+  "image": {
+    "file_page": "https://commons.wikimedia.org/wiki/File:Emporer_scorpion.jpg (candidate only, not verified; Wikimedia Commons was unreachable)",
+    "direct_url": null,
+    "author": "Kevin Walsh (from search index metadata, not verified)",
+    "license": "CC BY 2.0 (from search index metadata, not verified)",
+    "species_shown": "Pandinus imperator (Emperor scorpion), per file title; unverified and not a typical-size example",
+    "view": "unknown (image not retrieved)",
+    "image_viewed": false
+  },
+  "physical_parsing": {
+    "bounding_box_m": {"width_x": 0.03, "height_y": 0.025, "length_z": 0.065},
+    "approx_volume_m3": 0.0000015,
+    "volume_method": "Assumed body mass of about 1.5 g at density about 1050 kg/m3 (mass is an assumption, not measured). Cross-check: prosoma, mesosoma and metasoma modelled as ellipsoids with half-axes of roughly 0.007 x 0.005 x 0.006 m, 0.009 x 0.006 x 0.007 m and 0.005 x 0.003 x 0.004 m per metasomal segment. Total within an order of magnitude of 1.5 cm3.",
+    "shape_class": "Elongated dorsoventrally flattened body; front broad (prosoma and mesosoma), posterior long articulated tail (metasoma) arched up and over the back, ending in a telson.",
+    "core": {
+      "description": "Two rigid cuticular tagmata form the core: the prosoma (cephalothorax, carrying the eyes, chelicerae, pedipalps and four pairs of walking legs) and the mesosoma (pre-abdomen, carrying the pectines on its underside and the book lungs). The metasoma (five articulated segments plus telson) is attached behind it as an appended chain, not part of the solid core.",
+      "segments": 2,
+      "cross_section": "Prosoma and mesosoma: broad, flattened ellipse (wider than tall). Metasoma: rounded pentagonal section, narrowing toward the telson."
+    },
+    "size_source": "en.wikipedia.org/wiki/Buthus: medium-sized Buthus species are 40-85 mm total length. Typical adult modelled at about 65 mm total length. en.wikipedia.org/wiki/Scorpion: living species vary widely, and the emperor scorpion is among the largest. Fossil Gigantoscorpio is estimated at 28-44 cm. Only the Buthus range is used for scale."
+  },
+  "parts": [
+    {
+      "id": "pedipalp_L",
+      "name": "Pedipalp (pincer / chela)",
+      "category": "manipulation",
+      "symmetry": "pair",
+      "count": 1,
+      "attach_pos": [0.42, 0.25, 0.42],
+      "joints": [
+        {"name": "coxa-trochanter (shoulder, on prosoma)", "pos": [0.42, 0.25, 0.42], "type": "ball", "pivot_axes": ["x", "y", "z"], "range_deg": [-30, 30]},
+        {"name": "femur-patella (elbow)", "pos": [0.42, 0.25, 0.5], "type": "hinge", "pivot_axes": ["y"], "range_deg": [-20, 60]},
+        {"name": "chela (pincer closure, fixed finger vs movable finger)", "pos": [0.42, 0.25, 0.7], "type": "hinge", "pivot_axes": ["y"], "range_deg": [0, 45]}
+      ],
+      "root_radius_m": 0.0035,
+      "length_m": 0.022,
+      "penetration": {"depth_m": 0.0045, "fraction_of_root_radius": 1.3, "overlap_region": "Lateral-anterior corner of the prosoma, at the coxal articulation of leg pair 1 region; extend into the prosomal shell about 4.5 mm so the coxa is seated inside the rigid carapace."},
+      "library_hint": "hand_pincer",
+      "notes": "Chelate pedipalps with a robust chela (pincer) used for grasping and restraining prey, and for courtship. Closing is a single movable finger against a fixed finger, so pivot is vertical (y). Mirror on +X side. Coordinates are approximate because the front of the body is not normalised to the same frame as the pincers."
+    },
+    {
+      "id": "chelicera_L",
+      "name": "Chelicera (small chelate mouthpart)",
+      "category": "feeding",
+      "symmetry": "pair",
+      "count": 1,
+      "attach_pos": [0.07, 0.2, 0.48],
+      "joints": [
+        {"name": "chelicera base (articulates on the anterior prosoma)", "pos": [0.07, 0.2, 0.46], "type": "hinge", "pivot_axes": ["y"], "range_deg": [-15, 15]},
+        {"name": "movable finger", "pos": [0.07, 0.2, 0.5], "type": "hinge", "pivot_axes": ["y"], "range_deg": [0, 25]}
+      ],
+      "root_radius_m": 0.0012,
+      "length_m": 0.004,
+      "penetration": {"depth_m": 0.0012, "fraction_of_root_radius": 1.0, "overlap_region": "Anterior ventral margin of the prosoma, at the midline-adjacent socket."},
+      "library_hint": "mouth_mandibles",
+      "notes": "Small three-segmented chelae used to tear and transfer food to the mouth. Pair is mirrored; the midline gap between them is about 3 mm. Paired pedipalps and chelicerae are both on the front of the prosoma."
+    },
+    {
+      "id": "walking_legs_L",
+      "name": "Walking legs (4 pairs, one side shown)",
+      "category": "locomotion",
+      "symmetry": "pair",
+      "count": 4,
+      "attach_pos": [0.42, 0.2, 0.35],
+      "joints": [
+        {"name": "coxa (ball joint on prosoma sternum)", "pos": [0.42, 0.2, 0.35], "type": "ball", "pivot_axes": ["x", "y", "z"], "range_deg": [-25, 25]},
+        {"name": "trochanter-femur", "pos": [0.46, 0.2, 0.35], "type": "hinge", "pivot_axes": ["y"], "range_deg": [-20, 20]},
+        {"name": "patella (knee)", "pos": [0.5, 0.2, 0.35], "type": "hinge", "pivot_axes": ["y"], "range_deg": [-45, 45]},
+        {"name": "tibia-tarsus (ankle, tarsus tip claw)", "pos": [0.5, 0.2, 0.33], "type": "hinge", "pivot_axes": ["y"], "range_deg": [-30, 30]}
+      ],
+      "root_radius_m": 0.0022,
+      "length_m": 0.022,
+      "penetration": {"depth_m": 0.0025, "fraction_of_root_radius": 1.1, "overlap_region": "Lateral margin of the prosoma (leg 1) and mesosoma (legs 2-4); coxae sit in the sternum at z 0.35, 0.20, 0.05, -0.10 on the +X side."},
+      "library_hint": "foot_claw",
+      "notes": "Four pairs (eight total). Coxae are spread along the lateral sides of the prosoma and anterior mesosoma (normalised z about 0.35, 0.20, 0.05, -0.10). Each leg has seven articulated segments (coxa, trochanter, femur, patella, tibia, basitarsus, telotarsus) with two tarsal claws. The tarsal segment carries claws and is used for gripping. Mirror on the other side. Segment lengths are approximate (about 2.2 cm for the full leg in a 65 mm animal)."
+    },
+    {
+      "id": "pectines_L",
+      "name": "Pectines (comb-like sensory organs)",
+      "category": "sensory",
+      "symmetry": "pair",
+      "count": 1,
+      "attach_pos": [0.05, 0.02, 0.12],
+      "joints": [
+        {"name": "pectine base (fixed to second mesosomal sternite)", "pos": [0.05, 0.02, 0.12], "type": "fixed", "pivot_axes": [], "range_deg": [0, 0]}
+      ],
+      "root_radius_m": 0.0006,
+      "length_m": 0.003,
+      "penetration": {"depth_m": 0.0008, "fraction_of_root_radius": 1.3, "overlap_region": "Ventral surface of the mesosoma's second segment (sternite), on the +X side."},
+      "library_hint": null,
+      "notes": "Paired comb-like structures on the ventral side of the second mesosomal segment. They carry chemo- and mechanoreceptors (substrate vibration, chemical cues). Males usually have larger pectines than females. Fixed, no joint. Mirror on the other side. No PolyForge primitive matches the comb shape."
+    },
+    {
+      "id": "eyes_median",
+      "name": "Median eyes (2 median ocelli)",
+      "category": "sensory",
+      "symmetry": "centre",
+      "count": 2,
+      "attach_pos": [0.0, 0.55, 0.42],
+      "joints": [
+        {"name": "fixed on prosomal dorsal surface", "pos": [0.0, 0.55, 0.42], "type": "fixed", "pivot_axes": [], "range_deg": [0, 0]}
+      ],
+      "root_radius_m": 0.0004,
+      "length_m": 0.0005,
+      "penetration": {"depth_m": 0.0002, "fraction_of_root_radius": 0.5, "overlap_region": "Anterior-dorsal prosoma surface at the midline; shallow seat only."},
+      "library_hint": "eye_bead",
+      "notes": "Two median ocelli on the anterior-dorsal midline of the prosoma. Simple eyes that detect light intensity, not images. Count is 2 at the midline (the pair is one midline part with count 2)."
+    },
+    {
+      "id": "eyes_lateral",
+      "name": "Lateral eyes (ocelli)",
+      "category": "sensory",
+      "symmetry": "pair",
+      "count": 2,
+      "attach_pos": [0.25, 0.55, 0.37],
+      "joints": [
+        {"name": "fixed on prosomal dorsal lateral margin", "pos": [0.25, 0.55, 0.37], "type": "fixed", "pivot_axes": [], "range_deg": [0, 0]}
+      ],
+      "root_radius_m": 0.0004,
+      "length_m": 0.0005,
+      "penetration": {"depth_m": 0.0002, "fraction_of_root_radius": 0.5, "overlap_region": "Lateral dorsal prosoma surface."},
+      "library_hint": "eye_bead",
+      "notes": "Lateral ocelli: the count varies by family (commonly 2 to 5 per side; Buthidae has more). Count of 2 shown is per side and is a representative value, not a fixed fact. Mirror on the other side. Light-detecting only."
+    },
+    {
+      "id": "metasoma",
+      "name": "Metasoma (five-segment tail)",
+      "category": "locomotion",
+      "symmetry": "centre",
+      "count": 1,
+      "attach_pos": [0.0, 0.3, 0.04],
+      "joints": [
+        {"name": "mesosoma-metasoma junction (segment I)", "pos": [0.0, 0.3, 0.04], "type": "hinge", "pivot_axes": ["x"], "range_deg": [-20, 60]},
+        {"name": "segment I-II", "pos": [0.0, 0.32, -0.08], "type": "hinge", "pivot_axes": ["x"], "range_deg": [-20, 40]},
+        {"name": "segment II-III", "pos": [0.0, 0.5, -0.16], "type": "hinge", "pivot_axes": ["x"], "range_deg": [-20, 40]},
+        {"name": "segment III-IV", "pos": [0.0, 0.67, -0.27], "type": "hinge", "pivot_axes": ["x"], "range_deg": [-20, 40]},
+        {"name": "segment IV-V", "pos": [0.0, 0.75, -0.36], "type": "hinge", "pivot_axes": ["x"], "range_deg": [-20, 40]}
+      ],
+      "root_radius_m": 0.0045,
+      "length_m": 0.035,
+      "penetration": {"depth_m": 0.0060, "fraction_of_root_radius": 1.3, "overlap_region": "Posterior end of the mesosoma (the tergite and pleural region of segment 7 of the mesosoma), along the midline; the first metasomal segment is sunk into the mesosoma ring."},
+      "library_hint": null,
+      "notes": "Five segments (I to V) that narrow toward the tail tip and arch up over the back. The tail is a chain of hydrostatic-like cuticular rings, with pivot joints between segments. Used for balance, rapid retreat and holding the telson in strike position. It is a functional locomotion/posture structure with no close PolyForge primitive."
+    },
+    {
+      "id": "telson_stinger",
+      "name": "Telson and aculeus (venomous stinger)",
+      "category": "manipulation",
+      "symmetry": "centre",
+      "count": 1,
+      "attach_pos": [0.0, 0.75, -0.36],
+      "joints": [
+        {"name": "segment V-telson (bulb of the telson, venom gland)", "pos": [0.0, 0.75, -0.42], "type": "hinge", "pivot_axes": ["x"], "range_deg": [-30, 120]}
+      ],
+      "root_radius_m": 0.0015,
+      "length_m": 0.006,
+      "penetration": {"depth_m": 0.0015, "fraction_of_root_radius": 1.0, "overlap_region": "Posterior end of metasomal segment V; the telson bulb sits inside the ring."},
+      "library_hint": "spike",
+      "notes": "Venom bulb plus curved, sharp aculeus. Used for prey capture and defence, so it sits in the manipulation category (the stinger is a grasp/inject tool). The library spike is only a geometric proxy: a curved, bulbous telson differs from a straight spike. The telson is the most distal part of the tail, at normalised z about -0.5 and y about 0.8."
+    }
+  ],
+  "category_summary": {"locomotion": 2, "sensory": 3, "feeding": 1, "manipulation": 2, "aesthetics": 0},
+  "constraints": {
+    "symmetry": "Bilateral (sagittal plane). Prosomal appendages and the pectines are mirrored; the metasoma, telson, median eyes and mouthparts midline are centred.",
+    "gait": "Eight-legged, alternating-tetrapod gait (four legs swing while the other four stay planted, with the body held low). Legs act as a ground-contact set, and the tail is raised over the back, not dragged.",
+    "other": [
+      "Frame normalised to the bounding box: x and z in [-0.5, 0.5], y in [0, 1]; ground is y = 0, +Z is forward (toward the prosoma front).",
+      "Metasoma is an appended articulated chain; the core is the prosoma-mesosoma pair.",
+      "Pedipalps and legs are jointed appendages attached to the core by ball joints at the coxae, so penetration is measured at the coxal socket.",
+      "Coordinates are approximate and derived from anatomy, not from a viewed image."
+    ]
+  },
+  "library_gaps": [
+    {"feature": "Pectines (comb-shaped sensory organs on the mesosoma underside)", "why": "No PolyForge primitive is a comb or a set of thin parallel tines; the closest (frill, fin_dorsal) are wrong in shape and position."},
+    {"feature": "Segmented metasoma tail (five hinged segments ending in a telson)", "why": "tail_club, tail_tuft and tail_fan do not model an articulated tail that arches over the back; none of them provides segment-to-segment joints."},
+    {"feature": "Eight articulated walking legs as a set", "why": "foot_* primitives model single extremities; no multi-leg radial array with a shared body attachment exists."},
+    {"feature": "Curved venomous telson/aculeus", "why": "spike is a straight-tip proxy; a bulbous telson base with a curved aculeus has no direct match."}
+  ],
+  "sources": [
+    "https://en.wikipedia.org/wiki/Scorpion (body plan: prosoma, mesosoma, metasoma; eight legs; pedipalps; pectines and book lungs on the mesosoma; size range)",
+    "https://en.wikipedia.org/wiki/Mesosoma (mesosoma as the pre-abdomen carrying pectines and book lungs)",
+    "https://en.wikipedia.org/wiki/Metasoma (metasoma as the five-segment post-abdomen with telson)",
+    "https://en.wikipedia.org/wiki/Buthus (medium-sized Buthus species 40-85 mm total length; used as scale)",
+    "https://en.wikipedia.org/wiki/Emperor_scorpion (large species; not used for the typical size)",
+    "https://en.wikipedia.org/wiki/Gigantoscorpio (fossil size estimate 28-44 cm; cited only to show the range, not used)",
+    "Image: commons.wikimedia.org candidate File:Emporer_scorpion.jpg was NOT retrieved (Wikimedia Commons blocked by the session network; license and author are unverified search metadata)"
+  ],
+  "confidence": 0.55
+}

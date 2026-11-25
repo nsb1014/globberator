@@ -11,11 +11,12 @@ from character_io import clay_material, export_character
 DUTY = .64
 STRIDE = .65
 CYCLES = 2
+ABDOMEN = ("Abdomen", "Abdomen.Mid", "Abdomen.Rear")
 
 
 def body(s,shape):
     s.bone("Carapace",(0,-.10,.65),(0,-.95,.69))
-    s.bone("Abdomen",(0,.17,.65),(0,1.57,.68),"Carapace")
+
     shells = []
     def oval(name,center,scale):
         shells.append((s.ellipsoid(name,center,scale),"Carapace"))
@@ -47,7 +48,26 @@ def body(s,shape):
             row.append((.548*shape["abdomen_width"]*envelope*c*relief,y,
                         .668+.033*math.sin(math.pi*t)+.394*envelope*h*relief-groove+.036*envelope*plate))
         rows.append(row)
-    s.mount((0,0,0),[(s.surface("Segmented abdomen",rows),"Abdomen")])
+    length = 1.965 * shape["abdomen_length"]
+    shell = s.surface("Segmented abdomen",rows)
+    s.mount((0,0,0),[(shell,ABDOMEN[0])])
+    parent = "Carapace"
+    for i,name in enumerate(ABDOMEN):
+        s.bone(name,(0,.065+length*i/3,.668),(0,.065+length*(i+1)/3,.668),parent)
+        parent = name
+    # Blend rings across each hinge. The folds stay part of one continuous shell.
+    groups = [shell.vertex_groups[ABDOMEN[0]]] + [shell.vertex_groups.new(name=n) for n in ABDOMEN[1:]]
+    ring_size = len(rows[0])
+    for row,ring in enumerate(rows):
+        position = max(0., min(2., 3*(ring[0][1]-.065)/length-.5))
+        joint = int(position)
+        mix = position-joint
+        indices = list(range(row*ring_size,(row+1)*ring_size))
+        if joint:
+            groups[0].remove(indices)
+        groups[joint].add(indices,1-mix,"REPLACE")
+        if mix:
+            groups[joint+1].add(indices,mix,"REPLACE")
 
 
 def chelicera(s,width):
@@ -142,39 +162,58 @@ def bake(rig,chains):
     scene.render.fps = 24
     rig.animation_data_create()
     for clip,frames in [("Idle",48),("Walk",64)]:
+        walk = clip == "Walk"
         action = bpy.data.actions.new(clip)
         action.use_fake_user = True
         rig.animation_data.action = action
         for frame in range(frames+1):
             t = frame/frames
-            cycle = t*(CYCLES if clip == "Walk" else 1)
+            cycle = t*(CYCLES if walk else 1)
             phase = math.tau*cycle
-            rotation = {"Abdomen":Quaternion((1,0,0),.032*math.sin(phase))}
+            # Offset the body toward the supporting tripod and rise over midstance.
+            shift = (Vector((.053*math.cos(phase-1.9),0,.034*math.cos(2*phase-3.8)))
+                     if walk else Vector((0,0,.021*math.sin(phase))))
+            rotation = {}
+            for i,name in enumerate(ABDOMEN):
+                breath = math.sin(phase-.80*i)
+                pitch = (.046+.020*i)*breath
+                yaw = (.032+.012*i)*math.sin(phase-.80*i-.55) if walk else 0.
+                rotation[name] = Quaternion((0,0,1),yaw) @ Quaternion((1,0,0),pitch)
             for role,side,names,points,offset in chains:
                 sign = 1 if side == "L" else -1
-                if role == "foot" and clip == "Walk":
-                    f = (cycle+offset)%1
-                    swing = max(0,(f-DUTY)/(1-DUTY))
-                    ease = swing**3*(10-15*swing+6*swing*swing)
-                    delta = Vector((0,STRIDE*(f-DUTY/2-ease),.125*math.sin(math.pi*swing)**2))
+                if role == "foot":
+                    delta = -shift
+                    if walk:
+                        f = (cycle+offset)%1
+                        swing = max(0,(f-DUTY)/(1-DUTY))
+                        ease = swing**3*(10-15*swing+6*swing*swing)
+                        delta.y += STRIDE*(f-DUTY/2-ease)
+                        delta.z += .235*math.sin(math.pi*swing)**2
                     rotation.update(zip(names,solve_foot(points,delta),strict=True))
-                elif role != "foot":
+                else:
+                    # One palp reaches as its partner recovers. The finer sensory
+                    # pair follows on a shorter arc, slightly behind the palps.
+                    beat = phase + (math.pi if side == "R" else 0)
+                    palp = role == "palp"
                     for i,name in enumerate(names):
-                        wave = math.sin(phase-.37*i+offset*math.tau)
-                        scale = .055 if clip == "Idle" else .095
-                        rotation[name] = (Quaternion((0,0,1),sign*scale*wave)
-                                          @ Quaternion((1,0,0),.026*math.cos(phase-.25*i)))
+                        probe = beat-.25*i-(0 if palp else .85)
+                        sweep = (.158 if palp else .078)*math.sin(probe)
+                        lift = (.088 if palp else .052)*math.cos(probe)
+                        rotation[name] = Quaternion((0,0,1),sign*sweep) @ Quaternion((1,0,0),lift)
             for side,sign in [("L",1),("R",-1)]:
-                rotation["Chelicera."+side] = Quaternion((0,0,1),sign*.025*math.sin(phase))
-                rotation["Finger."+side] = rotation["Chelicera."+side] @ Quaternion((1,0,0),.052*math.sin(phase))
+                # A short gape follows the reach on this side.
+                pulse = ((1+sign*math.sin(phase-.65))/2)**3
+                jaw = Quaternion((0,0,1),sign*(.012+.045*pulse))
+                rotation["Chelicera."+side] = jaw
+                rotation["Finger."+side] = jaw @ Quaternion((1,0,0),.032+.17*pulse)
             for pb in rig.pose.bones:
                 inherited = rotation.get(pb.parent.name,Quaternion()) if pb.parent else Quaternion()
                 rest = pb.bone.matrix_local.to_quaternion()
                 pb.rotation_quaternion = rest.inverted() @ inherited.inverted() @ rotation.get(pb.name,inherited) @ rest
                 pb.keyframe_insert("rotation_quaternion",frame=frame,group=pb.name)
             root = rig.pose.bones["Carapace"]
-            travel = -STRIDE*cycle if clip == "Walk" else 0
-            root.location = root.bone.matrix_local.to_quaternion().inverted() @ Vector((0,travel,0))
+            travel = -STRIDE*cycle if walk else 0
+            root.location = root.bone.matrix_local.to_quaternion().inverted() @ (shift + Vector((0,travel,0)))
             root.keyframe_insert("location",frame=frame,group=root.name)
         for curve in action.fcurves:
             for key in curve.keyframe_points:

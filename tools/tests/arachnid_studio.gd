@@ -9,7 +9,7 @@ func check_studio() -> void:
 	await process_frame
 	studio.select_character(2)
 	var sk: Skeleton3D = studio.model.find_children("*","Skeleton3D",true,false)[0]
-	var valid := sk.get_bone_count() == 36
+	var valid := sk.get_bone_count() == 38
 	for feature in ["Abdomen width","Abdomen depth","Jaw breadth"]:
 		var idx: int = studio.skin.find_blend_shape_by_name(feature)
 		if idx < 0 or not studio.sliders.has(feature):

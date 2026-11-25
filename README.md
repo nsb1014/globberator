@@ -4,15 +4,15 @@
 
 ![Solifuge in its neutral stance](preview/arachnid.jpg)
 
-[Neutral turntable](preview/arachnid-turntable.mp4) · [Walking clip](preview/arachnid-walk.mp4) · [Rigged GLB](godot/arachnid.glb) · [Recipe](models/arachnid.json)
+[Neutral turntable](preview/arachnid-turntable.mp4) · [Sensing idle](preview/arachnid-idle.mp4) · [Walking clip](preview/arachnid-walk.mp4) · [Rigged GLB](godot/arachnid.glb) · [Recipe](models/arachnid.json)
 
 The supplied dorsal-oblique photograph shows a solifuge with forward-facing paired chelicerae, long pedipalps and a visibly segmented abdomen. The abdomen occupies roughly half the length from jaw tip to rump in the image. The neutral model preserves this proportion and separates the front appendages so their functions read during motion. Surface heights, hidden joints and the mirrored far side are estimates. Model coordinates use Blender units, +Z up and −Y forward.
 
-The three rear pairs support the body in a low, symmetric stance with flexed joints. The sensory first leg pair and pedipalps hover above the floor. The fixed and movable fingers of each chelicera have separate bones. The walk alternates tripods, solves each supporting leg to its foot target, and advances the body 1.30 units over two cycles. [Solifuge anatomy reference](https://ph.health.mil/resources/ento-arachnids-afghan-poster.pdf)
+The three rear pairs support the body in a low, symmetric stance with flexed joints. The sensory first leg pair and pedipalps hover above the floor. The fixed and movable fingers of each chelicera have separate bones. In idle, all six feet stay planted as the body breathes, the pedipalps sweep in alternation and each jaw briefly opens after the reach on its side. The rear abdomen follows the front by a quarter cycle. In the walk the body shifts over alternating tripods, the swing feet clear the floor by 0.23 units, and the creature advances 1.30 units over two cycles. [Solifuge anatomy reference](https://ph.health.mil/resources/ento-arachnids-afghan-poster.pdf)
 
 ### Generate a creature from a recipe
 
-A lightweight agent can select the solifuge preset and supply a few numeric controls. With Blender 4.3.2 (including NumPy and SciPy), Python 3 and FFmpeg on PATH, this command builds the mesh and rig, bakes idle and walk, reimports the GLB for contact checks, then writes the resolved recipe, GLB, neutral PNG, turntable and walking video to the output folder.
+A lightweight agent can select the solifuge preset and supply a few numeric controls. With Blender 4.3.2 (including NumPy and SciPy), Python 3 and FFmpeg on PATH, this command builds the mesh and rig, bakes idle and walk, reimports the GLB for contact checks, then writes the resolved recipe, GLB, neutral PNG, turntable, sensing idle and walking video to the output folder.
 
 ```sh
 python tools/generate.py --preset solifuge --out review/solifuge
@@ -81,7 +81,7 @@ blender -b --python-exit-code 1 -P tools/build.py -- --recipe models/bull.json
 blender -b --python-exit-code 1 -P tools/render.py -- godot/minotaur.glb review --clip still
 ```
 
-For the editable Blender scene, pass `-- --review review` to the build script. Render accepts `--clip turn` or `--clip walk` for PNG sequences. The review uses independent videos for the neutral orbit and the stationary step. The step preview uses `--azimuth 146` to show how the back and hips deform under load. The full renderer defaults to 64 samples per minotaur motion frame and 36 per bull motion frame. The included motion previews use `--samples 10 --frame-step 2` with denoising, encoded at 12 fps for the walks and 9 fps for the turntables. The bull walk uses a fixed side camera. Supply `--oidn /path/to/oidnDenoise` to apply Open Image Denoise before the display transform. The preview images come from reimporting the exported GLB.
+For the editable Blender scene, pass `-- --review review` to the build script. Render accepts `--clip turn`, `--clip idle` or `--clip walk` for PNG sequences. The review uses independent videos for the neutral orbit and the stationary step. The step preview uses `--azimuth 146` to show how the back and hips deform under load. The full renderer defaults to 64 samples per minotaur motion frame and 36 per bull motion frame. The included motion previews use `--samples 10 --frame-step 2` with denoising, encoded at 12 fps for the walks and 9 fps for the turntables. The bull walk uses a fixed side camera. Supply `--oidn /path/to/oidnDenoise` to apply Open Image Denoise before the display transform. The preview images come from reimporting the exported GLB.
 
 To check the imported sole contacts, run `godot --headless --editor --import --path godot`, then `godot --headless --path godot --script "$PWD/tools/tests/ground_contact.gd"` from the repository root. The check samples the soles through idle and both sides of the step, including between baked keyframes.
 

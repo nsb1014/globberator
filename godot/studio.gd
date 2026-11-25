@@ -9,7 +9,7 @@ const CHARACTERS := [
      "width":5.5, "travel":2.08, "walk_width":7.65, "walk_azimuth":1.48},
     {"name":"Solifuge", "scene":preload("res://arachnid.glb"), "save":"user://arachnid_shapes.cfg",
      "shapes":["Abdomen width","Abdomen depth","Jaw breadth"], "focus":Vector3(0,0.49,0.25),
-     "azimuth":0.97, "elevation":0.68, "width":5.85, "travel":1.30, "walk_width":6.65, "walk_azimuth":1.33},
+     "azimuth":0.91, "elevation":0.50, "width":5.85, "travel":1.30, "walk_width":6.65, "walk_azimuth":0.91},
 ]
 var shape_panel := VBoxContainer.new()
 var character := 0

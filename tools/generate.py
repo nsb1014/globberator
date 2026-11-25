@@ -55,13 +55,13 @@ with tempfile.TemporaryDirectory(dir=args.out) as tmp:
     blender("build.py","--recipe",spec,"--output",model)
     blender("tests/arthropod_export.py",model,spec)
     denoise = ["--oidn",args.oidn.resolve()] if args.oidn else []
-    for clip,rate in [("still",0),("turn",9),("walk",12)]:
+    for clip,rate in [("still",0),("turn",9),("idle",12),("walk",12)]:
         blender("render.py",model,stage,"--clip",clip,"--frame-step",2,
                 "--samples",64 if clip=="still" else 12,*denoise)
         if rate:
             subprocess.run(["ffmpeg","-nostdin","-loglevel","error","-framerate",str(rate),
                             "-i",str(stage/(clip+"-%03d.png")),"-c:v","libx264","-crf","19",
                             "-pix_fmt","yuv420p","-movflags","+faststart",str(stage/(clip+".mp4"))],check=True)
-    for file in ("recipe.json","arachnid.glb","still-000.png","turn.mp4","walk.mp4"):
+    for file in ("recipe.json","arachnid.glb","still-000.png","turn.mp4","idle.mp4","walk.mp4"):
         os.replace(stage/file,args.out/file)
 print("Creature package:",args.out.resolve())

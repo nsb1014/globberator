@@ -244,13 +244,13 @@
       "species_id": "primate",
       "label": "Chimpanzee (Pan troglodytes), quadrupedal knuckle-walking posture",
       "scientific": "Pan troglodytes",
-      "image": null,
-      "license": null,
-      "image_viewed": false,
+      "image": "https://commons.wikimedia.org/wiki/File:Pan_troglodytes_(male).jpg",
+      "license": "CC BY-SA 3.0",
+      "image_viewed": true,
       "bounding_box_m": {
         "width_x": 0.5,
         "height_y": 0.9,
-        "length_z": 1.0
+        "length_z": 0.9
       },
       "parts": 15,
       "category_summary": {
@@ -267,23 +267,20 @@
         "Knuckle-walking hand posture",
         "Flat, close-set rounded ear"
       ],
-      "confidence": 0.55,
-      "problems": [
-        "no image source",
-        "image licence not recorded as open: None"
-      ]
+      "confidence": 0.6,
+      "problems": []
     },
     {
       "species_id": "raptor",
-      "label": "Red-tailed hawk (Buteo jamaicensis), perched adult",
+      "label": "Red-tailed hawk (Buteo jamaicensis), perched, age not confirmed from the photo",
       "scientific": "Buteo jamaicensis",
       "image": "https://commons.wikimedia.org/wiki/File:Red-tailed-hawk-perched.jpg",
       "license": "CC BY-SA 4.0",
-      "image_viewed": false,
+      "image_viewed": true,
       "bounding_box_m": {
-        "width_x": 0.3,
+        "width_x": 0.2,
         "height_y": 0.5,
-        "length_z": 0.6
+        "length_z": 0.32
       },
       "parts": 12,
       "category_summary": {
@@ -299,7 +296,7 @@
         "Folded wing pose with separate flight feathers",
         "Multi-digit talon set (four talons per foot, hallux)"
       ],
-      "confidence": 0.6,
+      "confidence": 0.7,
       "problems": []
     },
     {

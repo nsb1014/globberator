@@ -11,6 +11,8 @@
 ##   animate <recipe> --clip walk --out f.mp4 [--seconds 4] [--view threequarter] [--size 480]
 ##   turntable <recipe> --out f.mp4 [--seconds 6]
 ##   gallery <recipe...> --out sheet.png [--view threequarter] [--size 320] [--pose clip@t]
+##   renderjobs <jobs.json> [--size 256]       many renders in one process:
+##       [{"recipe": path, "out": dir, "views": ["front", "30,10"], "mask": true}]
 ##   thumbs [--out library/thumbs]             one preview image per part
 ##   test                                      run the automated test suite
 ## Rendering commands need a display (use xvfb-run) and --rendering-driver opengl3.
@@ -64,6 +66,7 @@ func _run() -> void:
 		"turntable": code = await _turntable()
 		"thumbs": code = await _thumbs()
 		"gallery": code = await _gallery()
+		"renderjobs": code = await _renderjobs()
 		"test":
 			var T = load("res://tests/run_tests.gd")
 			code = await T.new().run(self)
@@ -388,3 +391,41 @@ static func _non_body_box(creature: Node3D) -> AABB:
 	if first:
 		return creature.get_meta("rig")["aabb"]
 	return box.grow(maxf(box.size.length() * 0.15, 0.08))
+
+
+## Batch renders for the AI fitter (one Godot start for many candidates).
+func _renderjobs() -> int:
+	var jobs = JSON.parse_string(FileAccess.get_file_as_string(_abs(pos[1])))
+	if typeof(jobs) != TYPE_ARRAY:
+		printerr("jobs file must be a JSON array")
+		return 1
+	var st = _studio(int(opts.get("size", "256")))
+	var results := []
+	for job in jobs:
+		var r: Dictionary = Recipe.load_file(_abs(job["recipe"]))
+		var creature: Node3D = Builder.build(r)
+		st.stage.add_child(creature)
+		_apply_pose(creature)
+		var box: AABB = creature.get_meta("rig")["aabb"]
+		var dir := _abs(job["out"])
+		DirAccess.make_dir_recursive_absolute(dir)
+		var outs := []
+		for v in job.get("views", ["threequarter"]):
+			var ang: Vector2 = Studio.view_angles(v)
+			st.frame(box, ang.x, ang.y)
+			var fname: String = str(v).replace(",", "_")
+			st.set_mask_mode(false)
+			if job.get("color", true):
+				var img: Image = await st.snap(self)
+				img.save_png(dir.path_join(fname + ".png"))
+				outs.append(dir.path_join(fname + ".png"))
+			if job.get("mask", false):
+				st.set_mask_mode(true)
+				var m: Image = await st.snap(self)
+				_alpha_to_mask(m).save_png(dir.path_join(fname + "_mask.png"))
+				outs.append(dir.path_join(fname + "_mask.png"))
+				st.set_mask_mode(false)
+		results.append({"recipe": job["recipe"], "images": outs, "report": creature.get_meta("report")})
+		creature.free()
+	print("RESULT " + JSON.stringify(results))
+	return 0

@@ -586,7 +586,7 @@ func _assemble() -> Node3D:
 		"rest": bone_rest, "parents": bone_parent, "names": bone_names,
 		"spine": spine_bones, "hub": hub, "limbs": limbs, "parts": parts_rig,
 		"leg_len": leg_len, "body_len": spine.length, "aabb": box,
-		"body_h": spine.vh[hub], "hub_height": spine.vpos[hub].y,
+		"body_h": spine.vh[hub], "hub_height": spine.vpos[hub].y, "shift": shift,
 	}
 	var report := {
 		"name": recipe["name"], "library_version": Catalog.VERSION,
@@ -600,3 +600,29 @@ func _assemble() -> Node3D:
 	root.set_meta("report", report)
 	root.set_meta("pick", {"pos": geo.pos, "owner": tri_owner, "owners": owners})
 	return root
+
+
+## Inverse of _limb_surface: nearest (u, theta) on a resolved limb for a point.
+static func limb_project(l: Dictionary, point: Vector3) -> Dictionary:
+	var joints: Array = l["joints"]
+	var best := {"u": 0.5, "theta": 0.0, "d": INF}
+	var acc := 0.0
+	for k in joints.size() - 1:
+		var a: Vector3 = joints[k]
+		var b: Vector3 = joints[k + 1]
+		var seg := b - a
+		var sl := seg.length()
+		var t := clampf((point - a).dot(seg) / maxf(sl * sl, 1e-6), 0.0, 1.0)
+		var c := a + seg * t
+		var d := point.distance_to(c)
+		if d < best["d"]:
+			var dir := seg / maxf(sl, 1e-6)
+			var e90 := Vector3.UP - dir * Vector3.UP.dot(dir)
+			if e90.length() < 0.2:
+				e90 = Vector3.BACK - dir * Vector3.BACK.dot(dir)
+			e90 = e90.normalized()
+			var e0 := e90.cross(dir).normalized()
+			var rel := point - c
+			best = {"u": (acc + t * sl) / maxf(l["length"], 1e-4), "theta": rad_to_deg(atan2(rel.dot(e90), rel.dot(e0))), "d": d}
+		acc += sl
+	return best

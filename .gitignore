@@ -1,4 +1,4 @@
 .godot/
 __pycache__/
+out/
 review/
-*.blend1

@@ -1,73 +1,172 @@
-# PolyForge character builder
+# PolyForge plan
 
-Design proposal for review • November 24, 2026
+Goal: a Spore-style 3D builder in Godot 4. You assemble a character from a small, deliberate part library. It rigs itself, gets procedural animation, and exports to GLB. On top of the builder sits an AI workflow: you give it a reference image and it builds a recipe that matches the image as closely as the library's style allows.
 
-Give PolyForge one full-body reference image and get back a character you can turn around, edit, play in motion, and export. A viewer should recognize the subject from its silhouette, proportions, and distinctive features. The part library supplies the artistic interpretation. A person and the AI should have access to the same building controls.
+Status: clean slate. The previous iteration was removed in the commit that added this plan. It can be recovered from git history (`git show ce72a4f`).
 
-## What to borrow from Spore
+## Lessons from the previous iteration
 
-Maxis called its deformable parts *rigblocks*. An artist designed both the part and the shapes it could take as the player dragged a handle. One piece could cover a family of shapes while retaining a deliberate design. Buildings and vehicles could be assembled entirely from these pieces. Creatures combined a flexible spine and torso with limbs and detailed anatomical parts. For PolyForge, a horn could have editable length, taper, and curvature, while its edges and surface treatment always belong to the same art style. [Maxis rigblocks paper](https://www.cs.cmu.edu/~ajw/s2007/0248-Rigblocks.pdf) · [Maxis texturing paper](https://www.cs.cmu.edu/~ajw/s2007/0311-PaintingModels.pdf) · [Spore animation paper](https://chrishecker.com/images/c/cb/Sporeanim-siggraph08.pdf)
+The earlier code produced a minotaur, a bull and a solifuge. Each came from bespoke Python generators running in Blender (`bovine.py`, `arachnid.py`), with a separate GDScript gait solver in Godot. The footprint and IK gait worked, but three things kept it from reaching the goal:
 
-Spore carried information about anatomy into animation. Parts declared capabilities such as grasping or opening a mouth. Animators could express a movement in terms of participating body parts and their relationships. At runtime the game selected the actual parts, worked out targets, and bent the skeleton to reach them. Walking also had a gait system to coordinate the feet. For PolyForge, author the timing and character of a movement, and let the runtime adapt it to the body. [Maxis SIGGRAPH paper and demonstration videos](https://chrishecker.com/Real-time_Motion_Retargeting_to_Highly_Varied_User-Created_Morphologies)
+1. **There was no real part library.** Each creature needed new geometry code, so the AI had nothing to choose from, and every new reference meant new programming.
+2. **There were two implementations.** Blender built the meshes and Godot animated them. Every feature had to be written twice and kept in sync, and the interactive editor could not rebuild anything.
+3. **Fitting was hand-annotated.** Landmarks came from manual windows on one image, so the "AI workflow" was really a human workflow.
 
-## First character: a minotaur
+This plan fixes all three: one engine (Godot), one data format (the recipe), and a fixed library that both the user and the AI assemble from.
 
-Use the far-right minotaur in the five-character lineup (1000012403.png) as the anatomical reference. Build the bare character in one neutral matte material. Exclude armor, garments, jewelry, the axe, and texture work from the model and its likeness score.
+## Core principle: the recipe is the product
 
-- **Visible landmarks.** Match the thick horns that sweep outward and curl up, the heavy brow and broad blunt muzzle, the substantial upper arms and hands, the wide-set split hooves, and the tufted tail. Give the mane and tail tuft simple sculpted masses.
-- **Hidden anatomy.** Estimate shoulder joints from the visible upper arms and neck. The outer edges of the shoulder plates are an unreliable guide to body width. Keep chest depth, waist, and the lower-leg profile adjustable. Mark areas covered by equipment as unknown when comparing the render to the reference.
-- **Neutral stance.** Save and export the character standing upright, facing forward, with level shoulders and weight evenly distributed over both hooves. Set the hooves about hip-width apart and keep a natural bend in the legs. Let the arms hang slightly away from the torso, elbows soft and hands relaxed. Use this pose for the editor and the full turntable. Apply the reference pose only to a temporary copy for image fitting.
+```
+reference image ──► AI ──► recipe.json ◄── editor (user)
+                              │
+                              ▼
+                 Godot builder (deterministic)
+                              │
+             mesh + skeleton + skin + gait bindings
+                              │
+               procedural animation ──► GLB export
+```
 
-First assemble the target by hand. Render a turntable and try a walk. Then give the AI the same reference and part controls. This gives us a direct comparison for likeness and motion. Buildings and vehicles remain interaction references.
+- A **recipe** is small, versioned, human-readable JSON. It holds the spine, the parts, their attachments, the shape parameters and the paint. The same recipe always builds the same character.
+- The **editor and the AI use the same operation API**: `add_part`, `move_part`, `set_param`, `set_spine_point`, `set_symmetry`, `remove_part`. The AI never writes mesh data; it writes recipes.
+- **The style lives in the library.** Matching an image means choosing parts and parameters within their allowed ranges. Anything outside those ranges is, by definition, outside the style.
 
-## Which parts earn a place
+## Architecture
 
-Choose part boundaries around edits a creator would actually want to make. Keep the brow, cheeks, and muzzle together in the first head so the bull face reads as a deliberate design. Give muzzle length and width a controlled range. Split out ears and horns because changing their shape and placement can produce a distinct silhouette. Revisit the division if a later reference needs it.
+### 1. Body (Spore's torso and spine)
 
-| Start with | Useful controls | How to test transfer |
+- The spine is a chain of 3 to 16 vertebrae. Each one has a position and a cross-section (width, height, optional profile squash).
+- The skin is a smooth swept surface along a Catmull-Rom spine, with a fixed low-poly ring count to keep the faceted "Poly" look. A later option is an SDF smooth union, polygonized with marching cubes, so limbs blend into the body.
+- Bones come directly from the vertebrae. Skin weights are computed from the parameters, not painted, because we know which ring belongs to which vertebra.
+
+### 2. Limbs (deformable joint chains)
+
+- A limb is a chain of 2 to 5 joints. Each joint has a position relative to its parent and a radius. The tube skin is generated the same way as the body.
+- A limb attaches to the body surface by spine parameter `u ∈ [0,1]` and angle `θ` around the cross-section. With symmetry on, the mirror copy is built automatically.
+- The end of a limb takes an optional **tip part** (foot, hand, claw, fin). The tip part decides the limb's role in animation (see below).
+
+### 3. Rigid parts (the library proper)
+
+Eyes, mouths, horns, ears, noses, spikes, plates, hands, feet, tails tips, details.
+
+Each part is a folder:
+
+```
+library/parts/horn_curl/
+  part.tres     # metadata: id, category, style tags, sockets, params + ranges, anim capabilities
+  mesh.glb      # low-poly mesh; optional blend shapes are the deformation params
+  thumb.png     # generated by a headless render
+```
+
+- **Parameters** are blend shapes or bone scales with min/max ranges, for example horn length, curl or taper. These are Spore's "rigblock" handles.
+- **Capabilities** give a part a role in animation: `foot{sole, forward}`, `hand{grip}`, `mouth{open}`, `eye{look}`, `ear{flop}`, `none`.
+- A part attaches to the body or a limb at `(u, θ, offset, rotation, scale)` and follows the bone underneath it.
+- The first library is deliberately small: about 40 parts that cover distinct silhouettes. A library-gap report from the AI loop (milestone 6) decides what to add next.
+- All parts are authored as code-generated or hand-modelled low-poly meshes in one consistent style: flat-shaded, with a limited palette and gradient vertex colors.
+
+### 4. Paint
+
+Spore-style paint: base, accent and detail colors, plus a pattern mask (stripes, spots, gradient) projected along the spine coordinates. It is stored in the recipe and applied with one shared shader.
+
+### 5. Auto-rig
+
+The skeleton is built during assembly from the spine, the limb joints and the bones that parts contribute (jaw, ears, tail). Skin weights come from distance along the sweep, so no manual painting is needed. Each limb gets a role from its tip part:
+
+| Tip capability | Role | Animation behavior |
 | --- | --- | --- |
-| Humanoid torso and pelvis | Shoulder span, chest depth, waist width | Make a broad minotaur and a lean hornless biped with the same body. Watch the shoulder and hip joins through a stride. |
-| Arms, hands, and two-legged skeleton | Segment lengths, thickness, resting pose | Reuse the arms on the lean biped. Change forearm length and verify the hand still reaches a common target. Keep body-specific lower-leg bends and foot contacts adjustable. |
-| Paired horns | Base position, sweep, taper, length | Fit the same horn to a narrower skull with a different sweep. Judge the silhouette in profile and from the front. |
-| Bull head and foot ends | Muzzle shape, ear angle, footprint and contact | Spend a dedicated part where it earns recognition or a convincing walk. Check the split hoof in front view and test stable contact through the stride. |
+| `foot` | leg | footprint planning, IK, supports body |
+| `hand` | arm | reach and gesture IK, free swing while walking |
+| none, touching ground at rest | leg | treated as a foot without a sole part |
+| none, off ground | appendage | spring or secondary motion |
 
-Keep the reuse checks as rough assemblies. The first finished character is the minotaur. For each prospective part, first try fitting an existing part with its allowed controls. Record which reference feature or motion fails, what a new part would fix, and where else it might be useful. If making a part more generic spoils the likeness or its movement, keep the specialized shape. Use a plain gray preview for every reuse check.
+### 6. Procedural animation (Spore-style)
 
-## The builder and its part library
+This follows Hecker et al., *Real-time Motion Retargeting to Highly Varied User-Created Morphologies* (SIGGRAPH 2008).
 
-- Shape a flexible trunk by moving a short spine and changing its thickness. Attach joint chains for limbs and deform the body around their roots. Fit detail pieces such as ears, eyes, and horns at artist-defined attachment regions. Test one shoulder through a full stride before making dozens of parts.
-- Give every part a stable identity, preview images, attachment rules, allowed shape changes, and a role in motion. A foot needs a sole contact point and a forward direction. An ear needs an attachment and an allowed bend. Build just enough styles of each part to tell the first references apart.
-- Store the character in a versioned, human-readable recipe containing the library version, parts, parent attachments, and shape settings. Generate the mesh and skeleton from that recipe. The viewport editor and AI both change the recipe through the same operations. Save and reopen must reproduce the same character.
-- In the editor, drag, mirror, resize, pose, undo, and pin a feature. A pinned head design should survive a request for shorter legs. Regenerate only the unlocked choices, then preview the result standing and walking.
+- **Gait planner.** Legs are grouped by position along the spine. A gait pattern (walk, trot, gallop, or a wave for 3+ pairs) is picked from the leg count and the leg lengths. Each foot keeps its world-space footprint during stance and follows an arc in swing. Two-bone IK, or FABRIK for longer chains, solves each leg. Body height and pitch come from the support legs. Stride and speed scale with leg length. There are special cases: no legs (slither), one leg (hop), and two legs (biped weight shift).
+- **Spine and secondary motion.** Spring dynamics drive the spine, tail and ears. Breathing scales the chest vertebrae. The head turns toward look targets.
+- **Retargetable authored animations.** Clips such as *roar*, *eat*, *wave* and *dance* are written against roles, not bones. For example: "mouth moves toward target, hands raise to head height, spine arches 20°". At runtime the system resolves which parts exist and uses IK to reach the targets. A creature without hands simply skips that track.
+- **Bake for export.** Sample the live controller into AnimationPlayer clips (idle, walk, run, plus the authored clips). Then export the GLB with `GLTFDocument`, so other tools can play the result.
 
-## How the reference becomes a model
+### 7. Editor (Godot app)
 
-1. Isolate the figure and estimate its camera angle and pose. Mark visible anatomical landmarks and distinctive shapes. Mask the other figures and all equipment. Record hidden or ambiguous features as guesses. A raised arm belongs to the reference pose, while the character still needs a neutral stance for walking.
-2. Have a vision model propose a small set of recipes from the actual catalog, using part previews and allowed settings. The builder checks attachments, joint ranges, and part identities. Reject an invalid recipe before scoring it.
-3. Pose each candidate to match the reference and render it from the estimated camera. Compare exposed contours, proportions, and landmark positions. Exclude hidden contours from the fit. Refine camera, shape controls, and part choices in a bounded loop. Use a fixed human-made example to check whether the scoring favors recognizable results.
-4. Give the user the closest valid candidate with a turntable and walking preview. When two plausible interpretations differ meaningfully, show the alternative or accept a second view. Keep uncertain features editable. On this target both horns are visible. Torso depth is inferred, so its shape should stay easy to revise.
+Spore-like interaction:
 
-**Style tolerance.** Let the library simplify the shapes while preserving the horn span, muzzle proportions, and limb proportions. Judge the turntable at thumbnail size and close up in neutral lighting.
+- Drag on the spine to extend it. Use the scroll wheel to fatten a vertebra.
+- Drag parts from a palette onto the body, where they snap to the surface with live mirroring.
+- Drag handles to set a part's parameters.
+- Paint mode, and a test-drive mode that runs the animation.
+- Undo and redo come free, because every edit is a recipe operation.
 
-Single-image part assembly has been demonstrated for furniture using a known, complete set of parts. PolyForge must additionally select suitable parts, vary their shapes, and produce a moving creature. Validate those capabilities on our own references before choosing a model provider or investing in training. [Li et al., ECCV 2020](https://cs.stanford.edu/~liyichen/projects/assembly/)
+### 8. Headless CLI (the AI's hands)
 
-## Motion and export
+```
+godot --headless --path . -- build   recipe.json --out out/         # GLB + validation report
+godot            --path . -- render  recipe.json --views front,side,3q,custom:<cam.json> --size 512
+godot            --path . -- animate recipe.json --clip walk --out walk.mp4
+godot --headless --path . -- library --describe                     # JSON catalog for the AI
+```
 
-Start with idle, look, and a level-ground walk. Animate a biped shifting its pelvis toward the supporting leg. Hold the planted foot in world space while the opposite leg swings toward its next reachable contact. Let the arms swing freely and check shoulder clearance when the torso widens. Bend hips, knees, and ankles within their limits. Adapt stride and body height to limb length. Add authored timing for weight shifts and head motion so character survives the procedural adjustments. Extend to a second body family after these rules work across very different proportions.
+Rendering needs a GPU context. In the container this is Xvfb plus Mesa llvmpipe with `--rendering-driver opengl3`. The CLI also reports validation problems: intersecting parts, a foot that can't reach the ground, or a value out of range.
 
-Deliver both the editable recipe and a rigged GLB model with the neutral preview material and baked idle and walk clips. Baking records the resulting movement so another 3D application can play it. The Godot builder retains the adaptive controller for live changes. Check the export by opening it in a fresh project and a second viewer.
+## AI workflow: image → recipe
 
-## Milestones and review tests
+The orchestrator is in Python and uses the Claude API with vision and tool use. Library and recipe schemas are passed as tool definitions, so every output is a valid recipe.
 
-| Milestone | What we should be able to see |
-| --- | --- |
-| 1. Establish the style and attainable likeness | A hand-built minotaur turntable beside the target image. Identify its defining features. Show the lean biped and narrower horned skull as rough reuse checks. |
-| 2. Prove the body and movement | Short-legged, long-legged, and broad-chested minotaur variants use the same biped walk controller. In slow motion the planted feet stay put, knees bend consistently, and shoulders stay attached. Measure planted-foot drift relative to foot length. |
-| 3. Prove the complete AI workflow | A fresh reference goes in and an editable, walking model comes out. Compare the first AI guess and the refined result with the best human assembly using the same parts. Record generation time and cost per accepted result. |
-| 4. Prove it generalizes and travels | Set aside previously unseen drawings and photos. Check recognition, 360-degree plausibility, style, and walking separately. Include a case with a missing library feature. Pin a feature, revise another, reopen the saved recipe, and play the exported clips in another viewer. |
+1. **Analyze.** A vision model describes the subject in library terms: body plan (biped, quadruped, hexapod, serpent, blob), spine curve and thickness profile, the limbs and where they attach, distinctive features in order of importance (big horns, long neck, three eyes), the dominant colors, and the camera view. Background removal gives a silhouette mask.
+2. **Retrieve.** For each feature, shortlist candidate parts from the catalog by category, style tags and thumbnails. The model then picks one from the thumbnails.
+3. **Draft.** The model writes an initial recipe.
+4. **Render and compare.** Render the recipe from the camera estimated in step 1, plus front, side and three-quarter views. Score it:
+   - silhouette IoU and a chamfer distance against the reference mask (global proportions)
+   - feature checklist: the vision model compares the renders with the reference and confirms each feature from step 1 (recognizability)
+   - palette distance in Lab space
+   - optional embedding similarity (DINOv2 or CLIP) as a tie-breaker
+5. **Refine.** Two update paths:
+   - The model proposes a few structured edits per iteration: swap a part, move an attachment, change a parameter.
+   - A numeric optimizer (CMA-ES or Nelder-Mead) tunes continuous parameters such as spine radii, limb lengths and attach `u`, against silhouette IoU.
 
-Use held-out renders of known recipes alongside real references. Known recipes reveal camera, attachment, and fitting errors. Real references reveal gaps in the library. When the best hand-built example misses the target, improve the parts; when the hand-built example succeeds and the AI falls short, improve selection and fitting.
+   Stop when the score passes the **style tolerance** or stops improving, with a cap of N iterations.
+6. **Output.** The recipe, a GLB with baked clips, turntable and walk previews, a score report, and a **library-gap report**: features that no part could express within tolerance.
 
-## First visual review
+**Style tolerance.** The final score is a weighted sum. Weights are about 0.4 feature checklist, 0.3 silhouette, 0.2 proportions and 0.1 palette. The tolerance is the threshold the user accepts. Fine detail such as texture, fur and exact facial expression is not scored. The checklist weighs the most visible features most, so a stylized result that keeps the recognizable traits beats a closer silhouette with the wrong horns.
 
-Show a gray turntable in the neutral stance. Check horn span, muzzle width, upper-arm mass, and hoof shape against visible anatomy. Review the estimated chest and pelvis in profile, then inspect the weight shift and hoof contact in a short walk.
+**Optional path B (later).** Run an image-to-3D model on the reference to get a rough mesh. Then fit the spine and limbs to it in 3D, using a skeleton from medial-axis extraction. This replaces guessing from a single view and helps with the hidden back side. The library still defines the style.
+
+**Benchmark set.** Start from known recipes: render each one, feed the render to the pipeline, and compare the recipe it builds with the original recipe. This measures fitting error separately from library gaps. Then add 20 to 30 real references: drawings, toys, photos and game creatures. Track the score, iteration count, time and cost per result.
+
+## Milestones
+
+Each milestone ends with something you can look at and an automated check.
+
+| # | Milestone | Done when |
+| --- | --- | --- |
+| 0 | **Scaffold.** Godot 4 project, recipe schema v1, headless build and render CLI working in the container | `build` + `render` of a hardcoded 5-vertebra blob produces a PNG in CI |
+| 1 | **Body.** Spine sweep mesh, bones, computed skin weights, editor spine dragging | Spine bends at runtime without tearing; save/reload round-trips byte-identical |
+| 2 | **Limbs and parts.** Limb chains, surface attachment, symmetry, rigid parts with params; first ~15 parts | Hand-assembled biped, quadruped and hexapod render from one library |
+| 3 | **Locomotion.** Role detection, gait planner, IK, body support, 0–8 legs | Walk clips for the 3 test creatures; planted-foot drift < 5% foot length (measured test) |
+| 4 | **Life.** Spine/tail springs, look-at, breathing, 3 role-based authored clips, GLB bake/export | Exported GLB plays idle/walk/roar in a fresh Godot project and in a glTF viewer |
+| 5 | **Editor UX.** Palette, drag-snap, handles, paint, test drive, undo | A person builds a new creature in under 10 minutes without touching JSON |
+| 6 | **AI v1.** Analyze → draft → render → critique loop; scoring; gap report | On the known-recipe benchmark, recovered recipes score ≥ 0.8; first real-image results reviewed |
+| 7 | **Library growth.** Use gap reports to add parts until ~40; tune tolerance weights | Real-image benchmark median score up, gap count down release over release |
+| 8 | **Beyond creatures (optional).** Reuse the rigid-part assembler for buildings and vehicles (no spine, grid/socket snapping, wheels as a motion role) | One building and one vehicle built from a shared assembler |
+
+Milestones 0 through 3 are the critical path. If parts don't attach well or the walk isn't convincing, the AI layer has nothing good to aim for.
+
+## Decisions to confirm
+
+- **Engine language.** GDScript for everything, or C# or GDExtension for the mesh sweep and IK if they turn out slow. Start with GDScript.
+- **Who authors parts.** Start with code-generated low-poly parts so there is no art bottleneck, and allow hand-modelled `mesh.glb` replacements later.
+- **Scope.** Creatures first. Buildings and vehicles are milestone 8.
+- **Body skin.** Start with a swept surface; it is simpler and faster. Move to an SDF blend if the joins look bad.
+
+## Repository layout (target)
+
+```
+project.godot
+core/        recipe.gd, ops.gd, builder/, rig/, anim/
+library/     parts/, catalog.gd
+editor/      scenes and UI
+cli/         headless entry points
+ai/          Python orchestrator, prompts, scoring, benchmarks
+tests/       recipe round-trip, gait drift, render golden images
+```

@@ -9,12 +9,13 @@
   },
   "image": {
     "file_page": "https://commons.wikimedia.org/wiki/File:Lumbricus.terrestris.jpg",
-    "direct_url": null,
-    "author": null,
-    "license": "CC BY-SA 3.0 (from search-result snippet; not verified on the file page)",
-    "species_shown": "Lumbricus terrestris (per file title; not verified)",
-    "view": "unknown: not viewed; whole-body and clitellum visibility unconfirmed",
-    "image_viewed": false
+    "direct_url": "https://upload.wikimedia.org/wikipedia/commons/5/51/Lumbricus.terrestris.jpg",
+    "author": "James K. Lindsey (James Lindsey's Ecology of Commanster)",
+    "license": "CC BY-SA 2.5 (verified on the Commons file page: Creative Commons Attribution-Share Alike 2.5 Generic)",
+    "species_shown": "Lumbricus terrestris (per the Commons file page description; not confirmed visually)",
+    "view": "unknown: not viewed, because Wikimedia returned HTTP 429 for image downloads from this session; whole-body and clitellum visibility unconfirmed",
+    "image_viewed": false,
+    "image_observations": "Not yet viewed: Wikimedia rate-limited image downloads (HTTP 429) during this pass. The Commons file page (2006 photo, Commanster, Belgian High Ardennes, species Lumbricus terrestris) was read, but the photo was not seen, so whether the whole worm and the clitellum are visible is unconfirmed. Geometry is unchanged from the first pass and still needs checking against the photo."
   },
   "physical_parsing": {
     "bounding_box_m": {"width_x": 0.006, "height_y": 0.006, "length_z": 0.15},
@@ -135,7 +136,7 @@
     {"feature": "Terminal anus (pygidium) as egestion opening", "why": "No library part for an egestion-only opening. mouth_* parts are ingestion structures."}
   ],
   "sources": [
-    "https://commons.wikimedia.org/wiki/File:Lumbricus.terrestris.jpg (candidate image file page; metadata from search snippet, not fetched)",
+    "https://commons.wikimedia.org/wiki/File:Lumbricus.terrestris.jpg (file page fetched; licence CC BY-SA 2.5 and author James K. Lindsey read from the page; image not viewed)",
     "https://commons.wikimedia.org/wiki/File:Lumbricus_terrestris_(26559560801).jpg (alternative candidate; not used)",
     "Edwards CA, Bohlen PJ (1996). Biology and Ecology of Earthworms, 3rd ed. Chapman & Hall (size, segment count, setal arrangement, clitellum position; cited from memory, not checked in this session)",
     "Sims RW, Gerard BM (1985). Earthworms. Synopses of the British Fauna No. 31 (taxonomy and morphology; cited from memory, not checked in this session)"

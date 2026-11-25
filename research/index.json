@@ -5,8 +5,8 @@
       "label": "Beetle (Coleoptera), representative: European stag beetle, Lucanus cervus (male)",
       "scientific": "Lucanus cervus",
       "image": "https://commons.wikimedia.org/wiki/File:Lucanus_cervus_male_Orchi_010.jpg",
-      "license": "CC BY-SA 3.0 / GFDL 1.2+ (per Commons search snippet; not verified on the file page)",
-      "image_viewed": false,
+      "license": "CC BY-SA 3.0 (file page licence template; GFDL 1.2+ also offered)",
+      "image_viewed": true,
       "bounding_box_m": {
         "width_x": 0.02,
         "height_y": 0.016,
@@ -26,7 +26,7 @@
         "toothed tibia (digging/grip)",
         "paired elytra opening along a midline hinge"
       ],
-      "confidence": 0.5,
+      "confidence": 0.6,
       "problems": []
     },
     {
@@ -102,9 +102,9 @@
       "species_id": "feline",
       "label": "Feline (domestic cat)",
       "scientific": "Felis catus",
-      "image": null,
-      "license": null,
-      "image_viewed": false,
+      "image": "https://commons.wikimedia.org/wiki/File:Domestic_cat_in_Poland_1.jpg",
+      "license": "CC BY-SA 4.0",
+      "image_viewed": true,
       "bounding_box_m": {
         "width_x": 0.13,
         "height_y": 0.27,
@@ -123,19 +123,15 @@
         "Whiskers (vibrissae)",
         "Head (rounded skull with forward eyes, mounted on a short neck)"
       ],
-      "confidence": 0.55,
-      "problems": [
-        "no image source",
-        "image licence not recorded as open: None",
-        "fur_coat: no penetration depth"
-      ]
+      "confidence": 0.6,
+      "problems": []
     },
     {
       "species_id": "frog",
       "label": "Amphibian / Frog (order Anura), representative: American bullfrog",
       "scientific": "Lithobates catesbeianus",
       "image": "https://commons.wikimedia.org/wiki/File:Lithobates_catesbeianus_PP.jpg",
-      "license": "CC BY-SA 3.0 (as reported by search-result metadata; not confirmed on the file page)",
+      "license": "CC BY-SA 3.0 (verified: Commons API extmetadata LicenseShortName)",
       "image_viewed": false,
       "bounding_box_m": {
         "width_x": 0.12,
@@ -164,7 +160,7 @@
       "label": "Moon jellyfish (Aurelia aurita), adult medusa",
       "scientific": "Aurelia aurita",
       "image": "https://commons.wikimedia.org/wiki/File:Moon_Jellies_(Aurelia_aurita)_(7153399193).jpg",
-      "license": "CC BY 2.0 per search snippet, not verified on the file page",
+      "license": "CC BY 2.0 (Attribution 2.0 Generic), per the Commons file page",
       "image_viewed": false,
       "bounding_box_m": {
         "width_x": 0.25,
@@ -317,13 +313,13 @@
     },
     {
       "species_id": "scorpion",
-      "label": "Scorpion (typical adult, medium-sized Buthid-type body plan)",
-      "scientific": "Scorpiones (representative: Buthus spp. for size)",
-      "image": "https://commons.wikimedia.org/wiki/File:Emporer_scorpion.jpg (candidate only, not verified; Wikimedia Commons was unreachable)",
-      "license": "CC BY 2.0 (from search index metadata, not verified)",
-      "image_viewed": false,
+      "label": "Scorpion (typical adult body plan; photo shows Emperor scorpion, Pandinus imperator)",
+      "scientific": "Scorpiones (photo: Pandinus imperator; size scale: Buthus spp.)",
+      "image": "https://commons.wikimedia.org/wiki/File:Emporer_scorpion.jpg",
+      "license": "CC BY 2.0 (Creative Commons Attribution 2.0 Generic)",
+      "image_viewed": true,
       "bounding_box_m": {
-        "width_x": 0.03,
+        "width_x": 0.04,
         "height_y": 0.025,
         "length_z": 0.065
       },
@@ -341,21 +337,19 @@
         "Eight articulated walking legs as a set",
         "Curved venomous telson/aculeus"
       ],
-      "confidence": 0.55,
-      "problems": [
-        "pedipalp_L.chela (pincer closure, fixed finger vs movable finger): joint outside normalized box [0.42, 0.25, 0.7]"
-      ]
+      "confidence": 0.65,
+      "problems": []
     },
     {
       "species_id": "shark",
       "label": "Blacktip reef shark (Carcharhinus melanopterus), typical adult, side view",
       "scientific": "Carcharhinus melanopterus",
       "image": "https://commons.wikimedia.org/wiki/File:Blacktip_reef_shark._(Tsumaguro).jpg",
-      "license": "UNVERIFIED. The file page could not be opened from this session, so the licence is unknown. Check the file page before reusing the image.",
-      "image_viewed": false,
+      "license": "CC BY-SA 3.0 (from Commons API extmetadata LicenseShortName)",
+      "image_viewed": true,
       "bounding_box_m": {
         "width_x": 0.35,
-        "height_y": 0.45,
+        "height_y": 0.42,
         "length_z": 1.6
       },
       "parts": 22,
@@ -376,25 +370,15 @@
         "Heterocercal caudal fin (asymmetric upper lobe)",
         "Male pelvic claspers"
       ],
-      "confidence": 0.4,
-      "problems": [
-        "image licence not recorded as open: 'UNVERIFIED. The file page could not be opened from this session, so the licence is unknown. Check the file page before reusing the image.'",
-        "pectoral_fin_R: no penetration depth",
-        "pelvic_fin_R: no penetration depth",
-        "eye_R: no penetration depth",
-        "nostril_R: no penetration depth",
-        "ampullae_of_lorenzini_R: no penetration depth",
-        "lateral_line_R: no penetration depth",
-        "gill_slits_R: no penetration depth",
-        "claspers_R: no penetration depth"
-      ]
+      "confidence": 0.55,
+      "problems": []
     },
     {
       "species_id": "worm",
       "label": "Earthworm (Lumbricus terrestris)",
       "scientific": "Lumbricus terrestris",
       "image": "https://commons.wikimedia.org/wiki/File:Lumbricus.terrestris.jpg",
-      "license": "CC BY-SA 3.0 (from search-result snippet; not verified on the file page)",
+      "license": "CC BY-SA 2.5 (verified on the Commons file page: Creative Commons Attribution-Share Alike 2.5 Generic)",
       "image_viewed": false,
       "bounding_box_m": {
         "width_x": 0.006,

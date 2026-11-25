@@ -9,22 +9,27 @@
   },
   "image": {
     "file_page": "https://commons.wikimedia.org/wiki/File:Blacktip_reef_shark._(Tsumaguro).jpg",
-    "direct_url": null,
-    "author": "Kakidai (taken from the search-result snippet only; not verified on the file page)",
-    "license": "UNVERIFIED. The file page could not be opened from this session, so the licence is unknown. Check the file page before reusing the image.",
-    "species_shown": "Carcharhinus melanopterus (per file title; not visually confirmed)",
-    "view": "unknown (image not opened)",
-    "image_viewed": false
+    "direct_url": "https://upload.wikimedia.org/wikipedia/commons/e/e2/Blacktip_reef_shark._%28Tsumaguro%29.jpg",
+    "author": "Kakidai (Wikimedia Commons user; Artist field from Commons API)",
+    "license": "CC BY-SA 3.0 (from Commons API extmetadata LicenseShortName)",
+    "species_shown": "Carcharhinus melanopterus (per file title; consistent with the photo: black-tipped first dorsal and caudal fins, pale ventral surface, fusiform reef-shark body)",
+    "view": "Whole animal in lateral side view, head to the left, slightly nose-down, body horizontal; photographed in an aquarium tank against a rocky backdrop",
+    "image_viewed": true,
+    "image_observations": "Whole shark in clean side profile, snout at left and upper caudal lobe at right, so every part is visible in one silhouette. The first dorsal is large with a black tip, the second dorsal is small and sits above the anal fin on the posterior trunk, and the pectoral fin is broad and low on the flank. The heterocercal tail has a large upper lobe with a black tip and a smaller lower lobe, and the body is slender and fusiform with a height-to-length ratio of about 0.26. These proportions set the revised bounding box, fin positions and lengths; the aquarium setting is not relevant to the geometry."
   },
   "physical_parsing": {
-    "bounding_box_m": {"width_x": 0.35, "height_y": 0.45, "length_z": 1.6},
-    "approx_volume_m3": 0.09,
-    "volume_method": "Prolate-ellipsoid approximation of the fusiform body (semi-axes 0.8 m long, 0.2 m deep, 0.15 m wide, about 0.10 m3), reduced about 10 percent for the tapered caudal peduncle and tail. Estimate only, not a mesh volume.",
+    "bounding_box_m": {
+      "width_x": 0.35,
+      "height_y": 0.42,
+      "length_z": 1.6
+    },
+    "approx_volume_m3": 0.05,
+    "volume_method": "Prolate-ellipsoid approximation of the fusiform body (semi-axes 0.8 m long, 0.12 m deep, 0.15 m wide, about 0.060 m3), reduced about 10 percent for the tapered caudal peduncle and tail, giving about 0.05 m3. Depth is measured from the side-view photo (body about 0.14 of total length, giving about 0.23 m). Width is not visible in a side view and is kept from the first pass. Estimate only, not a mesh volume.",
     "shape_class": "fusiform (torpedo-shaped) elasmobranch body, dorsoventrally flattened at the snout, laterally compressed at the tail",
     "core": {
-      "description": "Single fusiform core from snout tip (z=+0.5) to caudal peduncle (z about -0.3), centred near (x=0, y=0.33, z=0). The core is about 0.3 m deep at the pectoral region and tapers to a narrow peduncle. The caudal fin is a separate structure attached at the posterior end of the core. Head and trunk form one mass with no separate neck.",
+      "description": "Single fusiform core from snout tip (z=+0.5) to caudal peduncle (z about -0.3), centred near (x=0, y=0.40, z=0). The core is about 0.24 m deep at the pectoral region, judged from the photo, and tapers to a narrow peduncle. The caudal fin is a separate structure attached at the posterior end of the core. Head and trunk form one mass with no separate neck.",
       "segments": 3,
-      "cross_section": "rounded-elliptical, flattened ventrally, about 0.3 m deep by 0.3 m wide at the trunk, tapering to a compressed (roughly 0.1 m) peduncle"
+      "cross_section": "rounded-elliptical, flattened ventrally, about 0.24 m deep by 0.3 m wide at the trunk (width not visible in side view), tapering to a compressed (roughly 0.1 m) peduncle"
     },
     "size_source": "Compagno, L.J.V. (1984) FAO Species Catalogue Vol. 4, Sharks of the World, part 2, Carcharhinus melanopterus: maximum about 1.8 m total length, typical adults about 1.5-1.6 m. Stated from memory and not verified against the live source in this session. Also FishBase (Carcharhinus melanopterus) entry."
   },
@@ -35,22 +40,44 @@
       "category": "locomotion",
       "symmetry": "pair",
       "count": 1,
-      "attach_pos": [0.30, 0.30, 0.24],
+      "attach_pos": [
+        0.3,
+        0.33,
+        0.235
+      ],
       "joints": [
-        {"name": "pectoral girdle / shoulder", "pos": [0.28, 0.30, 0.25], "type": "ball", "pivot_axes": ["x", "y", "z"], "range_deg": [-35, 35]}
+        {
+          "name": "pectoral girdle / shoulder",
+          "pos": [
+            0.28,
+            0.33,
+            0.24
+          ],
+          "type": "ball",
+          "pivot_axes": [
+            "x",
+            "y",
+            "z"
+          ],
+          "range_deg": [
+            -35,
+            35
+          ]
+        }
       ],
       "root_radius_m": 0.035,
-      "length_m": 0.22,
-      "penetration": {"depth_m": 0.02, "fraction_of_root_radius": 0.57, "overlap_region": "anterior-lateral trunk core behind the gill region, at the pectoral girdle"},
+      "length_m": 0.21,
+      "penetration": {
+        "depth_m": 0.02,
+        "fraction_of_root_radius": 0.57,
+        "overlap_region": "anterior-lateral trunk core behind the gill region, at the pectoral girdle"
+      },
       "library_hint": "fin_dorsal",
-      "notes": "Large, broad-based, wing-like, mainly for lift and steering. Hint is a loose match: fin_dorsal is the closest fin shape in the library. Blacktip pectoral is about 15 percent of total length, so about 0.2-0.25 m, which sets length_m."
+      "notes": "Large, broad-based, wing-like, mainly for lift and steering. Photo shows the fin low on the flank behind the gill region, with a tip reaching about 0.13 of total length. Hint is a loose match: fin_dorsal is the closest fin shape in the library."
     },
     {
       "id": "pectoral_fin_R",
-      "mirror_of": "pectoral_fin_L",
-      "name": "Pectoral fin (right)",
-      "category": "locomotion",
-      "symmetry": "pair"
+      "mirror_of": "pectoral_fin_L"
     },
     {
       "id": "pelvic_fin_L",
@@ -58,22 +85,44 @@
       "category": "locomotion",
       "symmetry": "pair",
       "count": 1,
-      "attach_pos": [0.22, 0.22, -0.05],
+      "attach_pos": [
+        0.22,
+        0.26,
+        -0.05
+      ],
       "joints": [
-        {"name": "pelvic girdle", "pos": [0.20, 0.22, -0.05], "type": "ball", "pivot_axes": ["x", "y", "z"], "range_deg": [-25, 25]}
+        {
+          "name": "pelvic girdle",
+          "pos": [
+            0.2,
+            0.26,
+            -0.05
+          ],
+          "type": "ball",
+          "pivot_axes": [
+            "x",
+            "y",
+            "z"
+          ],
+          "range_deg": [
+            -25,
+            25
+          ]
+        }
       ],
       "root_radius_m": 0.02,
       "length_m": 0.12,
-      "penetration": {"depth_m": 0.012, "fraction_of_root_radius": 0.6, "overlap_region": "ventral-lateral trunk core, pelvic girdle region"},
+      "penetration": {
+        "depth_m": 0.012,
+        "fraction_of_root_radius": 0.6,
+        "overlap_region": "ventral-lateral trunk core, pelvic girdle region"
+      },
       "library_hint": "fin_dorsal",
-      "notes": "Smaller ventral fin, used for stability and pitch control. Hint is a loose match only. Pelvic insertion is about midway along the body, roughly 0.55 of total length from the snout."
+      "notes": "Smaller ventral fin, used for stability and pitch control. Photo places the pelvic root at about 0.55 of total length from the snout, as the first pass estimated. Hint is a loose match only."
     },
     {
       "id": "pelvic_fin_R",
-      "mirror_of": "pelvic_fin_L",
-      "name": "Pelvic fin (right)",
-      "category": "locomotion",
-      "symmetry": "pair"
+      "mirror_of": "pelvic_fin_L"
     },
     {
       "id": "dorsal_fin_1",
@@ -81,15 +130,36 @@
       "category": "locomotion",
       "symmetry": "centre",
       "count": 1,
-      "attach_pos": [0.0, 0.66, 0.12],
+      "attach_pos": [
+        0.0,
+        0.7,
+        0.08
+      ],
       "joints": [
-        {"name": "fin base (fixed to dorsal musculature)", "pos": [0.0, 0.66, 0.12], "type": "fixed", "pivot_axes": [], "range_deg": [0, 0]}
+        {
+          "name": "fin base (fixed to dorsal musculature)",
+          "pos": [
+            0.0,
+            0.7,
+            0.08
+          ],
+          "type": "fixed",
+          "pivot_axes": [],
+          "range_deg": [
+            0,
+            0
+          ]
+        }
       ],
       "root_radius_m": 0.025,
       "length_m": 0.12,
-      "penetration": {"depth_m": 0.015, "fraction_of_root_radius": 0.6, "overlap_region": "dorsal midline of the trunk core, above the pectoral region"},
+      "penetration": {
+        "depth_m": 0.015,
+        "fraction_of_root_radius": 0.6,
+        "overlap_region": "dorsal midline of the trunk core, above the pectoral region"
+      },
       "library_hint": "fin_dorsal",
-      "notes": "Large, with a dark tip in blacktip reef sharks. Provides stability and roll control. Its tip reaches about y=0.93 in the normalized frame, so it sets the top of the bounding box."
+      "notes": "Large, with a black tip in blacktip reef sharks (confirmed in the photo). Provides stability and roll control. Its tip reaches y=1.0 in the normalized frame, so it sets the top of the bounding box. Root is over the pectoral region, slightly forward of centre."
     },
     {
       "id": "dorsal_fin_2",
@@ -97,15 +167,36 @@
       "category": "locomotion",
       "symmetry": "centre",
       "count": 1,
-      "attach_pos": [0.0, 0.44, -0.22],
+      "attach_pos": [
+        0.0,
+        0.5,
+        -0.2
+      ],
       "joints": [
-        {"name": "fin base (fixed)", "pos": [0.0, 0.44, -0.22], "type": "fixed", "pivot_axes": [], "range_deg": [0, 0]}
+        {
+          "name": "fin base (fixed)",
+          "pos": [
+            0.0,
+            0.5,
+            -0.2
+          ],
+          "type": "fixed",
+          "pivot_axes": [],
+          "range_deg": [
+            0,
+            0
+          ]
+        }
       ],
       "root_radius_m": 0.012,
       "length_m": 0.05,
-      "penetration": {"depth_m": 0.006, "fraction_of_root_radius": 0.5, "overlap_region": "dorsal caudal-trunk core, posterior to the first dorsal"},
+      "penetration": {
+        "depth_m": 0.006,
+        "fraction_of_root_radius": 0.5,
+        "overlap_region": "dorsal caudal-trunk core, posterior to the first dorsal"
+      },
       "library_hint": "fin_dorsal",
-      "notes": "Small, placed over the anal fin on the posterior trunk, and it helps with stability."
+      "notes": "Small, placed over the anal fin on the posterior trunk (confirmed in the photo), and it helps with stability."
     },
     {
       "id": "anal_fin",
@@ -113,15 +204,36 @@
       "category": "locomotion",
       "symmetry": "centre",
       "count": 1,
-      "attach_pos": [0.0, 0.08, -0.20],
+      "attach_pos": [
+        0.0,
+        0.22,
+        -0.16
+      ],
       "joints": [
-        {"name": "fin base (fixed)", "pos": [0.0, 0.08, -0.20], "type": "fixed", "pivot_axes": [], "range_deg": [0, 0]}
+        {
+          "name": "fin base (fixed)",
+          "pos": [
+            0.0,
+            0.22,
+            -0.16
+          ],
+          "type": "fixed",
+          "pivot_axes": [],
+          "range_deg": [
+            0,
+            0
+          ]
+        }
       ],
       "root_radius_m": 0.012,
-      "length_m": 0.05,
-      "penetration": {"depth_m": 0.006, "fraction_of_root_radius": 0.5, "overlap_region": "ventral caudal-trunk core, posterior to the pelvic fins"},
+      "length_m": 0.06,
+      "penetration": {
+        "depth_m": 0.006,
+        "fraction_of_root_radius": 0.5,
+        "overlap_region": "ventral caudal-trunk core, posterior to the pelvic fins"
+      },
       "library_hint": "fin_dorsal",
-      "notes": "Ventral counterpart of the second dorsal fin. The hint is a shape match only, since fin_dorsal is not ventral by design."
+      "notes": "Ventral counterpart of the second dorsal fin, sitting slightly anterior to the caudal peduncle. The hint is a shape match only, since fin_dorsal is not ventral by design."
     },
     {
       "id": "caudal_fin",
@@ -129,15 +241,38 @@
       "category": "locomotion",
       "symmetry": "centre",
       "count": 1,
-      "attach_pos": [0.0, 0.40, -0.33],
+      "attach_pos": [
+        0.0,
+        0.45,
+        -0.31
+      ],
       "joints": [
-        {"name": "caudal peduncle flex", "pos": [0.0, 0.40, -0.30], "type": "hinge", "pivot_axes": ["y"], "range_deg": [-30, 30]}
+        {
+          "name": "caudal peduncle flex",
+          "pos": [
+            0.0,
+            0.45,
+            -0.29
+          ],
+          "type": "hinge",
+          "pivot_axes": [
+            "y"
+          ],
+          "range_deg": [
+            -30,
+            30
+          ]
+        }
       ],
       "root_radius_m": 0.04,
-      "length_m": 0.30,
-      "penetration": {"depth_m": 0.03, "fraction_of_root_radius": 0.75, "overlap_region": "caudal peduncle end of the core"},
+      "length_m": 0.32,
+      "penetration": {
+        "depth_m": 0.03,
+        "fraction_of_root_radius": 0.75,
+        "overlap_region": "caudal peduncle end of the core"
+      },
       "library_hint": "tail_fan",
-      "notes": "Heterocercal, meaning the upper lobe is larger than the lower, so the tail produces lift and thrust together. The upper lobe is the main thrust surface. Main drive for swimming, and flexed laterally about the peduncle."
+      "notes": "Heterocercal, meaning the upper lobe is larger than the lower (confirmed in the photo), so the tail produces lift and thrust together. The upper lobe is the main thrust surface, and both lobes have black tips. Main drive for swimming, and flexed laterally about the peduncle."
     },
     {
       "id": "eye_L",
@@ -145,22 +280,44 @@
       "category": "sensory",
       "symmetry": "pair",
       "count": 1,
-      "attach_pos": [0.33, 0.52, 0.42],
+      "attach_pos": [
+        0.33,
+        0.47,
+        0.42
+      ],
       "joints": [
-        {"name": "orbit (eyeball rotation, small)", "pos": [0.33, 0.52, 0.42], "type": "ball", "pivot_axes": ["x", "y", "z"], "range_deg": [-10, 10]}
+        {
+          "name": "orbit (eyeball rotation, small)",
+          "pos": [
+            0.33,
+            0.47,
+            0.42
+          ],
+          "type": "ball",
+          "pivot_axes": [
+            "x",
+            "y",
+            "z"
+          ],
+          "range_deg": [
+            -10,
+            10
+          ]
+        }
       ],
       "root_radius_m": 0.01,
       "length_m": 0.02,
-      "penetration": {"depth_m": 0.005, "fraction_of_root_radius": 0.5, "overlap_region": "dorsolateral head core, orbit"},
+      "penetration": {
+        "depth_m": 0.005,
+        "fraction_of_root_radius": 0.5,
+        "overlap_region": "dorsolateral head core, orbit"
+      },
       "library_hint": "eye_round",
       "notes": "Dorsolateral placement on the head with a nictitating membrane. Small and mostly stationary. The hint is a rough match."
     },
     {
       "id": "eye_R",
-      "mirror_of": "eye_L",
-      "name": "Eye (right)",
-      "category": "sensory",
-      "symmetry": "pair"
+      "mirror_of": "eye_L"
     },
     {
       "id": "nostril_L",
@@ -168,22 +325,40 @@
       "category": "sensory",
       "symmetry": "pair",
       "count": 1,
-      "attach_pos": [0.06, 0.25, 0.47],
+      "attach_pos": [
+        0.06,
+        0.41,
+        0.47
+      ],
       "joints": [
-        {"name": "nasal capsule (fixed)", "pos": [0.06, 0.25, 0.47], "type": "fixed", "pivot_axes": [], "range_deg": [0, 0]}
+        {
+          "name": "nasal capsule (fixed)",
+          "pos": [
+            0.06,
+            0.25,
+            0.47
+          ],
+          "type": "fixed",
+          "pivot_axes": [],
+          "range_deg": [
+            0,
+            0
+          ]
+        }
       ],
       "root_radius_m": 0.01,
       "length_m": 0.02,
-      "penetration": {"depth_m": 0.004, "fraction_of_root_radius": 0.4, "overlap_region": "ventral snout core, nasal capsule"},
+      "penetration": {
+        "depth_m": 0.004,
+        "fraction_of_root_radius": 0.4,
+        "overlap_region": "ventral snout core, nasal capsule"
+      },
       "library_hint": null,
       "notes": "Ventral nostril, a non-protruding inhalant opening for olfaction. No library equivalent. Symmetric pair on the ventral snout."
     },
     {
       "id": "nostril_R",
-      "mirror_of": "nostril_L",
-      "name": "Nostril / nasal capsule (right)",
-      "category": "sensory",
-      "symmetry": "pair"
+      "mirror_of": "nostril_L"
     },
     {
       "id": "ampullae_of_lorenzini_L",
@@ -191,22 +366,40 @@
       "category": "sensory",
       "symmetry": "pair",
       "count": 1,
-      "attach_pos": [0.10, 0.30, 0.46],
+      "attach_pos": [
+        0.1,
+        0.36,
+        0.46
+      ],
       "joints": [
-        {"name": "pore field (fixed in skin)", "pos": [0.10, 0.30, 0.46], "type": "fixed", "pivot_axes": [], "range_deg": [0, 0]}
+        {
+          "name": "pore field (fixed in skin)",
+          "pos": [
+            0.1,
+            0.3,
+            0.46
+          ],
+          "type": "fixed",
+          "pivot_axes": [],
+          "range_deg": [
+            0,
+            0
+          ]
+        }
       ],
       "root_radius_m": 0.02,
       "length_m": 0.06,
-      "penetration": {"depth_m": 0.01, "fraction_of_root_radius": 0.5, "overlap_region": "ventral head surface, subdermal canal network"},
+      "penetration": {
+        "depth_m": 0.01,
+        "fraction_of_root_radius": 0.5,
+        "overlap_region": "ventral head surface, subdermal canal network"
+      },
       "library_hint": null,
       "notes": "Electroreceptive jelly-filled canals opening through pores on the ventral snout and head. Flush with the skin, so it needs only a shallow surface overlap. No library equivalent."
     },
     {
       "id": "ampullae_of_lorenzini_R",
-      "mirror_of": "ampullae_of_lorenzini_L",
-      "name": "Ampullae of Lorenzini field (right)",
-      "category": "sensory",
-      "symmetry": "pair"
+      "mirror_of": "ampullae_of_lorenzini_L"
     },
     {
       "id": "lateral_line_L",
@@ -214,22 +407,40 @@
       "category": "sensory",
       "symmetry": "pair",
       "count": 1,
-      "attach_pos": [0.40, 0.40, 0.0],
+      "attach_pos": [
+        0.4,
+        0.43,
+        0.0
+      ],
       "joints": [
-        {"name": "canal (fixed in skin)", "pos": [0.40, 0.40, 0.0], "type": "fixed", "pivot_axes": [], "range_deg": [0, 0]}
+        {
+          "name": "canal (fixed in skin)",
+          "pos": [
+            0.4,
+            0.4,
+            0.0
+          ],
+          "type": "fixed",
+          "pivot_axes": [],
+          "range_deg": [
+            0,
+            0
+          ]
+        }
       ],
       "root_radius_m": 0.003,
       "length_m": 1.4,
-      "penetration": {"depth_m": 0.002, "fraction_of_root_radius": 0.67, "overlap_region": "lateral trunk surface along the full body length"},
+      "penetration": {
+        "depth_m": 0.002,
+        "fraction_of_root_radius": 0.67,
+        "overlap_region": "lateral trunk surface along the full body length"
+      },
       "library_hint": null,
       "notes": "Mechanosensory canal along each flank, running from head to tail. Sensitive to water movement. Flush with the skin, so it is a surface detail. No library equivalent."
     },
     {
       "id": "lateral_line_R",
-      "mirror_of": "lateral_line_L",
-      "name": "Lateral line canal (right)",
-      "category": "sensory",
-      "symmetry": "pair"
+      "mirror_of": "lateral_line_L"
     },
     {
       "id": "upper_jaw",
@@ -237,13 +448,34 @@
       "category": "feeding",
       "symmetry": "centre",
       "count": 1,
-      "attach_pos": [0.0, 0.35, 0.44],
+      "attach_pos": [
+        0.0,
+        0.4,
+        0.44
+      ],
       "joints": [
-        {"name": "jaw suspension to neurocranium (fixed for practical purposes)", "pos": [0.0, 0.36, 0.42], "type": "fixed", "pivot_axes": [], "range_deg": [0, 0]}
+        {
+          "name": "jaw suspension to neurocranium (fixed for practical purposes)",
+          "pos": [
+            0.0,
+            0.41,
+            0.42
+          ],
+          "type": "fixed",
+          "pivot_axes": [],
+          "range_deg": [
+            0,
+            0
+          ]
+        }
       ],
       "root_radius_m": 0.03,
       "length_m": 0.08,
-      "penetration": {"depth_m": 0.015, "fraction_of_root_radius": 0.5, "overlap_region": "anterior head core, neurocranium"},
+      "penetration": {
+        "depth_m": 0.015,
+        "fraction_of_root_radius": 0.5,
+        "overlap_region": "anterior head core, neurocranium"
+      },
       "library_hint": "mouth_jaws",
       "notes": "Upper jaw carries the upper tooth rows and is largely fixed to the skull. Sharks have no true jaw protrusion here, unlike bony fishes. Hint is a rough match."
     },
@@ -253,13 +485,36 @@
       "category": "feeding",
       "symmetry": "centre",
       "count": 1,
-      "attach_pos": [0.0, 0.31, 0.42],
+      "attach_pos": [
+        0.0,
+        0.37,
+        0.42
+      ],
       "joints": [
-        {"name": "jaw hinge at mandibular articulation", "pos": [0.0, 0.31, 0.40], "type": "hinge", "pivot_axes": ["x"], "range_deg": [0, 30]}
+        {
+          "name": "jaw hinge at mandibular articulation",
+          "pos": [
+            0.0,
+            0.37,
+            0.4
+          ],
+          "type": "hinge",
+          "pivot_axes": [
+            "x"
+          ],
+          "range_deg": [
+            0,
+            30
+          ]
+        }
       ],
       "root_radius_m": 0.02,
       "length_m": 0.07,
-      "penetration": {"depth_m": 0.01, "fraction_of_root_radius": 0.5, "overlap_region": "ventral-anterior head core, mandibular articulation"},
+      "penetration": {
+        "depth_m": 0.01,
+        "fraction_of_root_radius": 0.5,
+        "overlap_region": "ventral-anterior head core, mandibular articulation"
+      },
       "library_hint": "mouth_jaws",
       "notes": "Opens by rotating down about the mandibular articulation. Carries the lower tooth rows, which are replaced continuously in series."
     },
@@ -269,22 +524,40 @@
       "category": "feeding",
       "symmetry": "pair",
       "count": 5,
-      "attach_pos": [0.25, 0.35, 0.32],
+      "attach_pos": [
+        0.25,
+        0.43,
+        0.29
+      ],
       "joints": [
-        {"name": "branchial region (fixed)", "pos": [0.25, 0.35, 0.32], "type": "fixed", "pivot_axes": [], "range_deg": [0, 0]}
+        {
+          "name": "branchial region (fixed)",
+          "pos": [
+            0.25,
+            0.43,
+            0.29
+          ],
+          "type": "fixed",
+          "pivot_axes": [],
+          "range_deg": [
+            0,
+            0
+          ]
+        }
       ],
       "root_radius_m": 0.01,
-      "length_m": 0.10,
-      "penetration": {"depth_m": 0.005, "fraction_of_root_radius": 0.5, "overlap_region": "lateral branchial region of the head and trunk core"},
+      "length_m": 0.06,
+      "penetration": {
+        "depth_m": 0.005,
+        "fraction_of_root_radius": 0.5,
+        "overlap_region": "lateral branchial region of the head and trunk core"
+      },
       "library_hint": null,
-      "notes": "Five slits per side for respiratory water outflow. Not used for prey capture, so the feeding category is the closest fit in this taxonomy. Count is per side."
+      "notes": "Five slits per side for respiratory water outflow. In the photo the slit row spans about 0.05-0.06 m, so length_m is revised. Not used for prey capture, so the feeding category is the closest fit in this taxonomy. Count is per side."
     },
     {
       "id": "gill_slits_R",
-      "mirror_of": "gill_slits_L",
-      "name": "Gill slits, five per side (right)",
-      "category": "feeding",
-      "symmetry": "pair"
+      "mirror_of": "gill_slits_L"
     },
     {
       "id": "claspers_L",
@@ -292,25 +565,51 @@
       "category": "manipulation",
       "symmetry": "pair",
       "count": 1,
-      "attach_pos": [0.12, 0.20, -0.10],
+      "attach_pos": [
+        0.12,
+        0.24,
+        -0.1
+      ],
       "joints": [
-        {"name": "clasper base on pelvic fin", "pos": [0.12, 0.20, -0.10], "type": "hinge", "pivot_axes": ["z"], "range_deg": [0, 90]}
+        {
+          "name": "clasper base on pelvic fin",
+          "pos": [
+            0.12,
+            0.24,
+            -0.1
+          ],
+          "type": "hinge",
+          "pivot_axes": [
+            "z"
+          ],
+          "range_deg": [
+            0,
+            90
+          ]
+        }
       ],
       "root_radius_m": 0.01,
-      "length_m": 0.10,
-      "penetration": {"depth_m": 0.005, "fraction_of_root_radius": 0.5, "overlap_region": "ventral pelvic girdle core"},
+      "length_m": 0.1,
+      "penetration": {
+        "depth_m": 0.005,
+        "fraction_of_root_radius": 0.5,
+        "overlap_region": "ventral pelvic girdle core"
+      },
       "library_hint": "hand_claw",
       "notes": "Male-only reproductive grasping organ, a modified inner edge of the pelvic fin. It grasps during mating and is the only manipulation structure. Hint is a poor match, so this is a low-confidence category assignment. Females lack it."
     },
     {
       "id": "claspers_R",
-      "mirror_of": "claspers_L",
-      "name": "Pelvic clasper (right, males only)",
-      "category": "manipulation",
-      "symmetry": "pair"
+      "mirror_of": "claspers_L"
     }
   ],
-  "category_summary": {"locomotion": 6, "sensory": 4, "feeding": 3, "manipulation": 1, "aesthetics": 0},
+  "category_summary": {
+    "locomotion": 6,
+    "sensory": 4,
+    "feeding": 3,
+    "manipulation": 1,
+    "aesthetics": 0
+  },
   "constraints": {
     "symmetry": "bilateral about the sagittal (X=0) plane, with the caudal fin on the midline. Parts are listed by distinct structure; each pair counts once.",
     "gait": "Lateral undulation of the posterior trunk and caudal fin, with pectoral fins used for lift and steering and pelvic fins for pitch. Caudal fin is heterocercal (asymmetric). Blacktip reef sharks are fast and agile, with frequent sharp turns.",
@@ -323,20 +622,43 @@
     ]
   },
   "library_gaps": [
-    {"feature": "Ampullae of Lorenzini (electroreceptive pores)", "why": "Flush-to-skin pore fields with no library equivalent; needs a small surface decal or flat disc."},
-    {"feature": "Lateral line canal", "why": "Long, thin sensory canal along the flank. No library equivalent for a flush line."},
-    {"feature": "Nostrils (ventral nasal capsules)", "why": "Ventral, non-protruding inhalant openings. The library has nose_button, but it is a protruding feature."},
-    {"feature": "Gill slits (five per side)", "why": "Repeated slits with a respiratory function. No library equivalent, and the taxonomy has no respiration category."},
-    {"feature": "Teeth (multi-row, replaced in series)", "why": "Dental rows inside the jaws, far too fine for a library part. Needs a texture or decal."},
-    {"feature": "Dermal denticles (placoid scales)", "why": "Surface texture. Not a mesh part, and the library has no scale-texture category."},
-    {"feature": "Heterocercal caudal fin (asymmetric upper lobe)", "why": "tail_fan is symmetric, so an asymmetric shark tail needs a custom shape."},
-    {"feature": "Male pelvic claspers", "why": "Reproductive grasping organs. hand_claw is a poor match, and the library has no reproductive or clasping part."}
+    {
+      "feature": "Ampullae of Lorenzini (electroreceptive pores)",
+      "why": "Flush-to-skin pore fields with no library equivalent; needs a small surface decal or flat disc."
+    },
+    {
+      "feature": "Lateral line canal",
+      "why": "Long, thin sensory canal along the flank. No library equivalent for a flush line."
+    },
+    {
+      "feature": "Nostrils (ventral nasal capsules)",
+      "why": "Ventral, non-protruding inhalant openings. The library has nose_button, but it is a protruding feature."
+    },
+    {
+      "feature": "Gill slits (five per side)",
+      "why": "Repeated slits with a respiratory function. No library equivalent, and the taxonomy has no respiration category."
+    },
+    {
+      "feature": "Teeth (multi-row, replaced in series)",
+      "why": "Dental rows inside the jaws, far too fine for a library part. Needs a texture or decal."
+    },
+    {
+      "feature": "Dermal denticles (placoid scales)",
+      "why": "Surface texture. Not a mesh part, and the library has no scale-texture category."
+    },
+    {
+      "feature": "Heterocercal caudal fin (asymmetric upper lobe)",
+      "why": "tail_fan is symmetric, so an asymmetric shark tail needs a custom shape."
+    },
+    {
+      "feature": "Male pelvic claspers",
+      "why": "Reproductive grasping organs. hand_claw is a poor match, and the library has no reproductive or clasping part."
+    }
   ],
   "sources": [
-    "Compagno, L.J.V. (1984). FAO Species Catalogue Vol. 4, Sharks of the World, Part 2. FAO, Rome. (Carcharhinus melanopterus species account; size and morphology.) Cited from memory, not verified online.",
+    "Compagno, L.J.V. (1984). FAO Species Catalogue Vol. 4, Sharks of the World, Part 2. FAO, Rome. (Carcharhinus melanopterus species account; size.) Cited from memory, not verified online.",
     "FishBase, Carcharhinus melanopterus (blacktip reef shark) species page, https://www.fishbase.se/summary/Carcharhinus-melanopterus.html. Cited from memory, not verified online.",
-    "Wikimedia Commons, File:Blacktip_reef_shark._(Tsumaguro).jpg, https://commons.wikimedia.org/wiki/File:Blacktip_reef_shark._(Tsumaguro).jpg. Located through the WebSearch snippet only; file page not opened, so licence and image are unverified.",
-    "Wikimedia Commons, Category:Carcharhinus melanopterus, https://commons.wikimedia.org/wiki/Category:Carcharhinus_melanopterus. Used to locate candidates only."
+    "Wikimedia Commons, File:Blacktip_reef_shark._(Tsumaguro).jpg, https://commons.wikimedia.org/wiki/File:Blacktip_reef_shark._(Tsumaguro).jpg. Verified via the Commons API: author Kakidai, licence CC BY-SA 3.0. Image viewed (downscaled copy of the original upload file)."
   ],
-  "confidence": 0.4
+  "confidence": 0.55
 }

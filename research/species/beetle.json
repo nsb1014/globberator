@@ -9,12 +9,13 @@
   },
   "image": {
     "file_page": "https://commons.wikimedia.org/wiki/File:Lucanus_cervus_male_Orchi_010.jpg",
-    "direct_url": null,
-    "author": "Orchi (per Commons search snippet; not verified on the file page)",
-    "license": "CC BY-SA 3.0 / GFDL 1.2+ (per Commons search snippet; not verified on the file page)",
-    "species_shown": "Lucanus cervus, adult male, Saarland, Germany (2013)",
-    "view": "unknown (not viewed; Commons search snippet gives 2000x1500 JPEG, self-photographed)",
-    "image_viewed": false
+    "direct_url": "https://upload.wikimedia.org/wikipedia/commons/9/91/Lucanus_cervus_male_Orchi_010.jpg",
+    "author": "Orchi (Commons 'Photographer' field; user page https://commons.wikimedia.org/wiki/User:Orchi)",
+    "license": "CC BY-SA 3.0 (file page licence template; GFDL 1.2+ also offered)",
+    "species_shown": "Lucanus cervus, adult male, self-photographed in Germany (Saarland); uploaded 4 June 2013. Whole beetle in frame, dorsal-oblique view on weathered wood.",
+    "view": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/91/Lucanus_cervus_male_Orchi_010.jpg/1280px-Lucanus_cervus_male_Orchi_010.jpg",
+    "image_viewed": true,
+    "image_observations": "The photo shows a whole adult male stag beetle in a dorsal-oblique view, so the body outline, head, pronotum, elytra and all six legs are visible, but the angle foreshortens the length and hides the underside. The mandibles are the dominant feature: long, dark red-brown, strongly curved upward and forward, with a sharp forward tooth near the tip and smaller inner teeth. The elytra are a glossy, elongated oval making up most of the body width; the pronotum is a darker, more matte, granulated shield in front of the scutellum. Antennae are elbowed with a fan-shaped (lamellate) club. Legs are long and slender with dark tarsi, the hind pair reaching furthest. Proportions are estimates from this oblique view, checked against the photo rather than measured."
   },
   "physical_parsing": {
     "bounding_box_m": {
@@ -107,7 +108,7 @@
         "overlap_region": "dorsal core under the pronotum, z 0.08-0.16"
       },
       "library_hint": "plate",
-      "notes": "Broad, shiny, slightly convex shield over the prothorax. Mostly ornamental/protective; hides the head-thorax join."
+      "notes": "Broad, slightly convex, granulated (matte) shield over the prothorax in the photo, darker than the glossy elytra. Mostly ornamental/protective; hides the head-thorax join."
     },
     {
       "id": "mandible_L",
@@ -146,7 +147,7 @@
         "overlap_region": "head front, x 0.00-0.12, z 0.36-0.44"
       },
       "library_hint": "mouth_mandibles",
-      "notes": "Male mandibles are very long, antler-like, with a forward tooth. Used for male-male combat and grasping. Primary function is sexual display/combat, with feeding secondary. Length ~1/3 of total body length."
+      "notes": "Male mandibles are very long, strongly curved and antler-like, with a sharp forward tooth near the tip and smaller inner teeth (seen in the photo). Functionally a manipulation/combat structure: used in male-male contests (pushing and levering) and for gripping mates and prey. Categorised as feeding because the mandible base is part of the mouthpart apparatus; sexual-display and combat function is primary, feeding secondary. Length roughly a third to a half of body length; the 0.02 m estimate comes from the oblique view."
     },
     {
       "id": "palp_L",
@@ -191,7 +192,7 @@
     },
     {
       "id": "antenna_L",
-      "name": "antenna (geniculate, 10-segment, short club)",
+      "name": "antenna (geniculate, 10-segment, lamellate club)",
       "category": "sensory",
       "symmetry": "pair",
       "count": 1,
@@ -245,7 +246,7 @@
         "overlap_region": "head side, x 0.08-0.14, y 0.56-0.62, z 0.34-0.40"
       },
       "library_hint": "antenna",
-      "notes": "Elbowed (geniculate) antenna: long scape, flexible flagellum ending in a short club. Chemo/mechanosensory."
+      "notes": "Elbowed (geniculate) antenna: long scape, flexible flagellum ending in a fan-shaped (lamellate) club, visible in the photo. Chemo/mechanosensory."
     },
     {
       "id": "eye_L",
@@ -616,9 +617,10 @@
     }
   ],
   "sources": [
-    "https://commons.wikimedia.org/wiki/File:Lucanus_cervus_male_Orchi_010.jpg (listed via Commons search snippet only; file page not fetched)",
+    "https://commons.wikimedia.org/wiki/File:Lucanus_cervus_male_Orchi_010.jpg (file page fetched: photographer Orchi, CC BY-SA 3.0 licence template, 2000x1500 original, self-photographed; Commons API metadata unavailable due to rate limiting)",
+    "Image viewed locally: 1280px thumbnail https://thumb.wikimedia.org/wikipedia/commons/thumb/9/91/Lucanus_cervus_male_Orchi_010.jpg/1280px-Lucanus_cervus_male_Orchi_010.jpg (fetched via upload.wikimedia.org after rate limiting)",
     "Lucanus cervus, Wikipedia: adult size and male mandible description (general reference knowledge; not fetched in this session)",
     "Coleoptera anatomy (head, pronotum, elytra, hind wing, five-segment tarsus, geniculate antenna): general entomology reference, not fetched in this session"
   ],
-  "confidence": 0.5
+  "confidence": 0.6
 }

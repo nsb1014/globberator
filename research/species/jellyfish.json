@@ -9,13 +9,14 @@
   },
   "image": {
     "file_page": "https://commons.wikimedia.org/wiki/File:Moon_Jellies_(Aurelia_aurita)_(7153399193).jpg",
-    "direct_url": null,
-    "author": "Not verified (Flickr-sourced per search snippet; name not retrieved)",
-    "license": "CC BY 2.0 per search snippet, not verified on the file page",
+    "direct_url": "https://upload.wikimedia.org/wikipedia/commons/c/c4/Moon_Jellies_%28Aurelia_aurita%29_%287153399193%29.jpg",
+    "author": "Cliff from Arlington, Virginia, USA (Flickr user; per the Commons file page)",
+    "license": "CC BY 2.0 (Attribution 2.0 Generic), per the Commons file page",
     "species_shown": "Aurelia aurita",
-    "view": "unknown (not viewed)",
+    "view": "unknown (not viewed; image download returned HTTP 429 from upload.wikimedia.org)",
     "image_viewed": false
   },
+  "image_observations": "NOT COMPLETED. The Commons file page was fetched and its licence (CC BY 2.0) and author were verified there, and the direct image URL was taken from the page. The image itself could not be downloaded because upload.wikimedia.org returned HTTP 429 (rate limiting) for every attempt, including retries after waits, and the Commons API also returned rate-limit errors. The bounding box, part positions and flexion values were therefore NOT revised from a photo and still reflect the first-pass estimates.",
   "physical_parsing": {
     "bounding_box_m": {"width_x": 0.25, "height_y": 0.10, "length_z": 0.25},
     "approx_volume_m3": 0.0023,

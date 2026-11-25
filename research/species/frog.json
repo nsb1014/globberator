@@ -10,14 +10,18 @@
   "image": {
     "file_page": "https://commons.wikimedia.org/wiki/File:Lithobates_catesbeianus_PP.jpg",
     "direct_url": "https://upload.wikimedia.org/wikipedia/commons/6/66/Lithobates_catesbeianus_PP.jpg",
-    "author": null,
-    "license": "CC BY-SA 3.0 (as reported by search-result metadata; not confirmed on the file page)",
-    "species_shown": "Lithobates catesbeianus, adult male (Quebec), per search-result description",
-    "view": "unknown (not retrieved); parsing assumes a typical side or three-quarter resting pose",
+    "author": "Cephas (Commons user; 'Own work')",
+    "license": "CC BY-SA 3.0 (verified: Commons API extmetadata LicenseShortName)",
+    "species_shown": "Lithobates catesbeianus, adult male, Plaisance National Park, Quebec (June 2012), per Commons ImageDescription",
+    "view": "not visually confirmed; Commons categories list 'Amphibians facing left' and water reflections. Image download was refused with HTTP 429 on upload.wikimedia.org, and thumb.wikimedia.org is blocked by the egress proxy.",
     "image_viewed": false
   },
   "physical_parsing": {
-    "bounding_box_m": {"width_x": 0.12, "height_y": 0.07, "length_z": 0.20},
+    "bounding_box_m": {
+      "width_x": 0.12,
+      "height_y": 0.07,
+      "length_z": 0.2
+    },
     "approx_volume_m3": 0.0003,
     "volume_method": "Ellipsoid for the trunk and head (semi-axes 0.045 x 0.025 x 0.065 m, about 0.0003 m3, roughly 0.3 kg at density ~1). Limbs are excluded as they are thin and add little volume. Bounding box assumes a resting, crouched posture with legs folded, giving about 0.12 m across the spread hind knees, 0.07 m high and 0.20 m snout-to-toe.",
     "shape_class": "squat ovoid body (dorsoventrally flattened, wider than tall) with a broad head fused to the trunk and splayed, folded hind limbs",
@@ -35,11 +39,62 @@
       "category": "locomotion",
       "symmetry": "pair",
       "count": 2,
-      "attach_pos": [0.25, 0.5, -0.15],
+      "attach_pos": [
+        0.25,
+        0.5,
+        -0.15
+      ],
       "joints": [
-        {"name": "hip (acetabulum, ball)", "pos": [0.25, 0.5, -0.15], "type": "ball", "pivot_axes": ["x", "y", "z"], "range_deg": [-40, 90]},
-        {"name": "knee", "pos": [0.417, 0.286, -0.15], "type": "hinge", "pivot_axes": ["x"], "range_deg": [0, 135]},
-        {"name": "ankle (tarsal)", "pos": [0.29, 0.17, -0.425], "type": "hinge", "pivot_axes": ["x"], "range_deg": [0, 90]}
+        {
+          "name": "hip (acetabulum, ball)",
+          "pos": [
+            0.25,
+            0.5,
+            -0.15
+          ],
+          "type": "ball",
+          "pivot_axes": [
+            "x",
+            "y",
+            "z"
+          ],
+          "range_deg": [
+            -40,
+            90
+          ]
+        },
+        {
+          "name": "knee",
+          "pos": [
+            0.417,
+            0.286,
+            -0.15
+          ],
+          "type": "hinge",
+          "pivot_axes": [
+            "x"
+          ],
+          "range_deg": [
+            0,
+            135
+          ]
+        },
+        {
+          "name": "ankle (tarsal)",
+          "pos": [
+            0.29,
+            0.17,
+            -0.425
+          ],
+          "type": "hinge",
+          "pivot_axes": [
+            "x"
+          ],
+          "range_deg": [
+            0,
+            90
+          ]
+        }
       ],
       "root_radius_m": 0.012,
       "length_m": 0.17,
@@ -57,10 +112,42 @@
       "category": "locomotion",
       "symmetry": "pair",
       "count": 2,
-      "attach_pos": [0.29, 0.17, -0.425],
+      "attach_pos": [
+        0.29,
+        0.17,
+        -0.425
+      ],
       "joints": [
-        {"name": "ankle to foot", "pos": [0.29, 0.17, -0.425], "type": "hinge", "pivot_axes": ["x"], "range_deg": [-20, 40]},
-        {"name": "toe (metatarsophalangeal)", "pos": [0.29, 0.10, -0.5], "type": "fixed", "pivot_axes": [], "range_deg": [0, 0]}
+        {
+          "name": "ankle to foot",
+          "pos": [
+            0.29,
+            0.17,
+            -0.425
+          ],
+          "type": "hinge",
+          "pivot_axes": [
+            "x"
+          ],
+          "range_deg": [
+            -20,
+            40
+          ]
+        },
+        {
+          "name": "toe (metatarsophalangeal)",
+          "pos": [
+            0.29,
+            0.1,
+            -0.5
+          ],
+          "type": "fixed",
+          "pivot_axes": [],
+          "range_deg": [
+            0,
+            0
+          ]
+        }
       ],
       "root_radius_m": 0.008,
       "length_m": 0.05,
@@ -78,11 +165,62 @@
       "category": "manipulation",
       "symmetry": "pair",
       "count": 2,
-      "attach_pos": [0.167, 0.4, 0.2],
+      "attach_pos": [
+        0.167,
+        0.4,
+        0.2
+      ],
       "joints": [
-        {"name": "shoulder (pectoral girdle)", "pos": [0.167, 0.4, 0.2], "type": "ball", "pivot_axes": ["x", "y", "z"], "range_deg": [-30, 60]},
-        {"name": "elbow", "pos": [0.29, 0.29, 0.3], "type": "hinge", "pivot_axes": ["x"], "range_deg": [0, 120]},
-        {"name": "wrist", "pos": [0.33, 0.25, 0.37], "type": "hinge", "pivot_axes": ["x"], "range_deg": [-20, 40]}
+        {
+          "name": "shoulder (pectoral girdle)",
+          "pos": [
+            0.167,
+            0.4,
+            0.2
+          ],
+          "type": "ball",
+          "pivot_axes": [
+            "x",
+            "y",
+            "z"
+          ],
+          "range_deg": [
+            -30,
+            60
+          ]
+        },
+        {
+          "name": "elbow",
+          "pos": [
+            0.29,
+            0.29,
+            0.3
+          ],
+          "type": "hinge",
+          "pivot_axes": [
+            "x"
+          ],
+          "range_deg": [
+            0,
+            120
+          ]
+        },
+        {
+          "name": "wrist",
+          "pos": [
+            0.33,
+            0.25,
+            0.37
+          ],
+          "type": "hinge",
+          "pivot_axes": [
+            "x"
+          ],
+          "range_deg": [
+            -20,
+            40
+          ]
+        }
       ],
       "root_radius_m": 0.004,
       "length_m": 0.04,
@@ -100,9 +238,26 @@
       "category": "sensory",
       "symmetry": "pair",
       "count": 2,
-      "attach_pos": [0.167, 0.83, 0.25],
+      "attach_pos": [
+        0.167,
+        0.83,
+        0.25
+      ],
       "joints": [
-        {"name": "eyeball in orbit", "pos": [0.167, 0.83, 0.25], "type": "fixed", "pivot_axes": [], "range_deg": [0, 0]}
+        {
+          "name": "eyeball in orbit",
+          "pos": [
+            0.167,
+            0.83,
+            0.25
+          ],
+          "type": "fixed",
+          "pivot_axes": [],
+          "range_deg": [
+            0,
+            0
+          ]
+        }
       ],
       "root_radius_m": 0.007,
       "length_m": 0.014,
@@ -120,9 +275,26 @@
       "category": "sensory",
       "symmetry": "pair",
       "count": 2,
-      "attach_pos": [0.21, 0.74, 0.15],
+      "attach_pos": [
+        0.21,
+        0.74,
+        0.15
+      ],
       "joints": [
-        {"name": "tympanum membrane", "pos": [0.21, 0.74, 0.15], "type": "fixed", "pivot_axes": [], "range_deg": [0, 0]}
+        {
+          "name": "tympanum membrane",
+          "pos": [
+            0.21,
+            0.74,
+            0.15
+          ],
+          "type": "fixed",
+          "pivot_axes": [],
+          "range_deg": [
+            0,
+            0
+          ]
+        }
       ],
       "root_radius_m": 0.005,
       "length_m": 0.01,
@@ -140,9 +312,28 @@
       "category": "feeding",
       "symmetry": "centre",
       "count": 1,
-      "attach_pos": [0.0, 0.43, 0.45],
+      "attach_pos": [
+        0.0,
+        0.43,
+        0.45
+      ],
       "joints": [
-        {"name": "jaw hinge (quadrate)", "pos": [0.0, 0.43, 0.45], "type": "hinge", "pivot_axes": ["x"], "range_deg": [0, 35]}
+        {
+          "name": "jaw hinge (quadrate)",
+          "pos": [
+            0.0,
+            0.43,
+            0.45
+          ],
+          "type": "hinge",
+          "pivot_axes": [
+            "x"
+          ],
+          "range_deg": [
+            0,
+            35
+          ]
+        }
       ],
       "root_radius_m": 0.02,
       "length_m": 0.05,
@@ -160,9 +351,28 @@
       "category": "feeding",
       "symmetry": "centre",
       "count": 1,
-      "attach_pos": [0.0, 0.5, 0.15],
+      "attach_pos": [
+        0.0,
+        0.5,
+        0.15
+      ],
       "joints": [
-        {"name": "hyoid attachment", "pos": [0.0, 0.5, 0.15], "type": "hydrostatic", "pivot_axes": ["z"], "range_deg": [0, 160]}
+        {
+          "name": "hyoid attachment",
+          "pos": [
+            0.0,
+            0.5,
+            0.15
+          ],
+          "type": "hydrostatic",
+          "pivot_axes": [
+            "z"
+          ],
+          "range_deg": [
+            0,
+            160
+          ]
+        }
       ],
       "root_radius_m": 0.004,
       "length_m": 0.03,
@@ -180,9 +390,26 @@
       "category": "sensory",
       "symmetry": "centre",
       "count": 1,
-      "attach_pos": [0.0, 0.36, 0.25],
+      "attach_pos": [
+        0.0,
+        0.36,
+        0.25
+      ],
       "joints": [
-        {"name": "throat membrane", "pos": [0.0, 0.36, 0.25], "type": "hydrostatic", "pivot_axes": [], "range_deg": [0, 0]}
+        {
+          "name": "throat membrane",
+          "pos": [
+            0.0,
+            0.36,
+            0.25
+          ],
+          "type": "hydrostatic",
+          "pivot_axes": [],
+          "range_deg": [
+            0,
+            0
+          ]
+        }
       ],
       "root_radius_m": 0.01,
       "length_m": 0.03,
@@ -195,7 +422,13 @@
       "notes": "Male bullfrog throat sac, which inflates to amplify the call. It is communicative, so the category is debatable. It is placed under sensory as an acoustic interface, but it could equally be aesthetics (display). Size is approximate."
     }
   ],
-  "category_summary": {"locomotion": 2, "sensory": 3, "feeding": 2, "manipulation": 1, "aesthetics": 0},
+  "category_summary": {
+    "locomotion": 2,
+    "sensory": 3,
+    "feeding": 2,
+    "manipulation": 1,
+    "aesthetics": 0
+  },
   "constraints": {
     "symmetry": "bilateral about the sagittal (X=0) plane; midline parts (mouth, tongue, vocal sac) are centre",
     "gait": "saltatory jump: simultaneous extension of both hind limbs for launch, forelimbs for landing absorption. Swimming uses synchronized hind-leg kicks with the webbed feet.",
@@ -207,18 +440,31 @@
     ]
   },
   "library_gaps": [
-    {"feature": "Hind leg (long jumping limb)", "why": "No library part models a long segmented jumping leg. foot_webbed covers only the terminal foot, so the leg chain is a gap."},
-    {"feature": "Tympanum (external eardrum disc)", "why": "No library part for a flat, circular membrane set behind the eye. ear_leaf is a flap and does not fit."},
-    {"feature": "Projectile tongue", "why": "No library part for a long, sticky, ballistically extended tongue attached at the hyoid."},
-    {"feature": "Vocal sac (throat resonator)", "why": "No library part for an inflatable throat membrane. The closest is bulge, which is cosmetic and does not match the functional role."}
+    {
+      "feature": "Hind leg (long jumping limb)",
+      "why": "No library part models a long segmented jumping leg. foot_webbed covers only the terminal foot, so the leg chain is a gap."
+    },
+    {
+      "feature": "Tympanum (external eardrum disc)",
+      "why": "No library part for a flat, circular membrane set behind the eye. ear_leaf is a flap and does not fit."
+    },
+    {
+      "feature": "Projectile tongue",
+      "why": "No library part for a long, sticky, ballistically extended tongue attached at the hyoid."
+    },
+    {
+      "feature": "Vocal sac (throat resonator)",
+      "why": "No library part for an inflatable throat membrane. The closest is bulge, which is cosmetic and does not match the functional role."
+    }
   ],
   "sources": [
-    "https://commons.wikimedia.org/wiki/File:Lithobates_catesbeianus_PP.jpg (file page, not retrieved: Commons was unreachable from this session; metadata from search-result summary only)",
+    "https://commons.wikimedia.org/wiki/File:Lithobates_catesbeianus_PP.jpg (file page and extmetadata verified via Commons API; image itself not viewed)",
     "https://commons.wikimedia.org/wiki/Category:Lithobates_catesbeianus (category listing, via search)",
     "https://amphibiaweb.org/species/4999 (AmphibiaWeb, Rana/Lithobates catesbeianus; SVL means 152 mm males and 162 mm females, via search summary)",
     "https://en.wikipedia.com/wiki/Bull-frog (SVL 9-15 cm, via search summary)",
     "https://www.nationalgeographic.com/animals/amphibians/facts/american-bullfrog (size and sex-dimorphism note, via search)",
     "https://mdc.mo.gov/discover-nature/field-guide/american-bullfrog (field-guide description, via search)"
   ],
-  "confidence": 0.45
+  "confidence": 0.45,
+  "image_observations": "The photo could not be viewed: every download of the image returned HTTP 429 (rate limited) from upload.wikimedia.org, and thumb.wikimedia.org was refused by the egress proxy. Only Commons metadata was verified. Commons categories describe a male bullfrog in shallow water with reflections, facing left, but no visual check was made. Body proportions, part positions and joint locations are unchanged from the first pass and remain unverified against the image."
 }

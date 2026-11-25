@@ -49,10 +49,9 @@ def check(data):
         if cat not in CATEGORIES:
             problems.append("%s: bad category %r" % (pid, cat))
             continue
-        n = part.get("count") or 1
-        if part.get("symmetry") == "pair" and n == 1 and not any(q.get("mirror_of") == pid for q in data["parts"]):
-            n = 2                                      # pair described once without a stub
-        counts[cat] += n if part.get("symmetry") != "pair" or n != 1 else 2
+        # Distinct part types per category (a bilateral pair or a repeated structure
+        # counts once), so files written with different counting habits compare fairly.
+        counts[cat] += 1
         if part.get("attach_pos") is not None and not in_box(part["attach_pos"], radial):
             problems.append("%s: attach_pos outside normalized box %s" % (pid, part["attach_pos"]))
         for j in part.get("joints") or []:
@@ -86,7 +85,8 @@ def main():
         index.append({"species_id": sid, "label": data.get("label"), "scientific": (data.get("taxon") or {}).get("scientific"),
                       "image": img.get("file_page") or img.get("direct_url"), "license": img.get("license"),
                       "image_viewed": img.get("image_viewed"), "bounding_box_m": bb, "parts": len(data.get("parts") or []),
-                      "category_summary": data.get("category_summary"), "library_gaps": [g.get("feature") for g in data.get("library_gaps") or []],
+                      "category_summary": data.get("category_summary"), "part_types_by_category": counts,
+                      "library_gaps": [g.get("feature") for g in data.get("library_gaps") or []],
                       "confidence": data.get("confidence"), "problems": problems})
         print("%-10s %s  parts=%-3d viewed=%-5s %s" % (sid, "ok  " if not problems else "WARN", len(data.get("parts") or []),
                                                      img.get("image_viewed"), "; ".join(problems[:3])))

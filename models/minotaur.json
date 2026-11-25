@@ -1,0 +1,20 @@
+{
+  "name": "Minotaur",
+  "reference_subject": "Far-right figure in 1000012403.png",
+  "parts": {
+    "body": "heavy_biped",
+    "head": "bull",
+    "horns": "swept",
+    "feet": "split_hoof",
+    "tail": "tufted"
+  },
+  "socket_x": {"tail": 0.0},
+  "shape": {
+    "horn_span": 1.1838,
+    "horn_rise": 1.2526,
+    "muzzle_length": 1.0,
+    "shoulder_width": 1.0,
+    "chest_depth": 1.0
+  },
+  "rest_pose": "neutral"
+}

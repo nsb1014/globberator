@@ -1,0 +1,11 @@
+{
+  "subject": "Far-right minotaur",
+  "image_size": [1536, 640],
+  "left_horn_tip_box": [1115, 0, 1141, 24],
+  "right_horn_tip_box": [1347, 0, 1374, 24],
+  "left_horn_edge_box": [1091, 37, 1110, 75],
+  "right_horn_edge_box": [1381, 37, 1403, 75],
+  "left_eye": [1226, 107],
+  "right_eye": [1274, 107],
+  "ground_y": 608
+}

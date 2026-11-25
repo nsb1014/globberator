@@ -12,7 +12,7 @@ from mathutils import Vector
 parser=argparse.ArgumentParser()
 parser.add_argument("model",type=Path)
 parser.add_argument("folder",type=Path)
-parser.add_argument("--clip",choices=["still","turn","walk"],default="still")
+parser.add_argument("--clip",choices=["still","turn","idle","walk"],default="still")
 parser.add_argument("--oidn",type=Path,help="Optional oidnDenoise executable for linear-light CPU denoising")
 parser.add_argument("--azimuth",type=float,help="Camera angle in degrees from the front, or starting angle for a turntable")
 parser.add_argument("--samples",type=int,help="Override the default Cycles sample count")
@@ -25,6 +25,7 @@ bpy.ops.wm.read_factory_settings(use_empty=True)
 bpy.ops.import_scene.gltf(filepath=str(args.model.resolve()))
 rig=next(o for o in bpy.context.scene.objects if o.type=="ARMATURE")
 bull = rig.name.startswith("Bull")
+arachnid = rig.name.startswith("Solifuge")
 if rig.animation_data:
     for t in rig.animation_data.nla_tracks:t.mute=True
     rig.animation_data.action=None
@@ -41,7 +42,7 @@ scene.cycles.sample_clamp_indirect=2.5
 scene.cycles.use_denoising=False
 scene.render.resolution_x=800 if args.clip=="still" else 576
 scene.render.resolution_y=scene.render.resolution_x
-if bull:
+if bull or arachnid:
     scene.render.resolution_x,scene.render.resolution_y = (960,660) if args.clip=="still" else (720,480)
 scene.render.resolution_percentage=100
 scene.world=bpy.data.worlds.new("Studio")
@@ -61,8 +62,9 @@ floor=bpy.context.object
 mat=bpy.data.materials.new("Studio floor");mat.diffuse_color=(.18,.205,.23,1);floor.data.materials.append(mat)
 cam_data=bpy.data.cameras.new("Turntable camera");cam_data.type="ORTHO";cam_data.ortho_scale=5.63
 cam=bpy.data.objects.new("Camera",cam_data);scene.collection.objects.link(cam);scene.camera=cam
-if args.clip=="walk":
-    action=next(a for a in bpy.data.actions if a.name.split("_")[0].startswith("Walk") or a.name.startswith("Walk"))
+animated = args.clip in ("idle","walk")
+if animated:
+    action=next(a for a in bpy.data.actions if a.name.startswith(args.clip.title()))
     rig.animation_data.action=action
 def render_frame(destination):
     if not args.oidn:
@@ -99,11 +101,9 @@ def render_frame(destination):
         raw.save_render(str(destination),scene=scene)
         bpy.data.images.remove(raw)
 
-length={"still":1,"turn":72,"walk":0}[args.clip]
-if args.clip=="walk":
-    length=round(action.frame_range[1]-action.frame_range[0])
+length = round(action.frame_range[1]-action.frame_range[0]) if animated else {"still":1,"turn":72}[args.clip]
 for output_frame,i in enumerate(range(0,length,args.frame_step)):
-    if args.clip=="walk":
+    if animated:
         scene.frame_set(round(action.frame_range[0])+i)
     angle = math.radians(args.azimuth) if args.azimuth is not None else (.54 if args.clip=="walk" else .18)
     if args.clip=="turn":
@@ -122,6 +122,19 @@ for output_frame,i in enumerate(range(0,length,args.frame_step)):
             cam_data.ortho_scale = 7.45
             angle = math.radians(87) if args.azimuth is None else math.radians(args.azimuth)
             height = 2.62
+    if arachnid:
+        target = Vector((0,-.25,.49))
+        height = 8.65
+        cam_data.ortho_scale = 6.90
+        if args.azimuth is None:
+            angle += .79
+        if animated:
+            # A stationary three-quarter view exposes the daylight under a lifted tarsus.
+            angle = math.radians(52 if args.azimuth is None else args.azimuth)
+            height = 5.95
+            if args.clip == "walk":
+                target.y -= .80
+                cam_data.ortho_scale = 7.65
     cam.location=(target.x+10*math.sin(angle),target.y-10*math.cos(angle),height)
     aim(cam,target)
     render_frame((args.folder/f"{args.clip}-{output_frame:03}.png").resolve())

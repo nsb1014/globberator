@@ -1,7 +1,7 @@
 extends SceneTree
 
-const TOUCHDOWN := {"Hind.L": 0.0, "Fore.L": 0.20, "Hind.R": 0.50, "Fore.R": 0.70}
-const DUTY := 0.66
+const TOUCHDOWN := {"Hind.L": 0.0, "Fore.L": 0.50, "Hind.R": 0.75, "Fore.R": 0.25}
+const DUTY := 0.80
 const STRIDE := 1.04
 
 func _initialize() -> void:

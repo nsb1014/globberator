@@ -74,8 +74,17 @@ def bake(arm, clip, contacts=None):
 def bake_all(arm, clips=CLIPS, contacts=None):
     bpy.context.scene.render.fps = FPS
     ad = arm.animation_data_create()
+    # Rebaking replaces the previous clips: drop their (fake-user protected) actions too.
+    stale = {st.action for t in ad.nla_tracks for st in t.strips if st.action is not None}
+    if ad.action is not None:
+        stale.add(ad.action)
+    ad.action = None
     for t in list(ad.nla_tracks):
         ad.nla_tracks.remove(t)
+    for act in stale:
+        act.use_fake_user = False
+        if act.users == 0:
+            bpy.data.actions.remove(act)
     out = {}
     for clip in clips:
         act = bake(arm, clip, contacts)

@@ -3,3 +3,4 @@ out/
 review/
 runs/
 *.blend1
+.godot/

@@ -176,7 +176,10 @@ def test_isolated_edits(t):
         t.check(extract(instance) == draft and abs(instance["u"] - u) < 1e-6, "sliding preserves authored geometry")
         b = builder.Builder(new, "preview")
         b.resolve_limbs(R.Spine(new["spine"]))
-        t.check(sum(l["uid"] == "fore" for l in b.limbs) == (1 if theta == 90 else 2), "surface determines copy count")
+        bends = any(abs(sg[0]) > 1e-6 for sg in instance["segments"])
+        # Off the midline: a reflected pair. On it: single only if the shape is itself
+        # symmetric; a sideways-bending shape is mirrored so the creature stays symmetric.
+        t.check(sum(l["uid"] == "fore" for l in b.limbs) == (2 if theta != 90 or bends else 1), "surface and shape determine copy count")
     expanded, _ = ops.apply_all(base, [{"op": "scale_body", "w": 1.15}])
     t.check(landmarks(expanded)["fore"][0].x > landmarks(base)["fore"][0].x, "chest width carries the root outward")
     reset()
@@ -322,6 +325,55 @@ def test_build_and_export(t):
     t.check(all(any(c in n for n in names) for c in baker.CLIPS), "re-imported GLB carries all clips %s" % sorted(names))
 
 
+def test_review_fixes(t):
+    """Regressions from the PR 21 review."""
+    from . import baker
+    # 1. Limb edits re-ground; spine edits keep the floor.
+    r = leg_recipe(4)
+    r, _ = ops.apply_all(r, [{"op": "insert_vertebra", "index": 0}])
+    t.check("ground_y" in r, "spine edit freezes the floor height")
+    r, _ = ops.apply_all(r, [{"op": "set_limb", "uid": "p0", "segments": [[0.15, -0.2, 0], [0.03, -0.22, 0.04]]}])
+    t.check("ground_y" not in r, "limb edit re-grounds")
+    r, _ = ops.apply_all(r, [{"op": "set_limb", "uid": "p1", "segments": [[0.15, -0.2, 0], [0.03, -0.22, 0.04]]}])
+    reset()
+    res = builder.build(r, "preview")
+    t.check(res["report"]["legs"] == 4 and not res["report"]["warnings"], "shortened legs still reach the ground %s" % res["report"]["warnings"])
+    kept, _ = ops.apply_all({**r, "ground_y": 0.5}, [{"op": "set_limb", "uid": "p0", "radii": [0.1, 0.07, 0.05], "keep_ground": True}])
+    t.check(kept.get("ground_y") == 0.5 and "keep_ground" not in kept["limbs"][0], "keep_ground keeps the floor and is not stored")
+    from importlib import import_module
+    import sys as _sys
+    _sys.path.insert(0, os.path.join(ROOT, "ai"))
+    opt = import_module("optimize")
+    t.check("ground_y" not in opt.apply_knobs({**r, "ground_y": 0.5}, [], []), "fitter drops a frozen floor")
+    # 2. A version-2 limb that snaps to the midline stays symmetric: a sideways shape
+    #    becomes a mirrored pair (authored geometry kept), a straight one stays single.
+    v2 = R.normalize(R.default_recipe())[0]
+    v2, _ = ops.apply_all(v2, [{"op": "add_limb", "uid": "mid", "u": 0.45, "theta": -82, "rot": [10, 20, 30],
+                                "segments": [[0.12, -0.3, 0.05], [0.0, -0.3, 0.0]], "tip": "foot_pad"},
+                               {"op": "add_limb", "uid": "straight", "u": 0.6, "theta": -88,
+                                "segments": [[0.0, -0.3, 0.05], [0.0, -0.3, 0.0]], "tip": "foot_pad"}])
+    n, _ = R.normalize(v2)
+    t.check(n["limbs"][0]["theta"] == -90.0 and n["limbs"][0]["segments"][0][0] == 0.12, "midline snap keeps the authored limb shape")
+    reset()
+    res = builder.build(n, "preview")
+    copies = {}
+    for lm in res["rig"]["limbs"]:
+        copies.setdefault(lm["uid"], []).append(lm)
+    mid = copies["mid"]
+    t.check(len(mid) == 2 and all(abs(a + b) < 1e-5 for a, b in zip([j[0] for j in mid[0]["joints"]], [j[0] for j in mid[1]["joints"]])),
+            "sideways limb on the midline gets a mirror twin")
+    t.check(len(copies["straight"]) == 1, "straight limb on the midline stays single")
+    # 5/6. Rebuilds and rebakes do not leave orphan data.
+    reset()
+    res = builder.build(R.load(os.path.join(EX, "hopper.json")), "preview")
+    baker.bake_all(res["armature"])
+    n_actions = len(bpy.data.actions)
+    baker.bake_all(res["armature"])
+    t.check(len(bpy.data.actions) == n_actions, "rebaking replaces the previous actions (%d -> %d)" % (n_actions, len(bpy.data.actions)))
+    builder.build(R.load(os.path.join(EX, "hopper.json")), "preview")
+    t.check(not any(m.name.startswith("PF_skin.") for m in bpy.data.materials if m.users == 0), "rebuilds reuse the skin material")
+
+
 def run(fast=False):
     t = T()
     t0 = time.time()
@@ -329,6 +381,7 @@ def run(fast=False):
     test_placement(t)
     test_ops(t)
     test_isolated_edits(t)
+    test_review_fixes(t)
     test_parts(t, fast)
     test_animation(t)
     test_build_and_export(t)

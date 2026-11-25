@@ -96,7 +96,11 @@ class Builder:
             if l["motion"] == "tail":
                 role = "tail"
             length = sum((joints[k] - joints[k - 1]).length for k in range(1, len(joints)))
-            lateral = abs(abs(l["theta"]) - 90.0) > 1e-4
+            # Off the midline, or on it with a shape that bends sideways: build a
+            # reflected twin so the creature stays symmetric (a sideways leg on the
+            # midline would otherwise be a single lopsided limb). Authored geometry is kept.
+            bends = any(abs(j.x - hip.x) > 1e-4 for j in joints[1:])
+            lateral = abs(abs(l["theta"]) - 90.0) > 1e-4 or bends
             base = {"uid": l["uid"], "name": l["uid"], "u": l["u"], "v": s["v"], "joints": joints, "radii": radii,
                     "tip": l["tip"], "tip_params": l["tip_params"], "role": role, "has_foot": role == "leg",
                     "scale": scale, "sole_local": sole, "length": length, "mirrored": False,
@@ -471,6 +475,9 @@ class Builder:
         return m
 
     def skin_material(self):
+        old = bpy.data.materials.get("PF_skin")
+        if old is not None and old.users == 0:
+            bpy.data.materials.remove(old)      # reuse the name instead of PF_skin.001, .002, ...
         m = bpy.data.materials.new("PF_skin")
         m.use_nodes = True
         nt = m.node_tree

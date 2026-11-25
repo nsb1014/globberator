@@ -63,10 +63,16 @@ def creature_collection(scene):
 def rebuild_creature(scene, quality="preview"):
     col = creature_collection(scene)
     for ob in list(col.objects):
-        me = ob.data if ob.type == "MESH" else None
+        data = ob.data
+        mats = [m for m in getattr(data, "materials", []) if m is not None]
         bpy.data.objects.remove(ob, do_unlink=True)
-        if me is not None and me.users == 0:
-            bpy.data.meshes.remove(me)
+        if data is not None and data.users == 0:
+            # Free the mesh / armature datablock and any skin material it used, so
+            # rebuild-on-edit does not pile up orphan data.
+            (bpy.data.armatures if isinstance(data, bpy.types.Armature) else bpy.data.meshes).remove(data)
+        for m in mats:
+            if m.users == 0:
+                bpy.data.materials.remove(m)
     if quality == "preview" and scene.pf_solo:
         from .shapes import isolated, extract
         item = selected_limb(scene) or selected_part(scene)
@@ -310,6 +316,17 @@ class PF_OT_build(bpy.types.Operator):
 
     def execute(self, context):
         rebuild_creature(context.scene, self.quality)
+        return {"FINISHED"}
+
+
+class PF_OT_reground(bpy.types.Operator):
+    bl_idname = "polyforge.reground"
+    bl_label = "Reground"
+    bl_description = "Re-find the floor from the feet (spine edits keep the floor fixed so the legs don't jump)"
+    bl_options = {"REGISTER", "UNDO"}
+
+    def execute(self, context):
+        apply_ops(context.scene, [{"op": "reground"}])
         return {"FINISHED"}
 
 
@@ -613,6 +630,7 @@ class PF_PT_creature(PF_PT_base, bpy.types.Panel):
         row = col.row(align=True)
         row.operator("polyforge.build", text="Preview", icon="FILE_REFRESH").quality = "preview"
         row.operator("polyforge.build", text="Sculpt", icon="SCULPTMODE_HLT").quality = "final"
+        row.operator("polyforge.reground", text="Reground", icon="TRIA_DOWN_BAR")
         col.prop(s, "pf_auto")
         if s.pf_report:
             rep = json.loads(s.pf_report)
@@ -738,7 +756,7 @@ class PF_PT_animate(PF_PT_base, bpy.types.Panel):
             row.operator("polyforge.export", text=f.upper()).fmt = f
 
 
-CLASSES = [PF_Edit, PF_OT_new, PF_OT_example, PF_OT_open, PF_OT_save, PF_OT_build, PF_OT_place, PF_OT_select,
+CLASSES = [PF_Edit, PF_OT_new, PF_OT_example, PF_OT_open, PF_OT_save, PF_OT_build, PF_OT_reground, PF_OT_place, PF_OT_select,
            PF_OT_remove, PF_OT_vertebra, PF_OT_review_views, PF_OT_accept_review, PF_OT_bake, PF_OT_play, PF_OT_export,
            PF_PT_creature, PF_PT_palette, PF_PT_edit, PF_PT_spine, PF_PT_paint, PF_PT_animate]
 

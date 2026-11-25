@@ -205,12 +205,13 @@ def require_review(a):
 
 def cmd_build(a):
     from . import baker
+    if not a.no_anim:
+        require_review(a)       # check the gate before the (slow) sculpted build
     reset()
     t = time.time()
     res = build(a.recipe, "preview" if a.preview else "final")
     report = dict(res["report"])
     if not a.no_anim:
-        require_review(a)
         contact_frames = [] if a.contacts else None
         report["clips"] = baker.bake_all(res["armature"], contacts=contact_frames)
         if a.contacts:

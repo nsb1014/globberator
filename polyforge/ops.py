@@ -7,7 +7,7 @@ from . import recipe as R
 
 SPEC = {
     "attach_shape": {"shape": "{part,params} or {segments,radii,tip,tip_params,motion}", "u": "float", "theta": "degrees", "uid?": "string", "scale?": "float", "rot?": "[x,y,z]"},
-    "reground": {},
+    "reground": {"note": "drop the frozen floor height; the builder re-finds the ground from the feet"},
     "set_name": {"name": "string"},
     "set_spine": {"spine": "array of {y,z,w,h} (rear to front)"},
     "set_vertebra": {"index": "int", "y?": "float", "z?": "float", "w?": "float", "h?": "float"},
@@ -15,7 +15,7 @@ SPEC = {
     "remove_vertebra": {"index": "int"},
     "scale_body": {"w?": "float factor", "h?": "float factor", "length?": "float factor"},
     "add_limb": {"uid?": "string", "u": "float", "theta": "deg", "segments": "[[x,y,z],...]", "radii?": "[...]", "tip?": "part id", "tip_params?": "{}", "snap?": "bool (snap to the nearest named socket)"},
-    "set_limb": {"uid": "string", "...": "any limb field to replace (tip_params merge)"},
+    "set_limb": {"uid": "string", "keep_ground?": "bool (keep the frozen floor; default re-grounds)", "...": "any limb field to replace (tip_params merge)"},
     "remove_limb": {"uid": "string"},
     "add_part": {"uid?": "string", "part": "part id", "on?": "body | limb uid", "u?": "float", "theta?": "deg", "offset?": "float", "rot?": "[x,y,z] deg", "scale?": "float", "params?": "{}", "snap?": "bool (snap to the nearest named socket)"},
     "set_part": {"uid": "string", "...": "any part field to replace (params merge)"},
@@ -86,8 +86,14 @@ def apply(r, op):
     if name == "reground":
         r.pop("ground_y", None)
         return ""
-    if r["limbs"] and "ground_y" not in r and name in (
-            "set_limb", "remove_limb", "set_vertebra", "insert_vertebra", "remove_vertebra", "scale_body", "set_spine"):
+    # Spine edits keep the floor where it is so the legs don't jump (a longer tail
+    # must not lift the creature). Limb edits change where the feet are, so they
+    # re-ground automatically unless the op asks to keep the current floor.
+    keep_ground = bool(op.pop("keep_ground", False)) if isinstance(op, dict) else False
+    if name in ("add_limb", "set_limb", "remove_limb") and not keep_ground:
+        r.pop("ground_y", None)
+    elif r["limbs"] and "ground_y" not in r and name in (
+            "set_vertebra", "insert_vertebra", "remove_vertebra", "scale_body", "set_spine"):
         from .builder import Builder
         current = Builder(r, "preview")
         surface = R.Spine(current.recipe["spine"])
@@ -224,7 +230,7 @@ def apply_all(src, ops):
         if not isinstance(op, dict):
             errors.append("op %d is not an object" % i)
             continue
-        e = apply(r, op)
+        e = apply(r, dict(op))
         if e:
             errors.append("op %d (%s): %s" % (i, op.get("op", "?"), e))
     return r, errors

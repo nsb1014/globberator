@@ -204,6 +204,7 @@ def normalize(src):
         theta, centre = placement.centred(raw, "any")
         if src.get("version", 1) == 1 and abs(raw) > 90.0:
             segs = [[-sg[0], sg[1], sg[2]] for sg in segs]
+        limb_rot = [wrap_angle(a) for a in _vec(l.get("rot"), [0, 0, 0])]
         if src.get("version", 1) == 1 and centre:
             segs = [[0.0, sg[1], sg[2]] for sg in segs]
         limbs.append({
@@ -212,7 +213,7 @@ def normalize(src):
             "tip": tip, "tip_params": tip_params,
             "motion": "tail" if l.get("motion") == "tail" else "auto",
             "scale": _clamp(_num(l.get("scale"), 1.0), LIMITS["scale"], uid + ".scale", w),
-            "rot": [wrap_angle(a) for a in _vec(l.get("rot"), [0, 0, 0])],
+            "rot": limb_rot,
         })
         locate(l, limbs[-1])
     r["limbs"] = limbs

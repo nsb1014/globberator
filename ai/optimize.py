@@ -82,6 +82,9 @@ def default_knobs(recipe, part_uids=None, fit_camera=True):
 
 def apply_knobs(recipe, knobs, x):
     r = copy.deepcopy(recipe)
+    # Leg, body and neck knobs move the feet relative to the body; let the builder
+    # find the ground again instead of keeping a floor frozen by earlier edits.
+    r.pop("ground_y", None)
     for k, v in zip(knobs, x):
         if k.apply is not None and abs(v - k.x0) > 1e-9:
             k.apply(r, v)

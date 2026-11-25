@@ -29,7 +29,7 @@ Any command also runs through a regular Blender: `blender -b -P pf.py -- <comman
 
 ## Using the editor
 
-1. **Creature panel:** start a new creature or open an example. **Preview** rebuilds fast. **Sculpt** fuses the skin into one remeshed surface, which is what exports use.
+1. **Creature panel:** start a new creature or open an example. **Preview** rebuilds fast. **Sculpt** fuses the skin into one remeshed surface, which is what exports use. Spine edits keep the floor fixed so the legs don't jump. Leg edits re-find the floor automatically, and **Reground** re-finds it on demand.
 2. **Parts panel.** Pick a shape and click anywhere on the body. A lateral drop creates a reflected twin. A drop within 12 degrees of the midline creates one centered instance. Tails are flexible joint chains and can be placed in the center.
 3. **Selection panel.** Use **Isolate shape** to inspect one part or limb and edit its controls. Limbs have editable joint offsets and radii. Switch back to the creature to change instance scale, rotation, or placement. **Move to surface** picks a new location for the selected instance and its twin.
 4. **Spine and paint.** Edit body rings or paint the assembled creature. A saved body attachment records two ring IDs and its fractional position between them. A distant edit to the spine preserves that binding. Widening its own strip carries the part outward.
@@ -70,6 +70,7 @@ python3 pf.py test [--fast]
 # Image -> creature (needs ANTHROPIC_API_KEY)
 pip install anthropic
 python3 ai/forge.py photo.png --out runs/photo
+python3 ai/forge.py photo.png --out runs/x --init examples/bull.json --no-llm --accept "checked the review views"   # numeric fit only; --accept lets it export
 python3 ai/benchmark.py                      # known-recipe numeric fit, no API key needed
 python3 ai/benchmark.py --reference held-out.png --out runs/held-out
 ```

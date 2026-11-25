@@ -2,6 +2,12 @@
 
     python3 ai/forge.py reference.png --out runs/myfox [--iterations 4] [--tolerance 0.8]
     python3 ai/forge.py reference.png --out runs/x --init examples/bull.json --no-llm   (numeric fit only)
+    python3 ai/forge.py reference.png --out runs/x --init examples/bull.json --no-llm --accept "checked by hand"
+
+Exports (GLB/FBX/USDZ, videos) only happen once the assembled creature passes
+visual review: Claude's anatomy check, or with --no-llm an explicit --accept
+note after you have looked at the review views. Without it, a --no-llm run
+writes recipe.json, the review views and report.json, and says export was skipped.
 
 Loop: segment the reference -> Claude drafts a recipe from the part library ->
 render -> score (silhouette, proportions, palette, Claude feature checklist) ->
@@ -92,10 +98,22 @@ class Run:
             if not use_llm:
                 sys.exit("--no-llm needs --init recipe.json")
             self.log("drafting with %s ..." % claude.MODEL)
-            res, usage = claude.draft(a.image, catalog)
-            self._usage(usage)
+            recipe = None
+            for attempt in range(2):     # one retry if the reply's recipe is not valid JSON
+                res, usage = claude.draft(a.image, catalog)
+                self._usage(usage)
+                try:
+                    recipe = json.loads(res["recipe_json"])
+                    if not isinstance(recipe, dict):
+                        raise TypeError("recipe_json is not an object")
+                    break
+                except (json.JSONDecodeError, TypeError) as exc:
+                    self.repairs += 1
+                    self.log("draft reply had no valid recipe (%s)%s" % (exc, "; retrying" if attempt == 0 else ""))
+                    recipe = None
+            if recipe is None:
+                sys.exit("the draft replies did not contain a valid recipe; rerun or pass --init")
             analysis = {k: v for k, v in res.items() if k != "recipe_json"}
-            recipe = json.loads(res["recipe_json"])
             self.log("subject: %s (%s), view yaw %.0f pitch %.0f" % (res["subject"], res["body_plan"], res["view_yaw"], res["view_pitch"]))
             for f in res["features"]:
                 self.log("  feature [%d] %s -> %s" % (f["importance"], f["name"], f["part"]))
@@ -154,9 +172,10 @@ class Run:
             scores["total"] = round(total(scores) / active_weight, 4)
             self.history.append({"iteration": it, "scores": scores, "camera": cam, "warnings": warnings})
             self.log("  scores %s" % scores)
-            accepted = bool(critique and critique["anatomy_pass"])
+            accepted = bool(critique and critique["anatomy_pass"]) or (not use_llm and bool(a.accept))
+            note = critique["anatomy_note"] if critique else (a.accept or "")
             if best is None or (accepted, scores["total"]) > (best["accepted"], best["scores"]["total"] + 1e-4):
-                best = {"accepted": accepted, "review_note": critique["anatomy_note"] if critique else "", "recipe": recipe, "scores": scores, "render": rnd, "camera": cam}
+                best = {"accepted": accepted, "review_note": note, "recipe": recipe, "scores": scores, "render": rnd, "camera": cam}
                 stall = 0
             else:
                 stall += 1
@@ -209,7 +228,13 @@ class Run:
                 return
             if i < rounds:
                 self.repairs += 1
-                edits = json.loads(review["shape_json"])
+                try:
+                    edits = json.loads(review["shape_json"])
+                    if not isinstance(edits, dict):
+                        raise TypeError("shape_json is not an object")
+                except (json.JSONDecodeError, TypeError) as exc:
+                    self.log("  ignored a malformed shape edit for %s (%s)" % (item["uid"], exc))
+                    continue
                 draft.update({k: edits[k] for k in allowed if k in edits})
         self.log("isolated draft unaccepted; kept original " + item["uid"])
 
@@ -228,6 +253,9 @@ class Run:
         self.renders += 4
         if best["accepted"]:
             pf.run(["review", rp, "--out", self.out, "--accept", best["review_note"] or "Reviewed against reference"])
+        if not self.args.no_export and not best["accepted"]:
+            self.log("export skipped: the creature has not passed visual review. Inspect the review views in %s, then "
+                     "rerun with --accept \"note\" (or run pf.py review %s --out %s --accept \"note\" and pf.py build)." % (self.out, rp, self.out))
         if not self.args.no_export and best["accepted"]:
             pf.build(rp, self.out, name, "glb,fbx,usdz,blend")
             pf.video("turntable", rp, os.path.join(self.out, "turntable.mp4"), seconds=6, size=420)
@@ -253,6 +281,7 @@ def main():
     ap.add_argument("--tolerance", type=float, default=0.8, help="stop when the total score reaches this")
     ap.add_argument("--init", help="start from this recipe instead of an LLM draft")
     ap.add_argument("--no-llm", action="store_true", help="numeric fitting only (needs --init)")
+    ap.add_argument("--accept", metavar="NOTE", help="with --no-llm: accept the visual review with this note so exports run")
     ap.add_argument("--no-fit", action="store_true", help="skip numeric proportion fitting")
     ap.add_argument("--fit-rounds", type=int, default=2)
     ap.add_argument("--fixed-camera", action="store_true")

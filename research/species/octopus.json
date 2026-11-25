@@ -3,19 +3,20 @@
   "label": "Common octopus (Octopus vulgaris)",
   "taxon": {
     "common": "common octopus",
-    "scientific": "Octopus vulgaris Cuvier, 1797",
+    "scientific": "Octopus vulgaris",
     "order": "Octopoda",
     "class": "Cephalopoda"
   },
   "image": {
-    "file_page": null,
-    "direct_url": null,
-    "author": null,
-    "license": null,
-    "species_shown": "Octopus vulgaris (not obtained)",
-    "view": "n/a - no image obtained",
+    "file_page": "https://commons.wikimedia.org/wiki/File:Octopus_vulgaris2.jpg",
+    "direct_url": "https://upload.wikimedia.org/wikipedia/commons/6/65/Octopus_vulgaris2.jpg",
+    "author": "Beckmannjan",
+    "license": "CC BY-SA 3.0",
+    "species_shown": "Octopus vulgaris, per the Commons description ('Gewoehnlicher Krake (Octopus vulgaris)', east Crete, 2-4 m depth); not visually verified",
+    "view": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/65/Octopus_vulgaris2.jpg/1280px-Octopus_vulgaris2.jpg (not viewed: image bytes refused from this session)",
     "image_viewed": false
   },
+  "image_observations": "No visual observation was possible. The Commons API returned verified metadata for this file (CC BY-SA 3.0, 1465 x 977 px, described as a live animal in east Crete), but thumb.wikimedia.org was refused by the egress proxy (HTTP 403, policy denial) and upload.wikimedia.org returned a Wikimedia error page instead of the image. The physical_parsing values are therefore the unrevised first-pass estimates; no proportions, part positions or bend regions were changed from the photo.",
   "physical_parsing": {
     "bounding_box_m": {
       "width_x": 0.72,
@@ -565,7 +566,7 @@
     "Wells, M.J. (1978). Octopus: Physiology and Behaviour of an Advanced Invertebrate. Chapman & Hall. (muscular hydrostat arms; funnel jet propulsion)",
     "Kier, W.M. & Smith, K.K. (1985). Tongues, tentacles and trunks: the biomechanics of movement in muscular-hydrostats. Zoological Journal of the Linnean Society 83: 307-324. (hydrostat bending model)",
     "Wikipedia, 'Common octopus' (size, anatomy overview; recalled, not re-checked this session)",
-    "Wikimedia Commons, Category:Octopus vulgaris (intended image source; NOT accessed, the egress proxy refused commons.wikimedia.org and upload.wikimedia.org with HTTP 403)"
+    "Wikimedia Commons, File:Octopus_vulgaris2.jpg (image metadata and licence verified via the Commons API, CC BY-SA 3.0, Beckmannjan; image bytes not retrieved, thumb.wikimedia.org refused by the egress proxy and upload.wikimedia.org returned an error page)"
   ],
   "confidence": 0.45
 }

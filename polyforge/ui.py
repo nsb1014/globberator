@@ -472,12 +472,57 @@ class PF_OT_vertebra(bpy.types.Operator):
         return {"FINISHED"}
 
 
+class PF_OT_review_views(bpy.types.Operator):
+    bl_idname = "polyforge.review_views"
+    bl_label = "Render assembly review views"
+
+    def execute(self, context):
+        import subprocess
+        import tempfile
+        from pathlib import Path
+        from .review import signature
+        source = get_recipe(context.scene)
+        folder = Path(tempfile.mkdtemp(prefix="polyforge-review-"))
+        path = folder / "creature.json"
+        R.save(source, path)
+        # Render in a separate Blender process to preserve this scene and its undo history.
+        script = "import sys; sys.path.insert(0, %r); from polyforge import cli; cli.main(%r)" % (
+            os.path.dirname(_HERE), ["review", str(path), "--out", str(folder)])
+        subprocess.run([bpy.app.binary_path, "-b", "--factory-startup", "--python-exit-code", "1",
+                        "--python-expr", script], check=True)
+        context.scene.pf_viewed = signature(source)
+        bpy.ops.wm.path_open(filepath=str(folder))
+        return {"FINISHED"}
+
+
+class PF_OT_accept_review(bpy.types.Operator):
+    bl_idname = "polyforge.accept_review"
+    bl_label = "I inspected the assembled front, side and head views"
+
+    def execute(self, context):
+        from .review import signature
+        s = context.scene
+        if s.pf_solo:
+            self.report({"ERROR"}, "Return to assembled view first")
+            return {"CANCELLED"}
+        if s.pf_viewed != signature(get_recipe(s)):
+            self.report({"ERROR"}, "Render and inspect the current assembly views first")
+            return {"CANCELLED"}
+        rebuild_creature(s, "final")
+        s.pf_review = signature(get_recipe(s))
+        return {"FINISHED"}
+
+
 class PF_OT_bake(bpy.types.Operator):
     bl_idname = "polyforge.bake"
     bl_label = "Bake animations"
     bl_options = {"REGISTER", "UNDO"}
 
     def execute(self, context):
+        from .review import signature
+        if context.scene.pf_review != signature(get_recipe(context.scene)):
+            self.report({"ERROR"}, "Inspect and accept this assembly first")
+            return {"CANCELLED"}
         from . import baker
         arm = creature_armature(context.scene)
         if arm is None:
@@ -522,6 +567,10 @@ class PF_OT_export(bpy.types.Operator):
         return {"RUNNING_MODAL"}
 
     def execute(self, context):
+        from .review import signature
+        if context.scene.pf_review != signature(get_recipe(context.scene)):
+            self.report({"ERROR"}, "Inspect and accept this assembly first")
+            return {"CANCELLED"}
         from . import baker
         res = rebuild_creature(context.scene, "final")
         baker.bake_all(res["armature"])
@@ -678,6 +727,8 @@ class PF_PT_animate(PF_PT_base, bpy.types.Panel):
 
     def draw(self, context):
         lay = self.layout
+        lay.operator("polyforge.review_views")
+        lay.operator("polyforge.accept_review")
         lay.operator("polyforge.bake", icon="ACTION")
         grid = lay.grid_flow(columns=3, align=True)
         for c in ("idle", "walk", "run", "roar", "wave", "hop"):
@@ -688,7 +739,7 @@ class PF_PT_animate(PF_PT_base, bpy.types.Panel):
 
 
 CLASSES = [PF_Edit, PF_OT_new, PF_OT_example, PF_OT_open, PF_OT_save, PF_OT_build, PF_OT_place, PF_OT_select,
-           PF_OT_remove, PF_OT_vertebra, PF_OT_bake, PF_OT_play, PF_OT_export,
+           PF_OT_remove, PF_OT_vertebra, PF_OT_review_views, PF_OT_accept_review, PF_OT_bake, PF_OT_play, PF_OT_export,
            PF_PT_creature, PF_PT_palette, PF_PT_edit, PF_PT_spine, PF_PT_paint, PF_PT_animate]
 
 
@@ -701,6 +752,8 @@ def register():
         bpy.utils.register_class(c)
     S = bpy.types.Scene
     S.pf_recipe = StringProperty(name="Recipe", default="")
+    S.pf_viewed = StringProperty(default="")
+    S.pf_review = StringProperty(default="")
     S.pf_report = StringProperty(default="")
     S.pf_selected = StringProperty(default="")
     S.pf_solo = BoolProperty(name="Isolate shape", update=_solo_changed)
@@ -712,7 +765,7 @@ def unregister():
     global _previews
     for c in reversed(CLASSES):
         bpy.utils.unregister_class(c)
-    for k in ("pf_recipe", "pf_report", "pf_selected", "pf_auto", "pf_solo", "pf_edit"):
+    for k in ("pf_recipe", "pf_report", "pf_review", "pf_viewed", "pf_selected", "pf_auto", "pf_solo", "pf_edit"):
         delattr(bpy.types.Scene, k)
     if _previews is not None:
         bpy.utils.previews.remove(_previews)

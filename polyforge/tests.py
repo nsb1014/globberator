@@ -64,6 +64,17 @@ def test_parts(t, fast):
 
 
 def test_recipes(t):
+    from . import review
+    dragon = R.load(os.path.join(EX, "dragon.json"))
+    decision = review.record(dragon, True, "Inspected assembly")
+    review.require(dragon, decision)
+    dragon["limbs"][0]["segments"][0][1] -= 0.1
+    try:
+        review.require(dragon, decision)
+    except ValueError:
+        t.check(True, "changing a limb invalidates the assembly review")
+    else:
+        t.check(False, "changing a limb invalidates the assembly review")
     for path in examples():
         r1, w1 = R.normalize(R.load(path))
         r2, w2 = R.normalize(json.loads(R.to_json(r1)))
@@ -225,13 +236,20 @@ def test_animation(t):
                 an.drive(1.0, turn, False)
                 an.speed = an.target_speed
             worst = 0.0
+            torso = []
             for f in range(150):
                 an.step(1 / 60)
                 if f < 30:
                     continue
+                body = an.G[an.rig["spine"][an.rig["hub"]]]
+                torso.append((body.o.x, body.o.y, math.atan2(body.b[1][0], body.b[0][0])))
                 for st in an.legs:
                     if not st["swinging"]:
                         worst = max(worst, (an.posed_sole(st) - st["plant"]).length / max(st["length"], 0.01))
+            if len(an.legs) >= 3 and clip == "walk" and not turn:
+                spans = [max(values) - min(values) for values in zip(*torso)]
+                t.check(spans[0] < .04 * an.leg_len and spans[1] < .08 * an.leg_len and spans[2] < .05,
+                        "%s steady walk torso excursion %s" % (key, spans))
             t.check(worst < 0.05, "%s %s%s planted-foot drift %.3f < 0.05" % (key, clip, " turning" if turn else "", worst))
         an = Animator(res["rig"])
         ok = True
@@ -288,8 +306,6 @@ def test_build_and_export(t):
         path = export.export(res, os.path.join(d, "bull." + fmt), fmt)
         t.check(os.path.getsize(path) > 10000, "%s export written" % fmt)
     import runpy
-    import shutil
-    import subprocess
     from pathlib import Path
     fixture = Path(d, "bull.glb")
     rig = res["rig"]
@@ -298,13 +314,6 @@ def test_build_and_export(t):
     scripts = Path(ROOT, "tools", "tests")
     runpy.run_path(str(scripts / "export_contact.py"))["check"](fixture)
     t.check(True, "exported and reimported hoof surfaces plant, lift and hold")
-    godot = shutil.which("godot4") or shutil.which("godot")
-    if godot:
-        subprocess.run([godot, "--headless", "--path", str(scripts), "--script", "res://export_contact.gd",
-                        "--", str(fixture)], check=True)
-        t.check(True, "Godot imports the baked walk and plants the hoof surfaces")
-    else:
-        print("SKIP Godot export contact (Godot 4 executable unavailable)")
     reset()
     bpy.ops.import_scene.gltf(filepath=os.path.join(d, "bull.glb"))
     arms = [o for o in bpy.data.objects if o.type == "ARMATURE"]

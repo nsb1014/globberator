@@ -100,14 +100,18 @@ def wing_bat(g, p):
     L, C, f = 0.9 * p["span"], p["chord"], p["fold"]
     tipd = rot(RIGHT, -f * 0.9) @ V(0, L, -0.1 * L)
     wrist = V(0, L * 0.45, 0.18 * L * C)
-    rim = [V(0, -0.03, 0.1 * L * C), wrist, tipd,
+    rim = [V(0, -0.06, 0.02 * L * C), wrist, tipd,
            V(0, L * 0.72, -0.3 * L * C) + (tipd - V(0, L, -0.1 * L)) * 0.6,
            V(0, L * 0.6, -0.2 * L * C), V(0, L * 0.4, -0.42 * L * C),
            V(0, L * 0.25, -0.3 * L * C), V(0, L * 0.12, -0.36 * L * C), V(0, -0.03, -0.25 * L * C)]
     g.setup(slot_finish={"accent": "subsurf"}, voxel=0.005)
     g.slot("accent")
-    g.slab(rim, RIGHT, 0.018, bulge=0.2)
-    g.slot("skin")
+    # Support the outline through subdivision so membrane tips meet their spars.
+    supported = []
+    for i, point in enumerate(rim):
+        supported.extend([lerp(point, rim[i-1], .08), point, lerp(point, rim[(i+1) % len(rim)], .08)])
+    g.slab(supported, RIGHT, 0.018, bulge=0.2)
+    g.slot("base")
     g.loft([rim[0], lerp(rim[0], wrist, 0.5), wrist, lerp(wrist, tipd, 0.5), tipd], [0.045, 0.04, 0.035, 0.022, 0.008], sides=14, up=RIGHT)
     for k in (3, 5, 7):
         g.loft([wrist, lerp(wrist, rim[k], 0.5), rim[k]], [0.024, 0.016, 0.006], sides=12, up=RIGHT)

@@ -44,15 +44,8 @@ def _neck(r, d):
 
 def _tail(r, f):
     tails = [l for l in r.get("limbs", []) if l.get("motion") == "tail"]
-    if tails:
-        for tail in tails:
-            tail["segments"] = [[component * f for component in segment] for segment in tail["segments"]]
-        return
-    sp = r["spine"]
-    if len(sp) < 3:
-        return
-    z1 = sp[1]["z"]
-    sp[0]["z"] = z1 + (sp[0]["z"] - z1) * f
+    for tail in tails:
+        tail["segments"] = [[component * f for component in segment] for segment in tail["segments"]]
 
 
 def _part_scale(uid):
@@ -75,8 +68,9 @@ def default_knobs(recipe, part_uids=None, fit_camera=True):
         Knob("body_h", lambda r, x: _scale_body(r, h=x), 1.0, 0.15, 0.5, 2.0),
         Knob("body_len", lambda r, x: _scale_body(r, length=x), 1.0, 0.15, 0.5, 2.0),
         Knob("neck_raise", _neck, 0.0, 0.15, -0.8, 0.8, False),
-        Knob("tail_len", _tail, 1.0, 0.25, 0.3, 3.0),
     ]
+    if any(l.get("motion") == "tail" for l in recipe.get("limbs", [])):
+        ks.append(Knob("tail_len", _tail, 1.0, 0.25, 0.3, 3.0))
     if recipe.get("limbs"):
         ks += [Knob("leg_len", _legs, 1.0, 0.15, 0.4, 2.2), Knob("limb_thick", _thick, 1.0, 0.2, 0.4, 2.5)]
     for uid in (part_uids or []):

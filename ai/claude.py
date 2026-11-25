@@ -44,6 +44,7 @@ u runs from rear tip (0) to nose (1); theta=0 at the side, +90 at the back/top, 
 Place once: midline single, side paired. Scale and rotation fit a local shape on the animal.
 The builder manages ring bindings. Never author bind or a mirror flag.
 paint: {base,accent,detail} hex colors, pattern none/stripes/spots/patches/gradient.
+Keep the torso on the spine. Author tails as separate motion:"tail" chains; put tail ornaments on that chain.
 Choose broad masses and silhouette before details. Use defaults when unsure."""
 
 
@@ -74,6 +75,8 @@ DRAFT_SCHEMA = {
 CRITIQUE_SCHEMA = {
     "type": "object",
     "properties": {
+        "anatomy_pass": {"type":"boolean","description":"All visible relative placements and attachment seams pass visual inspection against the reference"},
+        "anatomy_note": {"type":"string","description":"Describe observed landmark relationships, including eyes, jaw, horns and wing roots where present"},
         "feature_checks": {"type": "array", "items": {"type": "object", "properties": {
             "name": {"type": "string"}, "score": {"type": "number", "description": "0 = missing/wrong, 0.5 = partly, 1 = clearly matches (within the library style)"},
             "issue": {"type": "string"}}, "required": ["name", "score", "issue"], "additionalProperties": False}},
@@ -81,7 +84,7 @@ CRITIQUE_SCHEMA = {
         "library_gaps": {"type": "array", "items": {"type": "string"}, "description": "features the library cannot express within its ranges"},
         "done": {"type": "boolean", "description": "true if further edits would not improve recognizability"},
     },
-    "required": ["feature_checks", "ops_json", "library_gaps", "done"],
+    "required": ["anatomy_pass", "anatomy_note", "feature_checks", "ops_json", "library_gaps", "done"],
     "additionalProperties": False,
 }
 

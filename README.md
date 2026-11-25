@@ -46,7 +46,7 @@ Every edit goes through the recipe, so Blender's undo covers it.
   - Builds the armature (spine chain, limb chains, part and jaw bones) and computes skin weights that blend across joints and where limbs meet the body.
   - Paints vertex colours (patterns, belly) and sets one material per paint slot.
 - **Animation** (`polyforge/animator.py`):
-  - Footprint gait planning for 0 to 8 or more legs, with FABRIK leg IK and the body sinking to keep every foot in reach.
+  - Footprint gait planning for 0 to 8 or more legs, with FABRIK leg IK and a standing clearance chosen once for each walk.
   - Spine, tail and neck motion, plus part behaviours: eyes look and blink, jaws open, ears flop, wings flap.
   - Role-based actions (roar, wave, hop) that work on any creature.
   - `polyforge/baker.py` bakes each clip to an action on its own NLA track, so every exporter carries all clips.
@@ -54,10 +54,13 @@ Every edit goes through the recipe, so Blender's undo covers it.
 ## Commands
 
 ```sh
-python3 pf.py build examples/bull.json --out out/bull --formats glb,fbx,usdz,blend
+python3 pf.py review examples/bull.json --out out/bull-review
+# Inspect the four images, then record your observations.
+python3 pf.py review examples/bull.json --out out/bull-review --accept "$REVIEW_NOTE"
+python3 pf.py build examples/bull.json --review out/bull-review/review.json --out out/bull --formats glb,fbx,usdz,blend
 python3 pf.py render examples/bull.json --out out/bull --views front,side,threequarter [--engine cycles]
-python3 pf.py animate examples/bull.json --clip walk --out out/bull_walk.mp4
-python3 pf.py turntable examples/bull.json --out out/bull_turntable.mp4
+python3 pf.py animate examples/bull.json --review out/bull-review/review.json --clip walk --out out/bull_walk.mp4
+python3 pf.py turntable examples/bull.json --review out/bull-review/review.json --out out/bull_turntable.mp4
 python3 pf.py gallery examples/*.json --out out/gallery.png
 python3 pf.py library --out out/parts       # each part as its own GLB, for engines that assemble parts themselves
 python3 pf.py describe                       # family index, placement rules and operations
@@ -88,15 +91,28 @@ Use `horn_sweep` for an unbranched horn and `ear_leaf` for round, pointed, long,
 
 The image loop defaults to Claude Haiku and accepts a model override through `POLYFORGE_MODEL`. It starts with a compact family index. For an identified feature, it requests that family's controls and critiques isolated views before the assembly fit. `--part-rounds` sets the local revision budget. The held-out benchmark writes first-pass validity, edit turns, renders and token usage. Review the rendered views against the input image to record artistic acceptance.
 
+## Review assembly before animation
+
+Shape the torso with the spine. Each leg owns its joint chain and foot, and each tail owns its flexible chain and attached ornaments. The leg solver poses the torso first, selects standing clearance from leg reach and stride, then solves the limbs. The legless gait retains spine undulation. Walk previews use a stationary camera with world travel.
+
+In Blender, use **Render assembly review views** in **Animate & export**. Inspect the front, side, three-quarter and head views against the reference or intended anatomy, then accept the assembly. Check the eye relative to the jaw and horn roots, wing roots relative to the shoulders, foot placement and tail attachment wherever applicable. Recipe edits invalidate the previous acceptance.
+
+For the CLI, generate and inspect the views, then record the observed result. Pass the resulting review file to build, animate or turntable commands. Commands also discover a review.json beside the input recipe. Static modeling and inspection remain available while review is pending.
+
+```sh
+python3 pf.py review examples/dragon.json --out out/dragon-review
+python3 pf.py review examples/dragon.json --out out/dragon-review --accept "Eyes ahead of horn roots; both wings seated at shoulders"
+python3 pf.py animate examples/dragon.json --review out/dragon-review/review.json --clip walk --out out/dragon-walk.mp4
+```
+
 ## Verify the exported walk
 
 ```sh
-python3 pf.py build examples/spider.json --out out/spider --formats glb --contacts
+python3 pf.py build examples/spider.json --review out/spider-review/review.json --out out/spider --formats glb --contacts
 blender -b --python-exit-code 1 -P tools/tests/export_contact.py -- out/spider/spider.glb
-godot --headless --path tools/tests --script res://export_contact.gd -- "$PWD/out/spider/spider.glb"
 ```
 
-The build report supplies stance timing and travel for the in-place clip. Both checks locate rigidly weighted sole vertices in the imported mesh, measure their height and world-space drift during stance, and require each foot to lift. Run the same commands with the bull and minotaur recipes. The regular test suite also checks the bull and runs the Godot assertion when Godot 4 is installed.
+The build report supplies stance timing and travel for the in-place clip. The Blender check locates rigidly weighted sole vertices in the imported mesh, measures their height and world-space drift during stance, and requires each foot to lift. Run the same commands with the bull and minotaur recipes. The regular test suite also checks the bull.
 
 ## Layout
 

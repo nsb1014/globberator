@@ -55,6 +55,29 @@
         0.03
       ],
       "tip": "foot_claw"
+    },
+    {
+      "uid": "tail_chain",
+      "motion": "tail",
+      "theta": 90,
+      "u": 0,
+      "segments": [
+        [
+          0,
+          0.02,
+          -0.12
+        ],
+        [
+          0,
+          0.04,
+          -0.1
+        ]
+      ],
+      "radii": [
+        0.08,
+        0.06,
+        0.035
+      ]
     }
   ],
   "parts": [
@@ -94,13 +117,14 @@
     {
       "uid": "tail",
       "part": "tail_fan",
-      "u": 0.02,
+      "u": 1,
       "theta": 90,
       "params": {
         "size": 1.0,
         "spread": 0.6,
         "lift": 0.6
-      }
+      },
+      "on": "tail_chain"
     },
     {
       "uid": "crest",

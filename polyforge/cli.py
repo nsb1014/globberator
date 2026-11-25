@@ -172,6 +172,37 @@ def cmd_apply(a):
     return 3 if errs else 0
 
 
+def cmd_review(a):
+    from . import review
+    source = R.load(a.recipe)
+    os.makedirs(a.out, exist_ok=True)
+    path = os.path.join(a.out, "review.json")
+    if a.accept:
+        previous = R.load(path)
+        if previous["recipe_hash"] != review.signature(source):
+            raise ValueError("Recipe changed; regenerate review images")
+        R.save(review.record(source, True, a.accept), path)
+        return
+    reset()
+    res = build(source, "final")
+    pose_at(res, None)
+    cam = render.setup("workbench", 640)
+    render.floor(True)
+    for view, focus in (("front", False), ("side", False), ("threequarter", False), ("side", True)):
+        bounds = head_bounds(res) if focus else render.bounds(objs(res))
+        render.frame(cam, *bounds, *render.view_angles(view))
+        render.render(os.path.join(a.out, ("head" if focus else view) + ".png"))
+    R.save(review.record(source, False, ""), path)
+
+
+def require_review(a):
+    from . import review
+    path = a.review or os.path.join(os.path.dirname(a.recipe), "review.json")
+    if not os.path.isfile(path):
+        raise ValueError("Create and inspect the review views first with pf.py review")
+    review.require(R.load(a.recipe), R.load(path))
+
+
 def cmd_build(a):
     from . import baker
     reset()
@@ -179,6 +210,7 @@ def cmd_build(a):
     res = build(a.recipe, "preview" if a.preview else "final")
     report = dict(res["report"])
     if not a.no_anim:
+        require_review(a)
         contact_frames = [] if a.contacts else None
         report["clips"] = baker.bake_all(res["armature"], contacts=contact_frames)
         if a.contacts:
@@ -245,6 +277,7 @@ def cmd_renderjobs(a):
 
 
 def _video(a, kind):
+    require_review(a)
     reset()
     res = build(a.recipe, "preview" if a.preview else "final")
     an = Animator(res["rig"])
@@ -259,17 +292,20 @@ def _video(a, kind):
     fps = 30
     frames = tempfile.mkdtemp(prefix="pf_frames_")
     n = int(a.seconds * fps)
+    if follow:
+        travel = kit.to_blender(Vector((0, 0, an.speed * a.seconds)))
+        render.frame(cam, Vector(map(min, lo, lo + travel)), Vector(map(max, hi, hi + travel)), yaw, pitch)
+    render.floor(True)
     for f in range(n):
         an.step(1.0 / fps)
         write_pose(res["armature"], an)
         if follow:
             set_world(res, an)
         bpy.context.view_layer.update()
-        off = res["armature"].matrix_world.translation
         if kind == "turntable":
             render.frame(cam, lo, hi, 360.0 * f / n, 14.0)
-        else:
-            render.frame(cam, lo + off, hi + off, yaw, pitch, 1.25 if follow else 1.08)
+        elif not follow:
+            render.frame(cam, lo, hi, yaw, pitch)
         render.render(os.path.join(frames, "f%04d.png" % f))
     frames_to_video(frames, a.out, fps)
     shutil.rmtree(frames, ignore_errors=True)
@@ -381,7 +417,8 @@ def main(argv=None):
     s = sub.add_parser("describe"); s.add_argument("--out"); s.add_argument("--part"); s.add_argument("--full", action="store_true")
     s = sub.add_parser("normalize"); s.add_argument("recipe"); s.add_argument("--out")
     s = sub.add_parser("apply"); s.add_argument("recipe"); s.add_argument("ops"); s.add_argument("--out", required=True)
-    s = sub.add_parser("build"); s.add_argument("recipe"); s.add_argument("--out", required=True)
+    s = sub.add_parser("review"); s.add_argument("recipe"); s.add_argument("--out", required=True); s.add_argument("--accept", metavar="INSPECTION_NOTE")
+    s = sub.add_parser("build"); s.add_argument("--review"); s.add_argument("recipe"); s.add_argument("--out", required=True)
     s.add_argument("--contacts", action="store_true", help="include walk stance samples in the build report")
     s.add_argument("--formats", default="glb,blend"); s.add_argument("--no-anim", action="store_true"); s.add_argument("--preview", action="store_true")
     for name in ("render", "animate", "turntable"):
@@ -393,7 +430,7 @@ def main(argv=None):
             s.add_argument("--views", default="front,side,threequarter"); s.add_argument("--mask", action="store_true")
             s.add_argument("--pose"); s.add_argument("--focus")
         else:
-            s.add_argument("--seconds", type=float, default=4.0 if name == "animate" else 6.0)
+            s.add_argument("--review"); s.add_argument("--seconds", type=float, default=4.0 if name == "animate" else 6.0)
             s.add_argument("--view", default="threequarter"); s.add_argument("--inplace", action="store_true")
             if name == "animate":
                 s.add_argument("--clip", default="walk")

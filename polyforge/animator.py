@@ -2,8 +2,7 @@
 
 Derived entirely from the rig the builder produced:
   * legs plan world-space footprints and swing between them; FABRIK IK bends them
-  * the body rides on the legs (bob, sway, lean) and sinks to keep every foot reachable;
-    with no legs it slithers
+  * the torso sets the walking pose at a precomputed clearance; legless bodies slither
   * neck/head and tail chains get look-around, wag and follow-through
   * parts animate by capability: eyes look and blink, jaws open, ears flop,
     wings flap, antennae sway
@@ -126,6 +125,7 @@ class Animator:
             p["_F"] = Matrix(p["frame"])
             p["_Fi"] = p["_F"].inverted_safe()
         self._setup_gait()
+        self.walk_settle = self._standing_clearance()
         self.reset()
 
     # ---------------------------------------------------------- gait setup
@@ -174,13 +174,25 @@ class Animator:
             half = min(half, -v.z + math.sqrt(disc), v.z + math.sqrt(disc))
         return 2.0 * max(half, 0.02) * 0.9
 
+    def _standing_clearance(self):
+        """Choose one reachable pelvis height for the stride before any foot swings."""
+        drop = 0.0
+        for leg in self.legs:
+            hip, sole = leg["rest_j"][0], leg["rest_j"][-1]
+            half_stride = self.walk_speed * self._duty("walk") / self._freq("walk") * 0.5
+            horizontal = math.hypot(sole.x - hip.x, abs(sole.z - hip.z) + half_stride)
+            reach = 0.94 * leg["length"]
+            vertical = math.sqrt(max(0.0, reach * reach - horizontal * horizontal))
+            drop = max(drop, hip.y + leg["sole_local"].y - vertical)
+        return min(drop, 0.45 * self.leg_len)
+
     def _duty(self, p):
         n = len(self.legs)
         if n == 1:
             return 0.45 if p == "walk" else 0.35
         if p == "run":
             return 0.38 if n == 2 else (0.42 if n <= 4 else 0.45)
-        return 0.6 if n == 2 else (0.65 if n <= 4 else 0.55)
+        return 0.6 if n == 2 else (0.75 if n == 4 else 0.65 if n <= 4 else 0.55)
 
     def _freq(self, p):
         s = 1.1 if p == "walk" else 1.75
@@ -247,7 +259,7 @@ class Animator:
                 st["swinging"] = True
                 st["swing_dur"] = (1.0 - self.duty) / self.gait_freq
                 st["swing_t"] = s
-                st["lift_h"] = self.leg_len * (0.12 if self.profile == "walk" else 0.18)
+                st["lift_h"] = self.leg_len * (0.16 if self.profile == "walk" else 0.18)
                 st["lift"] = rest_fp + fwd * (-0.5 * stride - self.speed * s * st["swing_dur"])
                 st["plant"] = st["lift"].copy()
         self.pose()
@@ -308,7 +320,7 @@ class Animator:
                     st["swing_t"] = 0.0
                     st["swing_dur"] = (1.0 - duty) / self.gait_freq if mv else 0.22 * math.sqrt(self.leg_len)
                     st["lift"] = st["plant"].copy()
-                    st["lift_h"] = self.leg_len * (0.12 if self.profile == "walk" else 0.18)
+                    st["lift_h"] = self.leg_len * (0.16 if self.profile == "walk" else 0.18)
             if st["swinging"]:
                 st["swing_t"] += dt / st["swing_dur"]
                 s = clamp(st["swing_t"], 0.0, 1.0)
@@ -402,16 +414,7 @@ class Animator:
         hb = euler(pitch, 0.0, roll)
         pivot = self.rest[hub_bone]
         if legs and jump <= 0.0:
-            hx = X(hb, pivot + off)
-            drop = 0.0
-            for st in legs:
-                tgt = inv @ st["foot"] - st["sole_local"]
-                hip = hx @ (st["rest_j"][0] - pivot)
-                maxr = st["length"] * 0.965
-                dxz = math.hypot(hip.x - tgt.x, hip.z - tgt.z)
-                allowed = tgt.y + (math.sqrt(maxr * maxr - dxz * dxz) if dxz < maxr else 0.0)
-                drop = max(drop, hip.y - allowed)
-            off.y -= min(drop, 0.45 * self.leg_len)
+            off.y -= self.walk_settle
         self._set(hub_bone, X(hb, pivot + off))
         self.bob_vel = off.y - self.prev_bob
         self.prev_bob = off.y
@@ -433,17 +436,9 @@ class Animator:
             if not legs:
                 q = rot(UPV, self._slither(i)) @ q
             self._set(spine[i], self._carry(spine[i], q))
-        # tail
-        wag_amp = 0.12 + 0.35 * self.track("wave") * (1.0 if not self.arms else 0.0)
+        # Rear torso inherits the hub. Undulation belongs to crawling bodies and tail chains.
         for i in range(hub - 1, -1, -1):
-            k = hub - i
-            if not legs:
-                q = rot(UPV, self._slither(i))
-            else:
-                wag = wag_amp * math.sin(TAU * (2.0 + 6.0 * self.track("wave")) * self.otime / IDLE_LOOP - k * 0.7) * (0.4 + 0.6 * idle_w)
-                wag += 0.1 * math.sin(TAU * self.gait_clock - k * 0.8) * moving
-                droop = 0.03 * k * (1.0 - moving * 0.5) + 0.04 * self.osc(2.0, k) * idle_w
-                q = euler(-droop - pitch / max(hub, 1), wag / max(hub, 1) * 1.5, 0.0)
+            q = rot(UPV, self._slither(i)) if not legs else Matrix.Identity(3)
             self._set(spine[i], self._carry(spine[i], q))
         # limbs
         for st in legs:

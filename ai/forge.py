@@ -105,13 +105,16 @@ class Run:
         recipe, warnings = pf.normalize(recipe)
         self.first_pass_valid = not warnings
         if use_llm and a.part_rounds:
-            # Focus the isolated pass on the most distinctive identified feature.
             ranked = sorted(analysis["features"], key=lambda f: -f["importance"])
             items = recipe["parts"] + recipe["limbs"]
-            target = next((i for f in ranked for i in items if f["part"] == i.get("part", i.get("tip"))), None)
-            if target:
-                self.refine_part(target, a.part_rounds)
-                recipe, warnings = pf.normalize(recipe)
+            reviewed = set()
+            for feature in ranked:
+                for index, item in enumerate(items):
+                    if index in reviewed or feature["part"] != item.get("part", item.get("tip")):
+                        continue
+                    self.refine_part(item, a.part_rounds, index)
+                    reviewed.add(index)
+            recipe, warnings = pf.normalize(recipe)
         best = None
         gaps = set(f["name"] for f in analysis["features"] if f.get("part") == "none")
         stall = 0
@@ -132,6 +135,11 @@ class Run:
             # 2. render + score
             rnd = self.render(recipe, "it%d" % it, cam, ["threequarter", "side", "front"])
             warnings = list(dict.fromkeys(warnings + rnd["report"]["warnings"]))
+            if use_llm:
+                closeup = os.path.join(self.work, "head%d" % it)
+                pf.run(["render", os.path.join(self.work, "it%d.json" % it), "--focus", "head", "--views", "side", "--out", closeup])
+                rnd["extra"].append(("head_side", os.path.join(closeup, "side.png")))
+                self.renders += 1
             scores = self.numeric_scores(rnd)
             critique = None
             if use_llm:
@@ -146,12 +154,13 @@ class Run:
             scores["total"] = round(total(scores) / active_weight, 4)
             self.history.append({"iteration": it, "scores": scores, "camera": cam, "warnings": warnings})
             self.log("  scores %s" % scores)
-            if best is None or scores["total"] > best["scores"]["total"] + 1e-4:
-                best = {"recipe": recipe, "scores": scores, "render": rnd, "camera": cam}
+            accepted = bool(critique and critique["anatomy_pass"])
+            if best is None or (accepted, scores["total"]) > (best["accepted"], best["scores"]["total"] + 1e-4):
+                best = {"accepted": accepted, "review_note": critique["anatomy_note"] if critique else "", "recipe": recipe, "scores": scores, "render": rnd, "camera": cam}
                 stall = 0
             else:
                 stall += 1
-            if scores["total"] >= a.tolerance:
+            if scores["total"] >= a.tolerance and (accepted or not use_llm):
                 self.log("  reached style tolerance %.2f" % a.tolerance)
                 break
             if stall >= 2:
@@ -159,7 +168,7 @@ class Run:
                 break
             # 3. LLM edits
             if critique is not None:
-                if critique["done"]:
+                if critique["done"] and accepted:
                     self.log("  judge: no further edits would help")
                     break
                 try:
@@ -177,14 +186,14 @@ class Run:
                 break
         self.finish(best, analysis, sorted(gaps), time.time() - t0)
 
-    def refine_part(self, item, rounds):
+    def refine_part(self, item, rounds, index):
         import claude
         pid = item.get("part", item.get("tip"))
         controls = pf.describe(pid)["parts"][0]["params"]
         allowed = ("segments", "radii", "tip_params") if "segments" in item else ("params",)
         draft = {k: item[k] for k in (*allowed, "part", "tip", "motion") if k in item}
         for i in range(rounds + 1):
-            work = os.path.join(self.work, "shape%d" % i)
+            work = os.path.join(self.work, "part%d" % index, "shape%d" % i)
             os.makedirs(work, exist_ok=True)
             path = os.path.join(work, "input.json")
             with open(path, "w") as out:
@@ -215,11 +224,16 @@ class Run:
         for v, p in best["render"]["extra"]:
             shutil.copy(p, os.path.join(self.out, "best_%s.png" % v))
         name = (best["recipe"].get("name") or "creature").lower().replace(" ", "_")
-        if not self.args.no_export:
+        pf.run(["review", rp, "--out", self.out])
+        self.renders += 4
+        if best["accepted"]:
+            pf.run(["review", rp, "--out", self.out, "--accept", best["review_note"] or "Reviewed against reference"])
+        if not self.args.no_export and best["accepted"]:
             pf.build(rp, self.out, name, "glb,fbx,usdz,blend")
             pf.video("turntable", rp, os.path.join(self.out, "turntable.mp4"), seconds=6, size=420)
             pf.video("animate", rp, os.path.join(self.out, "walk.mp4"), clip="walk", seconds=4, size=420)
         report = {
+            "visual_review": {"accepted": best["accepted"], "note": best["review_note"]},
             "best_scores": best["scores"], "tolerance": self.args.tolerance, "camera": best["camera"],
             "analysis": analysis, "library_gaps": gaps, "history": self.history,
             "first_pass_valid": self.first_pass_valid, "renders": self.renders, "repair_turns": self.repairs,

@@ -40,7 +40,7 @@ def foot_claw(g, p):
     s, sp = p["size"], p["spread"]
     tal = max(p["talons"], 0.1)
     g.setup(voxel=0.0025 * s)
-    g.slot("skin")
+    g.slot("base")
     g.oval(V(0, -0.02 * s, 0.0), (0.04 * s, 0.03 * s, 0.045 * s), segs=18, rings=10)
     claws = []
     for i in range(4):

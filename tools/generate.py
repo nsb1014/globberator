@@ -6,13 +6,14 @@ from pathlib import Path
 import subprocess
 import tempfile
 
-from arthropod_recipe import describe, validate
+from arthropod_recipe import configure_legs, describe, validate
 
 tools = Path(__file__).resolve().parent
 parser = argparse.ArgumentParser(description=__doc__)
 source = parser.add_mutually_exclusive_group()
 source.add_argument("--preset", choices=["solifuge"])
 source.add_argument("--recipe", type=Path, help="A segmented_arachnid JSON recipe")
+parser.add_argument("--legs",type=int,choices=range(9),help="Number of walking legs on the solifuge preset")
 parser.add_argument("--shape", metavar="CONTROL=NUMBER", action="append", default=[])
 parser.add_argument("--describe", action="store_true", help="Print the preset and accepted controls as JSON")
 parser.add_argument("--out", type=Path)
@@ -27,6 +28,10 @@ if not args.out:
 recipe = json.loads(args.recipe.read_text()) if args.recipe else preset
 if recipe["parts"]["body"] != "segmented_arachnid":
     parser.error("The automated contact review supports segmented_arachnid recipes")
+if args.legs is not None:
+    if args.recipe:
+        parser.error("--legs selects preset sockets. Edit mounts directly in a custom recipe.")
+    configure_legs(recipe,args.legs)
 for setting in args.shape:
     key, sep, value = setting.partition("=")
     if not sep or key not in recipe["shape"]:

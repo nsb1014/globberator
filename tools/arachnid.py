@@ -4,11 +4,12 @@ import math
 import bpy
 from mathutils import Matrix, Quaternion, Vector
 
+from locomotion import Gait
+from limb_ik import aim_leg
 from arthropod_recipe import validate
 from arthropod_parts import Sculpture, limb_chain
 from character_io import clay_material, export_character
 
-DUTY = .64
 STRIDE = .65
 CYCLES = 2
 ABDOMEN = ("Abdomen", "Abdomen.Mid", "Abdomen.Rear")
@@ -101,7 +102,7 @@ def chelicera(s,width):
         s.bone(mobile.format(side=side),mount@hinge,mount@tip,jaw)
 
 
-def make_rig(s):
+def make_rig(s,abdomen_center=.67):
     data = bpy.data.armatures.new("Solifuge skeleton")
     rig = bpy.data.objects.new("Solifuge skeleton",data)
     bpy.context.collection.objects.link(rig)
@@ -125,7 +126,7 @@ def make_rig(s):
     modifier.object = rig
     skin.shape_key_add(name="Basis")
     for name, bone_prefix, axis, center, scale in [
-        ("Abdomen width","Abdomen",0,0,.22), ("Abdomen depth","Abdomen",2,.67,.21),
+        ("Abdomen width","Abdomen",0,0,.22), ("Abdomen depth","Abdomen",2,abdomen_center,.21),
         ("Jaw breadth","Chelicera.",0,0,.16)]:
         key = skin.shape_key_add(name=name)
         key.slider_min = -1
@@ -137,31 +138,13 @@ def make_rig(s):
     return rig,skin
 
 
-def solve_foot(points, foot_offset):
-    hip,knee,ankle,toe = points
-    # Keep the distal segment level. Solve the upper two links against the target
-    # in the rest knee's bending plane, allowing a forward and vertical swing.
-    target = ankle+foot_offset
-    direction = target-hip
-    reach = direction.length
-    direction.normalize()
-    upper,lower = (knee-hip).length,(ankle-knee).length
-    along = (upper*upper-lower*lower+reach*reach)/(2*reach)
-    if abs(along) > upper+1e-5:
-        raise ValueError("Foot target exceeds limb reach")
-    pole = knee-hip
-    pole = (pole-direction*direction.dot(pole)).normalized()
-    bend = hip + along*direction + math.sqrt(max(0,upper*upper-along*along))*pole
-    return [(knee-hip).rotation_difference(bend-hip),
-            (ankle-knee).rotation_difference(target-bend), Quaternion()]
-
-
 def bake(rig,chains):
     scene = bpy.context.scene
     scene.frame_start = 0
     scene.render.fps = 24
     rig.animation_data_create()
-    for clip,frames in [("Idle",48),("Walk",64)]:
+    gait = Gait({names[-1]:points[0] for role,side,names,points in chains if role == "foot"})
+    for clip,frames in [("Idle",48),("Walk",gait.cycle_frames*CYCLES)]:
         walk = clip == "Walk"
         action = bpy.data.actions.new(clip)
         action.use_fake_user = True
@@ -170,26 +153,39 @@ def bake(rig,chains):
             t = frame/frames
             cycle = t*(CYCLES if walk else 1)
             phase = math.tau*cycle
-            # Offset the body toward the supporting tripod and rise over midstance.
-            shift = (Vector((.053*math.cos(phase-1.9),0,.034*math.cos(2*phase-3.8)))
-                     if walk else Vector((0,0,.021*math.sin(phase))))
+            shift = Vector((0,0,.021*math.sin(phase)))
+            if gait.count == 0:
+                shift = Vector((.055*math.sin(phase) if walk else 0,0,0))
+            elif walk:
+                if gait.count == 1:
+                    step = gait.step(next(iter(gait.touchdown)),cycle,STRIDE)
+                    compression = math.sin(math.pi*min(1.,step.phase/gait.duty))**2
+                    shift.z = .16*4*step.swing*(1-step.swing)-.085*compression
+                else:
+                    # Transfer laterally away from the foot currently in swing.
+                    unloaded = sum(math.copysign(gait.step(names[-1],cycle,STRIDE).arc,points[0].x)
+                                   for role,side,names,points in chains if role == "foot" and side != "C")
+                    shift = Vector((-.033*unloaded,0,.018*math.cos(2*phase)))
             rotation = {}
             for i,name in enumerate(ABDOMEN):
                 breath = math.sin(phase-.80*i)
                 pitch = (.046+.020*i)*breath
                 yaw = (.032+.012*i)*math.sin(phase-.80*i-.55) if walk else 0.
+                if gait.count == 0:
+                    pitch = 0.
+                    yaw = (.27 if walk else .075)*math.sin(phase-i*1.0)
                 rotation[name] = Quaternion((0,0,1),yaw) @ Quaternion((1,0,0),pitch)
-            for role,side,names,points,offset in chains:
+            for role,side,names,points in chains:
                 sign = 1 if side == "L" else -1
                 if role == "foot":
                     delta = -shift
                     if walk:
-                        f = (cycle+offset)%1
-                        swing = max(0,(f-DUTY)/(1-DUTY))
-                        ease = swing**3*(10-15*swing+6*swing*swing)
-                        delta.y += STRIDE*(f-DUTY/2-ease)
-                        delta.z += .235*math.sin(math.pi*swing)**2
-                    rotation.update(zip(names,solve_foot(points,delta),strict=True))
+                        step = gait.step(names[-1],cycle,STRIDE)
+                        delta.y += step.back
+                        delta.z += (.24 if gait.count == 1 else .17)*step.arc
+                    hip,knee,ankle,_ = points
+                    upper,lower = aim_leg(hip,knee,ankle,hip,ankle+delta)
+                    rotation.update(zip(names,(upper,lower,Quaternion()),strict=True))
                 else:
                     # One palp reaches as its partner recovers. The finer sensory
                     # pair follows on a shorter arc, slightly behind the palps.
@@ -223,6 +219,12 @@ def bake(rig,chains):
         pb.matrix_basis = Matrix.Identity(4)
     scene.frame_set(0)
     bpy.context.view_layer.update()
+    bindings = {names[-1]:{"joints":names,"lift":.24 if gait.count == 1 else .17}
+                for role,side,names,points in chains if role == "foot"}
+    profile = gait.profile(CYCLES,STRIDE,bindings)
+    if not gait.count:
+        profile["belly"] = {"root":"Carapace","spine":list(ABDOMEN),"sway":.055,"bend":.27,"lag":1.0}
+    return profile
 
 
 def build(recipe, output, review):
@@ -232,16 +234,23 @@ def build(recipe, output, review):
     body(sculpt,recipe["shape"])
     chelicera(sculpt,recipe["shape"]["jaw_width"])
     chains = []
-    foot_count = 0
+    feet = [m for m in recipe["mounts"] if m["role"] == "foot"]
+    belly_grounded = not feet
+    body_height = .48 if len(feet) == 1 and feet[0].get("center") else 0.
+    if belly_grounded:
+        shell = next(obj for obj in sculpt.meshes if obj.name.startswith("Segmented abdomen"))
+        body_height = -min(v.co.z for v in shell.data.vertices)
+    offset = Vector((0,0,body_height))
+    for obj in sculpt.meshes:
+        obj.data.transform(Matrix.Translation(offset))
+    for name,(head,tail,parent) in sculpt.bones.items():
+        sculpt.bones[name] = (head+offset,tail+offset,parent)
     for mount in recipe["mounts"]:
-        for side,names,points in limb_chain(sculpt,mount):
-            offset = ((foot_count % 2)*.5 + (.5 if side == "R" else 0)) % 1
-            chains.append((mount["role"],side,names,points,offset))
-        if mount["role"] == "foot":
-            foot_count += 1
-    rig,skin = make_rig(sculpt)
-    bake(rig,chains)
-    export_character(rig,skin,output)
+        for side,names,points in limb_chain(sculpt,mount,belly_grounded,body_height):
+            chains.append((mount["role"],side,names,points))
+    rig,skin = make_rig(sculpt,0 if belly_grounded else .67+body_height)
+    profile = bake(rig,chains)
+    export_character(rig,skin,output,profile)
     if review:
         review.mkdir(parents=True,exist_ok=True)
         bpy.ops.wm.save_as_mainfile(filepath=str((review/"Solifuge.blend").resolve()))

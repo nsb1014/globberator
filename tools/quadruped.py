@@ -4,15 +4,11 @@ import math
 import numpy as np
 from mathutils import Matrix, Quaternion, Vector
 from scipy.interpolate import PchipInterpolator
+from limb_ik import aim_leg
 
 
 STRIDE = 1.04
-DUTY = .66
 CYCLES = 2
-# Lateral-sequence walk: hind, then fore on the same side.
-TOUCHDOWN = {"Hind.L": 0., "Fore.L": .20, "Hind.R": .50, "Fore.R": .70}
-
-
 def socket(origin, source, scale, pitch=0):
     return (Matrix.Translation(origin) @ Matrix.Rotation(pitch,4,'X')
             @ Matrix.Diagonal((*scale,1)) @ Matrix.Translation(-Vector(source)))
@@ -89,7 +85,7 @@ def bind(vertices,bones,names):
         remaining*=after
     weights[:,names.index("Pelvis")]=remaining
 
-    for label in TOUCHDOWN:
+    for label in (n.removeprefix("Foot.") for n in bones if n.startswith("Foot.")):
         chain=[segment+"."+label for segment in ("Upper","Lower","Cannon","Pastern","Foot")]
         joints=np.array([tuple(bones[name][0]) for name in chain])
         axis_y=np.interp(z,joints[::-1,2],joints[::-1,1])
@@ -112,7 +108,7 @@ def bind(vertices,bones,names):
     return indices,selected/selected.sum(axis=1)[:,None]
 
 
-def walk_pose(t,bones):
+def walk_pose(t,bones,gait):
     cycle=t*CYCLES
     phase=2*math.pi*cycle
     heading=Vector((0,-STRIDE*cycle,0))
@@ -129,12 +125,10 @@ def walk_pose(t,bones):
     for name in ("Spine","Chest"):
         parent=bones[name][2]
         origin[name]=origin[parent]+delta[parent]@(bones[name][0]-bones[parent][0])
-    for label,touchdown in TOUCHDOWN.items():
-        f=(cycle-touchdown)%1
-        u=max(0.,(f-DUTY)/(1-DUTY))
-        smooth=u**3*(10-15*u+6*u*u)
-        arc=math.sin(math.pi*u)**2
-        offset_y=STRIDE*(f-DUTY/2-smooth)
+    for label in gait.touchdown:
+        step=gait.step(label,cycle,STRIDE)
+        u,arc=step.swing,step.arc
+        offset_y=step.back
         upper,lower,cannon,pastern,hoof=[s+"."+label for s in ("Upper","Lower","Cannon","Pastern","Foot")]
         a,b,parent=bones[upper]
         c,d,_=bones[cannon]
@@ -144,19 +138,7 @@ def walk_pose(t,bones):
         toe_pitch=rotate(pitch,.11*arc*math.cos(math.pi*u))
         foot_goal=foot+heading+Vector((0,offset_y,.178*arc))
         target=foot_goal-tilt@(foot-c)
-        axis=target-pivot
-        reach=axis.length
-        axis.normalize()
-        pole=b-a
-        pole=(pole-axis*pole.dot(axis)).normalized()
-        first=(b-a).length
-        second=(c-b).length
-        along=(first*first-second*second+reach*reach)/(2*reach)
-        if abs(along)>first+1e-5:
-            raise ValueError(f"Unreachable {label} hoof at cycle phase {f:.3f}")
-        bend=pivot+axis*along+pole*math.sqrt(max(0,first*first-along*along))
-        delta[upper]=(b-a).rotation_difference(bend-pivot)
-        delta[lower]=(c-b).rotation_difference(target-bend)
+        delta[upper],delta[lower]=aim_leg(a,b,c,pivot,target)
         delta[cannon]=tilt
         delta[pastern]=tilt
         delta[hoof]=toe_pitch

@@ -78,7 +78,7 @@ class Sculpture:
         return mounts
 
 
-def limb_chain(sculpt, spec):
+def limb_chain(sculpt, spec, belly_grounded=False, body_height=0.):
     """The same three-segment part serves a pedipalp, feeler or weight-bearing leg."""
     role = spec["role"]
     y = spec["socket_y"]
@@ -93,6 +93,14 @@ def limb_chain(sculpt, spec):
         point.z = height
         return point
     joints = [origin, station(.41,knee_z), station(.84,toe_z+.16), station(1,toe_z)]
+    if spec.get("center"):
+        origin = Vector((0,y,.64+body_height))
+        direction = Vector((0,-1,0))
+        joints = [origin,Vector((0,y+.37*reach,.42+.42*body_height)),Vector((0,y+.12*reach,.20)),
+                  Vector((0,y-.04*reach,toe_z))]
+    elif body_height:
+        for i,point in enumerate(joints):
+            point.z += body_height + (.18*i/3 if belly_grounded else 0)
     sizes = (.132,.096,.057) if role != "feeler" else (.087,.066,.042)
     if role == "palp":
         sizes = (.126,.102,.072)
@@ -113,11 +121,17 @@ def limb_chain(sculpt, spec):
         for fork in (-1,1):
             base = joints[-1] - direction*.065
             claw_tip = joints[-1] + direction*.095 + fork*.036*across
-            claw_tip.z = .012
+            claw_tip.z = .003
             claw = sculpt.spindle("Tarsal claw",base,claw_tip,
                                    [(0,.025),(.38,.021),(.77,.012),(1,.002)],.7,.018)
             parts.append((claw,names[-1]+".{side}"))
-        parts.append((sculpt.ellipsoid("Contact pad",joints[-1],(.047,.05,toe_z)),names[-1]+".{side}"))
+        # A flat ventral patch under the distal tarsus makes the planted area visible.
+        heel = joints[-1] - .13*direction
+        ball = joints[-1] + .055*direction
+        pad = sculpt.spindle("Tarsal pad",heel,ball,[(0,.021),(.23,.048),(.70,.055),(1,.021)])
+        for v in pad.data.vertices:
+            v.co.z = max(0.,v.co.z)
+        parts.append((pad,names[-1]+".{side}"))
     elif role == "palp":
         parts.append((sculpt.ellipsoid("Palp pad",joints[-1],(.058,.079,.051)),names[-1]+".{side}"))
     chains = []

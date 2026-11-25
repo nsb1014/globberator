@@ -10,6 +10,8 @@ from mathutils import Vector, Quaternion, Matrix
 from scipy.interpolate import PchipInterpolator
 
 sys.path.insert(0,str(Path(__file__).resolve().parent))
+from locomotion import Gait
+from limb_ik import aim_leg
 from horns import horn_profile
 from character_io import clay_material, export_character
 import quadruped
@@ -666,10 +668,8 @@ def walk_pose(t):
     }
     pivot = bones["Pelvis"][0]
     for sign, side in [(1, "L"), (-1, "R")]:
-        f = (t + (0 if sign == 1 else .5)) % 1
-        # A full-foot hold, then a rounded swing back to the same footprint.
-        u = max(0.0, (f-.60)/.40)
-        arc = math.sin(pi*u)**2
+        step = gait.step(side,t,0)
+        f,u,arc = step.phase,step.swing,step.arc
         lift = .285*arc
         forward = -.16*arc*(1+.35*math.cos(pi*u))
         pastern = axis((1,0,0), .17*arc*math.cos(pi*u))
@@ -679,17 +679,7 @@ def walk_pose(t):
         hip_now = pivot + shift + pelvis @ (hip-pivot)
         foot_goal = foot + Vector((0,forward,lift))
         hock_goal = foot_goal - pastern @ (foot-hock)
-        line = hock_goal-hip_now
-        distance = line.length
-        line.normalize()
-        pole = knee-hip
-        pole = (pole-line*line.dot(pole)).normalized()
-        upper_length = (knee-hip).length
-        lower_length = (hock-knee).length
-        projection = (upper_length**2-lower_length**2+distance**2)/(2*distance)
-        knee_now = hip_now + line*projection + pole*math.sqrt(max(0,upper_length**2-projection**2))
-        delta[thigh] = (knee-hip).rotation_difference(knee_now-hip_now)
-        delta[shin] = (hock-knee).rotation_difference(hock_goal-knee_now)
+        delta[thigh],delta[shin] = aim_leg(hip,knee,hock,hip_now,hock_goal)
         delta[lower] = pastern
         delta[hoof] = axis((1,0,0), .08*arc*math.cos(pi*u))
 
@@ -701,6 +691,7 @@ def walk_pose(t):
         delta["Hand."+side] = chest @ axis((1,0,0), -.11-.34*math.cos(arm_phase-.43))
     return delta, shift
 
+gait = Gait({n.removeprefix("Foot."):b[0] for n,b in bones.items() if n.startswith("Foot.")})
 scene.frame_start=0
 scene.render.fps=24
 actions={}
@@ -711,7 +702,7 @@ for name,end in [("Idle",73),("Walk",89 if is_quadruped else 49)]:
     for frame in range(end):
         t=frame/(end-1)
         if name=="Walk":
-            ds,offset=quadruped.walk_pose(t,bones) if is_quadruped else walk_pose(t)
+            ds,offset=quadruped.walk_pose(t,bones,gait) if is_quadruped else walk_pose(t)
         else:
             breath=math.sin(2*pi*t)
             ds={("Neck" if is_quadruped else "Chest"):axis((1,0,0),.020*breath),"Head":axis((0,0,1),.032*breath)}
@@ -725,7 +716,15 @@ rig.animation_data.action=None
 reset_pose()
 scene.frame_set(0)
 bpy.context.view_layer.update()
-export_character(rig, skin, output)
+bindings = {}
+for label in gait.touchdown:
+    segments = ("Upper","Lower","Cannon","Pastern","Foot") if is_quadruped else ("Thigh","Shin","Pastern","Foot")
+    bindings[label] = {"joints":[n+"."+label for n in segments],"lift":.178 if is_quadruped else .285,
+                       "distal_pitch":(.24 if label.startswith("Hind") else -.20) if is_quadruped else .17,
+                       "distal_rock":not is_quadruped, "toe_pitch":.11 if is_quadruped else .08,
+                       "step_in_place":0 if is_quadruped else .16}
+profile = gait.profile(quadruped.CYCLES if is_quadruped else 1,quadruped.STRIDE if is_quadruped else 0,bindings)
+export_character(rig, skin, output,profile)
 print("WROTE",output,"mesh vertices", len(skin.data.vertices),"bones",len(bones))
 if review:
     review.mkdir(parents=True,exist_ok=True)

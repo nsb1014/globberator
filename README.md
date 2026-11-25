@@ -8,7 +8,22 @@
 
 The supplied dorsal-oblique photograph shows a solifuge with forward-facing paired chelicerae, long pedipalps and a visibly segmented abdomen. The abdomen occupies roughly half the length from jaw tip to rump in the image. The neutral model preserves this proportion and separates the front appendages so their functions read during motion. Surface heights, hidden joints and the mirrored far side are estimates. Model coordinates use Blender units, +Z up and −Y forward.
 
-The three rear pairs support the body in a low, symmetric stance with flexed joints. The sensory first leg pair and pedipalps hover above the floor. The fixed and movable fingers of each chelicera have separate bones. In idle, all six feet stay planted as the body breathes, the pedipalps sweep in alternation and each jaw briefly opens after the reach on its side. The rear abdomen follows the front by a quarter cycle. In the walk the body shifts over alternating tripods, the swing feet clear the floor by 0.23 units, and the creature advances 1.30 units over two cycles. [Solifuge anatomy reference](https://ph.health.mil/resources/ento-arachnids-afghan-poster.pdf)
+The studio variant uses four pairs of walking legs. All eight soles meet the floor in neutral and idle. The shorter pedipalps sweep in front of the jaws. During the crawl, one foot lifts at a time and the other seven hold their footprints. Two strides cover 1.30 model units.
+
+### Procedural locomotion
+
+PolyForge assigns each walking foot a phase from its socket position. During stance the sole keeps one ground-space footprint. During swing it follows an arc to the next footprint. A two-link inverse kinematics solver bends the leg in its rest plane while the hip moves. The same planner supplies the minotaur, bull and jointed-appendage generator. Each rig supplies its own joint bindings, reach and distal articulation. This follows the footprint and pose-goal approach described in section 4.2 of the Spore animation paper. [Hecker et al., SIGGRAPH 2008](https://chrishecker.com/images/c/cb/Sporeanim-siggraph08.pdf)
+
+| Walking legs | Level-ground movement |
+| --- | --- |
+| 0 | The belly rests on the floor. A lateral wave travels along the spine as the body advances. |
+| 1 | A centered leg compresses, pushes off, clears the floor in flight and lands at the next footprint. |
+| 2 | Feet alternate with a short interval of double support. The minotaur keeps its in-place step. |
+| 3–8 | One foot swings at a time. The other feet hold their footprints. Odd-count presets add a centered leg to the paired sockets. |
+
+The GLB stores both the clips and the gait bindings. Godot uses the clip for timing and secondary motion, then solves walking legs or the grounded spine each frame. Use **Open creature GLB** in the studio to load a generated rig. Other viewers can play the baked clips. The solver uses a level floor and straight travel.
+
+[Compare all nine leg counts](preview/leg-counts.mp4)
 
 ### Generate a creature from a recipe
 
@@ -17,6 +32,10 @@ A lightweight agent can select the solifuge preset and supply a few numeric cont
 ```sh
 python tools/generate.py --preset solifuge --out review/solifuge
 ```
+
+Pass `--legs 0` through `--legs 8` to select a preset anatomy. The glide and hop presets omit the sensory appendages so their support is visible. Custom recipes retain their explicitly declared appendages.
+
+Build, reimport and test all counts with `python tools/tests/leg_counts.py --out review/gaits`. This also opens all nine GLBs in Godot, perturbs the chains and checks the recovered poses.
 
 Run `python tools/generate.py --describe` to get the default recipe, role choices and numeric bounds as JSON without opening Blender. Use `--shape abdomen_width=1.12` to adjust a preset. Use `--recipe models/arachnid.json` in place of `--preset` to edit the assembly. The optional `--oidn /path/to/oidnDenoise` filters the rendered frames. The checked-in example uses the supplied photo as a human-interpreted reference. The automated pipeline begins with the preset or JSON.
 
@@ -27,7 +46,7 @@ Run `python tools/generate.py --describe` to get the default recipe, role choice
 | `role` | `foot` receives a contact pad, claws and foot-planting IK. `feeler` and `palp` use the same limb builder with a different taper, tip and hovering motion. |
 | `socket_y` | Front-to-back position along the prosoma, from −1.05 to 0.18. The shared placement function reflects the complete part and joint chain. |
 | `sweep`, `reach` | Angle from the lateral axis in degrees (−78 to 65) and horizontal reach in model units (1.4–2.7). Negative sweep points forward. |
-| Mount order | Weight-bearing pairs alternate phase in recipe order. Each mirrored partner walks half a cycle later. |
+| `center` | Set to `true` on a foot mount for one sagittal leg. Paired mounts mirror automatically. The gait planner sorts actual socket positions. |
 
 To update only the studio asset, run `blender -b --python-exit-code 1 -P tools/build.py -- --recipe models/arachnid.json`. The studio exposes abdomen width, abdomen depth and jaw breadth as live blend shapes.
 
@@ -39,7 +58,7 @@ An unarmored adult bull built from a fresh recipe. Its bovine head, swept horns,
 
 [Earlier foreleg shape comparison](preview/bull-forelegs.jpg) · [Neutral turntable](preview/bull-turntable.mp4) · [Side-view walk](preview/bull-walk.mp4) · [Rigged bull](godot/bull.glb) · [Bull recipe](models/bull.json)
 
-At build time each socket constructs its leg and shared hoof once. The attachment mirrors the assembled geometry and joint positions across the body. An edit to the shoulder attachment updates both forelegs on rebuild. Each side gets its own bones in the 28-joint skeleton. During its walk the bull advances 2.08 model units over two strides. Each hoof bears weight for 66% of its cycle and lifts in turn. Both the idle and walk are baked into the GLB.
+At build time each socket constructs its leg and shared hoof once. The attachment mirrors the assembled geometry and joint positions across the body. An edit to the shoulder attachment updates both forelegs on rebuild. Each side gets its own bones in the 28-joint skeleton. During its walk the bull advances 2.08 model units over two strides. Each hoof bears weight for 80% of its cycle and lifts in turn. Both the idle and walk are baked into the GLB.
 
 ## Minotaur
 

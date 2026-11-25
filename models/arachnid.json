@@ -5,8 +5,8 @@
   "parts": {"body": "segmented_arachnid", "jaws": "chelicera", "limbs": "jointed_appendage"},
   "shape": {"abdomen_length": 1.0, "abdomen_width": 1.0, "jaw_width": 1.0},
   "mounts": [
-    {"id": "Palp", "role": "palp", "socket_y": -0.97, "sweep": -63, "reach": 2.10},
-    {"id": "Leg1", "role": "feeler", "socket_y": -0.70, "sweep": -40, "reach": 1.78},
+    {"id": "Palp", "role": "palp", "socket_y": -0.97, "sweep": -63, "reach": 1.50},
+    {"id": "Leg1", "role": "foot", "socket_y": -0.70, "sweep": -40, "reach": 1.78},
     {"id": "Leg2", "role": "foot", "socket_y": -0.43, "sweep": -19, "reach": 1.87},
     {"id": "Leg3", "role": "foot", "socket_y": -0.14, "sweep": 10, "reach": 2.03},
     {"id": "Leg4", "role": "foot", "socket_y": 0.12, "sweep": 42, "reach": 2.33}

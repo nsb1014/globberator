@@ -11,6 +11,7 @@ const CHARACTERS := [
      "shapes":["Abdomen width","Abdomen depth","Jaw breadth"], "focus":Vector3(0,0.49,0.25),
      "azimuth":0.91, "elevation":0.50, "width":5.85, "travel":1.30, "walk_width":6.65, "walk_azimuth":0.91},
 ]
+var entries := CHARACTERS.duplicate(true)
 var shape_panel := VBoxContainer.new()
 var character := 0
 var selector := OptionButton.new()
@@ -20,6 +21,7 @@ var walk_button: Button
 var target := Vector3(0,2.42,0)
 var model: Node3D
 var skin: MeshInstance3D
+var gait: SkeletonModifier3D
 var player: AnimationPlayer
 var camera := Camera3D.new()
 var azimuth := 0.12
@@ -58,11 +60,16 @@ func select_character(index: int) -> void:
 		model.queue_free()
 	character = index
 	selector.select(index)
-	var entry: Dictionary = CHARACTERS[index]
+	var entry: Dictionary = entries[index]
 	model = entry.scene.instantiate()
 	add_child(model)
 	skin = model.find_children("*", "MeshInstance3D", true, false)[0]
 	player = model.find_children("*", "AnimationPlayer", true, false)[0]
+	if model.has_meta("ground_gait"):
+		gait = preload("res://ground_gait.gd").new()
+		var skeleton: Skeleton3D = model.find_children("*","Skeleton3D",true,false)[0]
+		skeleton.add_child(gait)
+		gait.configure(player,model.get_meta("ground_gait"))
 	walk_button.text = "Walk forward" if entry.has("travel") else "Step in place"
 	azimuth = entry.azimuth
 	elevation = entry.elevation
@@ -71,6 +78,50 @@ func select_character(index: int) -> void:
 	restore_shapes()
 	status.text = "Drag to orbit · scroll to zoom"
 	neutral()
+
+func open_creature(path: String) -> void:
+	var document := GLTFDocument.new()
+	var state := GLTFState.new()
+	if document.append_from_file(path,state) != OK:
+		status.text = "Could not open the creature GLB."
+		return
+	var profile := preload("res://ground_gait.gd").profile_from_nodes(state.json.get("nodes",[]))
+	if profile.is_empty():
+		status.text = "Choose a PolyForge GLB that includes gait bindings."
+		return
+	var creature := document.generate_scene(state,24)
+	creature.set_meta("ground_gait",profile)
+	var meshes := creature.find_children("*","MeshInstance3D",true,false)
+	if meshes.is_empty() or creature.find_children("*","Skeleton3D",true,false).is_empty():
+		creature.free()
+		status.text = "The creature needs a skinned mesh and a skeleton."
+		return
+	var mesh: MeshInstance3D = meshes[0]
+	var bounds := mesh.get_aabb()
+	var shapes := []
+	for i in mesh.get_blend_shape_count():
+		shapes.append(mesh.mesh.get_blend_shape_name(i))
+	var packed := PackedScene.new()
+	var result := packed.pack(creature)
+	creature.free()
+	if result != OK:
+		status.text = "Could not load the creature scene."
+		return
+	var width := maxf(bounds.size.x,bounds.size.z)*1.35
+	var entry := {"name":"Generated · %d legs" % profile.legs.size(),"scene":packed,"shapes":shapes,
+		"save":"user://creature_%s.cfg" % path.sha256_text(),"focus":bounds.get_center(),
+		"azimuth":.91,"elevation":.42,"width":width}
+	var travel: float = profile.cycles*profile.stride
+	if travel > 0:
+		entry.merge({"travel":travel,"walk_width":width+travel,"walk_azimuth":.91})
+	var slot := CHARACTERS.size()
+	if entries.size() == slot:
+		entries.append(entry)
+		selector.add_item(entry.name)
+	else:
+		entries[slot] = entry
+		selector.set_item_text(slot,entry.name)
+	select_character(slot)
 
 func add_floor() -> void:
 	var floor_plane := MeshInstance3D.new()
@@ -106,6 +157,13 @@ func make_controls() -> void:
 	for entry in CHARACTERS:
 		selector.add_item(entry.name)
 	box.add_child(selector)
+	var files := FileDialog.new()
+	files.file_mode = FileDialog.FILE_MODE_OPEN_FILE
+	files.access = FileDialog.ACCESS_FILESYSTEM
+	files.filters = PackedStringArray(["*.glb ; PolyForge creature"])
+	box.add_child(files)
+	files.file_selected.connect(open_creature)
+	button(box,"Open creature GLB",func(): files.popup_centered_ratio(.7))
 	selector.item_selected.connect(select_character)
 	box.add_child(shape_panel)
 	var motion := HBoxContainer.new()
@@ -153,12 +211,12 @@ func neutral() -> void:
 	player.stop()
 	var skeleton: Skeleton3D = model.find_children("*", "Skeleton3D", true, false)[0]
 	skeleton.reset_bone_poses()
-	target = CHARACTERS[character].focus
-	view_width = CHARACTERS[character].width
+	target = entries[character].focus
+	view_width = entries[character].width
 	fit_character()
 
 func play_motion(clip: String) -> void:
-	var entry: Dictionary = CHARACTERS[character]
+	var entry: Dictionary = entries[character]
 	var forward := entry.has("travel") and clip == "Walk"
 	target = entry.focus
 	view_width = entry.width
@@ -175,12 +233,12 @@ func save_shapes() -> void:
 	var cfg := ConfigFile.new()
 	for feature in sliders:
 		cfg.set_value("shape",feature,sliders[feature].value)
-	var err := cfg.save(CHARACTERS[character].save)
+	var err := cfg.save(entries[character].save)
 	status.text = "Proportions saved" if err == OK else "Could not save proportions"
 
 func restore_shapes() -> void:
 	var cfg := ConfigFile.new()
-	if cfg.load(CHARACTERS[character].save) == OK:
+	if cfg.load(entries[character].save) == OK:
 		for feature in sliders:
 			sliders[feature].value = cfg.get_value("shape",feature,0.0)
 

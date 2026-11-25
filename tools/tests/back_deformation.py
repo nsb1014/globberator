@@ -19,12 +19,19 @@ rest = coordinates.reshape(-1,3).copy()
 edges = np.array([edge.vertices[:] for edge in mesh.data.edges])
 mid = rest[edges].mean(axis=1)
 rest_length = np.linalg.norm(rest[edges[:,1]]-rest[edges[:,0]], axis=1)
-# Sample the posterior rib cage beneath the blades. Omit nearly coincident
-# vertices, where a relative change in length would be ill-conditioned.
-region = ((abs(mid[:,0]) < .83) & (mid[:,1] > .19) & (mid[:,2] > 2.78)
-          & (mid[:,2] < 3.33) & (rest_length > .012))
+# Exclude nearly coincident vertices whose relative strain is ill-conditioned.
+if rig.name.startswith("Bull"):
+    label = "Mid-flank"
+    region = ((abs(mid[:,1]) < .38) & (mid[:,2] < 2.55) & (mid[:,2] > 1.16))
+    limits = (.90,1.10)
+else:
+    label = "Posterior rib cage"
+    region = ((abs(mid[:,0]) < .83) & (mid[:,1] > .19) & (mid[:,2] > 2.78)
+              & (mid[:,2] < 3.33))
+    limits = (.65,1.50)
+region &= rest_length > .012
 edges, rest_length = edges[region], rest_length[region]
-assert len(edges) > 100, "Posterior rib cage was missing from the mesh"
+assert len(edges) > 100, f"{label} was missing from the mesh"
 
 for track in rig.animation_data.nla_tracks:
     track.mute = True
@@ -39,5 +46,5 @@ for frame in range(round(action.frame_range[0]), round(action.frame_range[1])+1)
     ratio = np.linalg.norm(xyz[edges[:,1]]-xyz[edges[:,0]], axis=1)/rest_length
     smallest = min(smallest, ratio.min())
     largest = max(largest, ratio.max())
-print(f"Posterior rib edge lengths across step: {smallest:.3f}–{largest:.3f} times rest")
-assert .65 < smallest and largest < 1.5, "Local collapse or stretch under the shoulder"
+print(f"{label} edge lengths across walk: {smallest:.3f}–{largest:.3f} times rest")
+assert limits[0] < smallest and largest < limits[1], f"Local collapse or stretch in {label}"

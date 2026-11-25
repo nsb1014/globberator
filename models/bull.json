@@ -1,0 +1,18 @@
+{
+  "name": "Bull",
+  "parts": {
+    "body": "heavy_quadruped",
+    "head": "bull",
+    "horns": "swept_pair",
+    "feet": "split_hoof",
+    "tail": "tufted"
+  },
+  "shape": {
+    "horn_span": 0.94,
+    "horn_rise": 0.82,
+    "muzzle_length": 1.17,
+    "shoulder_width": 1.08,
+    "chest_depth": 1.06
+  },
+  "rest_pose": "neutral"
+}

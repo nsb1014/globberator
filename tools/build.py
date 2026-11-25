@@ -7,16 +7,17 @@ from pathlib import Path
 
 import bpy
 import numpy as np
-from mathutils import Vector, Quaternion
+from mathutils import Vector, Quaternion, Matrix
 from scipy.interpolate import PchipInterpolator
 
 sys.path.insert(0,str(Path(__file__).resolve().parent))
 from horns import horn_profile
+import quadruped
 
 parser = argparse.ArgumentParser()
 root = Path(__file__).resolve().parents[1]
 parser.add_argument("--recipe", type=Path, default=root / "models/minotaur.json")
-parser.add_argument("--output", type=Path, default=root / "godot/minotaur.glb")
+parser.add_argument("--output", type=Path, help="Default: the selected body family in godot/")
 parser.add_argument("--review", type=Path)
 args = parser.parse_args(sys.argv[sys.argv.index("--")+1:] if "--" in sys.argv else [])
 recipe = json.loads(args.recipe.read_text())
@@ -24,7 +25,11 @@ shape = recipe["shape"]
 for key, value in shape.items():
     if not 0.7 <= value <= 1.3:
         raise ValueError(f"{key} outside supported range [0.7, 1.3]")
-parts = {"body":"heavy_biped", "head":"bull", "horns":"swept_pair", "feet":"split_hoof", "tail":"tufted"}
+is_quadruped = recipe["parts"]["body"] == "heavy_quadruped"
+model_name = "Bull" if is_quadruped else "Minotaur"
+if args.output is None:
+    args.output = root / "godot" / (model_name.lower()+".glb")
+parts = {"body":"heavy_quadruped" if is_quadruped else "heavy_biped", "head":"bull", "horns":"swept_pair", "feet":"split_hoof", "tail":"tufted"}
 if recipe["parts"] != parts or recipe["rest_pose"] != "neutral":
     raise ValueError("Unsupported part or pose in recipe")
 bpy.ops.wm.read_factory_settings(use_empty=True)
@@ -161,6 +166,8 @@ def sculpt_core():
         tube("Oblique",mirrored([(.48,-.225,2.85,.085,.070),(.413,-.233,2.61,.083,.072),
                                  (.32,-.205,2.4,.027,.026)],s))
     oval("Neck",(0,.015,3.77),(.43,.39,.46))
+
+def sculpt_head():
     oval("Skull",(0,-.12,4.03),(.445,.40,.49))
     tube("Nape crest",[(0,.035,4.45,.15,.105),(0,.155,4.37,.145,.145),
                        (0,.235,4.19,.14,.145),(0,.282,4.01,.105,.12),
@@ -198,13 +205,16 @@ def sculpt_limbs(s):
         (.587,.19,.54,.128,.14),(.598,.032,.335,.163,.17),(.598,-.035,.24,.18,.175)],s))
     oval("Kneecap",(s*.515,-.273,1.34),(.158,.111,.185))
 
+    split_hoof("Foot."+("L" if s==1 else "R"),s,.60*s,0,1)
+
+
+def split_hoof(foot,s,x0,y0,scale):
     for j in (-1,1):
-        foot = "Foot."+("L" if s==1 else "R")
         # Each toe widens at the ground; the central cleft stays open.
         data=[(.000,.110,-.10,.104,.260),(.058,.111,-.109,.108,.268),
               (.145,.103,-.082,.108,.237),(.23,.086,-.038,.095,.192),
               (.30,.068,-.004,.075,.144),(.336,.050,.019,.05,.09)]
-        sections("Cloven toe",[(z,s*(.60+j*x*1.22),y,w*1.23,d*1.10) for z,x,y,w,d in data],foot,.72)
+        sections("Cloven toe",[(z*scale,x0+s*j*x*1.22*scale,y0+y*scale,w*1.23*scale,d*1.10*scale) for z,x,y,w,d in data],foot,.72)
 
 def apply_modifier(obj, modifier):
     bpy.context.view_layer.objects.active = obj
@@ -278,7 +288,7 @@ def nape_mane():
         tube("Crown sweep",keys,"Head",front=(math.sin(root_angle),math.cos(root_angle),0))
 
 
-def head_details():
+def head_details(with_mane):
     front_y = -.41-.19*MU
     snout = oval("Bovine nose pad",(0,front_y,3.99),(.284,.191,.156),"Head")
     for s in (-1,1):
@@ -310,27 +320,53 @@ def head_details():
         span=shape["horn_span"];rise=shape["horn_rise"]
         horn=horn_profile(span,rise)
         tube("Swept horn",mirrored(horn,s),"Head",sides=32)
-        for x,y,z,dx,dz,size in [(.29,-.30,4.11,.125,-.25,.095),(.36,-.19,4.15,.135,-.27,.092),
-                 (.38,-.03,4.14,.13,-.26,.107),(.33,.11,4.14,.14,-.25,.11),
-                 (.34,.16,4.04,.10,-.30,.105)]:
-            tube("Cheek ruff",mirrored([(x,y,z,size,size*.65),(x+dx*.55,y+.01,z+dz*.35,size*.86,size*.70),
-                (x+dx,y+.015,z+dz,.009,.009)],s),"Head")
-    nape_mane()
+        if with_mane:
+            for x,y,z,dx,dz,size in [(.29,-.30,4.11,.125,-.25,.095),(.36,-.19,4.15,.135,-.27,.092),
+                     (.38,-.03,4.14,.13,-.26,.107),(.33,.11,4.14,.14,-.25,.11),
+                     (.34,.16,4.04,.10,-.30,.105)]:
+                tube("Cheek ruff",mirrored([(x,y,z,size,size*.65),(x+dx*.55,y+.01,z+dz*.35,size*.86,size*.70),
+                    (x+dx,y+.015,z+dz,.009,.009)],s),"Head")
+    if with_mane:
+        nape_mane()
     oval("Lower lip",(0,front_y+.031,3.841),(.231,.154,.064),"Head")
     for x,y,z,dx,dy,h in [(0,-.27,4.38,.018,-.06,.18),(-.13,-.17,4.39,-.08,.0,.126),
              (.13,-.16,4.39,.067,0,.122),(0,-.011,4.42,.04,.12,.14)]:
         tube("Forelock",[(x,y,z-.065,.125,.105),(x+dx*.5,y+dy*.5,z+.06,.104,.084),
                           (x+dx,y+dy,z+h,.014,.014)],"Head")
+
+def tufted_tail():
     tube("Tail",[(0,.34,2.10,.09,.093),(.10,.54,1.96,.086,.08),(.22,.71,1.69,.068,.068),
                  (.41,.83,1.42,.056,.058),(.64,.83,1.22,.05,.05),(.79,.77,1.08,.042,.045)],"Tail")
     for x,y,z,d in [(.79,.77,1.108,.107),(.81,.79,1.12,.073),(.76,.742,1.10,.066)]:
         tube("Tail tuft",[(x,y,z,.05,.048),(x+.066,y,z-.125,d,d*.74),
                           (x+.074,y-.035,z-.219,d*.75,d*.55),(x+.044,y-.072,z-.32,.005,.006)],"Tail")
 
-sculpt_core()
-for sign in (-1,1):
-    sculpt_limbs(sign)
-head_details()
+def place_parts(items, transform):
+    bpy.context.view_layer.update()
+    for obj in items:
+        obj.data.transform(transform @ obj.matrix_world)
+        obj.matrix_world = Matrix.Identity(4)
+
+
+if is_quadruped:
+    quadruped.sculpt(rings,tube,SW,CD)
+    head_start = len(body)
+    sculpt_head()
+    head_details(with_mane=False)
+    place_parts(body[head_start:]+[obj for obj,_ in details],quadruped.HEAD)
+    for label,points in quadruped.legs(SW):
+        x,y,_ = points[-1]
+        split_hoof("Foot."+label,1 if x>0 else -1,x,y,.83)
+    tail_start = len(details)
+    tufted_tail()
+    place_parts([obj for obj,_ in details[tail_start:]],quadruped.TAIL)
+else:
+    sculpt_core()
+    sculpt_head()
+    for sign in (-1,1):
+        sculpt_limbs(sign)
+    head_details(with_mane=True)
+    tufted_tail()
 bpy.ops.object.select_all(action="DESELECT")
 for obj in body:
     obj.select_set(True)
@@ -345,46 +381,50 @@ apply_modifier(skin,remesh)
 smooth=skin.modifiers.new("Soften anatomical transitions","SMOOTH")
 smooth.factor=.58;smooth.iterations=6;apply_modifier(skin,smooth)
 # Relax the union only across the seat and hamstring junction.
-seat = skin.vertex_groups.new(name="Pelvic blend")
-for vertex in skin.data.vertices:
-    x,y,z = vertex.co
-    influence = np.clip((y+.01)/.29,0,1)*np.exp(-((z-1.95)/.34)**4)
-    if influence > .005:
-        seat.add([vertex.index],float(influence),"REPLACE")
-blend = skin.modifiers.new("Pelvic transition","SMOOTH")
-blend.vertex_group = seat.name
-blend.factor = .64
-blend.iterations = 21
-apply_modifier(skin,blend)
-skin.vertex_groups.remove(skin.vertex_groups["Pelvic blend"])
+if not is_quadruped:
+    seat = skin.vertex_groups.new(name="Pelvic blend")
+    for vertex in skin.data.vertices:
+        x,y,z = vertex.co
+        influence = np.clip((y+.01)/.29,0,1)*np.exp(-((z-1.95)/.34)**4)
+        if influence > .005:
+            seat.add([vertex.index],float(influence),"REPLACE")
+    blend = skin.modifiers.new("Pelvic transition","SMOOTH")
+    blend.vertex_group = seat.name
+    blend.factor = .64
+    blend.iterations = 21
+    apply_modifier(skin,blend)
+    skin.vertex_groups.remove(skin.vertex_groups["Pelvic blend"])
 dec=skin.modifiers.new("Reduce surface","DECIMATE");dec.ratio=.34;apply_modifier(skin,dec)
 
 bones={}
 def bone(name,start,end,parent=None):
     bones[name]=(Vector(start),Vector(end),parent)
-bone("Pelvis",(0,.06,1.88),(0,.06,2.31))
-bone("Spine",(0,.06,2.31),(0,.07,2.87),"Pelvis")
-bone("Chest",(0,.07,2.87),(0,.06,3.57),"Spine")
-bone("Neck",(0,.06,3.57),(0,-.02,3.84),"Chest")
-bone("Head",(0,-.02,3.84),(0,-.11,4.42),"Neck")
-bone("Tail",(0,.34,2.10),(.43,.83,1.43),"Pelvis")
-for s,side in [(1,"L"),(-1,"R")]:
-    off=(SW-1)*.85
-    def limb(name,start,end,parent):
-        bone(name+"."+side,(s*start[0],*start[1:]),(s*end[0],*end[1:]),parent)
-    shoulder=(.94+off,.035,3.45);elbow=(1.22+off,.025,2.82);wrist=(1.38+off,-.15,2.23)
-    limb("Clavicle",(.14,.05,3.49),shoulder,"Chest")
-    limb("UpperArm",shoulder,elbow,"Clavicle."+side)
-    limb("Forearm",elbow,wrist,"UpperArm."+side)
-    limb("Hand",wrist,(1.39+off,-.16,1.84),"Forearm."+side)
-    hip=(.40,.06,2.05); knee=(.51,-.155,1.34); hock=(.58,.26,.665); foot=(.60,-.01,.29)
-    limb("Thigh",hip,knee,"Pelvis")
-    limb("Shin",knee,hock,"Thigh."+side)
-    limb("Pastern",hock,foot,"Shin."+side)
-    limb("Foot",foot,(.60,-.27,.08),"Pastern."+side)
+if is_quadruped:
+    quadruped.make_bones(bone,SW)
+else:
+    bone("Pelvis",(0,.06,1.88),(0,.06,2.31))
+    bone("Spine",(0,.06,2.31),(0,.07,2.87),"Pelvis")
+    bone("Chest",(0,.07,2.87),(0,.06,3.57),"Spine")
+    bone("Neck",(0,.06,3.57),(0,-.02,3.84),"Chest")
+    bone("Head",(0,-.02,3.84),(0,-.11,4.42),"Neck")
+    bone("Tail",(0,.34,2.10),(.43,.83,1.43),"Pelvis")
+    for s,side in [(1,"L"),(-1,"R")]:
+        off=(SW-1)*.85
+        def limb(name,start,end,parent):
+            bone(name+"."+side,(s*start[0],*start[1:]),(s*end[0],*end[1:]),parent)
+        shoulder=(.94+off,.035,3.45);elbow=(1.22+off,.025,2.82);wrist=(1.38+off,-.15,2.23)
+        limb("Clavicle",(.14,.05,3.49),shoulder,"Chest")
+        limb("UpperArm",shoulder,elbow,"Clavicle."+side)
+        limb("Forearm",elbow,wrist,"UpperArm."+side)
+        limb("Hand",wrist,(1.39+off,-.16,1.84),"Forearm."+side)
+        hip=(.40,.06,2.05); knee=(.51,-.155,1.34); hock=(.58,.26,.665); foot=(.60,-.01,.29)
+        limb("Thigh",hip,knee,"Pelvis")
+        limb("Shin",knee,hock,"Thigh."+side)
+        limb("Pastern",hock,foot,"Shin."+side)
+        limb("Foot",foot,(.60,-.27,.08),"Pastern."+side)
 
-armdata=bpy.data.armatures.new("Humanoid skeleton")
-rig=bpy.data.objects.new("Minotaur skeleton",armdata)
+armdata=bpy.data.armatures.new(model_name+" skeleton")
+rig=bpy.data.objects.new(model_name+" skeleton",armdata)
 bpy.context.collection.objects.link(rig)
 bpy.context.view_layer.objects.active=rig
 bpy.ops.object.mode_set(mode="EDIT")
@@ -405,60 +445,63 @@ def smooth_band(values, low, high):
     t = np.clip((values-low)/(high-low),0,1)
     return t*t*(3-2*t)
 
-# Let arm influence fade across the outer ribs. A hard height cutoff here
-# folds the lat into a horizontal crease when the upper arm swings.
-arm_offset = .85*(SW-1)
-inner_ribs = 1-smooth_band(abs(v[:,0])-arm_offset,.78,1.01)
-below_shoulder = 1-smooth_band(v[:,2],3.05,3.52)
-arm_penalty = .95*inner_ribs*below_shoulder
-distances=[]
-for name in names:
-    a,b,_=bones[name];a=np.asarray(a);vec=np.asarray(b)-a
-    param=np.clip((v-a)@vec/(vec@vec),0,1)
-    dist=np.linalg.norm(v-a-param[:,None]*vec,axis=1)
-    if "." in name:
-        sign=1 if name.endswith(".L") else -1
-        dist[v[:,0]*sign<-.015]+=2
-        if name.split(".")[0] in ["UpperArm","Forearm","Hand","Clavicle"]:
-            dist += arm_penalty
-        else:
-            dist[(abs(v[:,0])>1.0+(SW-1)*.85)&(v[:,2]>1.62)]+=2
-    distances.append(dist)
-ds=np.column_stack(distances)
-idx=np.argsort(ds,axis=1)[:,:4]
-best=np.take_along_axis(ds,idx,axis=1)
-weights=np.exp(-(best-best[:,:1])/.068);weights/=weights.sum(axis=1)[:,None]
-def bind_back(vertices, names, indices, weights):
-    # The rib cage carries the blades below the shoulder joint. Blend that
-    # continuous sheet into the clavicle and deltoid across the outer border.
-    x,y,z = vertices.T
-    lateral = abs(x)-.85*(SW-1)
-    region = (smooth_band(y,-.03,.175)*(1-smooth_band(lateral,.86,1.10))
-              *smooth_band(z,2.46,2.75)*(1-smooth_band(z,3.54,3.82)))
-    rows = np.flatnonzero(region>0)
-    if not len(rows):
+if is_quadruped:
+    idx,weights = quadruped.bind(v,bones,names)
+else:
+    # Let arm influence fade across the outer ribs. A hard height cutoff here
+    # folds the lat into a horizontal crease when the upper arm swings.
+    arm_offset = .85*(SW-1)
+    inner_ribs = 1-smooth_band(abs(v[:,0])-arm_offset,.78,1.01)
+    below_shoulder = 1-smooth_band(v[:,2],3.05,3.52)
+    arm_penalty = .95*inner_ribs*below_shoulder
+    distances=[]
+    for name in names:
+        a,b,_=bones[name];a=np.asarray(a);vec=np.asarray(b)-a
+        param=np.clip((v-a)@vec/(vec@vec),0,1)
+        dist=np.linalg.norm(v-a-param[:,None]*vec,axis=1)
+        if "." in name:
+            sign=1 if name.endswith(".L") else -1
+            dist[v[:,0]*sign<-.015]+=2
+            if name.split(".")[0] in ["UpperArm","Forearm","Hand","Clavicle"]:
+                dist += arm_penalty
+            else:
+                dist[(abs(v[:,0])>1.0+(SW-1)*.85)&(v[:,2]>1.62)]+=2
+        distances.append(dist)
+    ds=np.column_stack(distances)
+    idx=np.argsort(ds,axis=1)[:,:4]
+    best=np.take_along_axis(ds,idx,axis=1)
+    weights=np.exp(-(best-best[:,:1])/.068);weights/=weights.sum(axis=1)[:,None]
+    def bind_back(vertices, names, indices, weights):
+        # The rib cage carries the blades below the shoulder joint. Blend that
+        # continuous sheet into the clavicle and deltoid across the outer border.
+        x,y,z = vertices.T
+        lateral = abs(x)-.85*(SW-1)
+        region = (smooth_band(y,-.03,.175)*(1-smooth_band(lateral,.86,1.10))
+                  *smooth_band(z,2.46,2.75)*(1-smooth_band(z,3.54,3.82)))
+        rows = np.flatnonzero(region>0)
+        if not len(rows):
+            return indices,weights
+        original = np.zeros((len(rows),len(names)))
+        np.put_along_axis(original,indices[rows],weights[rows],axis=1)
+        desired = np.zeros_like(original)
+        lateral,z = lateral[rows],z[rows]
+        arm = .58*smooth_band(lateral,.68,1.04)*smooth_band(z,3.04,3.51)
+        collar = .60*smooth_band(lateral,.25,.78)*smooth_band(z,3.13,3.60)*(1-arm)
+        rib = smooth_band(z,2.69,3.20)
+        desired[:,names.index("Chest")] = rib*(1-arm-collar)
+        desired[:,names.index("Spine")] = (1-rib)*(1-arm-collar)
+        for sign,side in ((1,"L"),(-1,"R")):
+            on_side = x[rows]*sign>0
+            desired[:,names.index("Clavicle."+side)] = collar*on_side
+            desired[:,names.index("UpperArm."+side)] = arm*on_side
+        result = original+(desired-original)*region[rows,None]
+        selected = np.argsort(result,axis=1)[:,-4:][:,::-1]
+        values = np.take_along_axis(result,selected,axis=1)
+        indices[rows] = selected
+        weights[rows] = values/values.sum(axis=1)[:,None]
         return indices,weights
-    original = np.zeros((len(rows),len(names)))
-    np.put_along_axis(original,indices[rows],weights[rows],axis=1)
-    desired = np.zeros_like(original)
-    lateral,z = lateral[rows],z[rows]
-    arm = .58*smooth_band(lateral,.68,1.04)*smooth_band(z,3.04,3.51)
-    collar = .60*smooth_band(lateral,.25,.78)*smooth_band(z,3.13,3.60)*(1-arm)
-    rib = smooth_band(z,2.69,3.20)
-    desired[:,names.index("Chest")] = rib*(1-arm-collar)
-    desired[:,names.index("Spine")] = (1-rib)*(1-arm-collar)
-    for sign,side in ((1,"L"),(-1,"R")):
-        on_side = x[rows]*sign>0
-        desired[:,names.index("Clavicle."+side)] = collar*on_side
-        desired[:,names.index("UpperArm."+side)] = arm*on_side
-    result = original+(desired-original)*region[rows,None]
-    selected = np.argsort(result,axis=1)[:,-4:][:,::-1]
-    values = np.take_along_axis(result,selected,axis=1)
-    indices[rows] = selected
-    weights[rows] = values/values.sum(axis=1)[:,None]
-    return indices,weights
 
-idx,weights = bind_back(v,names,idx,weights)
+    idx,weights = bind_back(v,names,idx,weights)
 groups=[skin.vertex_groups.new(name=n) for n in names]
 for i,(row,ws) in enumerate(zip(idx,weights)):
     for j,w in zip(row,ws):
@@ -474,7 +517,7 @@ skin.select_set(True)
 for obj,_ in details:obj.select_set(True)
 bpy.context.view_layer.objects.active=skin
 bpy.ops.object.join()
-skin.name="Minotaur clay"
+skin.name=model_name+" clay"
 
 # Editable shape targets use the joined mesh's neutral coordinates.
 # The rig and the walk are shared by every variation.
@@ -490,6 +533,21 @@ def add_shape(name, displacement):
     key.slider_max=1.0
 
 def morph(coords,feature):
+    if is_quadruped:
+        if feature == "Chest depth":
+            delta = np.zeros_like(coords)
+            barrel = np.exp(-((coords[:,1]+.62)/.86)**4)*smooth_band(coords[:,2],1.15,1.65)
+            delta[:,0] = coords[:,0]*.19*barrel
+            delta[:,2] = (coords[:,2]-2.35)*.19*barrel
+            return delta
+        # Use the same local feature masks on either head mounting.
+        inverse = np.asarray(quadruped.HEAD.inverted())
+        local = coords@inverse[:3,:3].T+inverse[:3,3]
+        displacement = head_morph(local,feature)@np.asarray(quadruped.HEAD)[:3,:3].T
+        return displacement*smooth_band(-coords[:,1],1.82,2.02)[:,None]
+    return head_morph(coords,feature)
+
+def head_morph(coords,feature):
     x,y,z=coords.T
     delta=np.zeros_like(coords)
     if feature=="Horn span":
@@ -587,16 +645,16 @@ scene.frame_start=0
 scene.render.fps=24
 actions={}
 rig.animation_data_create()
-for name,end in [("Idle",73),("Walk",49)]:
+for name,end in [("Idle",73),("Walk",89 if is_quadruped else 49)]:
     act=bpy.data.actions.new(name);act.use_fake_user=True
     rig.animation_data.action=act;actions[name]=act
     for frame in range(end):
         t=frame/(end-1)
         if name=="Walk":
-            ds,offset=walk_pose(t)
+            ds,offset=quadruped.walk_pose(t,bones) if is_quadruped else walk_pose(t)
         else:
             breath=math.sin(2*pi*t)
-            ds={"Chest":axis((1,0,0),.020*breath),"Head":axis((0,0,1),.032*breath),
+            ds={("Neck" if is_quadruped else "Chest"):axis((1,0,0),.020*breath),"Head":axis((0,0,1),.032*breath),
                 "Tail":axis((0,0,1),.082*breath)}
             offset=(0,0,0)
         pose_delta(ds,offset,frame)
@@ -617,4 +675,4 @@ bpy.ops.export_scene.gltf(filepath=str(args.output.resolve()),export_format="GLB
 print("WROTE",args.output,"mesh vertices", len(skin.data.vertices),"bones",len(bones))
 if args.review:
     args.review.mkdir(parents=True,exist_ok=True)
-    bpy.ops.wm.save_as_mainfile(filepath=str((args.review/"Minotaur.blend").resolve()))
+    bpy.ops.wm.save_as_mainfile(filepath=str((args.review/(model_name+".blend")).resolve()))

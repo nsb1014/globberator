@@ -1,7 +1,13 @@
 extends Node3D
 
-const MODEL := preload("res://minotaur.glb")
-const SAVE_PATH := "user://minotaur_shapes.cfg"
+const MODELS := [preload("res://minotaur.glb"), preload("res://bull.glb")]
+const SAVE_PATHS := ["user://minotaur_shapes.cfg", "user://bull_shapes.cfg"]
+var character := 0
+var selector := OptionButton.new()
+var panel := PanelContainer.new()
+var bull_view_width := 5.5
+var walk_button: Button
+var target := Vector3(0,2.42,0)
 const SHAPES := ["Horn span", "Muzzle length", "Chest depth"]
 var model: Node3D
 var skin: MeshInstance3D
@@ -15,10 +21,6 @@ var orbit := false
 var status := Label.new()
 
 func _ready() -> void:
-	model = MODEL.instantiate()
-	add_child(model)
-	skin = model.find_children("*", "MeshInstance3D", true, false)[0]
-	player = model.find_children("*", "AnimationPlayer", true, false)[0]
 	add_child(camera)
 	camera.projection = Camera3D.PROJECTION_ORTHOGONAL
 	camera.size = 5.8
@@ -38,7 +40,27 @@ func _ready() -> void:
 	if DisplayServer.get_name() != "headless":
 		add_floor()
 	make_controls()
+	select_character(0)
+	get_viewport().size_changed.connect(fit_character)
+
+func select_character(index: int) -> void:
+	if model:
+		remove_child(model)
+		model.queue_free()
+	character = index
+	selector.select(index)
+	model = MODELS[index].instantiate()
+	add_child(model)
+	skin = model.find_children("*", "MeshInstance3D", true, false)[0]
+	player = model.find_children("*", "AnimationPlayer", true, false)[0]
+	walk_button.text = "Walk forward" if character == 1 else "Step in place"
+	azimuth = 0.55 if character == 1 else 0.12
+	elevation = 0.12 if character == 1 else 0.07
+	camera.size = 5.8
+	for slider in sliders.values():
+		slider.value = 0
 	restore_shapes()
+	status.text = "Drag to orbit · scroll to zoom"
 	neutral()
 
 func add_floor() -> void:
@@ -63,7 +85,6 @@ func add_light(position_3d: Vector3, energy: float, shadows: bool) -> void:
 func make_controls() -> void:
 	var layer := CanvasLayer.new()
 	add_child(layer)
-	var panel := PanelContainer.new()
 	layer.add_child(panel)
 	panel.position = Vector2(16,16)
 	var margin := MarginContainer.new()
@@ -73,10 +94,10 @@ func make_controls() -> void:
 	var box := VBoxContainer.new()
 	margin.add_child(box)
 	box.add_theme_constant_override("separation", 7)
-	var title := Label.new()
-	title.text = "Minotaur"
-	title.add_theme_font_size_override("font_size",24)
-	box.add_child(title)
+	selector.add_item("Minotaur")
+	selector.add_item("Bull")
+	box.add_child(selector)
+	selector.item_selected.connect(select_character)
 	for feature in SHAPES:
 		var label := Label.new()
 		label.text = feature
@@ -93,18 +114,19 @@ func make_controls() -> void:
 	box.add_child(motion)
 	button(motion, "Neutral", neutral)
 	button(motion, "Idle", play_motion.bind("Idle"))
-	button(motion, "Step in place", play_motion.bind("Walk"))
+	walk_button = button(motion, "Step in place", play_motion.bind("Walk"))
 	button(box, "Rotate view", toggle_orbit)
 	button(box, "Save proportions", save_shapes)
 	button(box, "Reset proportions", reset_shapes)
 	box.add_child(status)
 	status.text = "Drag to orbit · scroll to zoom"
 
-func button(parent: Control, label: String, callback: Callable) -> void:
+func button(parent: Control, label: String, callback: Callable) -> Button:
 	var item := Button.new()
 	item.text = label
 	parent.add_child(item)
 	item.pressed.connect(callback)
+	return item
 
 func set_shape(value: float, feature: String) -> void:
 	var index := skin.find_blend_shape_by_name(feature)
@@ -115,21 +137,35 @@ func neutral() -> void:
 	player.stop()
 	var skeleton: Skeleton3D = model.find_children("*", "Skeleton3D", true, false)[0]
 	skeleton.reset_bone_poses()
+	target = Vector3(0,1.52,0.42) if character == 1 else Vector3(0,2.42,0)
+	bull_view_width = 5.5
+	fit_character()
 
 func play_motion(clip: String) -> void:
-	player.get_animation(clip).loop_mode = Animation.LOOP_LINEAR
+	var forward := character == 1 and clip == "Walk"
+	if forward:
+		target = Vector3(0,1.52,1.48)
+		azimuth = 1.48
+		bull_view_width = 7.65
+		fit_character()
+	elif character == 1:
+		target = Vector3(0,1.52,0.42)
+		bull_view_width = 5.5
+		fit_character()
+	player.stop()
+	player.get_animation(clip).loop_mode = Animation.LOOP_NONE if forward else Animation.LOOP_LINEAR
 	player.play(clip)
 
 func save_shapes() -> void:
 	var cfg := ConfigFile.new()
 	for feature in SHAPES:
 		cfg.set_value("shape",feature,sliders[feature].value)
-	var err := cfg.save(SAVE_PATH)
+	var err := cfg.save(SAVE_PATHS[character])
 	status.text = "Proportions saved" if err == OK else "Could not save proportions"
 
 func restore_shapes() -> void:
 	var cfg := ConfigFile.new()
-	if cfg.load(SAVE_PATH) == OK:
+	if cfg.load(SAVE_PATHS[character]) == OK:
 		for feature in SHAPES:
 			sliders[feature].value = cfg.get_value("shape",feature,0.0)
 
@@ -141,10 +177,23 @@ func reset_shapes() -> void:
 func toggle_orbit() -> void:
 	orbit = !orbit
 
+func controls_width(view_size: Vector2) -> float:
+	return minf(panel.position.x + panel.get_combined_minimum_size().x + 12.0,view_size.x*0.6)
+
+func fit_character() -> void:
+	if character == 1:
+		var view_size := get_viewport().get_visible_rect().size
+		var width := maxf(1.0,view_size.x-controls_width(view_size))
+		camera.size = maxf(3.9,bull_view_width*view_size.y/width)
+	set_camera()
+
 func set_camera() -> void:
-	var target := Vector3(0,2.42,0)
 	camera.position = target + 9.0 * Vector3(sin(azimuth)*cos(elevation),sin(elevation),cos(azimuth)*cos(elevation))
 	camera.look_at(target)
+	camera.h_offset = 0.0
+	if character == 1:
+		var view_size := get_viewport().get_visible_rect().size
+		camera.h_offset = -0.5*controls_width(view_size)*camera.size/maxf(view_size.y,1.0)
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:
@@ -152,8 +201,10 @@ func _unhandled_input(event: InputEvent) -> void:
 			rotating = event.pressed
 		elif event.pressed and event.button_index == MOUSE_BUTTON_WHEEL_UP:
 			camera.size = max(2.4,camera.size-0.25)
+			set_camera()
 		elif event.pressed and event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
-			camera.size = min(9.0,camera.size+0.25)
+			camera.size = camera.size+0.25 if character == 1 else minf(9.0,camera.size+0.25)
+			set_camera()
 	elif event is InputEventMouseMotion and rotating:
 		azimuth -= event.relative.x*0.009
 		elevation = clamp(elevation+event.relative.y*0.006,-0.12,0.95)

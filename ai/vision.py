@@ -99,7 +99,13 @@ def fill_holes(mask):
 
 
 def load_mask(path):
-    return np.asarray(Image.open(path).convert("L")) > 127
+    """Mask from a transparent render (alpha) or a black/white mask image."""
+    im = Image.open(path)
+    if im.mode in ("RGBA", "LA"):
+        a = np.asarray(im.convert("RGBA"))[..., 3]
+        if a.min() < 128:
+            return a > 127
+    return np.asarray(im.convert("L")) > 127
 
 
 def normalized(mask, size=NORM):

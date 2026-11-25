@@ -1,6 +1,5 @@
-.godot/
 __pycache__/
 out/
 review/
-*.import
-ai/.venv/
+runs/
+*.blend1

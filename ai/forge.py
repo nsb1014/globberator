@@ -57,7 +57,7 @@ class Run:
         path = os.path.join(self.work, tag + ".json")
         json.dump(recipe, open(path, "w"), indent=1)
         views = ["%g,%g" % cam] + list(extra_views)
-        res = pf.render_jobs([{"recipe": path, "out": os.path.join(self.work, tag), "views": views, "mask": True}], 384)[0]
+        res = pf.render_jobs([{"recipe": path, "out": os.path.join(self.work, tag), "views": views, "mask": True, "quality": "final"}], 384)[0]
         imgs = res["images"]
         return {"color": imgs[0], "mask": imgs[1], "extra": [(v, imgs[2 + 2 * i]) for i, v in enumerate(extra_views)], "report": res["report"]}
 
@@ -177,7 +177,7 @@ class Run:
             shutil.copy(p, os.path.join(self.out, "best_%s.png" % v))
         name = (best["recipe"].get("name") or "creature").lower().replace(" ", "_")
         if not self.args.no_export:
-            pf.build(rp, self.out, name)
+            pf.build(rp, self.out, name, "glb,fbx,usdz,blend")
             pf.video("turntable", rp, os.path.join(self.out, "turntable.mp4"), seconds=6, size=420)
             pf.video("animate", rp, os.path.join(self.out, "walk.mp4"), clip="walk", seconds=4, size=420)
         report = {

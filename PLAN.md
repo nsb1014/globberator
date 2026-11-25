@@ -1,8 +1,8 @@
 # PolyForge plan
 
-Goal: a Spore-style 3D builder in Godot 4. You assemble a character from a small, deliberate part library. It rigs itself, gets procedural animation, and exports to GLB. On top of the builder sits an AI workflow: you give it a reference image and it builds a recipe that matches the image as closely as the library's style allows.
+Goal: a Spore-style 3D creature builder, now built as a Blender add-on that exports to any engine (originally planned for Godot 4). You assemble a character from a small, deliberate part library. It rigs itself, gets procedural animation, and exports to GLB. On top of the builder sits an AI workflow: you give it a reference image and it builds a recipe that matches the image as closely as the library's style allows.
 
-Status: milestones 0 to 6 are built (see README). Parts are sculpted in Blender to match the original bull's clay look, and the runtime is Godot-only. The AI loop's Claude calls have not been run against the live API yet. The previous iteration is still in git history (`git show ce72a4f`).
+Status: the Godot runtime was replaced by a Blender add-on (`polyforge/`). Blender assembles, fuses, rigs, animates and exports creatures to glTF, FBX, USD or OBJ, so they work in any engine. Placement follows the original attachment rules: automatic midline centring, reflected twins and socket snapping. Milestones 0 to 6 are implemented in Blender. The AI loop's Claude calls have not been run against the live API yet. The Godot version and the first iteration are both in git history.
 
 ## Lessons from the previous iteration
 

@@ -14,5 +14,16 @@
     "shoulder_width": 1.08,
     "chest_depth": 1.06
   },
-  "rest_pose": "neutral"
+  "rest_pose": "neutral",
+  "attachments": {
+    "shoulders": {
+      "part": "ungulate_leg",
+      "profile": "fore",
+      "fullness": 1.0
+    },
+    "hips": {
+      "part": "ungulate_leg",
+      "profile": "hind"
+    }
+  }
 }

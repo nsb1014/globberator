@@ -2,13 +2,13 @@
 
 ## Bull
 
-An unarmored adult bull built from a fresh recipe. Its bovine head, swept horns, split hooves and tufted tail are the same catalog parts used by the minotaur. The one new entry, `heavy_quadruped`, supplies a horizontal body and one limb generator configured for both forelegs and hind legs. A continuous surface connects brisket, belly and rump.
+An unarmored adult bull built from a fresh recipe. Its bovine head, swept horns, split hooves and tufted tail are the same catalog parts used by the minotaur. The `heavy_quadruped` body supplies a horizontal torso with paired shoulder and hip sockets. Each socket accepts one `ungulate_leg` part. The recipe selects the fore or hind profile and can set fullness from 0 to 1. A continuous surface connects brisket, belly and rump.
 
 ![Neutral bull](preview/bull.jpg)
 
-[Neutral turntable](preview/bull-turntable.mp4) · [Side-view walk](preview/bull-walk.mp4) · [Rigged bull](godot/bull.glb) · [Bull recipe](models/bull.json)
+[Foreleg shape comparison](preview/bull-forelegs.jpg) · [Neutral turntable](preview/bull-turntable.mp4) · [Side-view walk](preview/bull-walk.mp4) · [Rigged bull](godot/bull.glb) · [Bull recipe](models/bull.json)
 
-The 26-joint skeleton includes four leg chains. During its walk the bull advances 2.08 model units over two strides. Each hoof bears weight for 66% of its cycle and lifts in turn. Both the idle and walk are baked into the GLB.
+At build time each socket constructs its leg and shared hoof once. The attachment mirrors the assembled geometry and joint positions across the body. An edit to the shoulder attachment updates both forelegs on rebuild. Each side gets its own bones in the 26-joint skeleton. During its walk the bull advances 2.08 model units over two strides. Each hoof bears weight for 66% of its cycle and lifts in turn. Both the idle and walk are baked into the GLB.
 
 ## Minotaur
 
@@ -47,6 +47,8 @@ blender -b --python-exit-code 1 -P tools/render.py -- godot/minotaur.glb review 
 For the editable Blender scene, pass `-- --review review` to the build script. Render accepts `--clip turn` or `--clip walk` for PNG sequences. The review uses independent videos for the neutral orbit and the stationary step. The step preview uses `--azimuth 146` to show how the back and hips deform under load. The renderer uses 64 samples per minotaur motion frame and 36 per bull motion frame. The bull walk uses a fixed side camera. Supply `--oidn /path/to/oidnDenoise` to apply Open Image Denoise before the display transform. The preview images come from reimporting the exported GLB.
 
 To check the imported sole contacts, run `godot --headless --editor --import --path godot`, then `godot --headless --path godot --script "$PWD/tools/tests/ground_contact.gd"` from the repository root. The check samples the soles through idle and both sides of the step, including between baked keyframes.
+
+To verify bilateral placement on a rotated and translated socket, run `blender -b --python-exit-code 1 -P tools/tests/paired_attachment.py`.
 
 For the bull, run `godot --headless --path godot --script "$PWD/tools/tests/bull_walk.gd"`. This checks all four soles, forward displacement, shape controls and character switching. The Blender check `blender -b --python-exit-code 1 -P tools/tests/back_deformation.py -- godot/bull.glb` measures how the flank stretches across the walk.
 

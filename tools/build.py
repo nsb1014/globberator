@@ -13,6 +13,8 @@ from scipy.interpolate import PchipInterpolator
 sys.path.insert(0,str(Path(__file__).resolve().parent))
 from horns import horn_profile
 import quadruped
+import limb_parts
+from attachments import attach_mirrored
 
 parser = argparse.ArgumentParser()
 root = Path(__file__).resolve().parents[1]
@@ -208,13 +210,13 @@ def sculpt_limbs(s):
     split_hoof("Foot."+("L" if s==1 else "R"),s,.60*s,0,1)
 
 
-def split_hoof(foot,s,x0,y0,scale):
+def split_hoof(foot,s,x0,y0,scale,sole_z=0.0):
     for j in (-1,1):
         # Each toe widens at the ground; the central cleft stays open.
         data=[(.000,.110,-.10,.104,.260),(.058,.111,-.109,.108,.268),
               (.145,.103,-.082,.108,.237),(.23,.086,-.038,.095,.192),
               (.30,.068,-.004,.075,.144),(.336,.050,.019,.05,.09)]
-        sections("Cloven toe",[(z*scale,x0+s*j*x*1.22*scale,y0+y*scale,w*1.23*scale,d*1.10*scale) for z,x,y,w,d in data],foot,.72)
+        sections("Cloven toe",[(sole_z+z*scale,x0+s*j*x*1.22*scale,y0+y*scale,w*1.23*scale,d*1.10*scale) for z,x,y,w,d in data],foot,.72)
 
 def apply_modifier(obj, modifier):
     bpy.context.view_layer.objects.active = obj
@@ -348,15 +350,43 @@ def place_parts(items, transform):
         obj.matrix_world = Matrix.Identity(4)
 
 
+def attach_leg_pair(mount, spec):
+    label,parent,origin = mount
+    build_part = limb_parts.CATALOG[spec["part"]]
+    joints,rings_local = build_part(spec["profile"],spec.get("fullness",0.0))
+    leg = tube(label+" leg",rings_local)
+    foot = joints[-1]
+    first_toe = len(details)
+    split_hoof("Foot."+label+".L",1,foot.x,foot.y,.83,foot.z-.235)
+    toes = [obj for obj,_ in details[first_toe:]]
+    placements = attach_mirrored([leg,*toes],Matrix.Translation(origin))
+    chains = []
+    tips = joints[1:]+[foot+Vector((0,-.20,-.15))]
+    for side,transform,objects in placements:
+        if side == "R":
+            body.append(objects[0])
+            details.extend((toe,"Foot."+label+".R") for toe in objects[1:])
+        owner = parent
+        for segment,start,end in zip(limb_parts.SEGMENTS,joints,tips,strict=True):
+            name = f"{segment}.{label}.{side}"
+            chains.append((name,transform@start,transform@end,owner))
+            owner = name
+    return chains
+
+
 if is_quadruped:
-    quadruped.sculpt(rings,tube,SW,CD)
+    quadruped.sculpt(rings,SW,CD)
     head_start = len(body)
     sculpt_head()
     head_details(with_mane=False)
     place_parts(body[head_start:]+[obj for obj,_ in details],quadruped.HEAD)
-    for label,points in quadruped.legs(SW):
-        x,y,_ = points[-1]
-        split_hoof("Foot."+label,1 if x>0 else -1,x,y,.83)
+    sockets = quadruped.leg_sockets(SW)
+    attachments = recipe.get("attachments",quadruped.DEFAULT_ATTACHMENTS)
+    if attachments.keys() != sockets.keys():
+        raise ValueError("This walking rig requires one attachment at the shoulders and one at the hips")
+    leg_bones = []
+    for socket_name,mount in sockets.items():
+        leg_bones.extend(attach_leg_pair(mount,attachments[socket_name]))
     tail_start = len(details)
     tufted_tail()
     place_parts([obj for obj,_ in details[tail_start:]],quadruped.TAIL)
@@ -400,7 +430,9 @@ bones={}
 def bone(name,start,end,parent=None):
     bones[name]=(Vector(start),Vector(end),parent)
 if is_quadruped:
-    quadruped.make_bones(bone,SW)
+    quadruped.make_bones(bone)
+    for segment in leg_bones:
+        bone(*segment)
 else:
     bone("Pelvis",(0,.06,1.88),(0,.06,2.31))
     bone("Spine",(0,.06,2.31),(0,.07,2.87),"Pelvis")

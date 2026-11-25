@@ -22,20 +22,19 @@ HEAD = socket((0,-2.10,2.32),(0,-.10,4.07),(1.16,1.43,1.28),math.radians(31))
 TAIL = socket((0,1.46,2.53),(0,.34,2.10),(.48,.71,1.47))
 
 
-def legs(shoulder_width):
-    """One articulated limb chain, with fore- and hind-leg joint placements."""
-    for end in ("Fore","Hind"):
-        for sign,side in ((1,"L"),(-1,"R")):
-            if end=="Fore":
-                points=[(.46*shoulder_width,-1.17,2.10),(.51,-.91,1.55),
-                        (.52,-1.22,.91),(.525,-1.13,.36),(.53,-1.23,.235)]
-            else:
-                points=[(.46,1.11,2.29),(.51,.79,1.62),(.53,1.38,.87),
-                        (.535,1.26,.36),(.54,1.16,.235)]
-            yield end+"."+side,[Vector((sign*x,y,z)) for x,y,z in points]
+def leg_sockets(shoulder_width):
+    # Each socket describes a bilateral mount, in host rest coordinates.
+    return {"shoulders": ("Fore","Chest",Vector((.46*shoulder_width,-1.17,2.10))),
+            "hips": ("Hind","Pelvis",Vector((.46,1.11,2.29)))}
 
 
-def sculpt(rings, tube, shoulder_width, chest_depth):
+DEFAULT_ATTACHMENTS = {
+    "shoulders": {"part":"ungulate_leg","profile":"fore"},
+    "hips": {"part":"ungulate_leg","profile":"hind"},
+}
+
+
+def sculpt(rings, shoulder_width, chest_depth):
     # A single continuous surface from throat to rump. Underside and withers
     # are independent contours, so a deeper brisket still meets the belly.
     sections=np.array([
@@ -65,38 +64,14 @@ def sculpt(rings, tube, shoulder_width, chest_depth):
         rows.append(np.column_stack((x,np.full_like(x,y),z)))
     rings("Withers, rib cage and pelvis",rows)
 
-    for label,points in legs(shoulder_width):
-        start,hinge,knee,fetlock,foot=points
-        fore=label.startswith("Fore")
-        sign=1 if label.endswith("L") else -1
-        cap=Vector((sign*.40, -.91 if fore else 1.17,2.73))
-        # Cross-sections of the same limb grow from a fleshy shoulder or
-        # haunch into a narrow cannon and pastern.
-        values=[
-            (cap,.14,.20),(cap.lerp(start,.52),.27 if fore else .31,.37 if fore else .42),
-            (start,.29 if fore else .33,.37 if fore else .45),
-            (start.lerp(hinge,.50),.23 if fore else .29,.28 if fore else .36),
-            (hinge,.18 if fore else .235,.23 if fore else .27),
-            (hinge.lerp(knee,.38),.16 if fore else .18,.20 if fore else .22),
-            (knee,.125,.135),(knee.lerp(fetlock,.43),.090,.10),
-            (fetlock,.105,.122),(foot,.127,.142),(foot+Vector((0,-.032,-.068)),.128,.133)]
-        tube(label+" leg",[(*point,w,d) for point,w,d in values])
 
-
-def make_bones(bone, shoulder_width):
+def make_bones(bone):
     bone("Pelvis",(0,1.11,2.29),(0,.42,2.38))
     bone("Spine",(0,.42,2.38),(0,-.49,2.41),"Pelvis")
     bone("Chest",(0,-.49,2.41),(0,-1.10,2.43),"Spine")
     bone("Neck",(0,-1.10,2.43),(0,-1.92,2.42),"Chest")
     bone("Head",(0,-1.92,2.42),(0,-2.69,2.03),"Neck")
     bone("Tail",TAIL@Vector((0,.34,2.10)),TAIL@Vector((.43,.83,1.43)),"Pelvis")
-    for label,points in legs(shoulder_width):
-        parent="Chest" if label.startswith("Fore") else "Pelvis"
-        ends=points[1:]+[points[-1]+Vector((0,-.20,-.15))]
-        for segment,start,end in zip(("Upper","Lower","Cannon","Pastern","Foot"),points,ends):
-            name=segment+"."+label
-            bone(name,start,end,parent)
-            parent=name
 
 
 def bind(vertices,bones,names):

@@ -10,11 +10,11 @@
   "image": {
     "file_page": "https://commons.wikimedia.org/wiki/File:Lithobates_catesbeianus_PP.jpg",
     "direct_url": "https://upload.wikimedia.org/wikipedia/commons/6/66/Lithobates_catesbeianus_PP.jpg",
-    "author": "Cephas (Commons user; 'Own work')",
+    "author": "Cephas",
     "license": "CC BY-SA 3.0 (verified: Commons API extmetadata LicenseShortName)",
-    "species_shown": "Lithobates catesbeianus, adult male, Plaisance National Park, Quebec (June 2012), per Commons ImageDescription",
-    "view": "not visually confirmed; Commons categories list 'Amphibians facing left' and water reflections. Image download was refused with HTTP 429 on upload.wikimedia.org, and thumb.wikimedia.org is blocked by the egress proxy.",
-    "image_viewed": false
+    "species_shown": "Lithobates catesbeianus, adult male (large tympanum, yellow throat), Plaisance National Park, Quebec (June 2012), per Commons ImageDescription",
+    "view": "Near-lateral, eye-level view of the animal's left flank (+X side), head pointing to image left, camera just above the waterline. Head and forebody only: the trunk is cropped at the right edge and the limbs are not visible. Water reflection below the animal.",
+    "image_viewed": true
   },
   "physical_parsing": {
     "bounding_box_m": {
@@ -24,9 +24,9 @@
     },
     "approx_volume_m3": 0.0003,
     "volume_method": "Ellipsoid for the trunk and head (semi-axes 0.045 x 0.025 x 0.065 m, about 0.0003 m3, roughly 0.3 kg at density ~1). Limbs are excluded as they are thin and add little volume. Bounding box assumes a resting, crouched posture with legs folded, giving about 0.12 m across the spread hind knees, 0.07 m high and 0.20 m snout-to-toe.",
-    "shape_class": "squat ovoid body (dorsoventrally flattened, wider than tall) with a broad head fused to the trunk and splayed, folded hind limbs",
+    "shape_class": "robust, rounded body; head is broad and fairly deep (about half its length), so the trunk is not strongly flattened, with folded hind limbs",
     "core": {
-      "description": "Single fused head-trunk ellipsoid. Pectoral girdle and pelvis sit inside the trunk at the forelimb and hind-limb roots. Head is continuous with the trunk, with no neck. Rear of the trunk is the urostyle/pelvic region.",
+      "description": "Single fused head-trunk ellipsoid. Pectoral girdle and pelvis sit inside the trunk at the forelimb and hind-limb roots. Head is continuous with the trunk, with no neck. The broad head merges into the trunk behind the tympanum. Rear of the trunk is the urostyle/pelvic region.",
       "segments": 2,
       "cross_section": "ellipse, roughly 0.09 m wide by 0.05 m high at mid-trunk"
     },
@@ -239,17 +239,17 @@
       "symmetry": "pair",
       "count": 2,
       "attach_pos": [
-        0.167,
+        0.19,
         0.83,
-        0.25
+        0.37
       ],
       "joints": [
         {
           "name": "eyeball in orbit",
           "pos": [
-            0.167,
+            0.19,
             0.83,
-            0.25
+            0.37
           ],
           "type": "fixed",
           "pivot_axes": [],
@@ -267,7 +267,7 @@
         "overlap_region": "Dorsal cranium around the orbit. The eye is seated into the skull so it does not float."
       },
       "library_hint": "eye_round",
-      "notes": "Dorsally placed, bulging eyes give near-360 degree vision above the water surface while the body is submerged. Eye size is approximate."
+      "notes": "Dorsolateral, bulging eyes give near-360 degree vision above the water surface while the body is submerged. In the photo the eye sits near the top of the head, about half-way along the head from the snout, and the far eye bulges above the top profile of the head. Eye size is approximate (the photo suggests roughly 0.012 m across)."
     },
     {
       "id": "tympanum_L",
@@ -276,17 +276,17 @@
       "symmetry": "pair",
       "count": 2,
       "attach_pos": [
-        0.21,
-        0.74,
-        0.15
+        0.22,
+        0.7,
+        0.29
       ],
       "joints": [
         {
           "name": "tympanum membrane",
           "pos": [
-            0.21,
-            0.74,
-            0.15
+            0.22,
+            0.7,
+            0.29
           ],
           "type": "fixed",
           "pivot_axes": [],
@@ -296,15 +296,15 @@
           ]
         }
       ],
-      "root_radius_m": 0.005,
-      "length_m": 0.01,
+      "root_radius_m": 0.01,
+      "length_m": 0.02,
       "penetration": {
         "depth_m": 0.002,
         "fraction_of_root_radius": 0.4,
         "overlap_region": "Lateral head surface directly behind the eye, over the otic capsule."
       },
       "library_hint": null,
-      "notes": "Flat, round membrane behind each eye, used for airborne sound reception. Large in male bullfrogs, which are also larger than females. Size is approximate."
+      "notes": "Flat, round membrane behind and slightly below each eye, touching the eye's rear edge. In the photo the disc is about 1.4-1.5 times the eye diameter, which fits a male bullfrog. Size is approximate."
     },
     {
       "id": "mouth",
@@ -336,14 +336,14 @@
         }
       ],
       "root_radius_m": 0.02,
-      "length_m": 0.05,
+      "length_m": 0.045,
       "penetration": {
         "depth_m": 0.001,
         "fraction_of_root_radius": 0.05,
         "overlap_region": "Anterior face of the skull. Nearly flush, so the mouth is a surface opening and not a protruding part."
       },
       "library_hint": "mouth_jaws",
-      "notes": "Very wide, almost circular gape that reaches the eye line. Gape is about 1/3 of the head width. Part is a surface feature with a small geometric footprint."
+      "notes": "Very wide gape: the mouth line runs from the snout tip back to under the tympanum, close to the length of the head. Part is a surface feature with a small geometric footprint."
     },
     {
       "id": "tongue",
@@ -392,16 +392,16 @@
       "count": 1,
       "attach_pos": [
         0.0,
-        0.36,
-        0.25
+        0.33,
+        0.33
       ],
       "joints": [
         {
           "name": "throat membrane",
           "pos": [
             0.0,
-            0.36,
-            0.25
+            0.33,
+            0.33
           ],
           "type": "hydrostatic",
           "pivot_axes": [],
@@ -419,7 +419,7 @@
         "overlap_region": "Ventral throat wall of the head-trunk core."
       },
       "library_hint": null,
-      "notes": "Male bullfrog throat sac, which inflates to amplify the call. It is communicative, so the category is debatable. It is placed under sensory as an acoustic interface, but it could equally be aesthetics (display). Size is approximate."
+      "notes": "Male bullfrog throat sac, which inflates to amplify the call. In the photo the yellow throat is the visible gular area below the jaw line. It is communicative, so the category is debatable. It is placed under sensory as an acoustic interface, but it could equally be aesthetics (display). Size is approximate."
     }
   ],
   "category_summary": {
@@ -458,13 +458,13 @@
     }
   ],
   "sources": [
-    "https://commons.wikimedia.org/wiki/File:Lithobates_catesbeianus_PP.jpg (file page and extmetadata verified via Commons API; image itself not viewed)",
+    "https://commons.wikimedia.org/wiki/File:Lithobates_catesbeianus_PP.jpg (file page and extmetadata verified via Commons API; image downloaded locally and viewed)",
     "https://commons.wikimedia.org/wiki/Category:Lithobates_catesbeianus (category listing, via search)",
     "https://amphibiaweb.org/species/4999 (AmphibiaWeb, Rana/Lithobates catesbeianus; SVL means 152 mm males and 162 mm females, via search summary)",
     "https://en.wikipedia.com/wiki/Bull-frog (SVL 9-15 cm, via search summary)",
     "https://www.nationalgeographic.com/animals/amphibians/facts/american-bullfrog (size and sex-dimorphism note, via search)",
     "https://mdc.mo.gov/discover-nature/field-guide/american-bullfrog (field-guide description, via search)"
   ],
-  "confidence": 0.45,
-  "image_observations": "The photo could not be viewed: every download of the image returned HTTP 429 (rate limited) from upload.wikimedia.org, and thumb.wikimedia.org was refused by the egress proxy. Only Commons metadata was verified. Commons categories describe a male bullfrog in shallow water with reflections, facing left, but no visual check was made. Body proportions, part positions and joint locations are unchanged from the first pass and remain unverified against the image."
+  "confidence": 0.55,
+  "image_observations": "The photo shows a male bullfrog in a near-lateral view of its left flank, head to the left and partly submerged. The eye sits high and bulges above the top of the head, the tympanum is large (about 1.4-1.5 times the eye) and touches the eye's rear edge, and the yellow throat sits below a wide mouth line that reaches back under the tympanum. I moved the eye, tympanum and vocal sac to these positions, enlarged the tympanum, shortened the mouth gape, and changed the shape class from flattened to robust. The limbs are not visible and the body depth is partly hidden by water, so the bounding box and leg geometry are unchanged and still unverified."
 }

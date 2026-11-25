@@ -12,20 +12,20 @@
     "direct_url": "https://upload.wikimedia.org/wikipedia/commons/6/65/Octopus_vulgaris2.jpg",
     "author": "Beckmannjan",
     "license": "CC BY-SA 3.0",
-    "species_shown": "Octopus vulgaris, per the Commons description ('Gewoehnlicher Krake (Octopus vulgaris)', east Crete, 2-4 m depth); not visually verified",
-    "view": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/65/Octopus_vulgaris2.jpg/1280px-Octopus_vulgaris2.jpg (not viewed: image bytes refused from this session)",
-    "image_viewed": false
+    "species_shown": "Octopus vulgaris per the Commons description (Gewoehnlicher Krake, east Crete, 2-4 m); the photo is visually consistent with it: mottled brown skin with raised pale papillae, a large orange-rimmed eye, a funnel under the head and a bulbous mantle. Species is from the Commons description, not confirmed by taxonomy",
+    "view": "Lateral side view, slightly from below, of a live animal on a rocky seabed in shallow water. Head and eye at the image right, mantle at the image left, funnel protruding forward under the head; arms trail and curl along the substrate. Which lateral side of the animal faces the camera cannot be determined from the photo.",
+    "image_viewed": true
   },
-  "image_observations": "No visual observation was possible. The Commons API returned verified metadata for this file (CC BY-SA 3.0, 1465 x 977 px, described as a live animal in east Crete), but thumb.wikimedia.org was refused by the egress proxy (HTTP 403, policy denial) and upload.wikimedia.org returned a Wikimedia error page instead of the image. The physical_parsing values are therefore the unrevised first-pass estimates; no proportions, part positions or bend regions were changed from the photo.",
+  "image_observations": "The photo is a lateral side view of a live common octopus on rock: a bulbous, elongated mantle with the head and a large eye at the front, a funnel protruding forward under the head, and two or three arms trailing and curling along the substrate with one arm rising off it. The overall form is draped rather than flat, so the bounding box height rises from 0.15 m to 0.30 m, the width is reduced to 0.60 m, and the arm roots, crown, eye and funnel positions were moved to the front-of-body layout seen here (the funnel was moved from the rear to the front). Arm trajectories were read from the visible arms; lateral (x) spread of the far arms is inferred, not seen. Confidence is raised modestly from 0.45 to 0.55.",
   "physical_parsing": {
     "bounding_box_m": {
-      "width_x": 0.72,
-      "height_y": 0.15,
-      "length_z": 0.7
+      "width_x": 0.6,
+      "height_y": 0.3,
+      "length_z": 0.72
     },
     "approx_volume_m3": 0.0007,
-    "volume_method": "Core modelled as a mantle ellipsoid (semi-axes 0.035 x 0.035 x 0.06 m, about 3.1e-4 m3) plus head (~1e-4 m3); eight tapered arm cones (root r 0.012 m, length 0.35 m, about 5e-5 m3 each, about 4e-4 m3 total). Total about 7e-4 m3, against a sprawled bounding box of about 0.07 m3, so the solid fraction is about 1 percent.",
-    "shape_class": "sprawled radial (star-like) soft body: a compact mantle with eight radiating arms in a low disc",
+    "volume_method": "Core modelled as a mantle ellipsoid (semi-axes 0.035 x 0.035 x 0.06 m, about 3.1e-4 m3) plus head (~1e-4 m3); eight tapered arm cones (root r 0.012 m, length 0.35 m, about 5e-5 m3 each, about 4e-4 m3 total). Total about 7e-4 m3, against a draped bounding box of about 0.13 m3 (0.6 x 0.3 x 0.72 m), so the solid fraction is about 0.5 percent.",
+    "shape_class": "draped radial soft body: a lifted, elongated mantle with the head at its front and eight arms radiating and trailing along the substrate",
     "core": {
       "description": "Mantle (muscular, mostly visceral mass with the gills and the jet cavity) plus the head with the eyes, and the buccal mass at the centre of the arm crown.",
       "segments": 2,
@@ -41,17 +41,17 @@
       "symmetry": "pair",
       "count": 1,
       "attach_pos": [
-        0.0139,
-        0.2,
-        0.0247
+        0.04,
+        0.4,
+        0.14
       ],
       "joints": [
         {
           "name": "basal bend zone (hydrostatic, ~10% arm length)",
           "pos": [
-            0.0382,
-            0.1833,
-            0.068
+            0.06,
+            0.44,
+            0.08
           ],
           "type": "hydrostatic",
           "pivot_axes": [
@@ -67,9 +67,9 @@
         {
           "name": "mid-arm bend zone (hydrostatic, ~50% arm length)",
           "pos": [
-            0.1354,
-            0.1167,
-            0.2412
+            0.1,
+            0.5,
+            -0.1
           ],
           "type": "hydrostatic",
           "pivot_axes": [
@@ -85,9 +85,9 @@
         {
           "name": "distal coil zone (hydrostatic, ~85% arm length)",
           "pos": [
-            0.2205,
-            0.0583,
-            0.3928
+            0.12,
+            0.46,
+            -0.3
           ],
           "type": "hydrostatic",
           "pivot_axes": [
@@ -122,17 +122,17 @@
       "symmetry": "pair",
       "count": 1,
       "attach_pos": [
-        0.0268,
-        0.2,
-        0.0074
+        0.07,
+        0.36,
+        0.12
       ],
       "joints": [
         {
           "name": "basal bend zone (hydrostatic, ~10% arm length)",
           "pos": [
-            0.0738,
-            0.1833,
-            0.0203
+            0.09,
+            0.36,
+            0.06
           ],
           "type": "hydrostatic",
           "pivot_axes": [
@@ -148,9 +148,9 @@
         {
           "name": "mid-arm bend zone (hydrostatic, ~50% arm length)",
           "pos": [
-            0.2616,
-            0.1167,
-            0.0721
+            0.12,
+            0.22,
+            -0.06
           ],
           "type": "hydrostatic",
           "pivot_axes": [
@@ -166,9 +166,9 @@
         {
           "name": "distal coil zone (hydrostatic, ~85% arm length)",
           "pos": [
-            0.4259,
-            0.0583,
-            0.1174
+            0.14,
+            0.12,
+            -0.3
           ],
           "type": "hydrostatic",
           "pivot_axes": [
@@ -203,17 +203,17 @@
       "symmetry": "pair",
       "count": 1,
       "attach_pos": [
-        0.0241,
-        0.2,
-        -0.0143
+        0.1,
+        0.32,
+        0.1
       ],
       "joints": [
         {
           "name": "basal bend zone (hydrostatic, ~10% arm length)",
           "pos": [
-            0.0662,
-            0.1833,
-            -0.0393
+            0.12,
+            0.24,
+            0.02
           ],
           "type": "hydrostatic",
           "pivot_axes": [
@@ -229,9 +229,9 @@
         {
           "name": "mid-arm bend zone (hydrostatic, ~50% arm length)",
           "pos": [
-            0.2345,
-            0.1167,
-            -0.1393
+            0.14,
+            0.1,
+            -0.14
           ],
           "type": "hydrostatic",
           "pivot_axes": [
@@ -247,9 +247,9 @@
         {
           "name": "distal coil zone (hydrostatic, ~85% arm length)",
           "pos": [
-            0.3819,
-            0.0583,
-            -0.2268
+            0.16,
+            0.04,
+            -0.38
           ],
           "type": "hydrostatic",
           "pivot_axes": [
@@ -284,17 +284,17 @@
       "symmetry": "pair",
       "count": 1,
       "attach_pos": [
-        0.0095,
-        0.2,
-        -0.0268
+        0.1,
+        0.3,
+        0.22
       ],
       "joints": [
         {
           "name": "basal bend zone (hydrostatic, ~10% arm length)",
           "pos": [
-            0.0261,
-            0.1833,
-            -0.0738
+            0.12,
+            0.22,
+            0.26
           ],
           "type": "hydrostatic",
           "pivot_axes": [
@@ -310,9 +310,9 @@
         {
           "name": "mid-arm bend zone (hydrostatic, ~50% arm length)",
           "pos": [
-            0.0926,
-            0.1167,
-            -0.2618
+            0.16,
+            0.04,
+            0.32
           ],
           "type": "hydrostatic",
           "pivot_axes": [
@@ -328,9 +328,9 @@
         {
           "name": "distal coil zone (hydrostatic, ~85% arm length)",
           "pos": [
-            0.1508,
-            0.0583,
-            -0.4262
+            0.2,
+            0.3,
+            0.46
           ],
           "type": "hydrostatic",
           "pivot_axes": [
@@ -365,17 +365,17 @@
       "symmetry": "pair",
       "count": 1,
       "attach_pos": [
-        0.0417,
-        0.4,
-        -0.05
+        0.05,
+        0.88,
+        0.22
       ],
       "joints": [
         {
           "name": "eyeball in orbit (near-fixed, slight rotation)",
           "pos": [
-            0.0417,
-            0.4,
-            -0.05
+            0.05,
+            0.88,
+            0.22
           ],
           "type": "fixed",
           "pivot_axes": [],
@@ -407,16 +407,16 @@
       "count": 1,
       "attach_pos": [
         0.0,
-        0.2,
-        -0.0929
+        0.62,
+        0.24
       ],
       "joints": [
         {
           "name": "funnel base (muscular, orientable)",
           "pos": [
             0.0,
-            0.2,
-            -0.0929
+            0.62,
+            0.24
           ],
           "type": "ball",
           "pivot_axes": [
@@ -438,7 +438,7 @@
         "overlap_region": "ventral mantle wall at the head-mantle junction"
       },
       "library_hint": null,
-      "notes": "Jet propulsion: water is drawn into the mantle cavity and expelled through the funnel. Steerable by muscle, so it orients the jet. Not a limb, so no good library match."
+      "notes": "Jet propulsion: water is drawn into the mantle cavity and expelled through the funnel. Steerable by muscle, so it orients the jet. Not a limb, so no good library match. Placed at the ventral head-mantle junction at the front of the body (+Z), as in the photo."
     },
     {
       "id": "beak",
@@ -448,16 +448,16 @@
       "count": 1,
       "attach_pos": [
         0.0,
-        0.1333,
-        0.0
+        0.3,
+        0.16
       ],
       "joints": [
         {
           "name": "beak jaw hinge (approximate)",
           "pos": [
             0.0,
-            0.1333,
-            0.0
+            0.3,
+            0.16
           ],
           "type": "hinge",
           "pivot_axes": [
@@ -487,16 +487,16 @@
       "count": 1,
       "attach_pos": [
         0.0,
-        0.1333,
-        0.0
+        0.32,
+        0.15
       ],
       "joints": [
         {
           "name": "web attachment to arm bases",
           "pos": [
             0.0,
-            0.1333,
-            0.0
+            0.32,
+            0.15
           ],
           "type": "fixed",
           "pivot_axes": [],
@@ -566,7 +566,7 @@
     "Wells, M.J. (1978). Octopus: Physiology and Behaviour of an Advanced Invertebrate. Chapman & Hall. (muscular hydrostat arms; funnel jet propulsion)",
     "Kier, W.M. & Smith, K.K. (1985). Tongues, tentacles and trunks: the biomechanics of movement in muscular-hydrostats. Zoological Journal of the Linnean Society 83: 307-324. (hydrostat bending model)",
     "Wikipedia, 'Common octopus' (size, anatomy overview; recalled, not re-checked this session)",
-    "Wikimedia Commons, File:Octopus_vulgaris2.jpg (image metadata and licence verified via the Commons API, CC BY-SA 3.0, Beckmannjan; image bytes not retrieved, thumb.wikimedia.org refused by the egress proxy and upload.wikimedia.org returned an error page)"
+    "Wikimedia Commons, File:Octopus_vulgaris2.jpg (metadata and CC BY-SA 3.0 licence verified via the Commons API, author Beckmannjan; image viewed from a local copy and used for the visual pass)"
   ],
-  "confidence": 0.45
+  "confidence": 0.55
 }

@@ -8,19 +8,24 @@
     "class": "Mammalia"
   },
   "image": {
-    "file_page": null,
-    "direct_url": null,
-    "author": null,
-    "license": null,
-    "species_shown": "Vulpes vulpes (red fox) chosen as representative; no image was obtained",
-    "view": "none",
-    "image_viewed": false
+    "file_page": "https://commons.wikimedia.org/wiki/File:Vulpes_vulpes_standing.jpg",
+    "direct_url": "https://upload.wikimedia.org/wikipedia/commons/e/eb/Vulpes_vulpes_standing.jpg",
+    "author": "Jim Thiele",
+    "license": "Public domain",
+    "species_shown": "Vulpes vulpes (red fox), adult standing in low grass and heather",
+    "view": "Near-profile side view from the animal's right flank (camera on the -X side), head toward image right, roughly level with the back. Whole animal visible on four legs with the bushy tail hanging back and slightly down.",
+    "image_viewed": true,
+    "image_observations": "The photo shows a whole, standing adult red fox in profile, facing image-right with its right flank toward the camera. Measured from the ground to the ear tip, the withers sit at about 0.78 of height and the belly at about 0.4, so the legs are a little longer and the back a little lower than before; the stifle is about 0.2 m up, the hock about 0.1 m, and the nose sits lower (about 0.64 of height) with the neck base near 0.7. The tail base sits behind the hip at z about -0.2 and the tail droops slightly below the back line. The photo's length-to-height ratio (roughly 1.4 by eye) is well below the sourced 1.1 m / 0.48 m, so the cited real-world sizes were kept and only the relative positions were changed; this mismatch is flagged, not forced."
   },
   "physical_parsing": {
-    "bounding_box_m": {"width_x": 0.25, "height_y": 0.48, "length_z": 1.1},
+    "bounding_box_m": {
+      "width_x": 0.25,
+      "height_y": 0.48,
+      "length_z": 1.1
+    },
     "approx_volume_m3": 0.0055,
     "volume_method": "Whole-body volume estimated as adult mass (about 5.5 kg, midpoint of the 3-7 kg range) divided by body density of about 1000 kg/m3. The fur-inflated bounding box is not used because it grossly overestimates volume for a slender canid. Legs and tail are folded into this estimate, not added separately.",
-    "shape_class": "Quadruped: horizontal ellipsoidal torso with a wedge-shaped tapering head and a long bushy tail; four slender digitigrade legs carry the body roughly 0.3 m above ground.",
+    "shape_class": "Quadruped: horizontal ellipsoidal torso with a wedge-shaped tapering head and a long bushy tail; four slender digitigrade legs carry the belly about 0.2 m and the back about 0.35 m above ground.",
     "core": {
       "description": "Torso as a segmented ellipsoid chain: thorax (forward, under the shoulders), lumbar/abdomen (middle), and pelvis (rear, carrying the hip girdle and tail root). The neck and head attach at the anterior end, and the tail attaches to the dorsal rump.",
       "segments": 3,
@@ -35,16 +40,74 @@
       "category": "locomotion",
       "symmetry": "pair",
       "count": 1,
-      "partner": {"id": "legs_fore_R", "mirror_of": "legs_fore_L"},
-      "attach_pos": [0.2, 0.667, 0.2],
+      "partner": {
+        "id": "legs_fore_R",
+        "mirror_of": "legs_fore_L"
+      },
+      "attach_pos": [
+        0.2,
+        0.62,
+        0.2
+      ],
       "joints": [
-        {"name": "shoulder", "pos": [0.2, 0.667, 0.2], "type": "ball", "pivot_axes": ["x", "y", "z"], "range_deg": [-30, 60]},
-        {"name": "elbow", "pos": [0.2, 0.292, 0.182], "type": "hinge", "pivot_axes": ["x"], "range_deg": [0, 150]},
-        {"name": "carpus (wrist)", "pos": [0.2, 0.104, 0.218], "type": "hinge", "pivot_axes": ["x"], "range_deg": [-20, 60]}
+        {
+          "name": "shoulder",
+          "pos": [
+            0.2,
+            0.62,
+            0.2
+          ],
+          "type": "ball",
+          "pivot_axes": [
+            "x",
+            "y",
+            "z"
+          ],
+          "range_deg": [
+            -30,
+            60
+          ]
+        },
+        {
+          "name": "elbow",
+          "pos": [
+            0.2,
+            0.34,
+            0.18
+          ],
+          "type": "hinge",
+          "pivot_axes": [
+            "x"
+          ],
+          "range_deg": [
+            0,
+            150
+          ]
+        },
+        {
+          "name": "carpus (wrist)",
+          "pos": [
+            0.2,
+            0.09,
+            0.2
+          ],
+          "type": "hinge",
+          "pivot_axes": [
+            "x"
+          ],
+          "range_deg": [
+            -20,
+            60
+          ]
+        }
       ],
       "root_radius_m": 0.03,
       "length_m": 0.31,
-      "penetration": {"depth_m": 0.02, "fraction_of_root_radius": 0.67, "overlap_region": "Lateral thoracic wall and scapular muscle sling, dorsolateral to the thorax"},
+      "penetration": {
+        "depth_m": 0.02,
+        "fraction_of_root_radius": 0.67,
+        "overlap_region": "Lateral thoracic wall and scapular muscle sling, dorsolateral to the thorax"
+      },
       "library_hint": null,
       "notes": "Digitigrade: the walking surface is the paw, and the carpus is raised. Joint ranges are approximate. The forelimb has no rigid clavicle, so the shoulder is a muscular ball-like attachment."
     },
@@ -54,16 +117,74 @@
       "category": "locomotion",
       "symmetry": "pair",
       "count": 1,
-      "partner": {"id": "legs_hind_R", "mirror_of": "legs_hind_L"},
-      "attach_pos": [0.2, 0.667, -0.136],
+      "partner": {
+        "id": "legs_hind_R",
+        "mirror_of": "legs_hind_L"
+      },
+      "attach_pos": [
+        0.2,
+        0.52,
+        -0.12
+      ],
       "joints": [
-        {"name": "hip", "pos": [0.2, 0.667, -0.136], "type": "ball", "pivot_axes": ["x", "y", "z"], "range_deg": [-30, 70]},
-        {"name": "stifle (knee)", "pos": [0.2, 0.354, -0.109], "type": "hinge", "pivot_axes": ["x"], "range_deg": [0, 140]},
-        {"name": "hock (ankle)", "pos": [0.2, 0.146, -0.218], "type": "hinge", "pivot_axes": ["x"], "range_deg": [-20, 60]}
+        {
+          "name": "hip",
+          "pos": [
+            0.2,
+            0.52,
+            -0.12
+          ],
+          "type": "ball",
+          "pivot_axes": [
+            "x",
+            "y",
+            "z"
+          ],
+          "range_deg": [
+            -30,
+            70
+          ]
+        },
+        {
+          "name": "stifle (knee)",
+          "pos": [
+            0.2,
+            0.38,
+            -0.13
+          ],
+          "type": "hinge",
+          "pivot_axes": [
+            "x"
+          ],
+          "range_deg": [
+            0,
+            140
+          ]
+        },
+        {
+          "name": "hock (ankle)",
+          "pos": [
+            0.2,
+            0.22,
+            -0.2
+          ],
+          "type": "hinge",
+          "pivot_axes": [
+            "x"
+          ],
+          "range_deg": [
+            -20,
+            60
+          ]
+        }
       ],
       "root_radius_m": 0.035,
       "length_m": 0.33,
-      "penetration": {"depth_m": 0.025, "fraction_of_root_radius": 0.71, "overlap_region": "Dorsolateral pelvis at the hip socket, the acetabulum region of the pelvic girdle"},
+      "penetration": {
+        "depth_m": 0.025,
+        "fraction_of_root_radius": 0.71,
+        "overlap_region": "Dorsolateral pelvis at the hip socket, the acetabulum region of the pelvic girdle"
+      },
       "library_hint": null,
       "notes": "Digitigrade hindleg. The hock is a raised tarsal joint, so the stance is on the toes. The hindleg is slightly longer and thicker than the foreleg (thigh musculature)."
     },
@@ -73,14 +194,40 @@
       "category": "locomotion",
       "symmetry": "pair",
       "count": 1,
-      "partner": {"id": "paws_fore_R", "mirror_of": "paws_fore_L"},
-      "attach_pos": [0.2, 0.104, 0.218],
+      "partner": {
+        "id": "paws_fore_R",
+        "mirror_of": "paws_fore_L"
+      },
+      "attach_pos": [
+        0.2,
+        0.09,
+        0.2
+      ],
       "joints": [
-        {"name": "digit joints (metacarpophalangeal)", "pos": [0.2, 0.02, 0.24], "type": "hinge", "pivot_axes": ["x"], "range_deg": [0, 40]}
+        {
+          "name": "digit joints (metacarpophalangeal)",
+          "pos": [
+            0.2,
+            0.02,
+            0.24
+          ],
+          "type": "hinge",
+          "pivot_axes": [
+            "x"
+          ],
+          "range_deg": [
+            0,
+            40
+          ]
+        }
       ],
       "root_radius_m": 0.02,
       "length_m": 0.06,
-      "penetration": {"depth_m": 0.0, "fraction_of_root_radius": 0.0, "overlap_region": "None. The paw is a distal segment attached to the carpus of the foreleg and does not touch the core."},
+      "penetration": {
+        "depth_m": 0.0,
+        "fraction_of_root_radius": 0.0,
+        "overlap_region": "None. The paw is a distal segment attached to the carpus of the foreleg and does not touch the core."
+      },
       "library_hint": "foot_pad",
       "notes": "Five digits including the dewclaw, with a fleshy metacarpal and digital pads. Ground contact is through the pads."
     },
@@ -90,14 +237,40 @@
       "category": "locomotion",
       "symmetry": "pair",
       "count": 1,
-      "partner": {"id": "paws_hind_R", "mirror_of": "paws_hind_L"},
-      "attach_pos": [0.2, 0.146, -0.218],
+      "partner": {
+        "id": "paws_hind_R",
+        "mirror_of": "paws_hind_L"
+      },
+      "attach_pos": [
+        0.2,
+        0.22,
+        -0.2
+      ],
       "joints": [
-        {"name": "digit joints (metatarsophalangeal)", "pos": [0.2, 0.02, -0.2], "type": "hinge", "pivot_axes": ["x"], "range_deg": [0, 40]}
+        {
+          "name": "digit joints (metatarsophalangeal)",
+          "pos": [
+            0.2,
+            0.02,
+            -0.2
+          ],
+          "type": "hinge",
+          "pivot_axes": [
+            "x"
+          ],
+          "range_deg": [
+            0,
+            40
+          ]
+        }
       ],
       "root_radius_m": 0.02,
       "length_m": 0.055,
-      "penetration": {"depth_m": 0.0, "fraction_of_root_radius": 0.0, "overlap_region": "None. The paw is a distal segment attached to the hock of the hindleg and does not touch the core."},
+      "penetration": {
+        "depth_m": 0.0,
+        "fraction_of_root_radius": 0.0,
+        "overlap_region": "None. The paw is a distal segment attached to the hock of the hindleg and does not touch the core."
+      },
       "library_hint": "foot_pad",
       "notes": "Four digits with a smaller plantar pad than the forepaw. Ground contact is through the pads."
     },
@@ -107,14 +280,38 @@
       "category": "locomotion",
       "symmetry": "pair",
       "count": 9,
-      "partner": {"id": "claws_R", "mirror_of": "claws_L"},
-      "attach_pos": [0.2, 0.0, 0.227],
+      "partner": {
+        "id": "claws_R",
+        "mirror_of": "claws_L"
+      },
+      "attach_pos": [
+        0.2,
+        0.0,
+        0.227
+      ],
       "joints": [
-        {"name": "ungual attachment (per digit)", "pos": [0.2, 0.0, 0.24], "type": "fixed", "pivot_axes": [], "range_deg": [0, 0]}
+        {
+          "name": "ungual attachment (per digit)",
+          "pos": [
+            0.2,
+            0.0,
+            0.24
+          ],
+          "type": "fixed",
+          "pivot_axes": [],
+          "range_deg": [
+            0,
+            0
+          ]
+        }
       ],
       "root_radius_m": 0.004,
       "length_m": 0.02,
-      "penetration": {"depth_m": 0.0, "fraction_of_root_radius": 0.0, "overlap_region": "None. Claws are keratin sheaths on the distal phalanges and do not touch the core."},
+      "penetration": {
+        "depth_m": 0.0,
+        "fraction_of_root_radius": 0.0,
+        "overlap_region": "None. Claws are keratin sheaths on the distal phalanges and do not touch the core."
+      },
       "library_hint": "foot_claw",
       "notes": "Count is 9 per side: 5 forefoot (four digits plus dewclaw) and 4 hindfoot. Claws are blunt and non-retractable, and they aid traction on the ground."
     },
@@ -124,13 +321,38 @@
       "category": "locomotion",
       "symmetry": "centre",
       "count": 1,
-      "attach_pos": [0.0, 0.625, -0.145],
+      "attach_pos": [
+        0.0,
+        0.55,
+        -0.2
+      ],
       "joints": [
-        {"name": "tail base", "pos": [0.0, 0.625, -0.145], "type": "ball", "pivot_axes": ["x", "y", "z"], "range_deg": [-45, 45]}
+        {
+          "name": "tail base",
+          "pos": [
+            0.0,
+            0.55,
+            -0.2
+          ],
+          "type": "ball",
+          "pivot_axes": [
+            "x",
+            "y",
+            "z"
+          ],
+          "range_deg": [
+            -45,
+            45
+          ]
+        }
       ],
       "root_radius_m": 0.04,
       "length_m": 0.4,
-      "penetration": {"depth_m": 0.03, "fraction_of_root_radius": 0.75, "overlap_region": "Posterior dorsal rump, the sacrum and caudal vertebrae at the back of the pelvis"},
+      "penetration": {
+        "depth_m": 0.03,
+        "fraction_of_root_radius": 0.75,
+        "overlap_region": "Posterior dorsal rump, the sacrum and caudal vertebrae at the back of the pelvis"
+      },
       "library_hint": "tail_tuft",
       "notes": "Functional roles: balance while running and turning, body heat and insulation, and signalling. The tail is bushy along its length and tapers to a tip, which is often white in red fox."
     },
@@ -140,13 +362,38 @@
       "category": "feeding",
       "symmetry": "centre",
       "count": 1,
-      "attach_pos": [0.0, 0.625, 0.327],
+      "attach_pos": [
+        0.0,
+        0.7,
+        0.32
+      ],
       "joints": [
-        {"name": "neck (cervical)", "pos": [0.0, 0.625, 0.327], "type": "ball", "pivot_axes": ["x", "y", "z"], "range_deg": [-40, 40]}
+        {
+          "name": "neck (cervical)",
+          "pos": [
+            0.0,
+            0.7,
+            0.32
+          ],
+          "type": "ball",
+          "pivot_axes": [
+            "x",
+            "y",
+            "z"
+          ],
+          "range_deg": [
+            -40,
+            40
+          ]
+        }
       ],
       "root_radius_m": 0.035,
       "length_m": 0.19,
-      "penetration": {"depth_m": 0.03, "fraction_of_root_radius": 0.86, "overlap_region": "Anterior thorax and cervical junction at the front of the torso"},
+      "penetration": {
+        "depth_m": 0.03,
+        "fraction_of_root_radius": 0.86,
+        "overlap_region": "Anterior thorax and cervical junction at the front of the torso"
+      },
       "library_hint": "mouth_snout",
       "notes": "Long, narrow, wedge-shaped muzzle, with the skull as a feeding and sensory housing. The head is treated as a feeding structure because the jaws and canines are carried on it. The head is not a separate category in the taxonomy."
     },
@@ -156,13 +403,36 @@
       "category": "feeding",
       "symmetry": "centre",
       "count": 1,
-      "attach_pos": [0.0, 0.6875, 0.382],
+      "attach_pos": [
+        0.0,
+        0.66,
+        0.4
+      ],
       "joints": [
-        {"name": "temporomandibular joint (TMJ)", "pos": [0.0, 0.6875, 0.382], "type": "hinge", "pivot_axes": ["x"], "range_deg": [0, 40]}
+        {
+          "name": "temporomandibular joint (TMJ)",
+          "pos": [
+            0.0,
+            0.66,
+            0.4
+          ],
+          "type": "hinge",
+          "pivot_axes": [
+            "x"
+          ],
+          "range_deg": [
+            0,
+            40
+          ]
+        }
       ],
       "root_radius_m": 0.012,
       "length_m": 0.1,
-      "penetration": {"depth_m": 0.01, "fraction_of_root_radius": 0.83, "overlap_region": "Cranial base at the zygomatic arch and temporal fossa of the skull"},
+      "penetration": {
+        "depth_m": 0.01,
+        "fraction_of_root_radius": 0.83,
+        "overlap_region": "Cranial base at the zygomatic arch and temporal fossa of the skull"
+      },
       "library_hint": "mouth_jaws",
       "notes": "Upper and lower jaws with pointed canines about 0.02-0.025 m exposed. The jaw is a hinge with a mainly vertical gape. The lower jaw is about 0.1 m long. Dentition is carnassial-type, adapted for prey capture and omnivorous feeding."
     },
@@ -172,13 +442,34 @@
       "category": "sensory",
       "symmetry": "centre",
       "count": 1,
-      "attach_pos": [0.0, 0.729, 0.5],
+      "attach_pos": [
+        0.0,
+        0.64,
+        0.5
+      ],
       "joints": [
-        {"name": "fixed rostral tip", "pos": [0.0, 0.729, 0.5], "type": "fixed", "pivot_axes": [], "range_deg": [0, 0]}
+        {
+          "name": "fixed rostral tip",
+          "pos": [
+            0.0,
+            0.64,
+            0.5
+          ],
+          "type": "fixed",
+          "pivot_axes": [],
+          "range_deg": [
+            0,
+            0
+          ]
+        }
       ],
       "root_radius_m": 0.012,
       "length_m": 0.01,
-      "penetration": {"depth_m": 0.006, "fraction_of_root_radius": 0.5, "overlap_region": "Rostral tip of the muzzle over the nasal bones"},
+      "penetration": {
+        "depth_m": 0.006,
+        "fraction_of_root_radius": 0.5,
+        "overlap_region": "Rostral tip of the muzzle over the nasal bones"
+      },
       "library_hint": "nose_button",
       "notes": "Moist rhinarium, important for olfaction. Olfaction is the principal sense for hunting small prey."
     },
@@ -188,14 +479,41 @@
       "category": "sensory",
       "symmetry": "pair",
       "count": 1,
-      "partner": {"id": "eyes_R", "mirror_of": "eyes_L"},
-      "attach_pos": [0.14, 0.771, 0.427],
+      "partner": {
+        "id": "eyes_R",
+        "mirror_of": "eyes_L"
+      },
+      "attach_pos": [
+        0.14,
+        0.74,
+        0.41
+      ],
       "joints": [
-        {"name": "eyeball (orbit)", "pos": [0.14, 0.771, 0.427], "type": "ball", "pivot_axes": ["x", "y"], "range_deg": [-20, 20]}
+        {
+          "name": "eyeball (orbit)",
+          "pos": [
+            0.14,
+            0.74,
+            0.41
+          ],
+          "type": "ball",
+          "pivot_axes": [
+            "x",
+            "y"
+          ],
+          "range_deg": [
+            -20,
+            20
+          ]
+        }
       ],
       "root_radius_m": 0.012,
       "length_m": 0.022,
-      "penetration": {"depth_m": 0.006, "fraction_of_root_radius": 0.5, "overlap_region": "Orbit (eye socket) of the frontal and maxillary bones"},
+      "penetration": {
+        "depth_m": 0.006,
+        "fraction_of_root_radius": 0.5,
+        "overlap_region": "Orbit (eye socket) of the frontal and maxillary bones"
+      },
       "library_hint": "eye_slit",
       "notes": "Forward-facing eyes with a vertically elliptical pupil, amber iris. Binocular forward vision gives depth perception for hunting."
     },
@@ -205,14 +523,41 @@
       "category": "sensory",
       "symmetry": "pair",
       "count": 1,
-      "partner": {"id": "ears_R", "mirror_of": "ears_L"},
-      "attach_pos": [0.16, 0.833, 0.382],
+      "partner": {
+        "id": "ears_R",
+        "mirror_of": "ears_L"
+      },
+      "attach_pos": [
+        0.16,
+        0.88,
+        0.38
+      ],
       "joints": [
-        {"name": "auricular base", "pos": [0.16, 0.833, 0.382], "type": "ball", "pivot_axes": ["x", "y"], "range_deg": [-30, 30]}
+        {
+          "name": "auricular base",
+          "pos": [
+            0.16,
+            0.88,
+            0.38
+          ],
+          "type": "ball",
+          "pivot_axes": [
+            "x",
+            "y"
+          ],
+          "range_deg": [
+            -30,
+            30
+          ]
+        }
       ],
       "root_radius_m": 0.015,
-      "length_m": 0.07,
-      "penetration": {"depth_m": 0.01, "fraction_of_root_radius": 0.67, "overlap_region": "Temporal and parietal region of the cranium, rear top of the skull"},
+      "length_m": 0.06,
+      "penetration": {
+        "depth_m": 0.01,
+        "fraction_of_root_radius": 0.67,
+        "overlap_region": "Temporal and parietal region of the cranium, rear top of the skull"
+      },
       "library_hint": "ear_leaf",
       "notes": "Large triangular upright ears used for directional hearing of prey under vegetation and snow. Ears rotate on auricular muscles."
     },
@@ -222,19 +567,49 @@
       "category": "sensory",
       "symmetry": "pair",
       "count": 1,
-      "partner": {"id": "vibrissae_R", "mirror_of": "vibrissae_L"},
-      "attach_pos": [0.088, 0.729, 0.427],
+      "partner": {
+        "id": "vibrissae_R",
+        "mirror_of": "vibrissae_L"
+      },
+      "attach_pos": [
+        0.088,
+        0.66,
+        0.43
+      ],
       "joints": [
-        {"name": "follicle base", "pos": [0.088, 0.729, 0.427], "type": "fixed", "pivot_axes": [], "range_deg": [0, 0]}
+        {
+          "name": "follicle base",
+          "pos": [
+            0.088,
+            0.66,
+            0.43
+          ],
+          "type": "fixed",
+          "pivot_axes": [],
+          "range_deg": [
+            0,
+            0
+          ]
+        }
       ],
       "root_radius_m": 0.002,
       "length_m": 0.07,
-      "penetration": {"depth_m": 0.002, "fraction_of_root_radius": 1.0, "overlap_region": "Muzzle skin and follicle pad over the maxilla, beside the nose"},
+      "penetration": {
+        "depth_m": 0.002,
+        "fraction_of_root_radius": 1.0,
+        "overlap_region": "Muzzle skin and follicle pad over the maxilla, beside the nose"
+      },
       "library_hint": null,
       "notes": "Tactile whisker pads on the muzzle. Several vibrissae per side, modelled here as a single representative whisker. The library has no matching part."
     }
   ],
-  "category_summary": {"locomotion": 6, "sensory": 4, "feeding": 2, "manipulation": 0, "aesthetics": 0},
+  "category_summary": {
+    "locomotion": 6,
+    "sensory": 4,
+    "feeding": 2,
+    "manipulation": 0,
+    "aesthetics": 0
+  },
   "constraints": {
     "symmetry": "Bilateral about the sagittal plane (x = 0). Midline parts: tail, head_muzzle, jaws, nose.",
     "gait": "Digitigrade quadruped; diagonal-couplet trot as the typical gait, gallop in fast pursuit. The hock is raised, so the foot strikes on the paw pads and claws.",
@@ -246,16 +621,31 @@
     ]
   },
   "library_gaps": [
-    {"feature": "Digitigrade leg segments (shoulder, elbow, carpus; hip, stifle, hock)", "why": "No library leg part exists. The library has foot parts only, not multi-joint limbs."},
-    {"feature": "Non-retractable claws as a standalone digit structure", "why": "foot_claw is the nearest hint but is a foot part, not a free-standing claw set with per-digit placement."},
-    {"feature": "Bushy brush tail with a taper and terminal tip", "why": "tail_tuft and tail_fan are close, but neither models a bushy taper with a tail-length-to-body ratio around 0.4 m."},
-    {"feature": "Vibrissae (whisker pads)", "why": "No library part for multiple fine tactile whiskers on the muzzle."},
-    {"feature": "Digitigrade paw pads and digit set", "why": "foot_pad is a single pad. It does not model metacarpal and digital pads with a dewclaw."}
+    {
+      "feature": "Digitigrade leg segments (shoulder, elbow, carpus; hip, stifle, hock)",
+      "why": "No library leg part exists. The library has foot parts only, not multi-joint limbs."
+    },
+    {
+      "feature": "Non-retractable claws as a standalone digit structure",
+      "why": "foot_claw is the nearest hint but is a foot part, not a free-standing claw set with per-digit placement."
+    },
+    {
+      "feature": "Bushy brush tail with a taper and terminal tip",
+      "why": "tail_tuft and tail_fan are close, but neither models a bushy taper with a tail-length-to-body ratio around 0.4 m."
+    },
+    {
+      "feature": "Vibrissae (whisker pads)",
+      "why": "No library part for multiple fine tactile whiskers on the muzzle."
+    },
+    {
+      "feature": "Digitigrade paw pads and digit set",
+      "why": "foot_pad is a single pad. It does not model metacarpal and digital pads with a dewclaw."
+    }
   ],
   "sources": [
+    "Wikimedia Commons, File:Vulpes_vulpes_standing.jpg, https://commons.wikimedia.org/wiki/File:Vulpes_vulpes_standing.jpg (photo by Jim Thiele, public domain, description 'Red Fox'); viewed locally and used for relative proportions only.",
     "Wilson, D.E. & Mittermeier, R.A. (eds) (2009). Handbook of the Mammals of the World, vol. 1: Carnivores. Lynx Edicions. (Vulpes vulpes account; cited from memory, not re-checked in this session.)",
-    "Animal Diversity Web, Vulpes vulpes account, https://animaldiversity.org (listed in search results only; not fetched in this session.)",
-    "Wikimedia Commons image not obtained: commons.wikimedia.org and upload.wikimedia.org are blocked by the session egress policy (403) and do not resolve (DNS). No image was downloaded or viewed."
+    "Animal Diversity Web, Vulpes vulpes account, https://animaldiversity.org (listed in search results only; not fetched in this session.)"
   ],
-  "confidence": 0.5
+  "confidence": 0.6
 }

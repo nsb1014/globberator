@@ -11,17 +11,18 @@
     "file_page": "https://commons.wikimedia.org/wiki/File:Lumbricus.terrestris.jpg",
     "direct_url": "https://upload.wikimedia.org/wikipedia/commons/5/51/Lumbricus.terrestris.jpg",
     "author": "James K. Lindsey (James Lindsey's Ecology of Commanster)",
-    "license": "CC BY-SA 2.5 (verified on the Commons file page: Creative Commons Attribution-Share Alike 2.5 Generic)",
-    "species_shown": "Lumbricus terrestris (per the Commons file page description; not confirmed visually)",
-    "view": "unknown: not viewed, because Wikimedia returned HTTP 429 for image downloads from this session; whole-body and clitellum visibility unconfirmed",
-    "image_viewed": false,
-    "image_observations": "Not yet viewed: Wikimedia rate-limited image downloads (HTTP 429) during this pass. The Commons file page (2006 photo, Commanster, Belgian High Ardennes, species Lumbricus terrestris) was read, but the photo was not seen, so whether the whole worm and the clitellum are visible is unconfirmed. Geometry is unchanged from the first pass and still needs checking against the photo."
+    "license": "CC BY-SA 3.0 (Commons API LicenseShortName; corrected from the earlier CC BY-SA 2.5 entry)",
+    "species_shown": "Lumbricus terrestris (per the Commons description 'Species: Lumbricus terrestris'; a single worm with a clitellum is consistent with this, but the species is not confirmed from morphology in the photo)",
+    "view": "top-down, near-orthographic close-up of a single worm lying on loose brown soil, body arched into an open curve in the image plane; dorsal vs ventral side not determinable",
+    "image_viewed": true,
+    "image_observations": "The photo shows one worm lying in loose brown soil, its body arched into an open U-shape about 1.7 times as long as its footprint. A paler, swollen clitellum saddle is visible on the right-hand third of the body, and the right tip has a reddish tint while the left tip is narrower. Changes: the bounding box now matches the curled footprint (the 0.15 m arc length is kept as arc_length_m), part positions were recomputed from the photo layout, and the clitellum and bends are recorded as normalized regions. Head/tail is inferred from clitellum placement, and confidence was raised modestly to 0.6."
   },
   "physical_parsing": {
-    "bounding_box_m": {"width_x": 0.006, "height_y": 0.006, "length_z": 0.15},
+    "bounding_box_m": {"width_x": 0.064, "height_y": 0.006, "length_z": 0.09},
+    "arc_length_m": 0.15,
     "approx_volume_m3": 0.0000042,
-    "volume_method": "Cylinder of length 0.15 m and radius 0.003 m: pi * r^2 * L = 4.2e-6 m^3 (~4.2 mL, consistent with ~4 g wet mass for an adult). Body is idealised as a uniform cylinder; the anterior and posterior tapers are ignored.",
-    "shape_class": "elongated cylinder (vermiform), slightly tapered at both ends, resting on ground in a lateral-to-ventral orientation",
+    "volume_method": "Cylinder of length 0.15 m and radius 0.003 m: pi * r^2 * L = 4.2e-6 m^3 (~4.2 mL, consistent with ~4 g wet mass for an adult). Body is idealised as a uniform cylinder along the 0.15 m arc length; the anterior and posterior tapers are ignored.",
+    "shape_class": "elongated cylinder (vermiform), slightly tapered at both ends, curved in an open arc in the ground plane and resting on the ground in a lateral-to-ventral orientation",
     "core": {
       "description": "Single continuous hydrostatic body (coelomic fluid under muscular pressure) made of ~150 metameric segments, each with septa, longitudinal and circular musculature, and paired setal sacs. Gut runs the full length; the extra-body region sits on the axis with the head at +Z.",
       "segments": 150,
@@ -36,15 +37,15 @@
       "category": "sensory",
       "symmetry": "centre",
       "count": 1,
-      "attach_pos": [0, 0.5, 0.49],
+      "attach_pos": [-0.47, 0.5, 0.48],
       "joints": [
-        {"name": "prostomium_base", "pos": [0, 0.5, 0.49], "type": "hydrostatic", "pivot_axes": [], "range_deg": null}
+        {"name": "prostomium_base", "pos": [-0.47, 0.5, 0.48], "type": "hydrostatic", "pivot_axes": [], "range_deg": null}
       ],
       "root_radius_m": 0.001,
       "length_m": 0.001,
       "penetration": {"depth_m": 0.001, "fraction_of_root_radius": 1.0, "overlap_region": "anterior-most (peristomial) segment, dorsal to the mouth"},
       "library_hint": null,
-      "notes": "Fleshy lobe that overhangs the mouth. Mainly a tactile and chemosensory organ and also used to probe and push into soil during burrowing. Dorsal of the mouth, no discrete eyes or antennae."
+      "notes": "Fleshy lobe that overhangs the mouth. Mainly a tactile and chemosensory organ and also used to probe and push into soil during burrowing. Dorsal of the mouth, no discrete eyes or antennae. Placed at the head tip, which is the right-hand end of the photo (z = +0.5, x at the lower edge of the image)."
     },
     {
       "id": "mouth",
@@ -52,15 +53,15 @@
       "category": "feeding",
       "symmetry": "centre",
       "count": 1,
-      "attach_pos": [0, 0.2, 0.49],
+      "attach_pos": [-0.45, 0.2, 0.46],
       "joints": [
-        {"name": "buccal_opening", "pos": [0, 0.2, 0.49], "type": "fixed", "pivot_axes": [], "range_deg": null}
+        {"name": "buccal_opening", "pos": [-0.45, 0.2, 0.46], "type": "fixed", "pivot_axes": [], "range_deg": null}
       ],
       "root_radius_m": 0.0015,
       "length_m": 0.0,
       "penetration": {"depth_m": 0.0, "fraction_of_root_radius": 0.0, "overlap_region": "ventral aperture in the peristomium, opening into the pharynx; an opening, not a protrusion"},
       "library_hint": null,
-      "notes": "Ventral terminal opening under the prostomium. Leads to a muscular pharynx that draws in soil and leaf litter."
+      "notes": "Ventral terminal opening under the prostomium. Leads to a muscular pharynx that draws in soil and leaf litter. Not visible in the top-down photo; position follows the prostomium."
     },
     {
       "id": "setae_L",
@@ -68,15 +69,15 @@
       "category": "locomotion",
       "symmetry": "pair",
       "count": 600,
-      "attach_pos": [0.45, 0.2, 0.0],
+      "attach_pos": [0.42, 0.2, -0.07],
       "joints": [
-        {"name": "setal_follicle (per segment)", "pos": [0.45, 0.2, 0.0], "type": "hydrostatic", "pivot_axes": [], "range_deg": null}
+        {"name": "setal_follicle (per segment)", "pos": [0.42, 0.2, -0.07], "type": "hydrostatic", "pivot_axes": [], "range_deg": null}
       ],
       "root_radius_m": 0.00005,
       "length_m": 0.0007,
       "penetration": {"depth_m": 0.00005, "fraction_of_root_radius": 1.0, "overlap_region": "epidermis and body wall of each segment, in the setal sac"},
       "library_hint": null,
-      "notes": "About 4 setae per side per segment, so ~600 on the left over ~150 segments (approximate). Stiff chitinous bristles that anchor the worm against the soil. Each is driven by protractor and retractor muscles to grip during peristalsis. Count is an estimate; Edwards & Bohlen (1996) gives the setal arrangement."
+      "notes": "About 4 setae per side per segment, so ~600 on the left over ~150 segments (approximate). Stiff chitinous bristles that anchor the worm against the soil. Each is driven by protractor and retractor muscles to grip during peristalsis. Representative position on the left (+X, upper edge of the photo) at the crest of the arc. Count is an estimate; Edwards & Bohlen (1996) gives the setal arrangement."
     },
     {
       "id": "setae_R",
@@ -88,15 +89,15 @@
       "category": "sensory",
       "symmetry": "centre",
       "count": 1,
-      "attach_pos": [0, 0.95, 0.3],
+      "attach_pos": [0.0, 0.95, 0.28],
       "joints": [
-        {"name": "epidermal_surface", "pos": [0, 0.95, 0.3], "type": "fixed", "pivot_axes": [], "range_deg": null}
+        {"name": "epidermal_surface", "pos": [0.0, 0.95, 0.28], "type": "fixed", "pivot_axes": [], "range_deg": null}
       ],
       "root_radius_m": 0.00005,
       "length_m": 0.00001,
       "penetration": {"depth_m": 0.00001, "fraction_of_root_radius": 0.2, "overlap_region": "epidermis, dorsal surface of the anterior segments"},
       "library_hint": null,
-      "notes": "Scattered photoreceptor cells in the epidermis, concentrated on the dorsal surface and anterior segments, without a lens or eye structure. Detect light intensity only; no image forming. Distributed over the surface rather than a single organ. Represented as one centre entry for the dorsal distribution."
+      "notes": "Scattered photoreceptor cells in the epidermis, concentrated on the dorsal surface and anterior segments, without a lens or eye structure. Detect light intensity only; no image forming. Distributed over the surface rather than a single organ. Represented as one centre entry for the dorsal distribution, placed over the anterior (right-hand) part of the body."
     },
     {
       "id": "anus_pygidium",
@@ -104,27 +105,33 @@
       "category": "feeding",
       "symmetry": "centre",
       "count": 1,
-      "attach_pos": [0, 0.5, -0.5],
+      "attach_pos": [-0.28, 0.5, -0.5],
       "joints": [
-        {"name": "pygidial_opening", "pos": [0, 0.5, -0.5], "type": "fixed", "pivot_axes": [], "range_deg": null}
+        {"name": "pygidial_opening", "pos": [-0.28, 0.5, -0.5], "type": "fixed", "pivot_axes": [], "range_deg": null}
       ],
       "root_radius_m": 0.002,
       "length_m": 0.0,
       "penetration": {"depth_m": 0.0, "fraction_of_root_radius": 0.0, "overlap_region": "terminal (pygidial) segment, an opening, not a protrusion"},
       "library_hint": null,
-      "notes": "Posterior terminal opening that egests faeces. Classed as feeding because it is the exit of the digestive tract. Not an ingestion structure."
+      "notes": "Posterior terminal opening that egests faeces. Classed as feeding because it is the exit of the digestive tract. Not an ingestion structure. Placed at the rear tip (left-hand end of the photo), which lies at the lower-left of the arc."
     }
   ],
   "category_summary": {"locomotion": 2, "sensory": 2, "feeding": 2, "manipulation": 0, "aesthetics": 0},
   "constraints": {
-    "symmetry": "Bilateral externally (setae pairs on left and right, lateral to the ventral midline); segmentally repeated along +Z (metamerism). Dorsal-ventral asymmetry from the ventral mouth and dorsal photoreceptors.",
+    "symmetry": "Bilateral externally (setae pairs on left and right, lateral to the ventral midline); segmentally repeated along the body (metamerism). Dorsal-ventral asymmetry from the ventral mouth and dorsal photoreceptors.",
     "gait": "Peristaltic: longitudinal and circular muscle waves in the hydrostatic body. Setae anchor each segment in turn. Not a rigid-joint gait; no discrete bending points. Bending is produced by segment-by-segment muscle contraction.",
+    "bending_regions_normalized": [
+      {"name": "crest of the arc", "x_center": 0.45, "z_center": 0.08, "note": "Broad, gentle curve on the left (+X) side; the body runs roughly along z here."},
+      {"name": "tight turn toward the head", "x_center": 0.3, "z_center": 0.34, "note": "Sharpest bend in the photo, on the body just behind the clitellum band."},
+      {"name": "rear arm", "x_center": 0.15, "z_center": -0.3, "note": "Tail arm running diagonally back to the rear tip at z = -0.5, x about -0.28."}
+    ],
+    "clitellum_band_normalized": {"x_center": 0.0, "z_center": 0.37, "note": "Paler, swollen saddle visible on the right-hand third of the body in the photo. Roughly 20-40% of the body length from the head, consistent with segments ~32-37 (approximate). Not a part; recorded here only."},
     "other": [
       "Body is a hydrostatic skeleton with no rigid joints. All joint entries are type 'hydrostatic' or 'fixed', and range_deg is null because the bending range is not a fixed angle.",
-      "The clitellum (segments ~32-37 in adult L. terrestris, approximate) is a glandular reproductive band that secretes the cocoon. It is not locomotor, sensory, feeding, manipulation or aesthetic, so it has no taxonomy category and is recorded here and in library_gaps rather than in parts.",
+      "The clitellum (segments ~32-37 in adult L. terrestris, approximate) is a glandular reproductive band that secretes the cocoon. It is not locomotor, sensory, feeding, manipulation or aesthetic, so it has no taxonomy category and is recorded here and in library_gaps rather than in parts. It is visible in the photo as a paler saddle.",
       "Internal organs (gizzard, typhlosole, nephridia, dorsal blood vessels, ventral nerve cord) are not external parts and are omitted from parts.",
       "Penetration into the core: the worm is itself the core body, so every external part is an epidermal or body-wall feature and penetrates only the outer cuticle or epidermis (on the order of 0.01-1 mm).",
-      "Dimensions are normalised to the bounding box: x and z in [-0.5, 0.5], y in [0, 1] with 0 = ground. Head at z = +0.5, tail at z = -0.5."
+      "Dimensions are normalised to the bounding box: x and z in [-0.5, 0.5], y in [0, 1] with 0 = ground. Head at z = +0.5, tail at z = -0.5. The box is the footprint of the curled body (about 0.09 x 0.064 m), so the 0.15 m arc length is not the box length. Head/tail assignment is inferred from clitellum placement and should be treated as provisional."
     ]
   },
   "library_gaps": [
@@ -136,10 +143,10 @@
     {"feature": "Terminal anus (pygidium) as egestion opening", "why": "No library part for an egestion-only opening. mouth_* parts are ingestion structures."}
   ],
   "sources": [
-    "https://commons.wikimedia.org/wiki/File:Lumbricus.terrestris.jpg (file page fetched; licence CC BY-SA 2.5 and author James K. Lindsey read from the page; image not viewed)",
+    "https://commons.wikimedia.org/wiki/File:Lumbricus.terrestris.jpg (file page read; author James K. Lindsey and licence CC BY-SA 3.0 from the Commons API LicenseShortName; the earlier 2.5 entry was corrected; image viewed from a local copy)",
     "https://commons.wikimedia.org/wiki/File:Lumbricus_terrestris_(26559560801).jpg (alternative candidate; not used)",
     "Edwards CA, Bohlen PJ (1996). Biology and Ecology of Earthworms, 3rd ed. Chapman & Hall (size, segment count, setal arrangement, clitellum position; cited from memory, not checked in this session)",
     "Sims RW, Gerard BM (1985). Earthworms. Synopses of the British Fauna No. 31 (taxonomy and morphology; cited from memory, not checked in this session)"
   ],
-  "confidence": 0.55
+  "confidence": 0.6
 }

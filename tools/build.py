@@ -1,4 +1,5 @@
 """Build the first PolyForge character. Run with Blender in background mode."""
+from contextlib import contextmanager
 import argparse
 import json
 import math
@@ -14,7 +15,8 @@ sys.path.insert(0,str(Path(__file__).resolve().parent))
 from horns import horn_profile
 import quadruped
 import limb_parts
-from attachments import attach_mirrored
+import tail
+from attachments import attach_part, CENTER_EPSILON, REFLECTION
 
 parser = argparse.ArgumentParser()
 root = Path(__file__).resolve().parents[1]
@@ -31,9 +33,20 @@ is_quadruped = recipe["parts"]["body"] == "heavy_quadruped"
 model_name = "Bull" if is_quadruped else "Minotaur"
 if args.output is None:
     args.output = root / "godot" / (model_name.lower()+".glb")
-parts = {"body":"heavy_quadruped" if is_quadruped else "heavy_biped", "head":"bull", "horns":"swept_pair", "feet":"split_hoof", "tail":"tufted"}
+# Read the original horn identifier used before placement determined multiplicity.
+if recipe["parts"]["horns"] == "swept_pair":
+    recipe["parts"]["horns"] = "swept"
+parts = {"body":"heavy_quadruped" if is_quadruped else "heavy_biped", "head":"bull", "horns":"swept", "feet":"split_hoof", "tail":"tufted"}
 if recipe["parts"] != parts or recipe["rest_pose"] != "neutral":
     raise ValueError("Unsupported part or pose in recipe")
+socket_x = recipe.get("socket_x", {})
+if not isinstance(socket_x, dict):
+    raise ValueError("socket_x must map socket names to lateral coordinates")
+if socket_x.keys() - {"horn", "ear", "eye", "tail"}:
+    raise ValueError("Unknown editable socket")
+if any(isinstance(x, bool) or not isinstance(x, (int, float)) or not math.isfinite(x)
+       for x in socket_x.values()):
+    raise ValueError("Socket coordinates must be finite numbers")
 bpy.ops.wm.read_factory_settings(use_empty=True)
 scene = bpy.context.scene
 clay = bpy.data.materials.new("Matte clay")
@@ -115,8 +128,34 @@ def oval(name, loc, scale, group=None, tilt=0):
         details.append((obj,group))
     return obj
 
-def mirrored(keys, sign):
-    return [(sign*x,y,z,w,d) for x,y,z,w,d in keys]
+@contextmanager
+def mounted_part(anchor, socket=None, socket_name=None):
+    """Place one authored assembly and register each instance with the skin builder."""
+    body_start, detail_start = len(body), len(details)
+    placements = []
+    yield placements
+    solids = body[body_start:]
+    features = details[detail_start:]
+    objects = solids + [obj for obj, _ in features]
+    del body[body_start:]
+    del details[detail_start:]
+    if socket is None:
+        socket = Matrix.Translation(anchor)
+    if socket_name in socket_x:
+        socket = socket.copy()
+        x = socket_x[socket_name]
+        socket[0][3] = abs(x) if abs(x) > CENTER_EPSILON else 0.0
+        if x < -CENTER_EPSILON:
+            socket = REFLECTION @ socket
+    for side, transform, meshes in attach_part(objects, socket, anchor):
+        body.extend(meshes[:len(solids)])
+        suffix = "" if side == "C" else "."+side
+        for obj, (_, group) in zip(meshes[len(solids):], features, strict=True):
+            for weight_group in obj.vertex_groups:
+                weight_group.name = weight_group.name.format(side=side, suffix=suffix)
+            details.append((obj, group.format(side=side, suffix=suffix)))
+        placements.append((side, transform))
+
 
 def sculpt_trunk():
     # Each ring shares one posterior surface from the sacrum to the nape.
@@ -155,18 +194,21 @@ def sculpt_trunk():
 
 def sculpt_core():
     sculpt_trunk()
-    for s in (-1,1):
-        oval("Pectoral",(s*.39*SW,-.285*CD,3.23),(.50*SW,.23*CD,.23),tilt=-s*.13)
+    with mounted_part((.39*SW,-.285*CD,3.23)):
+        oval("Pectoral",(.39*SW,-.285*CD,3.23),(.50*SW,.23*CD,.23),tilt=-.13)
+    with mounted_part((.18*SW,.09,3.76)):
         # The upper trapezius slopes into the shoulder and sits under the
         # trunk surface at its medial edge.
-        tube("Shoulder slope",mirrored([(.18*SW,.09,3.76,.145,.195),
+        tube("Shoulder slope",[(.18*SW,.09,3.76,.145,.195),
              (.39*SW,.10,3.65,.163,.216),(.67*SW,.095,3.54,.156,.21),
-             (.87*SW,.06,3.49,.10,.145)],s))
-        for i in range(3):
-            oval("Abdominal plane",(s*(.16-i*.011),(-.315+i*.015)*CD,2.92-i*.165),
-                 (.19-i*.014,.083,.131),tilt=-s*.07)
-        tube("Oblique",mirrored([(.48,-.225,2.85,.085,.070),(.413,-.233,2.61,.083,.072),
-                                 (.32,-.205,2.4,.027,.026)],s))
+             (.87*SW,.06,3.49,.10,.145)])
+    for i in range(3):
+        with mounted_part((.16-i*.011,(-.315+i*.015)*CD,2.92-i*.165)):
+            oval("Abdominal plane",(.16-i*.011,(-.315+i*.015)*CD,2.92-i*.165),
+                 (.19-i*.014,.083,.131),tilt=-.07)
+    with mounted_part((.48,-.225,2.85)):
+        tube("Oblique",[(.48,-.225,2.85,.085,.070),(.413,-.233,2.61,.083,.072),
+                                 (.32,-.205,2.4,.027,.026)])
     oval("Neck",(0,.015,3.77),(.43,.39,.46))
 
 def sculpt_head():
@@ -177,46 +219,49 @@ def sculpt_head():
          front=(1,0,0))
     oval("Jaw",(0,-.33,3.90),(.33,.35,.26))
     oval("Nasal bridge",(0,-.38,4.03),(.265,.37*MU,.286))
-    for s in (-1,1):
-        oval("Cheek",(s*.279,-.302,4.02),(.192,.217,.24),tilt=s*.22)
-        tube("Orbital ridge",mirrored([(.055,-.50,4.22,.078,.085),(.19,-.50,4.26,.105,.11),
-            (.315,-.43,4.31,.098,.115),(.408,-.28,4.28,.06,.08)],s))
-        oval("Brow crest",(s*.19,-.20,4.38),(.19,.22,.15),tilt=s*.24)
+    with mounted_part((.279,-.302,4.02)):
+        oval("Cheek",(.279,-.302,4.02),(.192,.217,.24),tilt=.22)
+        tube("Orbital ridge",[(.055,-.50,4.22,.078,.085),(.19,-.50,4.26,.105,.11),
+            (.315,-.43,4.31,.098,.115),(.408,-.28,4.28,.06,.08)])
+        oval("Brow crest",(.19,-.20,4.38),(.19,.22,.15),tilt=.24)
 
-def sculpt_limbs(s):
+def sculpt_arm():
     off=(SW-1)*.85
     def arm(keys):
-        return mirrored([(x+off,y,z,w,d) for x,y,z,w,d in keys],s)
+        return [(x+off,y,z,w,d) for x,y,z,w,d in keys]
     tube("Arm",arm([(.80,.04,3.46,.26,.25),(.97,.035,3.43,.345,.355),
         (1.10,.04,3.20,.30,.285),(1.17,.03,3.03,.253,.26),(1.22,.025,2.82,.193,.19),
         (1.27,-.045,2.68,.247,.235),(1.32,-.105,2.53,.224,.20),
         (1.37,-.145,2.29,.145,.155),(1.38,-.16,2.19,.135,.134)]))
-    oval("Biceps",(s*(1.12+off),-.085,3.05),(.237,.225,.341),tilt=-s*.26)
-    oval("Deltoid",(s*(.96+off),.01,3.41),(.345,.337,.337),tilt=-s*.18)
-    oval("Palm",(s*(1.39+off),-.16,2.12),(.15,.19,.245),tilt=-s*.065)
+    oval("Biceps",(1.12+off,-.085,3.05),(.237,.225,.341),tilt=-.26)
+    oval("Deltoid",(.96+off,.01,3.41),(.345,.337,.337),tilt=-.18)
+    oval("Palm",(1.39+off,-.16,2.12),(.15,.19,.245),tilt=-.065)
     for j,(y,drop) in enumerate([(-.289,.23),(-.205,.275),(-.117,.252),(-.036,.194)]):
         tube("Finger",arm([(1.407,y,2.08,.068,.057),(1.418,y-.015,1.99,.064,.048),
                             (1.395,y-.02,2.02-drop,.051,.044),(1.35,y-.033,1.98-drop,.036,.031)]))
     tube("Thumb",arm([(1.327,-.267,2.21,.082,.082),(1.294,-.32,2.12,.084,.074),
                        (1.267,-.348,2.015,.065,.062),(1.278,-.349,1.967,.045,.043)]))
-    tube("Leg",mirrored([(.29,.12,2.32,.095,.12),(.34,.125,2.20,.23,.26),
+
+
+def sculpt_leg():
+    tube("Leg",[(.29,.12,2.32,.095,.12),(.34,.125,2.20,.23,.26),
         (.395,.118,2.06,.313,.344),(.435,.087,1.92,.344,.376),
         (.46,.038,1.78,.335,.36),(.50,-.085,1.55,.265,.291),(.515,-.154,1.34,.205,.226),
         (.53,-.065,1.19,.198,.216),(.55,.12,1.03,.215,.230),
         (.57,.255,.825,.158,.175),(.58,.27,.666,.118,.131),
-        (.587,.19,.54,.128,.14),(.598,.032,.335,.163,.17),(.598,-.035,.24,.18,.175)],s))
-    oval("Kneecap",(s*.515,-.273,1.34),(.158,.111,.185))
+        (.587,.19,.54,.128,.14),(.598,.032,.335,.163,.17),(.598,-.035,.24,.18,.175)])
+    oval("Kneecap",(.515,-.273,1.34),(.158,.111,.185))
 
-    split_hoof("Foot."+("L" if s==1 else "R"),s,.60*s,0,1)
+    split_hoof("Foot.{side}",.60,0,1)
 
 
-def split_hoof(foot,s,x0,y0,scale,sole_z=0.0):
+def split_hoof(foot,x0,y0,scale,sole_z=0.0):
     for j in (-1,1):
         # Each toe widens at the ground; the central cleft stays open.
         data=[(.000,.110,-.10,.104,.260),(.058,.111,-.109,.108,.268),
               (.145,.103,-.082,.108,.237),(.23,.086,-.038,.095,.192),
               (.30,.068,-.004,.075,.144),(.336,.050,.019,.05,.09)]
-        sections("Cloven toe",[(sole_z+z*scale,x0+s*j*x*1.22*scale,y0+y*scale,w*1.23*scale,d*1.10*scale) for z,x,y,w,d in data],foot,.72)
+        sections("Cloven toe",[(sole_z+z*scale,x0+j*x*1.22*scale,y0+y*scale,w*1.23*scale,d*1.10*scale) for z,x,y,w,d in data],foot,.72)
 
 def apply_modifier(obj, modifier):
     bpy.context.view_layer.objects.active = obj
@@ -293,41 +338,48 @@ def nape_mane():
 def head_details(with_mane):
     front_y = -.41-.19*MU
     snout = oval("Bovine nose pad",(0,front_y,3.99),(.284,.191,.156),"Head")
-    for s in (-1,1):
-        cutter = oval("Nostril cutter",(s*.14,front_y-.160,4.024),(.067,.094,.050),"temp",tilt=-s*.43)
-        details.pop()
+    first_cutter = len(details)
+    with mounted_part((.14,front_y-.160,4.024)):
+        oval("Nostril cutter",(.14,front_y-.160,4.024),(.067,.094,.050),"temp",tilt=-.43)
+    cutters = details[first_cutter:]
+    del details[first_cutter:]
+    for cutter, _ in cutters:
         cut = snout.modifiers.new("Sculpt nostril","BOOLEAN")
         cut.operation="DIFFERENCE"
         cut.object=cutter
         apply_modifier(snout,cut)
         bpy.data.objects.remove(cutter,do_unlink=True)
-        oval("Eye",(s*.245,-.505,4.185),(.107,.070,.066),"Head",tilt=-s*.19)
-        oval("Iris relief",(s*.247,-.567,4.186),(.046,.012,.035),"Head")
-        oval("Pupil relief",(s*.247,-.577,4.187),(.025,.007,.014),"Head")
-        tube("Upper eyelid",mirrored([(.142,-.536,4.188,.025,.025),(.212,-.562,4.215,.038,.027),
-            (.278,-.543,4.229,.036,.036),(.346,-.463,4.209,.025,.028)],s),"Head")
-        tube("Lower eyelid",mirrored([(.14,-.526,4.177,.018,.021),(.211,-.536,4.143,.028,.026),
-            (.286,-.494,4.151,.030,.028),(.328,-.443,4.193,.02,.024)],s),"Head")
+    with mounted_part((.245,-.505,4.185), socket_name="eye"):
+        oval("Eye",(.245,-.505,4.185),(.107,.070,.066),"Head",tilt=-.19)
+        oval("Iris relief",(.247,-.567,4.186),(.046,.012,.035),"Head")
+        oval("Pupil relief",(.247,-.577,4.187),(.025,.007,.014),"Head")
+        tube("Upper eyelid",[(.142,-.536,4.188,.025,.025),(.212,-.562,4.215,.038,.027),
+            (.278,-.543,4.229,.036,.036),(.346,-.463,4.209,.025,.028)],"Head")
+        tube("Lower eyelid",[(.14,-.526,4.177,.018,.021),(.211,-.536,4.143,.028,.026),
+            (.286,-.494,4.151,.030,.028),(.328,-.443,4.193,.02,.024)],"Head")
+    with mounted_part((.34,-.02,4.22), socket_name="ear"):
         # Flattened leaf-shaped ears with a recessed front surface.
         outer = np.asarray([(.34,-.02,4.22),(.45,-.045,4.29),(.62,-.028,4.28),
                             (.792,-.065,4.227),(.672,-.035,4.13),(.50,-.04,4.080),(.383,-.05,4.144)])
         center=np.array([.525,-.028,4.201])
         rows=[outer,center+(outer-center)*.74+[0,-.042,0],center+(outer-center)*.48+[0,-.013,0],center+(outer-center)*.10]
-        verts=np.vstack(rows+[np.array([[.51,.082,4.20]])]); verts[:,0]*=s
+        verts=np.vstack(rows+[np.array([[.51,.082,4.20]])])
         faces=[(i,(i+1)%7,(i+1)%7+7,7+i) for i in range(7)]
         faces += [tuple(x+k for x in f) for k in (7,14) for f in faces[:7]]
         faces += [tuple(range(21,28))]+[(28,(i+1)%7,i) for i in range(7)]
         ear=mesh("Lobed ear",verts.tolist(),faces,"Head")
         sub=ear.modifiers.new("Round pinna","SUBSURF");sub.levels=2;apply_modifier(ear,sub)
+    with mounted_part((.30,-.10,4.35), socket_name="horn"):
         span=shape["horn_span"];rise=shape["horn_rise"]
         horn=horn_profile(span,rise)
-        tube("Swept horn",mirrored(horn,s),"Head",sides=32)
-        if with_mane:
+        tube("Swept horn",horn,"Head",sides=32)
+    if with_mane:
+        with mounted_part((.29,-.30,4.11)):
             for x,y,z,dx,dz,size in [(.29,-.30,4.11,.125,-.25,.095),(.36,-.19,4.15,.135,-.27,.092),
                      (.38,-.03,4.14,.13,-.26,.107),(.33,.11,4.14,.14,-.25,.11),
                      (.34,.16,4.04,.10,-.30,.105)]:
-                tube("Cheek ruff",mirrored([(x,y,z,size,size*.65),(x+dx*.55,y+.01,z+dz*.35,size*.86,size*.70),
-                    (x+dx,y+.015,z+dz,.009,.009)],s),"Head")
+                tube("Cheek ruff",[(x,y,z,size,size*.65),(x+dx*.55,y+.01,z+dz*.35,size*.86,size*.70),
+                    (x+dx,y+.015,z+dz,.009,.009)],"Head")
     if with_mane:
         nape_mane()
     oval("Lower lip",(0,front_y+.031,3.841),(.231,.154,.064),"Head")
@@ -336,36 +388,17 @@ def head_details(with_mane):
         tube("Forelock",[(x,y,z-.065,.125,.105),(x+dx*.5,y+dy*.5,z+.06,.104,.084),
                           (x+dx,y+dy,z+h,.014,.014)],"Head")
 
-def tufted_tail():
-    tube("Tail",[(0,.34,2.10,.09,.093),(.10,.54,1.96,.086,.08),(.22,.71,1.69,.068,.068),
-                 (.41,.83,1.42,.056,.058),(.64,.83,1.22,.05,.05),(.79,.77,1.08,.042,.045)],"Tail")
-    for x,y,z,d in [(.79,.77,1.108,.107),(.81,.79,1.12,.073),(.76,.742,1.10,.066)]:
-        tube("Tail tuft",[(x,y,z,.05,.048),(x+.066,y,z-.125,d,d*.74),
-                          (x+.074,y-.035,z-.219,d*.75,d*.55),(x+.044,y-.072,z-.32,.005,.006)],"Tail")
-
-def place_parts(items, transform):
-    bpy.context.view_layer.update()
-    for obj in items:
-        obj.data.transform(transform @ obj.matrix_world)
-        obj.matrix_world = Matrix.Identity(4)
-
-
 def attach_leg_pair(mount, spec):
     label,parent,origin = mount
     build_part = limb_parts.CATALOG[spec["part"]]
     joints,rings_local = build_part(spec["profile"],spec.get("fullness",0.0))
-    leg = tube(label+" leg",rings_local)
-    foot = joints[-1]
-    first_toe = len(details)
-    split_hoof("Foot."+label+".L",1,foot.x,foot.y,.83,foot.z-.235)
-    toes = [obj for obj,_ in details[first_toe:]]
-    placements = attach_mirrored([leg,*toes],Matrix.Translation(origin))
+    with mounted_part((0,0,0), Matrix.Translation(origin)) as placements:
+        tube(label+" leg",rings_local)
+        foot = joints[-1]
+        split_hoof("Foot."+label+".{side}",foot.x,foot.y,.83,foot.z-.235)
     chains = []
     tips = joints[1:]+[foot+Vector((0,-.20,-.15))]
-    for side,transform,objects in placements:
-        if side == "R":
-            body.append(objects[0])
-            details.extend((toe,"Foot."+label+".R") for toe in objects[1:])
+    for side,transform in placements:
         owner = parent
         for segment,start,end in zip(limb_parts.SEGMENTS,joints,tips,strict=True):
             name = f"{segment}.{label}.{side}"
@@ -376,10 +409,9 @@ def attach_leg_pair(mount, spec):
 
 if is_quadruped:
     quadruped.sculpt(rings,SW,CD)
-    head_start = len(body)
-    sculpt_head()
-    head_details(with_mane=False)
-    place_parts(body[head_start:]+[obj for obj,_ in details],quadruped.HEAD)
+    with mounted_part((0,0,0), quadruped.HEAD):
+        sculpt_head()
+        head_details(with_mane=False)
     sockets = quadruped.leg_sockets(SW)
     attachments = recipe.get("attachments",quadruped.DEFAULT_ATTACHMENTS)
     if attachments.keys() != sockets.keys():
@@ -387,16 +419,19 @@ if is_quadruped:
     leg_bones = []
     for socket_name,mount in sockets.items():
         leg_bones.extend(attach_leg_pair(mount,attachments[socket_name]))
-    tail_start = len(details)
-    tufted_tail()
-    place_parts([obj for obj,_ in details[tail_start:]],quadruped.TAIL)
 else:
     sculpt_core()
     sculpt_head()
-    for sign in (-1,1):
-        sculpt_limbs(sign)
+    with mounted_part((.94+(SW-1)*.85,.035,3.45)) as arm_mounts:
+        sculpt_arm()
+    with mounted_part((.40,.06,2.05)) as leg_mounts:
+        sculpt_leg()
     head_details(with_mane=True)
-    tufted_tail()
+tail_socket = Matrix.Translation(tail.ROOT)
+if is_quadruped:
+    tail_socket = quadruped.TAIL @ tail_socket
+with mounted_part(tail.ROOT, tail_socket, "tail") as tail_mounts:
+    tail.build(tube)
 bpy.ops.object.select_all(action="DESELECT")
 for obj in body:
     obj.select_set(True)
@@ -439,29 +474,36 @@ else:
     bone("Chest",(0,.07,2.87),(0,.06,3.57),"Spine")
     bone("Neck",(0,.06,3.57),(0,-.02,3.84),"Chest")
     bone("Head",(0,-.02,3.84),(0,-.11,4.42),"Neck")
-    bone("Tail",(0,.34,2.10),(.43,.83,1.43),"Pelvis")
-    for s,side in [(1,"L"),(-1,"R")]:
-        off=(SW-1)*.85
-        def limb(name,start,end,parent):
-            bone(name+"."+side,(s*start[0],*start[1:]),(s*end[0],*end[1:]),parent)
-        shoulder=(.94+off,.035,3.45);elbow=(1.22+off,.025,2.82);wrist=(1.38+off,-.15,2.23)
-        limb("Clavicle",(.14,.05,3.49),shoulder,"Chest")
-        limb("UpperArm",shoulder,elbow,"Clavicle."+side)
-        limb("Forearm",elbow,wrist,"UpperArm."+side)
-        limb("Hand",wrist,(1.39+off,-.16,1.84),"Forearm."+side)
-        hip=(.40,.06,2.05); knee=(.51,-.155,1.34); hock=(.58,.26,.665); foot=(.60,-.01,.29)
-        limb("Thigh",hip,knee,"Pelvis")
-        limb("Shin",knee,hock,"Thigh."+side)
-        limb("Pastern",hock,foot,"Shin."+side)
-        limb("Foot",foot,(.60,-.27,.08),"Pastern."+side)
+    off = (SW-1)*.85
+    shoulder=(.94+off,.035,3.45); elbow=(1.22+off,.025,2.82); wrist=(1.38+off,-.15,2.23)
+    hip=(.40,.06,2.05); knee=(.51,-.155,1.34); hock=(.58,.26,.665); foot=(.60,-.01,.29)
+    for mounts, owner, segments, joints in [
+        (arm_mounts, "Chest", ("Clavicle","UpperArm","Forearm","Hand"),
+         ((.14,.05,3.49),shoulder,elbow,wrist,(1.39+off,-.16,1.84))),
+        (leg_mounts, "Pelvis", ("Thigh","Shin","Pastern","Foot"),
+         (hip,knee,hock,foot,(.60,-.27,.08))),
+    ]:
+        for side, transform in mounts:
+            parent = owner
+            for segment, start, end in zip(segments, joints[:-1], joints[1:], strict=True):
+                name = f"{segment}.{side}"
+                bone(name, transform @ Vector(start), transform @ Vector(end), parent)
+                parent = name
+
+for side, mount in tail_mounts:
+    parent = "Pelvis"
+    for segment, start, end in zip(tail.SEGMENTS, tail.JOINTS[:-1], tail.JOINTS[1:], strict=True):
+        name = tail.bone_name(segment, side)
+        bone(name, mount @ start, mount @ end, parent)
+        parent = name
 
 armdata=bpy.data.armatures.new(model_name+" skeleton")
 rig=bpy.data.objects.new(model_name+" skeleton",armdata)
 bpy.context.collection.objects.link(rig)
 bpy.context.view_layer.objects.active=rig
 bpy.ops.object.mode_set(mode="EDIT")
-for name,(head,tail,parent) in bones.items():
-    b=armdata.edit_bones.new(name);b.head=head;b.tail=tail
+for name,(head,tip,parent) in bones.items():
+    b=armdata.edit_bones.new(name);b.head=head;b.tail=tip
     if parent:
         b.parent=armdata.edit_bones[parent]
 bpy.ops.object.mode_set(mode="OBJECT")
@@ -472,7 +514,7 @@ def attach(obj):
 
 # Blend the nearest four appropriate bones at each anatomical seam.
 v=np.asarray([tuple(v.co) for v in skin.data.vertices])
-names=[name for name in bones if name!="Tail"]
+names=[name for name in bones if name.split(".")[0] not in tail.SEGMENTS]
 def smooth_band(values, low, high):
     t = np.clip((values-low)/(high-low),0,1)
     return t*t*(3-2*t)
@@ -540,8 +582,9 @@ for i,(row,ws) in enumerate(zip(idx,weights)):
         groups[j].add([i],float(w),"REPLACE")
 attach(skin)
 for obj,name in details:
-    group=obj.vertex_groups.new(name=name)
-    group.add(list(range(len(obj.data.vertices))),1.0,"REPLACE")
+    if not obj.vertex_groups:
+        group=obj.vertex_groups.new(name=name)
+        group.add(list(range(len(obj.data.vertices))),1.0,"REPLACE")
     attach(obj)
 # Merge detail objects into the same skinned mesh; each keeps its weights.
 bpy.ops.object.select_all(action="DESELECT")
@@ -633,8 +676,6 @@ def walk_pose(t):
         "Neck": chest.slerp(Quaternion(), .58),
         "Head": axis((0,0,1), -.033*math.cos(phase-.75*pi))
                 @ axis((1,0,0), -.026*math.cos(2*phase-.42)),
-        "Tail": axis((0,0,1), .23*math.cos(phase-.90*pi))
-                @ axis((1,0,0), .064*math.sin(2*phase-.8)),
     }
     pivot = bones["Pelvis"][0]
     for sign, side in [(1, "L"), (-1, "R")]:
@@ -686,9 +727,10 @@ for name,end in [("Idle",73),("Walk",89 if is_quadruped else 49)]:
             ds,offset=quadruped.walk_pose(t,bones) if is_quadruped else walk_pose(t)
         else:
             breath=math.sin(2*pi*t)
-            ds={("Neck" if is_quadruped else "Chest"):axis((1,0,0),.020*breath),"Head":axis((0,0,1),.032*breath),
-                "Tail":axis((0,0,1),.082*breath)}
+            ds={("Neck" if is_quadruped else "Chest"):axis((1,0,0),.020*breath),"Head":axis((0,0,1),.032*breath)}
             offset=(0,0,0)
+        cycles = quadruped.CYCLES if is_quadruped and name == "Walk" else 1
+        ds.update(tail.pose(tail_mounts, 2*pi*t*cycles, name == "Walk"))
         pose_delta(ds,offset,frame)
     for curve in act.fcurves:
         for key in curve.keyframe_points:key.interpolation="LINEAR"

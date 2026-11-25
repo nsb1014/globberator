@@ -3,10 +3,11 @@
   "parts": {
     "body": "heavy_quadruped",
     "head": "bull",
-    "horns": "swept_pair",
+    "horns": "swept",
     "feet": "split_hoof",
     "tail": "tufted"
   },
+  "socket_x": {"tail": 0.0},
   "shape": {
     "horn_span": 0.94,
     "horn_rise": 0.82,

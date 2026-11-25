@@ -71,7 +71,6 @@ def make_bones(bone):
     bone("Chest",(0,-.49,2.41),(0,-1.10,2.43),"Spine")
     bone("Neck",(0,-1.10,2.43),(0,-1.92,2.42),"Chest")
     bone("Head",(0,-1.92,2.42),(0,-2.69,2.03),"Neck")
-    bone("Tail",TAIL@Vector((0,.34,2.10)),TAIL@Vector((.43,.83,1.43)),"Pelvis")
 
 
 def bind(vertices,bones,names):
@@ -124,8 +123,7 @@ def walk_pose(t,bones):
     chest=rotate(roll,-.024*math.sin(phase-.50))@rotate(pitch,.022*math.cos(2*phase))
     delta={"Pelvis":hip,"Spine":hip.slerp(chest,.50),"Chest":chest,
            "Neck":rotate(pitch,.044*math.cos(2*phase-.37)),
-           "Head":rotate(pitch,.023*math.cos(2*phase-.58))@rotate(yaw,.021*math.sin(phase)),
-           "Tail":rotate(yaw,.16*math.sin(phase-.70))@rotate(pitch,.048*math.cos(phase))}
+           "Head":rotate(pitch,.023*math.cos(2*phase-.58))@rotate(yaw,.021*math.sin(phase))}
     # Work out the actual shoulder and hip origins under the moving spine.
     origin={"Pelvis":bones["Pelvis"][0]+shift}
     for name in ("Spine","Chest"):

@@ -15,7 +15,11 @@ parser.add_argument("folder",type=Path)
 parser.add_argument("--clip",choices=["still","turn","walk"],default="still")
 parser.add_argument("--oidn",type=Path,help="Optional oidnDenoise executable for linear-light CPU denoising")
 parser.add_argument("--azimuth",type=float,help="Camera angle in degrees from the front, or starting angle for a turntable")
+parser.add_argument("--samples",type=int,help="Override the default Cycles sample count")
+parser.add_argument("--frame-step",type=int,default=1,help="Render every Nth source frame")
 args=parser.parse_args(sys.argv[sys.argv.index("--")+1:])
+if args.frame_step < 1 or (args.samples is not None and args.samples < 1):
+    parser.error("Samples and frame step must be positive")
 args.folder.mkdir(parents=True,exist_ok=True)
 bpy.ops.wm.read_factory_settings(use_empty=True)
 bpy.ops.import_scene.gltf(filepath=str(args.model.resolve()))
@@ -28,6 +32,8 @@ for p in rig.pose.bones:p.matrix_basis.identity()
 scene=bpy.context.scene
 scene.render.engine="CYCLES"
 scene.cycles.samples=112 if args.clip=="still" else (36 if bull else 64)
+if args.samples is not None:
+    scene.cycles.samples = args.samples
 scene.cycles.adaptive_threshold=.05
 scene.cycles.adaptive_min_samples=16
 scene.cycles.max_bounces=3
@@ -96,7 +102,7 @@ def render_frame(destination):
 length={"still":1,"turn":72,"walk":0}[args.clip]
 if args.clip=="walk":
     length=round(action.frame_range[1]-action.frame_range[0])
-for i in range(length):
+for output_frame,i in enumerate(range(0,length,args.frame_step)):
     if args.clip=="walk":
         scene.frame_set(round(action.frame_range[0])+i)
     angle = math.radians(args.azimuth) if args.azimuth is not None else (.54 if args.clip=="walk" else .18)
@@ -118,4 +124,4 @@ for i in range(length):
             height = 2.62
     cam.location=(target.x+10*math.sin(angle),target.y-10*math.cos(angle),height)
     aim(cam,target)
-    render_frame((args.folder/f"{args.clip}-{i:03}.png").resolve())
+    render_frame((args.folder/f"{args.clip}-{output_frame:03}.png").resolve())

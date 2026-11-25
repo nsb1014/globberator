@@ -6,17 +6,23 @@ An unarmored adult bull built from a fresh recipe. Its bovine head, swept horns,
 
 ![Neutral bull](preview/bull.jpg)
 
-[Foreleg shape comparison](preview/bull-forelegs.jpg) · [Neutral turntable](preview/bull-turntable.mp4) · [Side-view walk](preview/bull-walk.mp4) · [Rigged bull](godot/bull.glb) · [Bull recipe](models/bull.json)
+[Earlier foreleg shape comparison](preview/bull-forelegs.jpg) · [Neutral turntable](preview/bull-turntable.mp4) · [Side-view walk](preview/bull-walk.mp4) · [Rigged bull](godot/bull.glb) · [Bull recipe](models/bull.json)
 
-At build time each socket constructs its leg and shared hoof once. The attachment mirrors the assembled geometry and joint positions across the body. An edit to the shoulder attachment updates both forelegs on rebuild. Each side gets its own bones in the 26-joint skeleton. During its walk the bull advances 2.08 model units over two strides. Each hoof bears weight for 66% of its cycle and lifts in turn. Both the idle and walk are baked into the GLB.
+At build time each socket constructs its leg and shared hoof once. The attachment mirrors the assembled geometry and joint positions across the body. An edit to the shoulder attachment updates both forelegs on rebuild. Each side gets its own bones in the 28-joint skeleton. During its walk the bull advances 2.08 model units over two strides. Each hoof bears weight for 66% of its cycle and lifts in turn. Both the idle and walk are baked into the GLB.
 
 ## Minotaur
 
-A runnable Godot character study of the far-right minotaur in the supplied lineup. The model opens in a neutral stance, uses one matte gray material, and has a 22-joint skeleton.
+A runnable Godot character study of the far-right minotaur in the supplied lineup. The model opens in a neutral stance, uses one matte gray material, and has a 24-joint skeleton.
 
 ![Neutral minotaur](preview/minotaur.jpg)
 
-[Rear mane detail](preview/minotaur-mane.jpg) · [Rear shape comparison](preview/minotaur-back.jpg) · [Step in place from behind](preview/minotaur-motion.mp4) · [Neutral turntable](preview/minotaur-turntable.mp4) · [Rigged 3D model](godot/minotaur.glb)
+[Earlier rear mane detail](preview/minotaur-mane.jpg) · [Earlier rear shape comparison](preview/minotaur-back.jpg) · [Step in place from behind](preview/minotaur-motion.mp4) · [Neutral turntable](preview/minotaur-turntable.mp4) · [Rigged 3D model](godot/minotaur.glb)
+
+## Place one part and reuse it
+
+The builder uses the attachment root to choose how many instances to place. A socket on the host’s X=0 plane emits one assembly. A lateral socket emits the authored assembly and its reflection, with corrected face winding and matching joint positions. The mesh can cross the midline freely. The same rule places horns, ears, eyes, limbs and their attached details on both characters. Sculpted locks within a mane and the two toes within a cloven hoof travel with their owning part.
+
+Both recipes mount one tufted tail at the center of the pelvis. Its shaft blends across three bones and the tuft follows the tip. Idle and walk apply a delayed bend along the chain. This is baked animation. To try a pair, change the recipe’s `"socket_x": {"tail": 0.0}` to `"socket_x": {"tail": 0.20}` and rebuild. Both tails receive their own skin weights and animation. The same optional map accepts `horn`, `ear`, and `eye` in head-local units. Tail offsets use body-local units. Existing recipes can omit the map.
 
 ## Open the studio
 
@@ -44,12 +50,16 @@ blender -b --python-exit-code 1 -P tools/build.py -- --recipe models/bull.json
 blender -b --python-exit-code 1 -P tools/render.py -- godot/minotaur.glb review --clip still
 ```
 
-For the editable Blender scene, pass `-- --review review` to the build script. Render accepts `--clip turn` or `--clip walk` for PNG sequences. The review uses independent videos for the neutral orbit and the stationary step. The step preview uses `--azimuth 146` to show how the back and hips deform under load. The renderer uses 64 samples per minotaur motion frame and 36 per bull motion frame. The bull walk uses a fixed side camera. Supply `--oidn /path/to/oidnDenoise` to apply Open Image Denoise before the display transform. The preview images come from reimporting the exported GLB.
+For the editable Blender scene, pass `-- --review review` to the build script. Render accepts `--clip turn` or `--clip walk` for PNG sequences. The review uses independent videos for the neutral orbit and the stationary step. The step preview uses `--azimuth 146` to show how the back and hips deform under load. The full renderer defaults to 64 samples per minotaur motion frame and 36 per bull motion frame. The included motion previews use `--samples 10 --frame-step 2` with denoising, encoded at 12 fps for the walks and 9 fps for the turntables. The bull walk uses a fixed side camera. Supply `--oidn /path/to/oidnDenoise` to apply Open Image Denoise before the display transform. The preview images come from reimporting the exported GLB.
 
 To check the imported sole contacts, run `godot --headless --editor --import --path godot`, then `godot --headless --path godot --script "$PWD/tools/tests/ground_contact.gd"` from the repository root. The check samples the soles through idle and both sides of the step, including between baked keyframes.
 
-To verify bilateral placement on a rotated and translated socket, run `blender -b --python-exit-code 1 -P tools/tests/paired_attachment.py`.
+To verify centered and bilateral placement on rotated and translated sockets, run `blender -b --python-exit-code 1 -P tools/tests/paired_attachment.py`.
 
 For the bull, run `godot --headless --path godot --script "$PWD/tools/tests/bull_walk.gd"`. This checks all four soles, forward displacement, shape controls and character switching. The Blender check `blender -b --python-exit-code 1 -P tools/tests/back_deformation.py -- godot/bull.glb` measures how the flank stretches across the walk.
+
+To verify the exported tail hierarchy, skin weights and local motion in both clips, run
+`blender -b --python-exit-code 1 -P tools/tests/tail_rig.py -- godot/bull.glb`.
+Use the same command with the minotaur GLB, or add `--paired` for a lateral-tail build.
 
 The design plan and research are in [PLAN.md](PLAN.md).

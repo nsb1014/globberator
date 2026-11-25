@@ -16,7 +16,7 @@ func check_bull() -> void:
 	var skin: MeshInstance3D = studio.skin
 	var soles := {}
 	var peaks := {}
-	var valid := sk.get_bone_count() == 26
+	var valid := sk.get_bone_count() == 28
 	for feature in studio.SHAPES:
 		var index := skin.find_blend_shape_by_name(feature)
 		if index < 0:
@@ -78,6 +78,6 @@ func check_bull() -> void:
 		valid = valid and peak > 0.14
 	studio.select_character(0)
 	var biped: Skeleton3D = studio.model.find_children("*","Skeleton3D",true,false)[0]
-	valid = valid and biped.get_bone_count() == 22
+	valid = valid and biped.get_bone_count() == 24
 	print("Planted deviation ",drift,", lowest sole ",lowest,", clearances ",peaks,", forward travel ",travel)
 	quit(0 if valid and drift < 0.001 and lowest > -0.002 and absf(travel-2*STRIDE) < 0.003 else 1)

@@ -307,12 +307,12 @@ func _thumbs() -> int:
 		var r := Ops.showcase_recipe(id)
 		var creature: Node3D = Builder.build(r)
 		st.stage.add_child(creature)
-		var box: AABB = creature.get_meta("rig")["aabb"]
+		var box: AABB = _non_body_box(creature)
 		var def = cat.get_part(id)
 		var yaw := 35.0 if def.category in ["eye", "mouth", "nose"] else 60.0
 		if def.category == "tail":
 			yaw = 150.0
-		st.frame(box, yaw, 18.0, 1.0)
+		st.frame(box, yaw, 18.0, 1.25)
 		var img: Image = await st.snap(self)
 		img.save_png(dir.path_join(id + ".png"))
 		creature.free()
@@ -368,3 +368,23 @@ func _apply_pose(creature: Node3D) -> void:
 		an.play("idle")
 		an.otime = 0.0
 		an._pose()
+
+
+## Bounds of everything except the body (the showcased part and its limb).
+static func _non_body_box(creature: Node3D) -> AABB:
+	var pick: Dictionary = creature.get_meta("pick")
+	var box := AABB()
+	var first := true
+	for t in pick["owner"].size():
+		if pick["owners"][pick["owner"][t]]["kind"] == "body":
+			continue
+		for k in 3:
+			var p: Vector3 = pick["pos"][t * 3 + k]
+			if first:
+				box = AABB(p, Vector3.ZERO)
+				first = false
+			else:
+				box = box.expand(p)
+	if first:
+		return creature.get_meta("rig")["aabb"]
+	return box.grow(maxf(box.size.length() * 0.15, 0.08))

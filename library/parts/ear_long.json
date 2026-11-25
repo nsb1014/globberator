@@ -1,0 +1,41 @@
+{
+  "attach": "surface",
+  "bones": [],
+  "capability": "flop",
+  "category": "ear",
+  "desc": "Long upright ear (rabbits, donkeys, jackalopes).",
+  "glb": "ear_long.glb",
+  "hint": {
+    "theta": 75.0,
+    "u": 0.85
+  },
+  "id": "ear_long",
+  "library_version": "2.0.0",
+  "mirror_default": true,
+  "orient": "surface",
+  "params": {
+    "length": [
+      0.5,
+      2.5,
+      1.0
+    ],
+    "size": [
+      0.3,
+      3.0,
+      1.0
+    ],
+    "tilt": [
+      -1.0,
+      1.0,
+      0.3
+    ]
+  },
+  "pieces": [
+    "self"
+  ],
+  "tags": [
+    "rabbit",
+    "donkey",
+    "cute"
+  ]
+}

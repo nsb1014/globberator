@@ -1,0 +1,53 @@
+{
+  "attach": "tip",
+  "bones": [
+    {
+      "angle": -30.0,
+      "axis": [
+        0,
+        0,
+        1
+      ],
+      "name": "jaw",
+      "pivot": [
+        0.03,
+        0.14,
+        0.0
+      ]
+    }
+  ],
+  "capability": "grasp",
+  "category": "hand",
+  "desc": "Crab / scorpion pincer with a hinged finger.",
+  "glb": "hand_pincer.glb",
+  "hint": {
+    "theta": 90.0,
+    "u": 0.5
+  },
+  "id": "hand_pincer",
+  "library_version": "2.0.0",
+  "mirror_default": false,
+  "orient": "surface",
+  "params": {
+    "bulk": [
+      0.5,
+      2.0,
+      1.0
+    ],
+    "size": [
+      0.4,
+      3.0,
+      1.0
+    ]
+  },
+  "pieces": [
+    "self",
+    "jaw"
+  ],
+  "tags": [
+    "crab",
+    "scorpion",
+    "lobster",
+    "arthropod"
+  ]
+}

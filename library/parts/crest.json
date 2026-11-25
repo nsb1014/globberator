@@ -1,0 +1,36 @@
+{
+  "attach": "surface",
+  "bones": [],
+  "capability": "",
+  "category": "detail",
+  "desc": "Spiky zig-zag crest ridge for heads and backs (dragons, iguanas).",
+  "glb": "crest.glb",
+  "hint": {
+    "theta": 90.0,
+    "u": 0.85
+  },
+  "id": "crest",
+  "library_version": "2.0.0",
+  "mirror_default": false,
+  "orient": "surface",
+  "params": {
+    "height": [
+      0.3,
+      3.0,
+      1.0
+    ],
+    "length": [
+      0.3,
+      3.0,
+      1.0
+    ]
+  },
+  "pieces": [
+    "self"
+  ],
+  "tags": [
+    "dragon",
+    "lizard",
+    "punk"
+  ]
+}

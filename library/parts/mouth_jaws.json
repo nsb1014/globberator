@@ -1,0 +1,58 @@
+{
+  "attach": "surface",
+  "bones": [
+    {
+      "angle": -38.0,
+      "axis": [
+        1,
+        0,
+        0
+      ],
+      "name": "jaw",
+      "pivot": [
+        0.0,
+        -0.05,
+        -0.02
+      ]
+    }
+  ],
+  "capability": "mouth",
+  "category": "mouth",
+  "desc": "Toothy predator jaws (upper and hinged lower jaw).",
+  "glb": "mouth_jaws.glb",
+  "hint": {
+    "theta": -20.0,
+    "u": 0.97
+  },
+  "id": "mouth_jaws",
+  "library_version": "2.0.0",
+  "mirror_default": false,
+  "orient": "face",
+  "params": {
+    "length": [
+      0.4,
+      2.5,
+      1.0
+    ],
+    "teeth": [
+      0.0,
+      1.5,
+      1.0
+    ],
+    "width": [
+      0.5,
+      2.0,
+      1.0
+    ]
+  },
+  "pieces": [
+    "self",
+    "jaw"
+  ],
+  "tags": [
+    "predator",
+    "reptile",
+    "dinosaur",
+    "menacing"
+  ]
+}

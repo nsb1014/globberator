@@ -589,7 +589,7 @@ func _assemble() -> Node3D:
 		"body_h": spine.vh[hub], "hub_height": spine.vpos[hub].y, "shift": shift,
 	}
 	var report := {
-		"name": recipe["name"], "library_version": Catalog.VERSION,
+		"name": recipe["name"], "library_version": Catalog.shared().VERSION,
 		"warnings": warnings, "triangles": geo.tri_count(), "bones": bone_names.size(),
 		"legs": legs, "arms": arms, "parts": parts_rig.size(),
 		"height": snappedf(box.end.y, 0.001), "length": snappedf(box.size.z, 0.001), "width": snappedf(box.size.x, 0.001),

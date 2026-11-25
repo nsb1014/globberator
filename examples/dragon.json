@@ -19,7 +19,7 @@
     {"uid": "horns", "part": "horn_spike", "u": 0.93, "theta": 60, "params": {"length": 1.3, "curve": -0.8}, "mirror": true},
     {"uid": "jaws", "part": "mouth_jaws", "u": 0.985, "theta": -10, "params": {"length": 1.1, "width": 1.0}},
     {"uid": "eyes", "part": "eye_slit", "u": 0.93, "theta": 30, "params": {"size": 0.9}, "mirror": true},
-    {"uid": "crest", "part": "crest", "u": 0.45, "theta": 90, "params": {"height": 1.4, "length": 2.5, "points": 6}},
+    {"uid": "crest", "part": "crest", "u": 0.45, "theta": 90, "params": {"height": 1.4, "length": 2.5}},
     {"uid": "spike1", "part": "spike", "u": 0.2, "theta": 90, "params": {"length": 1.2}},
     {"uid": "spike2", "part": "spike", "u": 0.1, "theta": 90, "params": {"length": 0.9}}
   ],

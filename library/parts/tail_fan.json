@@ -1,0 +1,42 @@
+{
+  "attach": "surface",
+  "bones": [],
+  "capability": "",
+  "category": "tail",
+  "desc": "Spread fan of tail feathers (birds, peacocks) or a fish tail fin; place at the rear tip.",
+  "glb": "tail_fan.glb",
+  "hint": {
+    "theta": 90.0,
+    "u": 0.0
+  },
+  "id": "tail_fan",
+  "library_version": "2.0.0",
+  "mirror_default": false,
+  "orient": "face",
+  "params": {
+    "lift": [
+      -1.0,
+      1.0,
+      0.3
+    ],
+    "size": [
+      0.3,
+      3.0,
+      1.0
+    ],
+    "spread": [
+      0.3,
+      1.5,
+      0.8
+    ]
+  },
+  "pieces": [
+    "self"
+  ],
+  "tags": [
+    "bird",
+    "peacock",
+    "fish",
+    "display"
+  ]
+}

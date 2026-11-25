@@ -68,6 +68,20 @@ func test_parts() -> void:
 					break
 			check(finite, "%s geometry is finite (%s)" % [id, mode])
 			check(g.aabb().size.length() < 9.0, "%s stays a sane size (%s)" % [id, mode])
+		# Every parameter must change the shape (Blender shape keys reach Godot).
+		var base_g = def.make(def.defaults())
+		for k in def.params.keys():
+			var r: Array = def.params[k]
+			for v in [r[0], r[1]]:
+				if absf(v - r[2]) < 1e-6:
+					continue
+				var prm2: Dictionary = def.defaults()
+				prm2[k] = v
+				var g2 = def.make(prm2)
+				var moved := 0.0
+				for i in mini(g2.pos.size(), base_g.pos.size()):
+					moved = maxf(moved, g2.pos[i].distance_to(base_g.pos[i]))
+				check(moved > 1e-4, "%s param %s=%.2f changes the mesh" % [id, k, v])
 		# Every part must build into a creature without warnings.
 		var c: Node3D = Builder.build(Ops.showcase_recipe(id))
 		check(c.get_meta("report")["warnings"].is_empty(), "%s showcase builds cleanly %s" % [id, c.get_meta("report")["warnings"]])

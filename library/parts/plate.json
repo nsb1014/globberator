@@ -1,0 +1,40 @@
+{
+  "attach": "surface",
+  "bones": [],
+  "capability": "",
+  "category": "detail",
+  "desc": "Upright armor plate (stegosaurus back plates).",
+  "glb": "plate.glb",
+  "hint": {
+    "theta": 90.0,
+    "u": 0.5
+  },
+  "id": "plate",
+  "library_version": "2.0.0",
+  "mirror_default": false,
+  "orient": "surface",
+  "params": {
+    "height": [
+      0.3,
+      3.0,
+      1.0
+    ],
+    "lean": [
+      -1.0,
+      1.0,
+      -0.2
+    ],
+    "width": [
+      0.3,
+      2.5,
+      1.0
+    ]
+  },
+  "pieces": [
+    "self"
+  ],
+  "tags": [
+    "dinosaur",
+    "armored"
+  ]
+}

@@ -1,0 +1,46 @@
+{
+  "attach": "surface",
+  "bones": [],
+  "capability": "",
+  "category": "horn",
+  "desc": "Ram horn spiraling back, down and forward around the ear.",
+  "glb": "horn_curl.glb",
+  "hint": {
+    "theta": 60.0,
+    "u": 0.88
+  },
+  "id": "horn_curl",
+  "library_version": "2.0.0",
+  "mirror_default": true,
+  "orient": "surface",
+  "params": {
+    "drift": [
+      0.0,
+      1.0,
+      0.4
+    ],
+    "size": [
+      0.4,
+      3.0,
+      1.0
+    ],
+    "thickness": [
+      0.5,
+      2.0,
+      1.0
+    ],
+    "turns": [
+      0.4,
+      1.3,
+      0.85
+    ]
+  },
+  "pieces": [
+    "self"
+  ],
+  "tags": [
+    "ram",
+    "sheep",
+    "demon"
+  ]
+}

@@ -1,0 +1,58 @@
+{
+  "attach": "surface",
+  "bones": [
+    {
+      "angle": -28.0,
+      "axis": [
+        1,
+        0,
+        0
+      ],
+      "name": "jaw",
+      "pivot": [
+        0.0,
+        -0.02,
+        -0.06
+      ]
+    }
+  ],
+  "capability": "mouth",
+  "category": "mouth",
+  "desc": "Blunt mammal muzzle with nostrils and a small lower jaw (bovines, pigs, dogs, bears).",
+  "glb": "mouth_snout.glb",
+  "hint": {
+    "theta": -15.0,
+    "u": 0.97
+  },
+  "id": "mouth_snout",
+  "library_version": "2.0.0",
+  "mirror_default": false,
+  "orient": "face",
+  "params": {
+    "length": [
+      0.3,
+      2.5,
+      1.0
+    ],
+    "nostrils": [
+      0.0,
+      2.0,
+      1.0
+    ],
+    "width": [
+      0.5,
+      2.2,
+      1.0
+    ]
+  },
+  "pieces": [
+    "self",
+    "jaw"
+  ],
+  "tags": [
+    "mammal",
+    "bovine",
+    "pig",
+    "dog"
+  ]
+}

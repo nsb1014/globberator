@@ -1,17 +1,13 @@
-## Part catalog. Library version bumps whenever part geometry or params change
-## in a way that alters existing recipes.
+## Part catalog: loads the Blender-authored parts listed in library/manifest.json.
+## Rebuild the assets with `python3 blender/build_library.py`.
 extends RefCounted
 
-const VERSION := "1.0.0"
-const SOURCES := [
-	preload("res://library/parts/face.gd"),
-	preload("res://library/parts/head.gd"),
-	preload("res://library/parts/body.gd"),
-	preload("res://library/parts/tips.gd"),
-]
+const GlbPart = preload("res://library/glb_part.gd")
+const DIR := "res://library/parts/"
 
 static var _shared = null
 
+var VERSION := "unknown"
 var parts := {}
 var order: Array[String] = []
 
@@ -23,11 +19,17 @@ static func shared():
 
 
 func _init() -> void:
-	for src in SOURCES:
-		for part in src.all():
-			assert(not parts.has(part.id), "duplicate part id " + part.id)
-			parts[part.id] = part
-			order.append(part.id)
+	var manifest = JSON.parse_string(FileAccess.get_file_as_string("res://library/manifest.json"))
+	if typeof(manifest) != TYPE_DICTIONARY:
+		push_error("library/manifest.json missing; run python3 blender/build_library.py")
+		return
+	VERSION = manifest["library_version"]
+	for id in manifest["parts"]:
+		var meta = JSON.parse_string(FileAccess.get_file_as_string(DIR + id + ".json"))
+		var part = GlbPart.new()
+		if typeof(meta) == TYPE_DICTIONARY and part.load_part(meta, DIR + id + ".glb"):
+			parts[id] = part
+			order.append(id)
 
 
 func get_part(id: String):

@@ -1,0 +1,41 @@
+{
+  "attach": "surface",
+  "bones": [],
+  "capability": "look",
+  "category": "eye",
+  "desc": "Round cartoon eye: white ball with a black pupil and optional brow.",
+  "glb": "eye_round.glb",
+  "hint": {
+    "theta": 35.0,
+    "u": 0.93
+  },
+  "id": "eye_round",
+  "library_version": "2.0.0",
+  "mirror_default": true,
+  "orient": "face",
+  "params": {
+    "brow": [
+      0.0,
+      1.0,
+      0.0
+    ],
+    "pupil": [
+      0.3,
+      0.9,
+      0.55
+    ],
+    "size": [
+      0.4,
+      3.0,
+      1.0
+    ]
+  },
+  "pieces": [
+    "self"
+  ],
+  "tags": [
+    "cute",
+    "mammal",
+    "cartoon"
+  ]
+}

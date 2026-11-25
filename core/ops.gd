@@ -186,7 +186,7 @@ static func apply_all(src: Dictionary, ops: Array) -> Dictionary:
 static func showcase_recipe(part_id: String) -> Dictionary:
 	var r := Recipe.default_recipe()
 	r["name"] = part_id
-	r["paint"] = {"base": "#9aa3ad", "accent": "#5f87b5", "detail": "#d8d2c4", "pattern": "none", "pattern_scale": 1.0, "belly": false}
+	r["paint"] = {"base": "#5f666e", "accent": "#5f87b5", "detail": "#d8d2c4", "pattern": "none", "pattern_scale": 1.0, "belly": false}
 	var def = Catalog.shared().get_part(part_id)
 	if def == null:
 		return r

@@ -1,0 +1,57 @@
+{
+  "attach": "surface",
+  "bones": [
+    {
+      "angle": 50.0,
+      "axis": [
+        1,
+        0,
+        0
+      ],
+      "name": "jaw",
+      "pivot": [
+        0.0,
+        0.15541,
+        -0.10102
+      ]
+    }
+  ],
+  "capability": "mouth",
+  "category": "mouth",
+  "desc": "Long flexible trunk or proboscis that curls up when 'opened'.",
+  "glb": "mouth_trunk.glb",
+  "hint": {
+    "theta": 0.0,
+    "u": 0.97
+  },
+  "id": "mouth_trunk",
+  "library_version": "2.0.0",
+  "mirror_default": false,
+  "orient": "face",
+  "params": {
+    "droop": [
+      0.0,
+      1.5,
+      1.0
+    ],
+    "length": [
+      0.3,
+      3.0,
+      1.0
+    ],
+    "thickness": [
+      0.4,
+      2.0,
+      1.0
+    ]
+  },
+  "pieces": [
+    "self",
+    "jaw"
+  ],
+  "tags": [
+    "elephant",
+    "tapir",
+    "alien"
+  ]
+}

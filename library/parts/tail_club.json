@@ -1,0 +1,35 @@
+{
+  "attach": "surface",
+  "bones": [],
+  "capability": "",
+  "category": "tail",
+  "desc": "Bony club for the tail tip (ankylosaurus); place at the rear tip (u near 0).",
+  "glb": "tail_club.glb",
+  "hint": {
+    "theta": 90.0,
+    "u": 0.0
+  },
+  "id": "tail_club",
+  "library_version": "2.0.0",
+  "mirror_default": false,
+  "orient": "face",
+  "params": {
+    "size": [
+      0.4,
+      3.0,
+      1.0
+    ],
+    "spikes": [
+      0.0,
+      1.5,
+      1.0
+    ]
+  },
+  "pieces": [
+    "self"
+  ],
+  "tags": [
+    "dinosaur",
+    "armored"
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "attach": "surface",
+  "bones": [],
+  "capability": "",
+  "category": "detail",
+  "desc": "Fan-shaped neck frill or bony shield behind the head (triceratops, frilled lizard).",
+  "glb": "frill.glb",
+  "hint": {
+    "theta": 90.0,
+    "u": 0.82
+  },
+  "id": "frill",
+  "library_version": "2.0.0",
+  "mirror_default": false,
+  "orient": "surface",
+  "params": {
+    "size": [
+      0.3,
+      3.0,
+      1.0
+    ],
+    "tilt": [
+      -1.0,
+      1.0,
+      0.4
+    ]
+  },
+  "pieces": [
+    "self"
+  ],
+  "tags": [
+    "dinosaur",
+    "lizard",
+    "display"
+  ]
+}

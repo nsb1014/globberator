@@ -1,0 +1,37 @@
+{
+  "attach": "tip",
+  "bones": [],
+  "capability": "hand",
+  "category": "hand",
+  "desc": "Clawed hand with three long curved talons (raptors, monsters, sloths).",
+  "glb": "hand_claw.glb",
+  "hint": {
+    "theta": 90.0,
+    "u": 0.5
+  },
+  "id": "hand_claw",
+  "library_version": "2.0.0",
+  "mirror_default": false,
+  "orient": "surface",
+  "params": {
+    "claw": [
+      0.4,
+      2.5,
+      1.0
+    ],
+    "size": [
+      0.4,
+      3.0,
+      1.0
+    ]
+  },
+  "pieces": [
+    "self"
+  ],
+  "tags": [
+    "monster",
+    "raptor",
+    "dragon",
+    "menacing"
+  ]
+}

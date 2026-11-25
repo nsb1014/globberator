@@ -1,0 +1,41 @@
+{
+  "attach": "surface",
+  "bones": [],
+  "capability": "sway",
+  "category": "detail",
+  "desc": "Thin antenna with a bulb tip (insects, aliens).",
+  "glb": "antenna.glb",
+  "hint": {
+    "theta": 75.0,
+    "u": 0.93
+  },
+  "id": "antenna",
+  "library_version": "2.0.0",
+  "mirror_default": true,
+  "orient": "surface",
+  "params": {
+    "bulb": [
+      0.0,
+      2.0,
+      1.0
+    ],
+    "curve": [
+      -1.0,
+      1.0,
+      -0.4
+    ],
+    "length": [
+      0.3,
+      3.0,
+      1.0
+    ]
+  },
+  "pieces": [
+    "self"
+  ],
+  "tags": [
+    "insect",
+    "alien",
+    "cute"
+  ]
+}

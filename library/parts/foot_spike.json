@@ -1,0 +1,32 @@
+{
+  "attach": "tip",
+  "bones": [],
+  "capability": "foot",
+  "category": "foot",
+  "desc": "Pointed leg tip (insects, spiders, crabs).",
+  "glb": "foot_spike.glb",
+  "hint": {
+    "theta": 90.0,
+    "u": 0.5
+  },
+  "id": "foot_spike",
+  "library_version": "2.0.0",
+  "mirror_default": false,
+  "orient": "surface",
+  "params": {
+    "size": [
+      0.4,
+      3.0,
+      1.0
+    ]
+  },
+  "pieces": [
+    "self"
+  ],
+  "tags": [
+    "insect",
+    "spider",
+    "crab",
+    "arthropod"
+  ]
+}

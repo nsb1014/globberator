@@ -10,8 +10,9 @@ const Spine = preload("res://core/spine.gd")
 const Recipe = preload("res://core/recipe.gd")
 const Catalog = preload("res://library/catalog.gd")
 
-const BODY_SEGS := 10
-const LIMB_SEGS := 6
+const BODY_SEGS := 32
+const LIMB_SEGS := 18
+const LIMB_RINGS := 7   # rings per limb segment
 static var MIRROR := Transform3D(Basis.from_scale(Vector3(-1, 1, 1)), Vector3.ZERO)
 
 const FIXED_COLORS := {
@@ -274,20 +275,7 @@ func _limb_geometry() -> void:
 		var radii: Array = l["radii"]
 		var bones: PackedInt32Array = l["bones"]
 		geo.slot = "skin"
-		geo.weight = 1.0
-		var total := 0.0
-		for k in joints.size() - 1:
-			var seg_len: float = joints[k].distance_to(joints[k + 1])
-			geo.bone = bones[k]
-			geo.bone_b = bones[k]
-			geo.uv = Vector2(10.0 + (total + seg_len * 0.5) / maxf(l["length"], 0.01), 0.0)
-			geo.tube(PackedVector3Array([joints[k], joints[k + 1]]), PackedFloat32Array([radii[k], radii[k + 1]]), LIMB_SEGS, false, false, Vector3.UP)
-			total += seg_len
-		for k in joints.size():
-			geo.bone = bones[k]
-			geo.bone_b = bones[k]
-			geo.uv = Vector2(10.0 + float(k) / maxf(joints.size() - 1, 1), 0.0)
-			geo.ellipsoid(joints[k], Vector3.ONE * radii[k] * (1.08 if k > 0 else 1.0), Basis(), LIMB_SEGS, 4)
+		_limb_sweep(joints, radii, bones, l["length"])
 		geo.bone = 0
 		geo.bone_b = 0
 		var owner := _owner({"kind": "limb", "uid": l["uid"], "mirrored": l["mirrored"]})
@@ -327,6 +315,89 @@ func _limb_geometry() -> void:
 			_tag(start_tip, owner)
 		else:
 			l["jaws"] = []
+
+
+## One continuous, smooth limb: a Catmull-Rom path through the joints with a
+## muscle bulge on each segment. Rings near a joint blend between the two bones
+## so knees and elbows bend softly instead of creasing.
+func _limb_sweep(joints: Array, radii: Array, bones: PackedInt32Array, length: float) -> void:
+	var n := joints.size()
+	var pts := PackedVector3Array()
+	var rad := PackedFloat32Array()
+	var wb: Array[Vector3i] = []
+	var ww := PackedFloat32Array()
+	var us := PackedFloat32Array()
+	# Start a little inside the body so the limb root is buried.
+	var d0: Vector3 = (joints[1] - joints[0]).normalized()
+	pts.append(joints[0] - d0 * radii[0] * 0.6)
+	rad.append(radii[0] * 0.85)
+	wb.append(Vector3i(bones[0], bones[0], 0))
+	ww.append(1.0)
+	us.append(0.0)
+	var acc := 0.0
+	for k in n - 1:
+		var p0: Vector3 = joints[maxi(k - 1, 0)]
+		var p1: Vector3 = joints[k]
+		var p2: Vector3 = joints[k + 1]
+		var p3: Vector3 = joints[mini(k + 2, n - 1)]
+		var seg: float = p1.distance_to(p2)
+		var bulge := 0.16 if k < n - 2 else 0.08
+		for r in LIMB_RINGS:
+			var t := float(r) / LIMB_RINGS
+			pts.append(Spine._cr(p0, p1, p2, p3, t))
+			var base: float = lerpf(radii[k], radii[k + 1], t)
+			rad.append(base * (1.0 + bulge * sin(PI * clampf(t * 1.15, 0.0, 1.0))))
+			# Blend across joint k (t near 0) between bone k-1 and bone k.
+			if k > 0 and t < 0.3:
+				var f := 0.5 + 0.5 * smoothstep(0.0, 0.3, t)
+				wb.append(Vector3i(bones[k], bones[k - 1], 0))
+				ww.append(f)
+			elif t > 0.7 and k + 1 < n - 1:
+				var f2 := 1.0 - 0.5 * smoothstep(0.7, 1.0, t)
+				wb.append(Vector3i(bones[k], bones[k + 1], 0))
+				ww.append(f2)
+			else:
+				wb.append(Vector3i(bones[k], bones[k], 0))
+				ww.append(1.0)
+			us.append((acc + seg * t) / maxf(length, 0.01))
+		acc += seg
+	pts.append(joints[n - 1])
+	rad.append(radii[n - 1])
+	wb.append(Vector3i(bones[n - 1], bones[n - 1], 0))
+	ww.append(1.0)
+	us.append(1.0)
+	var frames := Geo.parallel_frames(pts, Vector3.UP)
+	var rings: Array[PackedVector3Array] = []
+	for i in pts.size():
+		var f: Basis = frames[i]
+		rings.append(Geo.ring(pts[i], f.x, f.y, rad[i], rad[i], LIMB_SEGS))
+	for i in pts.size() - 1:
+		geo.uv = Vector2(10.0 + us[i], 0.0)
+		var ra: PackedVector3Array = rings[i]
+		var rb: PackedVector3Array = rings[i + 1]
+		for a in LIMB_SEGS:
+			var b := (a + 1) % LIMB_SEGS
+			geo.tri_w(ra[a], ra[b], rb[b], wb[i], wb[i], wb[i + 1], ww[i], ww[i], ww[i + 1])
+			geo.tri_w(ra[a], rb[b], rb[a], wb[i], wb[i + 1], wb[i + 1], ww[i], ww[i + 1], ww[i + 1])
+	# Domed caps at both ends.
+	for e in [[0, -1.0], [pts.size() - 1, 1.0]]:
+		var i: int = e[0]
+		var f: Basis = frames[i]
+		var ring: PackedVector3Array = rings[i]
+		var prev := ring
+		for c in range(1, 4):
+			var a := PI * 0.5 * c / 3.0
+			var center: Vector3 = pts[i] + f.z * e[1] * rad[i] * sin(a)
+			var cur := Geo.ring(center, f.x, f.y, rad[i] * cos(a) + 0.0005, rad[i] * cos(a) + 0.0005, LIMB_SEGS)
+			for s_ in LIMB_SEGS:
+				var t_ := (s_ + 1) % LIMB_SEGS
+				if e[1] > 0:
+					geo.tri_w(prev[s_], prev[t_], cur[t_], wb[i], wb[i], wb[i], ww[i], ww[i], ww[i])
+					geo.tri_w(prev[s_], cur[t_], cur[s_], wb[i], wb[i], wb[i], ww[i], ww[i], ww[i])
+				else:
+					geo.tri_w(prev[s_], cur[t_], prev[t_], wb[i], wb[i], wb[i], ww[i], ww[i], ww[i])
+					geo.tri_w(prev[s_], cur[s_], cur[t_], wb[i], wb[i], wb[i], ww[i], ww[i], ww[i])
+			prev = cur
 
 
 ## Orthonormal frame with y along `y_dir` and z as close as possible to `z_hint`.
@@ -492,6 +563,62 @@ func _paint_skin(uv: Vector2, pal: Dictionary, paint: Dictionary) -> Color:
 	return base
 
 
+## Smooth vertex normals: weld coincident positions within each owner (body,
+## a limb, a part) and average area-weighted face normals.
+func _smooth_normals() -> PackedVector3Array:
+	var acc := {}
+	var tc: int = geo.tri_count()
+	var keys := []
+	keys.resize(tc * 3)
+	var face_n := PackedVector3Array()
+	face_n.resize(tc)
+	for t in tc:
+		var k := t * 3
+		var a: Vector3 = geo.pos[k]
+		var fn: Vector3 = (geo.pos[k + 1] - a).cross(geo.pos[k + 2] - a)
+		face_n[t] = fn
+		var o: int = tri_owner[t] if t < tri_owner.size() else 0
+		for j in 3:
+			var p: Vector3 = geo.pos[k + j]
+			var key := Vector4i(roundi(p.x * 4000.0), roundi(p.y * 4000.0), roundi(p.z * 4000.0), o)
+			keys[k + j] = key
+			acc[key] = acc.get(key, Vector3.ZERO) + fn
+	var out := PackedVector3Array()
+	out.resize(tc * 3)
+	for v in tc * 3:
+		var nn: Vector3 = acc[keys[v]]
+		out[v] = nn.normalized() if nn.length_squared() > 1e-20 else face_n[v / 3].normalized()
+	_feather_normals(out, keys)
+	return out
+
+
+## Skin-coloured parts and limb roots take on the body's normal where they meet
+## it, so the join shades like one sculpted surface instead of a crease.
+func _feather_normals(normals: PackedVector3Array, keys: Array) -> void:
+	var cache := {}
+	var body_scale: float = 0.0
+	for w in spine.vw:
+		body_scale = maxf(body_scale, w)
+	var falloff := clampf(body_scale * 0.35, 0.04, 0.25)
+	for t in geo.tri_count():
+		var o: Dictionary = owners[tri_owner[t]]
+		if o["kind"] == "body" or geo.tri_slot[t] != "skin":
+			continue
+		for j in 3:
+			var v: int = t * 3 + j
+			var key = keys[v]
+			if not cache.has(key):
+				var p: Vector3 = geo.pos[v]
+				var pr: Dictionary = spine.project(p)
+				var surf: Dictionary = spine.surface(pr["u"], pr["theta"])
+				var d: float = (p - surf["p"]).length()
+				var w := 1.0 - smoothstep(0.0, falloff, d)
+				cache[key] = [surf["n"], w]
+			var c: Array = cache[key]
+			if c[1] > 0.0:
+				normals[v] = normals[v].lerp(c[0], c[1] * 0.9).normalized()
+
+
 func _assemble() -> Node3D:
 	var paint: Dictionary = recipe["paint"]
 	var pal := FIXED_COLORS.duplicate()
@@ -505,6 +632,7 @@ func _assemble() -> Node3D:
 	var bones := PackedInt32Array()
 	var weights := PackedFloat32Array()
 	verts.resize(n); normals.resize(n); colors.resize(n); bones.resize(n * 4); weights.resize(n * 4)
+	var smooth := _smooth_normals()
 	for t in geo.tri_count():
 		var k: int = t * 3
 		var a: Vector3 = geo.pos[k]
@@ -514,15 +642,13 @@ func _assemble() -> Node3D:
 		nn = nn.normalized() if nn.length() > 1e-12 else Vector3.UP
 		var slot: String = geo.tri_slot[t]
 		var col: Color = _paint_skin(geo.tri_uv[t], pal, paint) if slot == "skin" else pal.get(slot, pal["base"])
-		var jit := (_hash(t) - 0.5) * 0.06
-		col = Color(clampf(col.r + jit, 0, 1), clampf(col.g + jit, 0, 1), clampf(col.b + jit, 0, 1))
 		# Godot treats clockwise triangles as front faces: emit a, c, b.
 		var order := [0, 2, 1]
 		for o in 3:
 			var src: int = k + order[o]
 			var dst: int = k + o
 			verts[dst] = geo.pos[src]
-			normals[dst] = nn
+			normals[dst] = smooth[src]
 			colors[dst] = col
 			var bb0: int = geo.b0[src]
 			var bb1: int = geo.b1[src]
@@ -544,7 +670,7 @@ func _assemble() -> Node3D:
 	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arrays)
 	var mat := StandardMaterial3D.new()
 	mat.vertex_color_use_as_albedo = true
-	mat.roughness = 0.82
+	mat.roughness = 0.87
 	mat.cull_mode = BaseMaterial3D.CULL_DISABLED
 	mesh.surface_set_material(0, mat)
 

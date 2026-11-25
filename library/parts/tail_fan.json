@@ -10,7 +10,7 @@
     "u": 0.0
   },
   "id": "tail_fan",
-  "library_version": "2.0.0",
+  "library_version": "3.0.0",
   "mirror_default": false,
   "orient": "face",
   "params": {
@@ -38,5 +38,6 @@
     "peacock",
     "fish",
     "display"
-  ]
+  ],
+  "triangles": 5040
 }

@@ -10,7 +10,7 @@
     "u": 0.9
   },
   "id": "horn_spike",
-  "library_version": "2.0.0",
+  "library_version": "3.0.0",
   "mirror_default": true,
   "orient": "surface",
   "params": {
@@ -42,5 +42,6 @@
     "goat",
     "demon",
     "dinosaur"
-  ]
+  ],
+  "triangles": 2200
 }

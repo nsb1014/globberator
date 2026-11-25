@@ -10,7 +10,7 @@
     "u": 0.88
   },
   "id": "ear_fan",
-  "library_version": "2.0.0",
+  "library_version": "3.0.0",
   "mirror_default": true,
   "orient": "surface",
   "params": {
@@ -31,5 +31,6 @@
   "tags": [
     "elephant",
     "big"
-  ]
+  ],
+  "triangles": 2496
 }

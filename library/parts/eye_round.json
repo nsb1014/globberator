@@ -3,21 +3,26 @@
   "bones": [],
   "capability": "look",
   "category": "eye",
-  "desc": "Round cartoon eye: white ball with a black pupil and optional brow.",
+  "desc": "Round eye under soft lids with an optional heavy brow (mammals, cartoon, bovines).",
   "glb": "eye_round.glb",
   "hint": {
     "theta": 35.0,
     "u": 0.93
   },
   "id": "eye_round",
-  "library_version": "2.0.0",
+  "library_version": "3.0.0",
   "mirror_default": true,
   "orient": "face",
   "params": {
     "brow": [
       0.0,
       1.0,
-      0.0
+      0.3
+    ],
+    "lid": [
+      0.0,
+      1.0,
+      0.3
     ],
     "pupil": [
       0.3,
@@ -36,6 +41,8 @@
   "tags": [
     "cute",
     "mammal",
-    "cartoon"
-  ]
+    "cartoon",
+    "bovine"
+  ],
+  "triangles": 3810
 }

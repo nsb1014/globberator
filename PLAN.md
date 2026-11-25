@@ -2,7 +2,7 @@
 
 Goal: a Spore-style 3D builder in Godot 4. You assemble a character from a small, deliberate part library. It rigs itself, gets procedural animation, and exports to GLB. On top of the builder sits an AI workflow: you give it a reference image and it builds a recipe that matches the image as closely as the library's style allows.
 
-Status: clean slate. The previous iteration was removed in the commit that added this plan. It can be recovered from git history (`git show ce72a4f`).
+Status: milestones 0 to 6 are built (see README). Parts are sculpted in Blender to match the original bull's clay look, and the runtime is Godot-only. The AI loop's Claude calls have not been run against the live API yet. The previous iteration is still in git history (`git show ce72a4f`).
 
 ## Lessons from the previous iteration
 
@@ -62,7 +62,7 @@ library/parts/horn_curl/
 - **Capabilities** give a part a role in animation: `foot{sole, forward}`, `hand{grip}`, `mouth{open}`, `eye{look}`, `ear{flop}`, `none`.
 - A part attaches to the body or a limb at `(u, θ, offset, rotation, scale)` and follows the bone underneath it.
 - The first library is deliberately small: about 40 parts that cover distinct silhouettes. A library-gap report from the AI loop (milestone 6) decides what to add next.
-- All parts are authored as code-generated or hand-modelled low-poly meshes in one consistent style: flat-shaded, with a limited palette and gradient vertex colors.
+- All parts are code-generated in Blender in one consistent style: sculpted matte clay. Each part is built from smooth lofts and ovals, carved with booleans, voxel-remeshed, smoothed and decimated, as the original bull was. Parameters are shape keys, and the GLBs are loaded by Godot at runtime.
 
 ### 4. Paint
 
@@ -154,8 +154,8 @@ Milestones 0 through 3 are the critical path. If parts don't attach well or the 
 
 ## Decisions to confirm
 
-- **Engine language.** GDScript for everything, or C# or GDExtension for the mesh sweep and IK if they turn out slow. Start with GDScript.
-- **Who authors parts.** Start with code-generated low-poly parts so there is no art bottleneck, and allow hand-modelled `mesh.glb` replacements later.
+- **Engine language.** Decided: GDScript. Next candidate for native code: fusing the body, limbs and skin parts into one surface at runtime (SDF skinning), which is too slow in GDScript.
+- **Who authors parts.** Decided: 100% code-generated, sculpted in Blender through `bpy` scripts (`blender/`). `library/parts.blend` allows hand touch-ups.
 - **Scope.** Creatures first. Buildings and vehicles are milestone 8.
 - **Body skin.** Start with a swept surface; it is simpler and faster. Move to an SDF blend if the joins look bad.
 

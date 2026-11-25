@@ -1,21 +1,21 @@
-"""Build the part library in Blender and export it for Godot.
+"""Build the sculpted part library in Blender and export it for Godot.
 
     python3 blender/build_library.py [--only id,id] [--no-blend]
+    (or inside Blender: blender -b -P blender/build_library.py -- [--only ...])
 
-Uses Blender as a Python module (`pip install bpy`) or run inside Blender:
-    blender -b -P blender/build_library.py -- [--only ...]
+Per part and per bone piece ("self", "jaw", ...), each paint region is
+finished like a sculpt:
+    remesh finish:  voxel remesh -> boolean carve -> remesh -> smooth -> decimate
+    subsurf finish: Catmull-Clark subdivision of the cage (thin plates)
+Parameters become shape keys "<param>.min" / "<param>.max". Subsurf parts get
+exact keys (same topology). Remeshed parts carry the construction cage's
+displacement onto the final surface (inverse-distance weighted), so the
+sculpted mesh follows the parametric shape.
 
-For every part this writes
-    library/parts/<id>.glb   one object per bone piece ("self", "jaw", ...),
-                             one material per paint slot, and two shape keys
-                             per parameter ("<param>.min" / "<param>.max")
-    library/parts/<id>.json  metadata Godot needs (category, params, capability,
-                             attachment, placement hint, bone pivots/axes)
-and also library/manifest.json plus library/parts.blend (every part laid out
-on a grid so the library can be browsed and edited in Blender).
+Outputs library/parts/<id>.glb + <id>.json, library/manifest.json and
+library/parts.blend (all parts laid out for browsing and hand edits).
 """
 import json
-import math
 import os
 import sys
 
@@ -23,6 +23,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 
 import bpy  # noqa: E402
+import mathutils  # noqa: E402
 from mathutils import Vector  # noqa: E402
 
 import kit  # noqa: E402
@@ -30,11 +31,12 @@ from parts import face, head, body, tips  # noqa: E402
 
 ROOT = os.path.dirname(HERE)
 OUT = os.path.join(ROOT, "library", "parts")
-LIBRARY_VERSION = "2.0.0"
+LIBRARY_VERSION = "3.0.0"
 ALL_PARTS = face.PARTS + head.PARTS + body.PARTS + tips.PARTS
+FACE_BUDGET = 1100          # faces per paint region before the detail multiplier
 
 PREVIEW = {
-    "skin": (0.55, 0.6, 0.65), "base": (0.6, 0.64, 0.68), "accent": (0.37, 0.53, 0.71), "detail": (0.85, 0.82, 0.77),
+    "skin": (0.55, 0.55, 0.55), "base": (0.6, 0.6, 0.6), "accent": (0.42, 0.5, 0.62), "detail": (0.82, 0.8, 0.76),
     "white": (0.95, 0.94, 0.9), "black": (0.05, 0.05, 0.05), "dark": (0.17, 0.13, 0.12), "horn": (0.86, 0.8, 0.62),
     "claw": (0.18, 0.15, 0.14), "teeth": (0.94, 0.91, 0.81), "eye": (0.9, 0.76, 0.23),
 }
@@ -45,17 +47,128 @@ def material(slot):
     if m is None:
         m = bpy.data.materials.new(slot)
         m.diffuse_color = (*PREVIEW.get(slot, (0.6, 0.6, 0.6)), 1.0)
-        bsdf = m.node_tree.nodes.get("Principled BSDF") if m.node_tree else None
-        if bsdf:
-            bsdf.inputs["Base Color"].default_value = (*PREVIEW.get(slot, (0.6, 0.6, 0.6)), 1.0)
-            bsdf.inputs["Roughness"].default_value = 0.8
+        m.roughness = 0.87
     return m
 
 
-def variants(part):
-    """Default build plus min/max builds for every parameter, topology checked."""
+# ------------------------------------------------------------------ meshes
+
+def new_object(name, verts, faces):
+    me = bpy.data.meshes.new(name)
+    me.from_pydata([kit.to_blender(v) for v in verts], [], faces)
+    me.validate()
+    me.update()
+    ob = bpy.data.objects.new(name, me)
+    bpy.context.scene.collection.objects.link(ob)
+    return ob
+
+
+def bake(ob):
+    """Apply all modifiers of ob in place."""
+    dg = bpy.context.evaluated_depsgraph_get()
+    dg.update()
+    ev = ob.evaluated_get(dg)
+    me = bpy.data.meshes.new_from_object(ev)
+    old = ob.data
+    ob.modifiers.clear()
+    ob.data = me
+    bpy.data.meshes.remove(old)
+
+
+def read_mesh(ob):
+    me = ob.data
+    verts = [Vector((v.co.x, v.co.z, -v.co.y)) for v in me.vertices]   # back to Godot coords
+    faces = [tuple(p.vertices) for p in me.polygons]
+    return verts, faces
+
+
+def remove(ob):
+    me = ob.data
+    bpy.data.objects.remove(ob, do_unlink=True)
+    if me and me.users == 0:
+        bpy.data.meshes.remove(me)
+
+
+def auto_voxel(verts):
+    lo = Vector((min(v.x for v in verts), min(v.y for v in verts), min(v.z for v in verts)))
+    hi = Vector((max(v.x for v in verts), max(v.y for v in verts), max(v.z for v in verts)))
+    return min(max((hi - lo).length / 130.0, 0.0022), 0.014)
+
+
+def finish_region(piece, slot, verts, faces, cut, detail):
+    ob = new_object("work", verts, faces)
+    if piece.finish_for(slot) == "subsurf":
+        m = ob.modifiers.new("sub", "SUBSURF")
+        m.levels = 2
+        m.render_levels = 2
+        bake(ob)
+    else:
+        voxel = piece.voxel or auto_voxel(verts)
+        m = ob.modifiers.new("remesh", "REMESH")
+        m.mode = "VOXEL"
+        m.voxel_size = voxel
+        bake(ob)
+        if cut[0]:
+            cutter = new_object("cutter", cut[0], cut[1])
+            cm = cutter.modifiers.new("clean", "REMESH")   # overlapping cutters -> one clean solid
+            cm.mode = "VOXEL"
+            cm.voxel_size = voxel * 0.75
+            bake(cutter)
+            b = ob.modifiers.new("carve", "BOOLEAN")
+            b.operation = "DIFFERENCE"
+            b.solver = "EXACT"
+            b.object = cutter
+            b.use_self = True
+            bake(ob)
+            remove(cutter)
+            m = ob.modifiers.new("remesh2", "REMESH")
+            m.mode = "VOXEL"
+            m.voxel_size = voxel
+            bake(ob)
+        s = ob.modifiers.new("smooth", "SMOOTH")
+        s.factor = piece.smooth
+        s.iterations = 4
+        bake(ob)
+        budget = FACE_BUDGET * detail * piece.detail
+        n = len(ob.data.polygons)
+        if n > budget:
+            d = ob.modifiers.new("decimate", "DECIMATE")
+            d.ratio = budget / n
+            bake(ob)
+    out = read_mesh(ob)
+    remove(ob)
+    return out
+
+
+def idw_transfer(final, cage0, cage1, k=8):
+    """Move final verts by the cage displacement, inverse-distance weighted."""
+    tree = mathutils.kdtree.KDTree(len(cage0))
+    for i, c in enumerate(cage0):
+        tree.insert(c, i)
+    tree.balance()
+    out = []
+    for v in final:
+        acc = Vector((0, 0, 0))
+        wsum = 0.0
+        for _, i, d in tree.find_n(v, k):
+            w = 1.0 / (d * d + 1e-7)
+            acc += (cage1[i] - cage0[i]) * w
+            wsum += w
+        out.append(v + acc / wsum)
+    return out
+
+
+def all_cage(piece):
+    v, _ = piece.cage(None, False)
+    vn, _ = piece.cage(None, True)
+    return v + vn
+
+
+# ------------------------------------------------------------------ parts
+
+def build_part(part):
     base = part.build(part.defaults())
-    keys = []
+    variants = []
     for name, (lo, hi, d) in part.params.items():
         for tag, val in (("min", lo), ("max", hi)):
             if abs(val - d) < 1e-9:
@@ -63,60 +176,80 @@ def variants(part):
             p = part.defaults()
             p[name] = val
             v = part.build(p)
-            for piece, mesh in base.pieces.items():
-                other = v.pieces[piece]
-                if len(other.v) != len(mesh.v) or other.f != mesh.f:
-                    raise RuntimeError("%s: param %s.%s changes topology of piece %s" % (part.id, name, tag, piece))
-            keys.append(("%s.%s" % (name, tag), v))
-    return base, keys
+            for pn, pc in base.pieces.items():
+                if v.pieces[pn].signature() != pc.signature():
+                    raise RuntimeError("%s: %s.%s changes the cage topology of piece %s" % (part.id, name, tag, pn))
+            variants.append(("%s.%s" % (name, tag), v))
+    result = {}
+    for pn, piece in base.pieces.items():
+        pivot = base.pivots.get(pn, Vector((0, 0, 0))) if pn != "self" else Vector((0, 0, 0))
+        cut = piece.cage(None, True)
+        regions = []
+        keys = {k: [] for k, _ in variants}
+        slots = piece.slots()
+        detail = 1.0 / max(1, len(slots)) ** 0.5
+        cage0 = all_cage(piece)
+        for slot in slots:
+            cv, cf = piece.cage(slot)
+            fv, ff = finish_region(piece, slot, cv, cf, cut, detail)
+            regions.append((slot, [x - pivot for x in fv], ff))
+            for kname, var in variants:
+                vp = var.pieces[pn]
+                if piece.finish_for(slot) == "subsurf":
+                    vv, vf = vp.cage(slot)
+                    kv, _ = finish_region(vp, slot, vv, vf, ([], []), detail)
+                    if len(kv) != len(fv):
+                        raise RuntimeError("%s: subsurf topology mismatch for %s" % (part.id, kname))
+                else:
+                    kv = idw_transfer(fv, cage0, all_cage(vp))
+                keys[kname].append([x - pivot for x in kv])
+        result[pn] = {"regions": regions, "keys": keys, "pivot": pivot}
+    return base, result
 
 
-def make_objects(part, collection, offset=Vector((0, 0, 0))):
-    base, keys = variants(part)
+def make_objects(part, built, collection, offset=Vector((0, 0, 0))):
+    base, pieces = built
     objs = {}
-    order = ["self"] + [b["name"] for b in part.bones]
-    for name in order:
-        piece = base.pieces[name]
-        if not piece.v:
-            if name == "self":
-                # Parts made only of hinged pieces still need a root node.
+    for pn in ["self"] + [b["name"] for b in part.bones]:
+        data = pieces[pn]
+        if not data["regions"]:
+            if pn == "self":
                 ob = bpy.data.objects.new(part.id, None)
                 collection.objects.link(ob)
-                ob["piece"] = "self"
-                ob["part_id"] = part.id
                 ob.location = offset
                 objs["self"] = ob
             continue
-        pivot = base.pivots.get(name, Vector((0, 0, 0))) if name != "self" else Vector((0, 0, 0))
-        mesh = bpy.data.meshes.new("%s_%s" % (part.id, name))
-        verts = [kit.to_blender(v - pivot) for v in piece.v]
-        mesh.from_pydata(verts, [], piece.f)
-        slots = sorted(set(piece.slot), key=list(PREVIEW).index if all(s in PREVIEW for s in piece.slot) else str)
-        for s in slots:
-            mesh.materials.append(material(s))
-        for poly, s in zip(mesh.polygons, piece.slot):
-            poly.material_index = slots.index(s)
-            poly.use_smooth = False
-        mesh.update()
-        ob = bpy.data.objects.new(part.id if name == "self" else "%s__%s" % (part.id, name), mesh)
+        verts, faces, slots = [], [], []
+        for slot, rv, rf in data["regions"]:
+            o = len(verts)
+            verts += rv
+            faces += [tuple(i + o for i in f) for f in rf]
+            slots += [slot] * len(rf)
+        me = bpy.data.meshes.new("%s_%s" % (part.id, pn))
+        me.from_pydata([kit.to_blender(v) for v in verts], [], faces)
+        order_slots = [s for s, _, _ in data["regions"]]
+        for s in order_slots:
+            me.materials.append(material(s))
+        for poly, s in zip(me.polygons, slots):
+            poly.material_index = order_slots.index(s)
+        me.shade_smooth()
+        me.update()
+        ob = bpy.data.objects.new(part.id if pn == "self" else "%s__%s" % (part.id, pn), me)
         collection.objects.link(ob)
-        ob["piece"] = name
-        if keys:
+        if data["keys"]:
             ob.shape_key_add(name="Basis", from_mix=False)
-            for kname, v in keys:
+            for kname, regs in data["keys"].items():
                 sk = ob.shape_key_add(name=kname, from_mix=False)
-                vpiv = v.pivots.get(name, pivot) if name != "self" else Vector((0, 0, 0))
-                for i, p in enumerate(v.pieces[name].v):
-                    # Keep the default pivot so the bone stays put; the delta moves the geometry.
-                    sk.data[i].co = kit.to_blender(p - pivot)
-        if name == "self":
+                flat = [v for reg in regs for v in reg]
+                for i, p in enumerate(flat):
+                    sk.data[i].co = kit.to_blender(p)
+        if pn == "self":
             ob.location = offset
-            ob["part_id"] = part.id
         else:
             ob.parent = objs["self"]
-            ob.location = kit.to_blender(pivot)
-        objs[name] = ob
-    return objs, base
+            ob.location = kit.to_blender(data["pivot"])
+        objs[pn] = ob
+    return objs
 
 
 def metadata(part, base):
@@ -137,66 +270,55 @@ def metadata(part, base):
 
 def reset_scene():
     bpy.ops.wm.read_factory_settings(use_empty=True)
-    return bpy.context.scene.collection
 
 
 def export_part(part):
-    col = reset_scene()
-    objs, base = make_objects(part, col)
+    reset_scene()
+    built = build_part(part)
+    objs = make_objects(part, built, bpy.context.scene.collection)
     bpy.ops.object.select_all(action="DESELECT")
     for ob in objs.values():
         ob.select_set(True)
-    path = os.path.join(OUT, part.id + ".glb")
-    bpy.ops.export_scene.gltf(filepath=path, export_format="GLB", use_selection=True, export_yup=True,
-                              export_apply=False, export_morph=True, export_morph_normal=False,
+    bpy.ops.export_scene.gltf(filepath=os.path.join(OUT, part.id + ".glb"), export_format="GLB", use_selection=True,
+                              export_yup=True, export_apply=False, export_morph=True, export_morph_normal=False,
                               export_materials="EXPORT", export_extras=True, export_animations=False)
-    meta = metadata(part, base)
+    meta = metadata(part, built[0])
+    meta["triangles"] = sum(sum(len(f) - 2 for f in r[2]) for p in built[1].values() for r in p["regions"])
     with open(os.path.join(OUT, part.id + ".json"), "w") as f:
         json.dump(meta, f, indent=2, sort_keys=True)
-    return meta
+    return meta, built
 
 
-def save_blend(parts):
+def save_blend(builds):
     reset_scene()
     cols = {}
-    per_row = 8
-    for i, part in enumerate(parts):
+    for i, (part, built) in enumerate(builds):
         if part.category not in cols:
             c = bpy.data.collections.new(part.category)
             bpy.context.scene.collection.children.link(c)
             cols[part.category] = c
-        off = Vector(((i % per_row) * 1.2, -(i // per_row) * 1.4, 0))
-        make_objects(part, cols[part.category], off)
+        make_objects(part, built, cols[part.category], Vector(((i % 8) * 1.2, -(i // 8) * 1.4, 0)))
     bpy.ops.wm.save_as_mainfile(filepath=os.path.join(ROOT, "library", "parts.blend"), compress=True)
 
 
 def main(argv):
-    only = None
-    blend = True
-    if "--only" in argv:
-        only = set(argv[argv.index("--only") + 1].split(","))
-    if "--no-blend" in argv:
-        blend = False
+    only = set(argv[argv.index("--only") + 1].split(",")) if "--only" in argv else None
     os.makedirs(OUT, exist_ok=True)
     ids = [p.id for p in ALL_PARTS]
     assert len(ids) == len(set(ids)), "duplicate part ids"
-    manifest = []
+    builds = []
     for part in ALL_PARTS:
         if only and part.id not in only:
-            path = os.path.join(OUT, part.id + ".json")
-            if os.path.exists(path):
-                manifest.append(json.load(open(path)))
             continue
-        meta = export_part(part)
-        manifest.append(meta)
-        print("built", part.id, "keys:", 2 * len(part.params))
+        meta, built = export_part(part)
+        builds.append((part, built))
+        print("built %-16s %5d tris" % (part.id, meta["triangles"]), flush=True)
     with open(os.path.join(ROOT, "library", "manifest.json"), "w") as f:
-        json.dump({"library_version": LIBRARY_VERSION, "parts": [m["id"] for m in manifest]}, f, indent=2)
-    if blend and not only:
-        save_blend(ALL_PARTS)
+        json.dump({"library_version": LIBRARY_VERSION, "parts": ids}, f, indent=2)
+    if "--no-blend" not in argv and not only:
+        save_blend(builds)
         print("saved library/parts.blend")
 
 
 if __name__ == "__main__":
-    args = sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else sys.argv[1:]
-    main(args)
+    main(sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else sys.argv[1:])

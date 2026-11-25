@@ -186,6 +186,8 @@ func _render() -> int:
 	st.stage.add_child(creature)
 	var box: AABB = creature.get_meta("rig")["aabb"]
 	_apply_pose(creature)
+	if opts.get("focus", "") == "head":
+		box = _head_box(creature)
 	var views: PackedStringArray = str(opts.get("views", "front,side,threequarter")).split(";" if ";" in str(opts.get("views", "")) else ",")
 	if opts.has("cam"):
 		views = PackedStringArray([opts["cam"]])
@@ -429,3 +431,24 @@ func _renderjobs() -> int:
 		creature.free()
 	print("RESULT " + JSON.stringify(results))
 	return 0
+
+
+## Bounds of the parts near the front of the body (u > 0.8) for head close-ups.
+static func _head_box(creature: Node3D) -> AABB:
+	var rig: Dictionary = creature.get_meta("rig")
+	var uids := {}
+	for p in rig["parts"]:
+		if p["u"] > 0.8:
+			uids[p["uid"]] = true
+	var pick: Dictionary = creature.get_meta("pick")
+	var box := AABB()
+	var first := true
+	for t in pick["owner"].size():
+		var o: Dictionary = pick["owners"][pick["owner"][t]]
+		if o["kind"] != "part" or not uids.has(o["uid"]):
+			continue
+		for k in 3:
+			var p: Vector3 = pick["pos"][t * 3 + k]
+			box = AABB(p, Vector3.ZERO) if first else box.expand(p)
+			first = false
+	return rig["aabb"] if first else box.grow(box.size.length() * 0.12)

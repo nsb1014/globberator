@@ -3,14 +3,14 @@
   "bones": [],
   "capability": "flop",
   "category": "ear",
-  "desc": "Round ear (bears, mice, monkeys).",
+  "desc": "Round cupped ear (bears, mice, monkeys).",
   "glb": "ear_round.glb",
   "hint": {
     "theta": 60.0,
     "u": 0.86
   },
   "id": "ear_round",
-  "library_version": "2.0.0",
+  "library_version": "3.0.0",
   "mirror_default": true,
   "orient": "surface",
   "params": {
@@ -33,5 +33,6 @@
     "mouse",
     "monkey",
     "cute"
-  ]
+  ],
+  "triangles": 2080
 }

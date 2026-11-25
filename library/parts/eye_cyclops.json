@@ -3,17 +3,22 @@
   "bones": [],
   "capability": "look",
   "category": "eye",
-  "desc": "Single large central eye with a heavy brow.",
+  "desc": "Single large central eye with lids and a heavy brow.",
   "glb": "eye_cyclops.glb",
   "hint": {
     "theta": 60.0,
     "u": 0.95
   },
   "id": "eye_cyclops",
-  "library_version": "2.0.0",
+  "library_version": "3.0.0",
   "mirror_default": false,
   "orient": "face",
   "params": {
+    "lid": [
+      0.0,
+      1.0,
+      0.3
+    ],
     "pupil": [
       0.3,
       0.9,
@@ -31,5 +36,6 @@
   "tags": [
     "monster",
     "alien"
-  ]
+  ],
+  "triangles": 4400
 }

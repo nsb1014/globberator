@@ -3,14 +3,14 @@
   "bones": [],
   "capability": "flop",
   "category": "ear",
-  "desc": "Pointed triangular ear (cats, foxes, wolves, goblins).",
+  "desc": "Pointed cupped ear (cats, foxes, wolves, goblins, bovines when tilted).",
   "glb": "ear_pointy.glb",
   "hint": {
     "theta": 65.0,
     "u": 0.86
   },
   "id": "ear_pointy",
-  "library_version": "2.0.0",
+  "library_version": "3.0.0",
   "mirror_default": true,
   "orient": "surface",
   "params": {
@@ -37,6 +37,8 @@
     "cat",
     "fox",
     "wolf",
-    "goblin"
-  ]
+    "goblin",
+    "bovine"
+  ],
+  "triangles": 1664
 }

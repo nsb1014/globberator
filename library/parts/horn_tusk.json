@@ -10,7 +10,7 @@
     "u": 0.96
   },
   "id": "horn_tusk",
-  "library_version": "2.0.0",
+  "library_version": "3.0.0",
   "mirror_default": true,
   "orient": "face",
   "params": {
@@ -38,5 +38,6 @@
     "elephant",
     "walrus",
     "orc"
-  ]
+  ],
+  "triangles": 2200
 }

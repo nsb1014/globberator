@@ -18,14 +18,14 @@
   ],
   "capability": "mouth",
   "category": "mouth",
-  "desc": "Blunt mammal muzzle with nostrils and a small lower jaw (bovines, pigs, dogs, bears).",
+  "desc": "Broad mammal muzzle with carved nostrils and a soft lower lip (bovines, pigs, dogs, bears).",
   "glb": "mouth_snout.glb",
   "hint": {
     "theta": -15.0,
     "u": 0.97
   },
   "id": "mouth_snout",
-  "library_version": "2.0.0",
+  "library_version": "3.0.0",
   "mirror_default": false,
   "orient": "face",
   "params": {
@@ -54,5 +54,6 @@
     "bovine",
     "pig",
     "dog"
-  ]
+  ],
+  "triangles": 4400
 }

@@ -10,7 +10,7 @@
     "u": 0.62
   },
   "id": "wing_feather",
-  "library_version": "2.0.0",
+  "library_version": "3.0.0",
   "mirror_default": true,
   "orient": "surface",
   "params": {
@@ -33,5 +33,6 @@
     "angel",
     "griffin",
     "flying"
-  ]
+  ],
+  "triangles": 6912
 }

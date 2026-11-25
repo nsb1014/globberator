@@ -10,7 +10,7 @@
     "u": 0.95
   },
   "id": "eye_stalk",
-  "library_version": "2.0.0",
+  "library_version": "3.0.0",
   "mirror_default": true,
   "orient": "face",
   "params": {
@@ -37,5 +37,6 @@
     "alien",
     "mollusk",
     "silly"
-  ]
+  ],
+  "triangles": 3810
 }

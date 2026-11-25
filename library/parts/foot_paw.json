@@ -3,14 +3,14 @@
   "bones": [],
   "capability": "foot",
   "category": "foot",
-  "desc": "Padded paw with three toe beads (cats, dogs, bears).",
+  "desc": "Padded paw with four toe pads (cats, dogs, bears).",
   "glb": "foot_paw.glb",
   "hint": {
     "theta": 90.0,
     "u": 0.5
   },
   "id": "foot_paw",
-  "library_version": "2.0.0",
+  "library_version": "3.0.0",
   "mirror_default": false,
   "orient": "surface",
   "params": {
@@ -34,5 +34,6 @@
     "dog",
     "bear",
     "cute"
-  ]
+  ],
+  "triangles": 2200
 }

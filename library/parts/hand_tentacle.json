@@ -10,7 +10,7 @@
     "u": 0.5
   },
   "id": "hand_tentacle",
-  "library_version": "2.0.0",
+  "library_version": "3.0.0",
   "mirror_default": false,
   "orient": "surface",
   "params": {
@@ -33,5 +33,6 @@
     "alien",
     "aquatic",
     "creepy"
-  ]
+  ],
+  "triangles": 2200
 }

@@ -3,17 +3,22 @@
   "bones": [],
   "capability": "look",
   "category": "eye",
-  "desc": "Reptile eye: colored iris with a vertical slit pupil.",
+  "desc": "Reptile eye: colored iris with a vertical slit pupil under hooded lids.",
   "glb": "eye_slit.glb",
   "hint": {
     "theta": 40.0,
     "u": 0.92
   },
   "id": "eye_slit",
-  "library_version": "2.0.0",
+  "library_version": "3.0.0",
   "mirror_default": true,
   "orient": "face",
   "params": {
+    "lid": [
+      0.0,
+      1.0,
+      0.4
+    ],
     "size": [
       0.4,
       3.0,
@@ -32,5 +37,6 @@
     "reptile",
     "cat",
     "menacing"
-  ]
+  ],
+  "triangles": 3810
 }

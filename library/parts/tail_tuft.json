@@ -10,7 +10,7 @@
     "u": 0.0
   },
   "id": "tail_tuft",
-  "library_version": "2.0.0",
+  "library_version": "3.0.0",
   "mirror_default": false,
   "orient": "face",
   "params": {
@@ -33,5 +33,6 @@
     "bull",
     "minotaur",
     "hairy"
-  ]
+  ],
+  "triangles": 2200
 }

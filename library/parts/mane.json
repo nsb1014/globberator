@@ -3,14 +3,14 @@
   "bones": [],
   "capability": "",
   "category": "detail",
-  "desc": "Shaggy mane of tufts over the neck or head (lions, minotaurs, horses, punk crests).",
+  "desc": "Shaggy mane of soft clumps over the neck or head (lions, minotaurs, horses).",
   "glb": "mane.glb",
   "hint": {
     "theta": 90.0,
     "u": 0.75
   },
   "id": "mane",
-  "library_version": "2.0.0",
+  "library_version": "3.0.0",
   "mirror_default": false,
   "orient": "surface",
   "params": {
@@ -38,5 +38,6 @@
     "horse",
     "minotaur",
     "hairy"
-  ]
+  ],
+  "triangles": 3300
 }

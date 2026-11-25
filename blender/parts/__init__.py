@@ -21,6 +21,19 @@ class Ctx:
         for p in self.pieces.values():
             p.cur = name
 
+    def setup(self, finish=None, voxel=None, detail=None, smooth=None, slot_finish=None):
+        """Finishing options for the current piece."""
+        if slot_finish is not None:
+            self.current.slot_finish.update(slot_finish)
+        if finish is not None:
+            self.current.finish = finish
+        if voxel is not None:
+            self.current.voxel = voxel
+        if detail is not None:
+            self.current.detail = detail
+        if smooth is not None:
+            self.current.smooth = smooth
+
     def __getattr__(self, k):
         return getattr(self.current, k)
 

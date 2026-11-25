@@ -3,14 +3,14 @@
   "bones": [],
   "capability": "",
   "category": "detail",
-  "desc": "Domed shell or carapace covering the back (turtles, beetles, armadillos).",
+  "desc": "Domed shell or carapace with plate grooves (turtles, beetles, armadillos).",
   "glb": "shell.glb",
   "hint": {
     "theta": 90.0,
     "u": 0.5
   },
   "id": "shell",
-  "library_version": "2.0.0",
+  "library_version": "3.0.0",
   "mirror_default": false,
   "orient": "surface",
   "params": {
@@ -38,5 +38,6 @@
     "beetle",
     "armored",
     "snail"
-  ]
+  ],
+  "triangles": 4976
 }

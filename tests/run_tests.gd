@@ -160,7 +160,7 @@ func test_examples() -> void:
 		check(rep["warnings"].is_empty() or key == "bird", "%s builds without warnings %s" % [key, rep["warnings"]])
 		if expect.has(key):
 			check(rep["legs"] == expect[key], "%s has %d legs (got %d)" % [key, expect[key], rep["legs"]])
-		check(rep["triangles"] < 20000, "%s triangle budget" % key)
+		check(rep["triangles"] < 120000, "%s triangle budget" % key)
 		c.free()
 
 

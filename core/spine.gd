@@ -5,8 +5,8 @@
 ## a fractional vertebra index used for skin weights.
 extends RefCounted
 
-const SUB := 5
-const CAP := 4
+const SUB := 9
+const CAP := 8
 
 var vpos: Array[Vector3] = []
 var vw: Array[float] = []

@@ -18,14 +18,14 @@
   ],
   "capability": "mouth",
   "category": "mouth",
-  "desc": "Flat friendly mouth with curved lips (cartoon, humanoid, frog).",
+  "desc": "Friendly mouth with soft curved lips (cartoon, humanoid, frog).",
   "glb": "mouth_smile.glb",
   "hint": {
     "theta": -35.0,
     "u": 0.97
   },
   "id": "mouth_smile",
-  "library_version": "2.0.0",
+  "library_version": "3.0.0",
   "mirror_default": false,
   "orient": "face",
   "params": {
@@ -54,5 +54,6 @@
     "humanoid",
     "frog",
     "friendly"
-  ]
+  ],
+  "triangles": 5308
 }

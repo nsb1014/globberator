@@ -3,14 +3,14 @@
   "bones": [],
   "capability": "flop",
   "category": "ear",
-  "desc": "Long upright ear (rabbits, donkeys, jackalopes).",
+  "desc": "Long upright cupped ear (rabbits, donkeys, jackalopes).",
   "glb": "ear_long.glb",
   "hint": {
     "theta": 75.0,
     "u": 0.85
   },
   "id": "ear_long",
-  "library_version": "2.0.0",
+  "library_version": "3.0.0",
   "mirror_default": true,
   "orient": "surface",
   "params": {
@@ -37,5 +37,6 @@
     "rabbit",
     "donkey",
     "cute"
-  ]
+  ],
+  "triangles": 2496
 }

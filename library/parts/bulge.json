@@ -1,0 +1,47 @@
+{
+  "attach": "surface",
+  "bones": [],
+  "capability": "",
+  "category": "detail",
+  "desc": "Soft muscle mass or hump that blends into the body (shoulders, haunches, chest, humps, bellies).",
+  "glb": "bulge.glb",
+  "hint": {
+    "theta": 20.0,
+    "u": 0.62
+  },
+  "id": "bulge",
+  "library_version": "3.0.0",
+  "mirror_default": true,
+  "orient": "surface",
+  "params": {
+    "height": [
+      0.3,
+      4.0,
+      1.0
+    ],
+    "length": [
+      0.3,
+      4.0,
+      1.0
+    ],
+    "taper": [
+      -1.0,
+      1.0,
+      0.0
+    ],
+    "width": [
+      0.3,
+      4.0,
+      1.0
+    ]
+  },
+  "pieces": [
+    "self"
+  ],
+  "tags": [
+    "muscle",
+    "hump",
+    "sculpt"
+  ],
+  "triangles": 2200
+}

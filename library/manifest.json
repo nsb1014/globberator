@@ -1,5 +1,5 @@
 {
-  "library_version": "2.0.0",
+  "library_version": "3.0.0",
   "parts": [
     "eye_round",
     "eye_bug",
@@ -24,6 +24,9 @@
     "ear_round",
     "ear_long",
     "ear_fan",
+    "bulge",
+    "brow_ridge",
+    "cheek",
     "spike",
     "plate",
     "fin_dorsal",

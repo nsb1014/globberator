@@ -2,7 +2,9 @@
 
 Goal: a Spore-style 3D creature builder, now built as a Blender add-on that exports to any engine (originally planned for Godot 4). You assemble a character from a small, deliberate part library. It rigs itself, gets procedural animation, and exports to GLB. On top of the builder sits an AI workflow: you give it a reference image and it builds a recipe that matches the image as closely as the library's style allows.
 
-Status: the Godot runtime was replaced by a Blender add-on (`polyforge/`). Blender assembles, fuses, rigs, animates and exports creatures to glTF, FBX, USD or OBJ, so they work in any engine. Placement follows the original attachment rules: automatic midline centring, reflected twins and socket snapping. Milestones 0 to 6 are implemented in Blender. The AI loop's Claude calls have not been run against the live API yet. The Godot version and the first iteration are both in git history.
+Status: the Godot runtime was replaced by a Blender add-on (`polyforge/`). Blender assembles, fuses, rigs, animates and exports creatures to glTF, FBX, USD or OBJ, so they work in any engine. Recipe v2 uses continuous surface placement, ring-local bindings, automatic midline centring, and reflected twins. The editor and CLI support isolated part previews. Milestones 0 to 6 are implemented in Blender. The AI loop's Claude calls have not been run against the live API yet. The Godot version and the first iteration are both in git history.
+
+The remaining sections record the original design and milestone plan. See README.md for the current operations, coordinate rules, family index, and export tests.
 
 ## Lessons from the previous iteration
 

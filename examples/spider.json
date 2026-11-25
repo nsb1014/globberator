@@ -35,107 +35,47 @@
   "limbs": [
     {
       "uid": "a",
+      "shape": "walking_leg",
       "u": 0.62,
       "theta": -10,
-      "segments": [
-        [
-          0.35,
-          0.35,
-          -0.3
-        ],
-        [
-          0.25,
-          -0.62,
-          -0.25
-        ]
-      ],
-      "radii": [
-        0.055,
-        0.04,
-        0.028
-      ],
-      "tip": "foot_spike",
-      "tip_params": {
-        "size": 0.7
-      }
+      "rot": [
+        0,
+        42,
+        0
+      ]
     },
     {
       "uid": "b",
+      "shape": "walking_leg",
       "u": 0.68,
       "theta": -10,
-      "segments": [
-        [
-          0.42,
-          0.38,
-          -0.08
-        ],
-        [
-          0.28,
-          -0.62,
-          -0.06
-        ]
-      ],
-      "radii": [
-        0.055,
-        0.04,
-        0.028
-      ],
-      "tip": "foot_spike",
-      "tip_params": {
-        "size": 0.7
-      }
+      "rot": [
+        0,
+        14,
+        0
+      ]
     },
     {
       "uid": "c",
+      "shape": "walking_leg",
       "u": 0.74,
       "theta": -10,
-      "segments": [
-        [
-          0.42,
-          0.38,
-          0.1
-        ],
-        [
-          0.28,
-          -0.62,
-          0.08
-        ]
-      ],
-      "radii": [
-        0.055,
-        0.04,
-        0.028
-      ],
-      "tip": "foot_spike",
-      "tip_params": {
-        "size": 0.7
-      }
+      "rot": [
+        0,
+        -14,
+        0
+      ]
     },
     {
       "uid": "d",
+      "shape": "walking_leg",
       "u": 0.8,
       "theta": -10,
-      "segments": [
-        [
-          0.35,
-          0.35,
-          0.3
-        ],
-        [
-          0.25,
-          -0.62,
-          0.28
-        ]
-      ],
-      "radii": [
-        0.055,
-        0.04,
-        0.028
-      ],
-      "tip": "foot_spike",
-      "tip_params": {
-        "size": 0.7
-      }
+      "rot": [
+        0,
+        -43,
+        0
+      ]
     }
   ],
   "parts": [
@@ -175,5 +115,31 @@
     "pattern": "spots",
     "pattern_scale": 0.8,
     "belly": false
+  },
+  "version": 2,
+  "shapes": {
+    "walking_leg": {
+      "segments": [
+        [
+          0.43,
+          0.35,
+          0
+        ],
+        [
+          0.28,
+          -0.62,
+          0
+        ]
+      ],
+      "radii": [
+        0.055,
+        0.04,
+        0.028
+      ],
+      "tip": "foot_spike",
+      "tip_params": {
+        "size": 0.7
+      }
+    }
   }
 }

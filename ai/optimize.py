@@ -24,11 +24,15 @@ def _scale_body(r, w=1.0, h=1.0, length=1.0):
 
 def _legs(r, f):
     for l in r.get("limbs", []):
+        if l.get("motion") == "tail" or not l.get("tip", "").startswith("foot_"):
+            continue
         l["segments"] = [[s[0] * f, s[1] * f, s[2] * f] for s in l["segments"]]
 
 
 def _thick(r, f):
     for l in r.get("limbs", []):
+        if l.get("motion") == "tail":
+            continue
         l["radii"] = [x * f for x in l["radii"]]
 
 
@@ -39,6 +43,11 @@ def _neck(r, d):
 
 
 def _tail(r, f):
+    tails = [l for l in r.get("limbs", []) if l.get("motion") == "tail"]
+    if tails:
+        for tail in tails:
+            tail["segments"] = [[component * f for component in segment] for segment in tail["segments"]]
+        return
     sp = r["spine"]
     if len(sp) < 3:
         return

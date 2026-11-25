@@ -16,13 +16,13 @@
     {
       "y": 1.62,
       "z": 0.02,
-      "w": 0.48,
+      "w": 0.51,
       "h": 0.32
     },
     {
       "y": 1.88,
       "z": 0.05,
-      "w": 0.5,
+      "w": 0.58,
       "h": 0.3
     },
     {
@@ -95,13 +95,18 @@
   "parts": [
     {
       "uid": "horns",
-      "part": "horn_bull",
-      "u": 0.95,
-      "theta": 60,
+      "part": "horn_sweep",
+      "u": 0.903,
+      "theta": 47,
       "params": {
-        "length": 1.1,
-        "thickness": 1.2
-      }
+        "length": 0.59,
+        "width": 0.19,
+        "splay": 0.86,
+        "lift": 1.09,
+        "sweep": 0.1,
+        "taper": 0.75
+      },
+      "offset": -0.026
     },
     {
       "uid": "eyes",
@@ -118,13 +123,14 @@
       "u": 0.985,
       "theta": -90.0,
       "params": {
-        "length": 1.2,
-        "width": 1.4
-      }
+        "length": 0.72,
+        "width": 1.65
+      },
+      "offset": -0.045
     },
     {
       "uid": "ears",
-      "part": "ear_pointy",
+      "part": "ear_leaf",
       "u": 0.93,
       "theta": 30,
       "rot": [
@@ -133,7 +139,10 @@
         -50
       ],
       "params": {
-        "size": 0.8
+        "length": 0.19,
+        "width": 0.14,
+        "droop": 0.37,
+        "point": 0.75
       }
     },
     {
@@ -154,5 +163,6 @@
     "pattern": "none",
     "pattern_scale": 1.0,
     "belly": true
-  }
+  },
+  "version": 2
 }

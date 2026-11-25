@@ -15,7 +15,7 @@ BLENDER = os.environ.get("PF_BLENDER")
 
 def _cmd(args):
     if BLENDER:
-        return [BLENDER, "-b", "--factory-startup", "-P", os.path.join(ROOT, "pf.py"), "--"] + args
+        return [BLENDER, "-b", "--factory-startup", "--python-exit-code", "2", "-P", os.path.join(ROOT, "pf.py"), "--"] + args
     return [sys.executable, os.path.join(ROOT, "pf.py")] + args
 
 
@@ -26,10 +26,10 @@ def run(args, timeout=3600):
     return p
 
 
-def describe():
+def describe(part=None):
     with tempfile.TemporaryDirectory() as d:
         out = os.path.join(d, "catalog.json")
-        run(["describe", "--out", out])
+        run(["describe", "--out", out] + (["--part", part] if part else []))
         return json.load(open(out))
 
 

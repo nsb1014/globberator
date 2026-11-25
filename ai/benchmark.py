@@ -6,12 +6,12 @@ Each example creature is rendered as a reference "photo" and segmented like a
 real image. Its recipe is perturbed (wider body, shorter legs, shorter spine),
 and the numeric fitter must recover the silhouette. Reports silhouette scores
 before and after, and how close the recovered knobs are to the true inverse
-of the perturbation. With --llm, the full forge loop (Claude draft and
-critique) also runs on each reference.
+of the perturbation. With --reference, the full forge loop drafts from a held-out image.
 """
 import argparse
 import json
 import os
+import subprocess
 import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -31,12 +31,22 @@ def main():
     ap.add_argument("--out", default=os.path.join(ROOT, "out", "bench"))
     ap.add_argument("--view", default="38,16")
     ap.add_argument("--rounds", type=int, default=8)
+    ap.add_argument("--reference", help="held-out reference image; run a fresh small-model draft with no seed recipe")
     args = ap.parse_args()
+    if args.reference:
+        subprocess.run([sys.executable, os.path.join(HERE, "forge.py"), args.reference,
+                        "--out", args.out, "--no-export"], check=True)
+        with open(os.path.join(args.out, "report.json")) as f:
+            report = json.load(f)
+        summary = {k: report[k] for k in ("first_pass_valid", "repair_turns", "renders", "usage", "seconds", "best_scores")}
+        summary["visual_acceptance"] = "pending human review of best_view.png, best_side.png and best_front.png"
+        print(json.dumps(summary, indent=2))
+        return
     os.makedirs(args.out, exist_ok=True)
     yaw, pitch = (float(v) for v in args.view.split(","))
     rows = []
     for name in args.examples.split(","):
-        truth = json.load(open(os.path.join(ROOT, "examples", name + ".json")))
+        truth, _ = pf.normalize(json.load(open(os.path.join(ROOT, "examples", name + ".json"))))
         work = os.path.join(args.out, name)
         os.makedirs(work, exist_ok=True)
         tpath = os.path.join(work, "truth.json")

@@ -40,7 +40,7 @@ def examples():
 
 
 def test_parts(t, fast):
-    t.check(len(catalog.PARTS) >= 45, "library has at least 45 parts (%d)" % len(catalog.PARTS))
+    t.check(len({p.id for p in catalog.PARTS}) == len(catalog.PARTS), "discoverable family IDs are unique")
     for p in catalog.PARTS:
         base = p.build(p.defaults())
         t.check(any(pc.cage()[0] for pc in base.pieces.values()), "%s has geometry" % p.id)
@@ -78,6 +78,7 @@ def test_recipes(t):
 
 def test_placement(t):
     r = R.default_recipe()
+    r["version"] = 1  # legacy placement migration
     r["parts"] = [
         {"uid": "a", "part": "spike", "u": 0.5, "theta": 84},           # near the midline -> centred
         {"uid": "b", "part": "spike", "u": 0.5, "theta": 60},           # lateral -> twin
@@ -123,6 +124,55 @@ def test_ops(t):
     t.check(not r2["limbs"] and len(r2["parts"]) == 1, "remove_limb removes its parts")
     _, errs = ops.apply_all(r, [{"op": "bogus"}, {"op": "remove_part", "uid": "zzz"}])
     t.check(len(errs) == 2, "bad ops are reported")
+
+
+def test_isolated_edits(t):
+    from .shapes import extract, isolated
+    def landmarks(r):
+        b = builder.Builder(r, "preview")
+        sp = R.Spine(b.recipe["spine"])
+        b.resolve_limbs(sp)
+        ground = b.ground_level(sp)
+        return {l["name"]: [v - Vector((0, ground, 0)) for v in (l["joints"][0], l["sole"])]
+                for l in b.limbs if l["role"] == "leg"}
+
+    bull = R.load(os.path.join(EX, "bull.json"))
+    # Reproduce the original v1 tail edit through the normal operation entry point.
+    legacy = leg_recipe(4)
+    legacy["version"] = 1
+    legacy["spine"].insert(0, dict(legacy["spine"][0], z=-1.7))
+    for src, op in [(legacy, {"op": "set_vertebra", "index": 0, "z": -2.7}),
+                    (bull, {"op": "set_limb", "uid": "tail", "scale": 2})]:
+        before = landmarks(src)
+        moved, errors = ops.apply_all(src, [op])
+        after = landmarks(moved)
+        t.check(not errors and before.keys() == after.keys() and all(
+            (a - b).length < 0.00002 for k in before for a, b in zip(before[k], after[k])),
+            "lengthening tail leaves all planted limb landmarks fixed")
+    base, _ = R.normalize(bull)
+    old_bind = next(l["bind"] for l in base["limbs"] if l["uid"] == "fore")
+    for edit in ({"op": "insert_vertebra", "index": 0}, {"op": "remove_vertebra", "index": 0}):
+        edited, _ = ops.apply_all(base, [edit])
+        placed, warnings = R.normalize(edited)
+        target = next(l for l in placed["limbs"] if l["uid"] == "fore")
+        t.check(target["bind"] == old_bind and not warnings, "ring insertion/deletion outside the strip preserves its binding")
+    fore = next(l for l in base["limbs"] if l["uid"] == "fore")
+    draft = extract(fore)
+    for u, theta in [(0.31, 22), (0.48, 90), (0.76, -42)]:
+        edited, _ = ops.apply_all(base, [{"op": "set_limb", "uid": "fore", "u": u, "theta": theta}])
+        new, _ = R.normalize(edited)
+        instance = next(l for l in new["limbs"] if l["uid"] == "fore")
+        t.check(extract(instance) == draft and abs(instance["u"] - u) < 1e-6, "sliding preserves authored geometry")
+        b = builder.Builder(new, "preview")
+        b.resolve_limbs(R.Spine(new["spine"]))
+        t.check(sum(l["uid"] == "fore" for l in b.limbs) == (1 if theta == 90 else 2), "surface determines copy count")
+    expanded, _ = ops.apply_all(base, [{"op": "scale_body", "w": 1.15}])
+    t.check(landmarks(expanded)["fore"][0].x > landmarks(base)["fore"][0].x, "chest width carries the root outward")
+    reset()
+    objects, warnings = isolated(draft)
+    t.check(len(objects) == 2 and not warnings, "isolated foreleg has one skin mesh and its hoof")
+    attached, errors = ops.apply_all(R.default_recipe(), [{"op": "attach_shape", "shape": draft, "u": .31, "theta": 15}])
+    t.check(not errors and extract(R.normalize(attached)[0]["limbs"][0]) == draft, "reattached draft round-trips its shape")
 
 
 def leg_recipe(n):
@@ -230,12 +280,31 @@ def test_build_and_export(t):
     isl = islands(res["skin"])
     t.check(isl[0] / sum(isl) > 0.95, "bull body, legs and skin parts fuse into one surface (islands %s)" % isl[:5])
     t.check(len(res["skin"].vertex_groups) > 10, "skin is weighted to the skeleton")
-    clips = baker.bake_all(res["armature"])
+    contacts = []
+    clips = baker.bake_all(res["armature"], contacts=contacts)
     t.check(len(clips) == 6, "six clips baked")
     d = tempfile.mkdtemp()
     for fmt in ("glb", "fbx", "obj"):
         path = export.export(res, os.path.join(d, "bull." + fmt), fmt)
         t.check(os.path.getsize(path) > 10000, "%s export written" % fmt)
+    import runpy
+    import shutil
+    import subprocess
+    from pathlib import Path
+    fixture = Path(d, "bull.glb")
+    rig = res["rig"]
+    lengths = {rig["names"][l["bones"][-1]]: l["length"] for l in rig["limbs"] if l["role"] == "leg"}
+    fixture.with_suffix(".report.json").write_text(json.dumps({"contact": {"frames": contacts, "legs": lengths}}))
+    scripts = Path(ROOT, "tools", "tests")
+    runpy.run_path(str(scripts / "export_contact.py"))["check"](fixture)
+    t.check(True, "exported and reimported hoof surfaces plant, lift and hold")
+    godot = shutil.which("godot4") or shutil.which("godot")
+    if godot:
+        subprocess.run([godot, "--headless", "--path", str(scripts), "--script", "res://export_contact.gd",
+                        "--", str(fixture)], check=True)
+        t.check(True, "Godot imports the baked walk and plants the hoof surfaces")
+    else:
+        print("SKIP Godot export contact (Godot 4 executable unavailable)")
     reset()
     bpy.ops.import_scene.gltf(filepath=os.path.join(d, "bull.glb"))
     arms = [o for o in bpy.data.objects if o.type == "ARMATURE"]
@@ -250,6 +319,7 @@ def run(fast=False):
     test_recipes(t)
     test_placement(t)
     test_ops(t)
+    test_isolated_edits(t)
     test_parts(t, fast)
     test_animation(t)
     test_build_and_export(t)

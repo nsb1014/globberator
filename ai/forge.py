@@ -46,6 +46,8 @@ class Run:
         os.makedirs(self.work, exist_ok=True)
         self.log_lines = []
         self.history = []
+        self.renders = 0
+        self.repairs = 0
         self.usage = {"input_tokens": 0, "output_tokens": 0}
 
     def log(self, msg):
@@ -58,6 +60,7 @@ class Run:
         json.dump(recipe, open(path, "w"), indent=1)
         views = ["%g,%g" % cam] + list(extra_views)
         res = pf.render_jobs([{"recipe": path, "out": os.path.join(self.work, tag), "views": views, "mask": True, "quality": "final"}], 384)[0]
+        self.renders += 2 * len(views)
         imgs = res["images"]
         return {"color": imgs[0], "mask": imgs[1], "extra": [(v, imgs[2 + 2 * i]) for i, v in enumerate(extra_views)], "report": res["report"]}
 
@@ -77,7 +80,6 @@ class Run:
         Image.fromarray((self.ref_mask * 255).astype(np.uint8)).save(os.path.join(self.out, "reference_mask.png"))
         self.log("reference segmented: %d%% foreground" % int(self.ref_mask.mean() * 100))
         catalog = pf.describe()
-        examples = [json.load(open(os.path.join(ROOT, "examples", e))) for e in ("bull.json", "bird.json", "minotaur.json")]
         use_llm = not a.no_llm
         if use_llm:
             import claude
@@ -89,11 +91,8 @@ class Run:
         else:
             if not use_llm:
                 sys.exit("--no-llm needs --init recipe.json")
-            sheet = os.path.join(ROOT, "library", "thumbs")
-            ids = [p["id"] for p in catalog["parts"]]
-            sheet_path = vision.contact_sheet([os.path.join(sheet, i + ".png") for i in ids], ids, os.path.join(self.work, "library_sheet.png"))
             self.log("drafting with %s ..." % claude.MODEL)
-            res, usage = claude.draft(a.image, catalog, examples, sheet_path)
+            res, usage = claude.draft(a.image, catalog)
             self._usage(usage)
             analysis = {k: v for k, v in res.items() if k != "recipe_json"}
             recipe = json.loads(res["recipe_json"])
@@ -102,8 +101,17 @@ class Run:
                 self.log("  feature [%d] %s -> %s" % (f["importance"], f["name"], f["part"]))
         if a.yaw is not None and a.init:
             analysis["view_yaw"], analysis["view_pitch"] = a.yaw, a.pitch
-        cam = (analysis.get("view_yaw") or 38.0, analysis.get("view_pitch") if analysis.get("view_pitch") is not None else 16.0)
+        cam = (analysis["view_yaw"] if analysis.get("view_yaw") is not None else 38.0, analysis.get("view_pitch") if analysis.get("view_pitch") is not None else 16.0)
         recipe, warnings = pf.normalize(recipe)
+        self.first_pass_valid = not warnings
+        if use_llm and a.part_rounds:
+            # Focus the isolated pass on the most distinctive identified feature.
+            ranked = sorted(analysis["features"], key=lambda f: -f["importance"])
+            items = recipe["parts"] + recipe["limbs"]
+            target = next((i for f in ranked for i in items if f["part"] == i.get("part", i.get("tip"))), None)
+            if target:
+                self.refine_part(target, a.part_rounds)
+                recipe, warnings = pf.normalize(recipe)
         best = None
         gaps = set(f["name"] for f in analysis["features"] if f.get("part") == "none")
         stall = 0
@@ -111,28 +119,31 @@ class Run:
             self.log("--- iteration %d" % it)
             # 1. numeric proportion fit
             if not a.no_fit:
-                part_uids = [p["uid"] for p in recipe.get("parts", [])][:4]
+                feature_rank = {f["part"]: f["importance"] for f in analysis["features"]}
+                ranked = sorted(recipe["parts"], key=lambda p: -feature_rank.get(p["part"], 0))
+                part_uids = [p["uid"] for p in ranked[:2]]
                 fitter = optimize.Fitter(self.ref_mask, cam, os.path.join(self.work, "fit%d" % it))
                 os.makedirs(fitter.work, exist_ok=True)
                 knobs = optimize.default_knobs(recipe, part_uids, fit_camera=not a.fixed_camera)
                 recipe, fs, f0, xs, cam = fitter.fit(recipe, knobs, rounds=a.fit_rounds, log=self.log)
+                self.renders += fitter.evals
                 recipe, warnings = pf.normalize(recipe)
                 self.log("  fitted %s (%d renders), camera %.0f,%.0f" % ({k: v for k, v in xs.items() if abs(v - (0 if k in ('neck_raise', 'cam_yaw') else 1)) > 1e-6}, fitter.evals, cam[0], cam[1]))
             # 2. render + score
             rnd = self.render(recipe, "it%d" % it, cam, ["threequarter", "side", "front"])
+            warnings = list(dict.fromkeys(warnings + rnd["report"]["warnings"]))
             scores = self.numeric_scores(rnd)
             critique = None
             if use_llm:
-                critique, usage = claude.critique(a.image, [("reference view", rnd["color"])] + rnd["extra"], analysis, recipe, scores, warnings, catalog, examples)
+                critique, usage = claude.critique(a.image, [("reference view", rnd["color"])] + rnd["extra"], analysis, recipe, scores, warnings, catalog)
                 self._usage(usage)
                 fc = critique["feature_checks"]
                 imp = {f["name"]: f["importance"] for f in analysis["features"]}
                 wsum = sum(imp.get(c["name"], 1) for c in fc) or 1
                 scores["features"] = round(sum(imp.get(c["name"], 1) * max(0.0, min(1.0, c["score"])) for c in fc) / wsum, 4)
                 gaps.update(critique["library_gaps"])
-            else:
-                scores["features"] = scores["silhouette"]  # no judge available
-            scores["total"] = round(total(scores), 4)
+            active_weight = sum(WEIGHTS[k] for k in scores)
+            scores["total"] = round(total(scores) / active_weight, 4)
             self.history.append({"iteration": it, "scores": scores, "camera": cam, "warnings": warnings})
             self.log("  scores %s" % scores)
             if best is None or scores["total"] > best["scores"]["total"] + 1e-4:
@@ -156,14 +167,42 @@ class Run:
                 except json.JSONDecodeError:
                     ops = []
                 if ops:
-                    new, errs, warns = pf.apply_ops(best["recipe"], ops)
+                    new, errs, warns = pf.apply_ops(recipe, ops)
                     for e in errs:
                         self.log("  op error: " + e)
                     self.log("  applied %d ops" % (len(ops) - len(errs)))
+                    self.repairs += 1
                     recipe, warnings = new, warns
             elif a.no_fit:
                 break
         self.finish(best, analysis, sorted(gaps), time.time() - t0)
+
+    def refine_part(self, item, rounds):
+        import claude
+        pid = item.get("part", item.get("tip"))
+        controls = pf.describe(pid)["parts"][0]["params"]
+        allowed = ("segments", "radii", "tip_params") if "segments" in item else ("params",)
+        draft = {k: item[k] for k in (*allowed, "part", "tip", "motion") if k in item}
+        for i in range(rounds + 1):
+            work = os.path.join(self.work, "shape%d" % i)
+            os.makedirs(work, exist_ok=True)
+            path = os.path.join(work, "input.json")
+            with open(path, "w") as out:
+                json.dump(draft, out)
+            pf.run(["part", path, "--out", work, "--views", "front,side"])
+            self.renders += 2
+            with open(os.path.join(work, "shape.json")) as out:
+                draft = json.load(out)
+            review, usage = claude.refine_shape(self.args.image, [os.path.join(work, v + ".png") for v in ("front", "side")], draft, controls)
+            self._usage(usage)
+            if review["accept"]:
+                item.update({k: draft[k] for k in allowed if k in draft})
+                return
+            if i < rounds:
+                self.repairs += 1
+                edits = json.loads(review["shape_json"])
+                draft.update({k: edits[k] for k in allowed if k in edits})
+        self.log("isolated draft unaccepted; kept original " + item["uid"])
 
     def _usage(self, u):
         self.usage["input_tokens"] += (u.input_tokens or 0) + (getattr(u, "cache_read_input_tokens", 0) or 0) + (getattr(u, "cache_creation_input_tokens", 0) or 0)
@@ -183,6 +222,7 @@ class Run:
         report = {
             "best_scores": best["scores"], "tolerance": self.args.tolerance, "camera": best["camera"],
             "analysis": analysis, "library_gaps": gaps, "history": self.history,
+            "first_pass_valid": self.first_pass_valid, "renders": self.renders, "repair_turns": self.repairs,
             "seconds": round(seconds, 1), "usage": self.usage, "weights": WEIGHTS,
         }
         json.dump(report, open(os.path.join(self.out, "report.json"), "w"), indent=2)
@@ -194,12 +234,13 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("image")
     ap.add_argument("--out", required=True)
+    ap.add_argument("--part-rounds", type=int, default=1, help="maximum isolated shape revisions; 0 disables")
     ap.add_argument("--iterations", type=int, default=4)
     ap.add_argument("--tolerance", type=float, default=0.8, help="stop when the total score reaches this")
     ap.add_argument("--init", help="start from this recipe instead of an LLM draft")
     ap.add_argument("--no-llm", action="store_true", help="numeric fitting only (needs --init)")
     ap.add_argument("--no-fit", action="store_true", help="skip numeric proportion fitting")
-    ap.add_argument("--fit-rounds", type=int, default=6)
+    ap.add_argument("--fit-rounds", type=int, default=2)
     ap.add_argument("--fixed-camera", action="store_true")
     ap.add_argument("--yaw", type=float, default=None, help="camera yaw of the reference (with --init)")
     ap.add_argument("--pitch", type=float, default=16.0)

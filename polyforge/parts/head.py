@@ -113,7 +113,28 @@ def ear_fan(g, p):
     g.leaf(outline, UP, 0.04, 0.35)
 
 
-PARTS = [
+def swept_horn(g, p):
+    """An outward shaft with an independently adjustable tip lift and forward sweep."""
+    length, radius = p["length"], p["width"] * 0.5
+    ts = [i / 10 for i in range(11)]
+    points = [V(length * p["splay"] * (t - 0.48 * t ** 3),
+                length * (t * (1 - p["splay"]) + p["lift"] * t ** 2.5) - radius * 0.35,
+                length * p["sweep"] * t * t) for t in ts]
+    g.slot("horn")
+    g.loft(points, [max(0.002, radius * (1 - t) ** p["taper"]) for t in ts], sides=22, up=BACK)
+
+
+def leaf_ear(g, p):
+    outline = []
+    for i in range(20):
+        a = 2 * math.pi * i / 20
+        t = (math.sin(a) + 1) / 2
+        width = p["width"] * 0.5 * math.cos(a) * (1 - p["point"] * t)
+        outline.append(V(width, p["length"] * (t - 0.12), -p["droop"] * p["length"] * t * t))
+    _ear(g, outline, 0.6, rot(RIGHT, 0), p["width"] * 0.15, p["cup"])
+
+
+LEGACY = [
     Part("horn_spike", "horn", "Straight or gently curved conical horn.", ["goat", "demon", "dinosaur"],
          {"length": (0.2, 4.0, 1.0), "thickness": (0.4, 2.5, 1.0), "curve": (-1.0, 1.0, -0.3), "splay": (-1.0, 1.0, 0.2)}, horn_spike, mirror=True, hint={"u": 0.9, "theta": 70.0}),
     Part("horn_curl", "horn", "Ram horn spiraling back, down and forward around the ear.", ["ram", "sheep", "demon"],
@@ -135,3 +156,16 @@ PARTS = [
     Part("ear_fan", "ear", "Large flat fan ear on the side of the head (elephants).", ["elephant", "big"],
          {"size": (0.4, 3.0, 1.0), "droop": (0.0, 1.0, 0.5)}, ear_fan, cap="flop", mirror=True, hint={"u": 0.88, "theta": 20.0}),
 ]
+
+
+PARTS = [
+    Part("horn_sweep", "horn", "Tapered shaft with adjustable sweep, lift and splay.", [],
+         {"length": (0.07, 1.2, 0.42), "width": (0.025, 0.38, 0.13), "splay": (0.0, 1.0, 0.45),
+          "lift": (-0.6, 1.6, 0.3), "sweep": (-1.2, 1.2, 0.15), "taper": (0.4, 2.0, 0.85)},
+         swept_horn, hint={"u": 0.92, "theta": 45.0}),
+    Part("ear_leaf", "ear", "Cupped leaf with round, pointed, long or drooping profile.", [],
+         {"length": (0.055, 0.65, 0.19), "width": (0.045, 0.48, 0.14), "point": (0, 1, 0.4),
+          "cup": (0.1, 1.5, 0.55), "droop": (0, 1.4, 0.1)}, leaf_ear, cap="flop", hint={"u": 0.89, "theta": 35}),
+]
+# Branched and helical horns retain their distinct topology/curve construction.
+PARTS.extend(p for p in LEGACY if p.id in ("horn_antler", "horn_curl"))

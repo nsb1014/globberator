@@ -67,6 +67,13 @@ def rebuild_creature(scene, quality="preview"):
         bpy.data.objects.remove(ob, do_unlink=True)
         if me is not None and me.users == 0:
             bpy.data.meshes.remove(me)
+    if quality == "preview" and scene.pf_solo:
+        from .shapes import isolated, extract
+        item = selected_limb(scene) or selected_part(scene)
+        if item:
+            isolated(extract(item), col)
+            scene.pf_report = ""
+            return
     res = builder.build(get_recipe(scene), quality, col)
     scene.pf_report = json.dumps(res["report"])
     return res
@@ -117,7 +124,13 @@ def sync_edit(scene):
         elif l:
             target, part = l, catalog.get(l["tip"]) if l["tip"] else None
             e.u, e.theta = l["u"], l["theta"]
+            idx = min(e.joint_index, len(l["segments"]) - 1)
+            e.joint_index = idx
+            e.segment = l["segments"][idx]
+            e.joint_radius = l["radii"][idx + 1]
             e.radius = l["radii"][0]
+            e.scale = l["scale"]
+            e.rot = [math.radians(a) for a in l["rot"]]
             params = l["tip_params"]
         if part:
             for i, (k, (lo, hi, d)) in enumerate(part.params.items()):
@@ -176,10 +189,23 @@ def _edit_update(field):
                     return
                 lo, hi, _ = part.params[keys[i]]
                 op["tip_params"] = {keys[i]: lo + (hi - lo) * getattr(self, field)}
+            elif field == "joint_index":
+                sync_edit(scene)
+                return
+            elif field in ("segment", "joint_radius"):
+                idx = min(self.joint_index, len(l["segments"]) - 1)
+                if field == "segment":
+                    op["segments"] = list(l["segments"])
+                    op["segments"][idx] = list(self.segment)
+                else:
+                    op["radii"] = list(l["radii"])
+                    op["radii"][idx + 1] = self.joint_radius
             elif field == "radius":
                 k = self.radius / max(l["radii"][0], 1e-4)
                 op["radii"] = [x * k for x in l["radii"]]
-            elif field in ("u", "theta"):
+            elif field == "rot":
+                op["rot"] = [math.degrees(a) for a in self.rot]
+            elif field in ("u", "theta", "scale"):
                 op[field] = getattr(self, field)
             else:
                 return
@@ -194,6 +220,9 @@ class PF_Edit(bpy.types.PropertyGroup):
     offset: FloatProperty(name="Offset", min=-0.6, max=0.6, update=_edit_update("offset"))
     scale: FloatProperty(name="Scale", min=0.2, max=4.0, default=1.0, update=_edit_update("scale"))
     rot: FloatVectorProperty(name="Rotation", subtype="EULER", size=3, update=_edit_update("rot"))
+    joint_index: IntProperty(name="Segment", min=0, max=4, update=_edit_update("joint_index"))
+    segment: FloatVectorProperty(name="Joint offset", size=3, update=_edit_update("segment"))
+    joint_radius: FloatProperty(name="End radius", min=0.02, max=1.2, update=_edit_update("joint_radius"))
     radius: FloatProperty(name="Thickness", min=0.02, max=1.2, default=0.1, update=_edit_update("radius"))
     base: FloatVectorProperty(name="Base", subtype="COLOR", min=0, max=1, update=_edit_update("base"))
     accent: FloatVectorProperty(name="Accent", subtype="COLOR", min=0, max=1, update=_edit_update("accent"))
@@ -295,7 +324,7 @@ def _hit_to_recipe(context, event):
     return Vector((loc.x, loc.z, -loc.y))
 
 
-def _attach_point(scene, p):
+def _attach_point(scene, p, body_only=False):
     """Nearest attachment for a recipe-space point: body (u, theta) or a limb."""
     arm = creature_armature(scene)
     r = get_recipe(scene)
@@ -303,7 +332,7 @@ def _attach_point(scene, p):
     sp = Spine(r["spine"], Vector((0, rig.get("shift_y", 0.0), 0)) if rig else Vector())
     body = sp.project(p)
     best = {"on": "body", "u": body["u"], "theta": body["theta"], "d": body["d"]}
-    if rig:
+    if rig and not body_only:
         for l in rig["limbs"]:
             if l["mirrored"]:
                 continue
@@ -312,10 +341,17 @@ def _attach_point(scene, p):
             for k in range(len(J) - 1):
                 ab = J[k + 1] - J[k]
                 t = max(0.0, min(1.0, (q - J[k]).dot(ab) / max(ab.length_squared, 1e-9)))
-                d = (q - (J[k] + ab * t)).length - (l["radii"][k] + (l["radii"][k + 1] - l["radii"][k]) * t)
+                radial = q - (J[k] + ab * t)
+                d = abs(radial.length - (l["radii"][k] + (l["radii"][k + 1] - l["radii"][k]) * t))
                 if d < best["d"] - 0.01:
                     acc = sum((J[i + 1] - J[i]).length for i in range(k)) + ab.length * t
-                    best = {"on": l["uid"], "u": acc / max(l["length"], 1e-3), "theta": 0.0, "d": d}
+                    direction = ab.normalized()
+                    up = builder.UP - direction * builder.UP.dot(direction)
+                    if up.length < 0.2:
+                        up = builder.BACK - direction * builder.BACK.dot(direction)
+                    up.normalize()
+                    theta = math.degrees(math.atan2(radial.dot(up), radial.dot(up.cross(direction))))
+                    best = {"on": l["uid"], "u": acc / max(l["length"], 1e-3), "theta": theta, "d": d}
     return best
 
 
@@ -349,16 +385,23 @@ class PF_OT_place(bpy.types.Operator):
         return {"PASS_THROUGH"} if event.type in {"MIDDLEMOUSE", "WHEELUPMOUSE", "WHEELDOWNMOUSE"} else {"RUNNING_MODAL"}
 
     def place(self, scene, p):
-        at = _attach_point(scene, p)
         w = self.what
+        at = _attach_point(scene, p, body_only=w.startswith("limb:") or w == "move_limb")
+        if w in ("move_limb", "move_part"):
+            op = {"op": "set_limb" if w == "move_limb" else "set_part", "uid": scene.pf_selected,
+                  "u": at["u"], "theta": at["theta"]}
+            if w == "move_part":
+                op["on"] = at["on"]
+            apply_ops(scene, [op])
+            return
         if w.startswith("limb:"):
             kind = w[5:]
-            seg = {"leg": [[0.12, -0.32, 0.05], [0.0, -0.32, 0.0]], "arm": [[0.25, -0.12, 0.05], [0.1, -0.25, 0.12]],
+            seg = {"tail": [[0,-0.08,-0.22],[0,-0.18,-0.16],[0,-0.18,-0.08]], "leg": [[0.12, -0.32, 0.05], [0.0, -0.32, 0.0]], "arm": [[0.25, -0.12, 0.05], [0.1, -0.25, 0.12]],
                    "feeler": [[0.15, 0.2, 0.15], [0.1, 0.2, 0.2], [0.05, 0.1, 0.2]]}.get(kind, [[0.0, -0.32, 0.05], [0.0, -0.32, 0.0]])
-            tip = {"leg": "foot_paw", "arm": "hand_basic", "feeler": "", "center": "foot_pad"}[kind]
+            tip = {"leg": "foot_paw", "arm": "hand_basic", "feeler": "", "center": "foot_pad", "tail": ""}[kind]
             theta = -90.0 if kind == "center" else at["theta"]
             apply_ops(scene, [{"op": "add_limb", "u": at["u"], "theta": theta, "segments": seg,
-                               "radii": [0.11, 0.08, 0.06, 0.04][:len(seg) + 1], "tip": tip, "snap": True}])
+                               "radii": [0.11, 0.08, 0.06, 0.04][:len(seg) + 1], "motion": "tail" if kind == "tail" else "auto", "tip": tip}])
             scene.pf_selected = get_recipe(scene)["limbs"][-1]["uid"]
         else:
             part = catalog.get(w)
@@ -368,7 +411,7 @@ class PF_OT_place(bpy.types.Operator):
                 apply_ops(scene, [{"op": "set_limb", "uid": at["on"], "tip": w, "tip_params": {}}])
                 scene.pf_selected = at["on"]
             else:
-                apply_ops(scene, [{"op": "add_part", "part": w, "on": at["on"], "u": at["u"], "theta": at["theta"], "snap": True}])
+                apply_ops(scene, [{"op": "add_part", "part": w, "on": at["on"], "u": at["u"], "theta": at["theta"]}])
                 scene.pf_selected = get_recipe(scene)["parts"][-1]["uid"]
         sync_edit(scene)
 
@@ -381,6 +424,8 @@ class PF_OT_select(bpy.types.Operator):
     def execute(self, context):
         context.scene.pf_selected = self.uid
         sync_edit(context.scene)
+        if context.scene.pf_solo:
+            rebuild_creature(context.scene)
         return {"FINISHED"}
 
 
@@ -532,9 +577,12 @@ class PF_PT_palette(PF_PT_base, bpy.types.Panel):
 
     def draw(self, context):
         lay = self.layout
-        lay.label(text="Pick, then click the creature (snaps to sockets)")
+        if context.scene.pf_solo:
+            lay.label(text="Show creature to place parts")
+            return
+        lay.label(text="Pick a part, then click the surface")
         row = lay.row(align=True)
-        for kind, label in (("leg", "Legs"), ("arm", "Arms"), ("center", "Centre leg"), ("feeler", "Feelers")):
+        for kind, label in (("leg", "Legs"), ("arm", "Arms"), ("center", "Centre leg"), ("feeler", "Feelers"), ("tail", "Tail")):
             row.operator("polyforge.place", text=label).what = "limb:" + kind
         pv = thumbs()
         for cat, ids in catalog.by_category().items():
@@ -563,10 +611,14 @@ class PF_PT_edit(PF_PT_base, bpy.types.Panel):
             col.operator("polyforge.select", text="%s (limb%s)" % (l["uid"], ", " + l["tip"] if l["tip"] else ""), depress=l["uid"] == s.pf_selected).uid = l["uid"]
         p, l = selected_part(s, r), selected_limb(s, r)
         e = s.pf_edit
+        if p or l or s.pf_solo:
+            lay.prop(s, "pf_solo", toggle=True)
+            if not s.pf_solo:
+                lay.operator("polyforge.place", text="Move to surface").what = "move_limb" if l else "move_part"
         if p:
             part = catalog.get(p["part"])
             box = lay.box()
-            box.label(text="%s · %s" % (part.id, placement.symmetry(part)))
+            box.label(text=part.id)
             for k in ("u", "theta", "offset", "scale", "rot"):
                 box.prop(e, k)
             for i, (k, (lo, hi, d)) in enumerate(part.params.items()):
@@ -576,8 +628,10 @@ class PF_PT_edit(PF_PT_base, bpy.types.Panel):
         elif l:
             box = lay.box()
             box.label(text="Limb %s" % l["uid"])
-            for k in ("u", "theta", "radius"):
+            for k in ("u", "theta", "scale", "rot", "radius"):
                 box.prop(e, k)
+            for field in ("joint_index", "segment", "joint_radius"):
+                box.prop(e, field)
             if l["tip"]:
                 part = catalog.get(l["tip"])
                 for i, (k, (lo, hi, d)) in enumerate(part.params.items()):
@@ -638,6 +692,10 @@ CLASSES = [PF_Edit, PF_OT_new, PF_OT_example, PF_OT_open, PF_OT_save, PF_OT_buil
            PF_PT_creature, PF_PT_palette, PF_PT_edit, PF_PT_spine, PF_PT_paint, PF_PT_animate]
 
 
+def _solo_changed(scene, context):
+    rebuild_creature(scene)
+
+
 def register():
     for c in CLASSES:
         bpy.utils.register_class(c)
@@ -645,6 +703,7 @@ def register():
     S.pf_recipe = StringProperty(name="Recipe", default="")
     S.pf_report = StringProperty(default="")
     S.pf_selected = StringProperty(default="")
+    S.pf_solo = BoolProperty(name="Isolate shape", update=_solo_changed)
     S.pf_auto = BoolProperty(name="Rebuild on edit", default=True)
     S.pf_edit = bpy.props.PointerProperty(type=PF_Edit)
 
@@ -653,7 +712,7 @@ def unregister():
     global _previews
     for c in reversed(CLASSES):
         bpy.utils.unregister_class(c)
-    for k in ("pf_recipe", "pf_report", "pf_selected", "pf_auto", "pf_edit"):
+    for k in ("pf_recipe", "pf_report", "pf_selected", "pf_auto", "pf_solo", "pf_edit"):
         delattr(bpy.types.Scene, k)
     if _previews is not None:
         bpy.utils.previews.remove(_previews)

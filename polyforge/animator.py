@@ -469,6 +469,12 @@ class Animator:
                 t = t.lerp(hip + Vector((st["side"] * (0.45 + 0.25 * math.sin(self.time * 9.0)) * L, 0.75 * L, 0.2 * L)), wv)
             self._solve(st, t, False)
         for ai, st in enumerate(self.apps):
+            if st["l"]["role"] == "tail":
+                for k, bone in enumerate(st["bones"]):
+                    phase = TAU * self.otime / IDLE_LOOP * 2 - k * 0.65
+                    wag = math.sin(phase) * (0.11 + 0.09 * moving)
+                    self._set(bone, self._carry(bone, euler(0.035 * math.cos(phase), wag, 0)))
+                continue
             L = st["length"]
             sway = Vector((self.osc(1.0, ai), 0.5 * self.osc(2.0, ai * 2.0 + 1.5), self.osc(1.0, ai + 0.7))) * 0.08 * L
             sway += Vector((0, 0.06 * L * self.bob_vel * 30.0, -0.15 * L * moving))

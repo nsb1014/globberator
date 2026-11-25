@@ -79,25 +79,30 @@ class Builder:
     def resolve_limbs(self, sp):
         for l in self.recipe["limbs"]:
             s = sp.surface(l["u"], l["theta"])
-            radii = l["radii"]
+            scale = l["scale"]
+            rotation = Euler([math.radians(a) for a in l["rot"]], "ZXY").to_matrix()
+            radii = [radius * scale for radius in l["radii"]]
             hip = s["p"] - s["n"] * radii[0] * 0.5
             joints = [hip]
             for sg in l["segments"]:
-                joints.append(joints[-1] + Vector(sg))
+                joints.append(joints[-1] + (rotation @ Vector(sg)) * scale)
             part = catalog.get(l["tip"]) if l["tip"] else None
             role, sole = "appendage", Vector((0, -radii[-1], 0))
             if part is not None:
                 if part.cap == "foot":
-                    role, sole = "leg", part_sole(part, l["tip_params"])
+                    role, sole = "leg", part_sole(part, l["tip_params"]) * scale
                 elif part.cap in ("hand", "grasp"):
                     role = "arm"
+            if l["motion"] == "tail":
+                role = "tail"
             length = sum((joints[k] - joints[k - 1]).length for k in range(1, len(joints)))
+            lateral = abs(abs(l["theta"]) - 90.0) > 1e-4
             base = {"uid": l["uid"], "name": l["uid"], "u": l["u"], "v": s["v"], "joints": joints, "radii": radii,
                     "tip": l["tip"], "tip_params": l["tip_params"], "role": role, "has_foot": role == "leg",
-                    "sole_local": sole, "length": length, "mirrored": False,
-                    "side": (1.0 if hip.x > 0 else -1.0) if abs(hip.x) > 0.02 else 0.0}
+                    "scale": scale, "sole_local": sole, "length": length, "mirrored": False,
+                    "side": 1.0 if lateral else 0.0}
             self.limbs.append(base)
-            if abs(hip.x) > 1e-4:          # off the midline -> reflected twin (automatic)
+            if lateral:          # off the midline -> reflected twin (automatic)
                 m = dict(base)
                 m["joints"] = [Vector((-j.x, j.y, j.z)) for j in joints]
                 m["name"] = l["uid"] + "_m"
@@ -112,11 +117,12 @@ class Builder:
         lowest = sp.bottom_y()
         foot_low = min([l["sole"].y for l in self.limbs if l["has_foot"]] or [float("inf")])
         for l in self.limbs:
-            if l["role"] != "arm":
+            if l["role"] not in ("arm", "tail"):
                 lowest = min(lowest, l["sole"].y)
         ground = foot_low if foot_low < float("inf") else lowest
+        ground = self.recipe.get("ground_y", ground)
         for l in self.limbs:
-            if l["role"] == "arm":
+            if l["role"] in ("arm", "tail"):
                 continue
             gap = l["sole"].y - ground
             if l["has_foot"]:
@@ -291,12 +297,10 @@ class Builder:
             rot = Euler([math.radians(a) for a in p["rot"]], "ZXY").to_matrix()
             M = xform(basis @ rot @ Matrix.Diagonal((p["scale"],) * 3), s["p"])
             self.place(part, p["params"], M, parent, p["uid"], False, p["uid"], p["u"])
-            twin = (not on_limb and abs(abs(p["theta"]) - 90.0) > 1e-3) or (on_limb and l["side"] != 0.0)
+            twin = (not on_limb and abs(abs(p["theta"]) - 90.0) > 1e-3) or (on_limb and (l["side"] != 0.0 or abs(s["p"].x) > 1e-4))
             if twin:
                 if on_limb:
-                    ml = limb_of.get((p["on"], True))
-                    if ml is None:
-                        continue
+                    ml = limb_of.get((p["on"], True), l)
                     mparent = self.limb_surface(ml, p["u"], p["theta"], p["offset"])["bone"]
                 else:
                     mparent = self.spine_bone_at(sp.surface(p["u"], 180.0 - p["theta"])["v"])
@@ -322,6 +326,7 @@ class Builder:
                     M = MIRROR @ xform(frame(od, BACK), Vector((-end.x, end.y, end.z)))
                 else:
                     M = xform(frame(d, BACK), end)
+            M = M @ Matrix.Scale(l["scale"], 4)
             end_bone = l["bones"][-1]
             ctx, regions = finish.part_regions(part, l["tip_params"], skip_slots=("skin",))
             flip = M.to_3x3().determinant() < 0

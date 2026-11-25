@@ -30,9 +30,9 @@ Any command also runs through a regular Blender: `blender -b -P pf.py -- <comman
 ## Using the editor
 
 1. **Creature panel:** start a new creature or open an example. **Preview** rebuilds fast. **Sculpt** fuses the skin into one remeshed surface, which is what exports use.
-2. **Parts panel:** click a part or limb button, then click the creature. Placement snaps to named sockets (head front, brow, eyes, ears, horns, cheeks, back, tail tip, shoulders, hips).
-3. **Symmetry is automatic** (carried over from the original attachment code). Parts near the spine's midline snap onto it and stay single. Parts off the midline get a reflected twin. Centre-only parts (mouths, nose, brow, crest, frill, shell, mane, fins, tail tips, cyclops eye) are always centred, and paired parts (eyes, ears, horns, cheeks, wings, antennae) are always mirrored.
-4. **Selection panel:** sliders for position, scale, rotation and every part parameter. **Spine panel:** move, grow, shrink, add or remove vertebrae. **Paint panel:** base, accent and detail colours plus pattern.
+2. **Parts panel.** Pick a shape and click anywhere on the body. A lateral drop creates a reflected twin. A drop within 12 degrees of the midline creates one centered instance. Tails are flexible joint chains and can be placed in the center.
+3. **Selection panel.** Use **Isolate shape** to inspect one part or limb and edit its controls. Limbs have editable joint offsets and radii. Switch back to the creature to change instance scale, rotation, or placement. **Move to surface** picks a new location for the selected instance and its twin.
+4. **Spine and paint.** Edit body rings or paint the assembled creature. A saved body attachment records two ring IDs and its fractional position between them. A distant edit to the spine preserves that binding. Widening its own strip carries the part outward.
 5. **Animate & export panel:** bake idle, walk, run, roar, wave and hop, play them, and export GLB, FBX, USDZ or OBJ.
 
 Every edit goes through the recipe, so Blender's undo covers it.
@@ -60,14 +60,43 @@ python3 pf.py animate examples/bull.json --clip walk --out out/bull_walk.mp4
 python3 pf.py turntable examples/bull.json --out out/bull_turntable.mp4
 python3 pf.py gallery examples/*.json --out out/gallery.png
 python3 pf.py library --out out/parts       # each part as its own GLB, for engines that assemble parts themselves
-python3 pf.py describe                       # part catalog, sockets and ops as JSON (what the AI reads)
+python3 pf.py describe                       # family index, placement rules and operations
+python3 pf.py describe --part horn_sweep     # controls and ranges for one family
 python3 pf.py test [--fast]
 
 # Image -> creature (needs ANTHROPIC_API_KEY)
 pip install anthropic
 python3 ai/forge.py photo.png --out runs/photo
-python3 ai/benchmark.py                      # fitter check on known recipes, no API key needed
+python3 ai/benchmark.py                      # known-recipe numeric fit, no API key needed
+python3 ai/benchmark.py --reference held-out.png --out runs/held-out
 ```
+
+## Edit one shape
+
+A shape file holds local geometry. A surface part uses `part` and `params`. A limb uses `segments`, `radii`, `tip` and `tip_params`; set `motion` to `tail` for a flexible chain. Fit belongs to the instance. Recipes may define local templates under `shapes` and instantiate one by name, as in `examples/spider.json`. Normalization expands them to independently editable instances.
+
+```sh
+python3 pf.py part examples/bull.json --uid fore --out out/fore
+# Edit the local joint offsets or radii in out/fore/shape.json.
+python3 pf.py part out/fore/shape.json --out out/fore-review
+python3 pf.py attach examples/bull.json out/fore-review/shape.json --uid extra_leg --u .37 --theta -40 --out out/six-legged.json
+```
+
+Version 1 recipes migrate on load with their original placement. Version 2 saves the ring binding and a derived `u` for the slider. To slide an existing instance, use `set_limb` or `set_part` with a new `u`. To refit the creation floor after a limb edit, apply `{"op":"reground"}`.
+
+Use `horn_sweep` for an unbranched horn and `ear_leaf` for round, pointed, long, or drooping ears. The bull and minotaur use both families. Existing recipes can still load the older specialized shapes. A branched antler and an articulated pincer retain their own construction.
+
+The image loop defaults to Claude Haiku and accepts a model override through `POLYFORGE_MODEL`. It starts with a compact family index. For an identified feature, it requests that family's controls and critiques isolated views before the assembly fit. `--part-rounds` sets the local revision budget. The held-out benchmark writes first-pass validity, edit turns, renders and token usage. Review the rendered views against the input image to record artistic acceptance.
+
+## Verify the exported walk
+
+```sh
+python3 pf.py build examples/spider.json --out out/spider --formats glb --contacts
+blender -b --python-exit-code 1 -P tools/tests/export_contact.py -- out/spider/spider.glb
+godot --headless --path tools/tests --script res://export_contact.gd -- "$PWD/out/spider/spider.glb"
+```
+
+The build report supplies stance timing and travel for the in-place clip. Both checks locate rigidly weighted sole vertices in the imported mesh, measure their height and world-space drift during stance, and require each foot to lift. Run the same commands with the bull and minotaur recipes. The regular test suite also checks the bull and runs the Godot assertion when Godot 4 is installed.
 
 ## Layout
 

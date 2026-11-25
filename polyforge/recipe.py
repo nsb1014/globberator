@@ -10,9 +10,10 @@ import copy
 import json
 
 from . import catalog, placement
+from .spine import Spine
 
 FORMAT = "polyforge.recipe"
-VERSION = 1
+VERSION = 2
 LIMITS = {
     "vertebrae": [2, 16], "spine_y": [0.0, 8.0], "spine_z": [-8.0, 8.0], "radius": [0.04, 2.5],
     "limbs": 12, "segments": [1, 5], "segment_len": [0.02, 3.5], "limb_radius": [0.02, 1.2],
@@ -101,7 +102,20 @@ def normalize(src):
     """Returns (recipe, warnings)."""
     w = []
     src = src if isinstance(src, dict) else {}
+    templates = src.get("shapes", {})
+    def expand(item):
+        if not isinstance(item, dict) or "shape" not in item:
+            return item
+        key = item["shape"]
+        base = templates.get(key) if isinstance(templates, dict) and isinstance(key, str) else None
+        if not isinstance(base, dict):
+            w.append("unknown shape %s" % key)
+            return item
+        return {**base, **item}
+
     r = {"format": FORMAT, "version": VERSION, "name": str(src.get("name", "Untitled"))}
+    if isinstance(src.get("ground_y"), (float, int)):
+        r["ground_y"] = float(src["ground_y"])
     s_in = src.get("spine")
     if not isinstance(s_in, list) or len(s_in) < 2:
         w.append("spine missing or too short; using default spine")
@@ -110,21 +124,44 @@ def normalize(src):
         w.append("spine truncated to %d vertebrae" % LIMITS["vertebrae"][1])
         s_in = s_in[:LIMITS["vertebrae"][1]]
     spine = []
+    reserved = {"@rear", "@front"} | {str(v["id"]) for v in s_in if isinstance(v, dict) and "id" in v}
+    ring_ids = {"@rear", "@front"}
+    def ring_id(index, v):
+        if "id" in v and str(v["id"]) not in ring_ids:
+            return _unique(v["id"], ring_ids)
+        proposal = _unique("r%d" % index, reserved)
+        ring_ids.add(proposal)
+        return proposal
     for i, v in enumerate(s_in):
         v = v if isinstance(v, dict) else {}
         spine.append({
+            "id": ring_id(i, v),
             "y": _clamp(_num(v.get("y"), 0.6), LIMITS["spine_y"], "spine[%d].y" % i, w),
             "z": _clamp(_num(v.get("z"), 0.0), LIMITS["spine_z"], "spine[%d].z" % i, w),
             "w": _clamp(_num(v.get("w"), 0.3), LIMITS["radius"], "spine[%d].w" % i, w),
             "h": _clamp(_num(v.get("h", v.get("w")), 0.3), LIMITS["radius"], "spine[%d].h" % i, w),
         })
     r["spine"] = spine
+    surface = Spine(spine)
+    def locate(raw, item):
+        if item.get("on", "body") != "body":
+            return
+        saved = raw.get("bind")
+        u = surface.resolve(saved)
+        if u is None:
+            if saved is not None:
+                w.append("invalid strip on %s; rebound at its last position" % item["uid"])
+            u = item["u"]
+        item["bind"] = surface.bind(u)
+        item["u"] = round(u, 9)
+
     used = set()
     limbs = []
     l_in = src.get("limbs") if isinstance(src.get("limbs"), list) else []
     if len(l_in) > LIMITS["limbs"]:
         w.append("only %d limbs allowed" % LIMITS["limbs"])
     for i, l in enumerate(l_in[:LIMITS["limbs"]]):
+        l = expand(l)
         if not isinstance(l, dict):
             continue
         uid = _unique(l.get("uid", "limb%d" % i), used)
@@ -165,20 +202,25 @@ def normalize(src):
         # Symmetry rules: author on the +X side; near the midline snaps to centre (x = 0).
         raw = wrap_angle(_num(l.get("theta"), -45.0))
         theta, centre = placement.centred(raw, "any")
-        if abs(raw) > 90.0:
+        if src.get("version", 1) == 1 and abs(raw) > 90.0:
             segs = [[-sg[0], sg[1], sg[2]] for sg in segs]
-        if centre:
+        if src.get("version", 1) == 1 and centre:
             segs = [[0.0, sg[1], sg[2]] for sg in segs]
         limbs.append({
             "uid": uid, "u": _clamp(_num(l.get("u"), 0.5), [0.0, 1.0], "limb %s u" % uid, w),
             "theta": round(theta, 4), "segments": segs, "radii": radii,
             "tip": tip, "tip_params": tip_params,
+            "motion": "tail" if l.get("motion") == "tail" else "auto",
+            "scale": _clamp(_num(l.get("scale"), 1.0), LIMITS["scale"], uid + ".scale", w),
+            "rot": [wrap_angle(a) for a in _vec(l.get("rot"), [0, 0, 0])],
         })
+        locate(l, limbs[-1])
     r["limbs"] = limbs
     limb_ids = {l["uid"] for l in limbs}
     parts = []
     p_in = src.get("parts") if isinstance(src.get("parts"), list) else []
     for i, p in enumerate(p_in[:LIMITS["parts"]]):
+        p = expand(p)
         if not isinstance(p, dict):
             continue
         pid = str(p.get("part", ""))
@@ -198,7 +240,12 @@ def normalize(src):
         theta = wrap_angle(_num(p.get("theta"), 90.0))
         if on == "body":
             raw = theta
-            theta, centre = placement.centred(raw, placement.symmetry(part))
+            mode = "any"
+            if src.get("version", 1) == 1:
+                mode = placement.symmetry(part)
+            elif p.get("bind") and abs(raw) != 90:
+                mode = "pair"  # retain previously bound angles on load, including legacy pairs
+            theta, centre = placement.centred(raw, mode)
             if abs(raw) > 90.0:
                 rot = [rot[0], -rot[1], -rot[2]]       # reflected to the +X side
             if centre:
@@ -212,6 +259,7 @@ def normalize(src):
             "scale": _clamp(_num(p.get("scale"), 1.0), LIMITS["scale"], "part %s scale" % uid, w),
             "params": catalog.normalize_params(part, p.get("params", {}), "part %s" % uid, w),
         })
+        locate(p, parts[-1])
     r["parts"] = parts
     pa = src.get("paint") if isinstance(src.get("paint"), dict) else {}
     dp = default_paint()

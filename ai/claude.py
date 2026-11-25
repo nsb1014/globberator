@@ -9,10 +9,10 @@ import io
 import json
 import os
 
-import anthropic
+
 from PIL import Image
 
-MODEL = os.environ.get("POLYFORGE_MODEL", "claude-opus-5-5")
+MODEL = os.environ.get("POLYFORGE_MODEL", "claude-haiku-4-5")
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 _client = None
@@ -21,6 +21,7 @@ _client = None
 def client():
     global _client
     if _client is None:
+        import anthropic
         _client = anthropic.Anthropic()
     return _client
 
@@ -35,44 +36,22 @@ def image_block(path, max_side=1024):
     return {"type": "image", "source": {"type": "base64", "media_type": "image/png", "data": base64.standard_b64encode(buf.getvalue()).decode()}}
 
 
-RECIPE_GUIDE = """\
-# PolyForge recipe format (JSON)
-Coordinates: +Y up, +Z is the creature's forward (head direction), +X its left/right side. Units ~ meters.
-The builder places feet on the ground automatically.
-- "spine": 2-16 vertebrae ordered REAR (tail tip) to FRONT (head). Each {"y","z","w","h"}: the vertebra
-  sits at x=0, height y, forward position z, with cross-section half-width w and half-height h.
-  The body is a smooth tube through them with rounded end caps. The last vertebrae form the neck and head;
-  a thin tapering run of rear vertebrae makes a tail. A vertical run of vertebrae makes an upright biped torso.
-- Surface coordinates: u in [0,1] runs along the body from the rear tip (0) to the front tip (1);
-  theta (degrees) goes around the cross-section: 0 = +X side, 90 = top/back, -90 = belly, 180 = -X side.
-  For an upright spine, theta 90 faces backward and -90 faces forward.
-- "limbs": [{"uid","u","theta","segments":[[dx,dy,dz],...],"radii":[...],"tip": part id or "","tip_params":{},"mirror":true}]
-  segments are joint-to-joint offsets starting at the attachment (1-5 segments); radii has segments+1 entries.
-  A limb with a foot tip becomes a walking leg (it must reach the ground), a hand/pincer tip makes an arm,
-  no tip makes a free appendage. mirror=true duplicates it on the other side (author the +X side).
-- "parts": [{"uid","part","on":"body" or limb uid,"u","theta","offset","rot":[x,y,z] deg,"scale","params":{},"mirror":bool}]
-  Eyes/mouths/noses sit on the head cap (u 0.9-1.0). Tail tips go at u near 0. Horns/ears around u 0.85-0.95.
-- "paint": {"base","accent","detail": "#rrggbb", "pattern": none|stripes|spots|patches|gradient, "pattern_scale", "belly": bool}
-  base = main skin, accent = pattern/horn-ish secondary areas (also fins, plates, shells), detail = belly, muzzle, inner ears.
-Values outside allowed ranges are clamped (that is the style tolerance): the library's look wins over exact likeness.
-"""
+RECIPE_GUIDE = """Write version 2 JSON. +Y up, +Z forward. spine: 2-16 rear-to-front
+{y,z,w,h} rings (w,h are half-extents). limbs: {uid,u,theta,segments:[[dx,dy,dz],...],
+radii:[root,...,tip],tip,tip_params}. motion:"tail" makes a flexible non-supporting chain.
+parts: {uid,part,u,theta,params,scale,rot:[degrees],on:"body" or limb uid}.
+u runs from rear tip (0) to nose (1); theta=0 at the side, +90 at the back/top, -90 at belly.
+Place once: midline single, side paired. Scale and rotation fit a local shape on the animal.
+The builder manages ring bindings. Never author bind or a mirror flag.
+paint: {base,accent,detail} hex colors, pattern none/stripes/spots/patches/gradient.
+Choose broad masses and silhouette before details. Use defaults when unsure."""
 
 
-def _system(catalog, examples):
-    parts = []
-    for p in catalog["parts"]:
-        parts.append({"id": p["id"], "category": p["category"], "attach": p["attach"], "desc": p["desc"],
-                      "params": {k: [v["min"], v["max"], v["default"]] for k, v in p["params"].items()},
-                      "hint": p["hint"], "mirror_default": p["mirror_default"]})
-    return (
-        "You build stylized low-poly 3D creatures for PolyForge, a Spore-like creature builder, by writing recipes.\n"
-        "Your goal is recognizability within the part library's style: match silhouette, proportions, the most "
-        "distinctive features and the main colors. Exact detail is not expected.\n\n"
-        + RECIPE_GUIDE
-        + "\n# Part library\n" + json.dumps(parts, separators=(",", ":"))
-        + "\n\n# Recipe ops (for edits)\n" + json.dumps(catalog.get("ops", {}), separators=(",", ":"))
-        + "\n\n# Example recipes\n" + "\n".join(json.dumps(e, separators=(",", ":")) for e in examples)
-    )
+def _system(catalog):
+    groups = {}
+    for part in catalog["parts"]:
+        groups.setdefault(part["category"], []).append(part["id"])
+    return RECIPE_GUIDE + "\nAvailable families: " + json.dumps(groups, separators=(",", ":"))
 
 
 DRAFT_SCHEMA = {
@@ -108,13 +87,9 @@ CRITIQUE_SCHEMA = {
 
 
 def _call(system, content, schema, effort="high"):
-    resp = client().beta.messages.create(
-        model=MODEL,
-        max_tokens=16000,
-        betas=["server-side-fallback-2026-07-01"],
-        fallbacks="default",
-        thinking={"type": "adaptive"},
-        output_config={"effort": effort, "format": {"type": "json_schema", "schema": schema}},
+    resp = client().messages.create(
+        model=MODEL, max_tokens=8192,
+        output_config={"format": {"type": "json_schema", "schema": schema}},
         cache_control={"type": "ephemeral"},
         system=system,
         messages=[{"role": "user", "content": content}],
@@ -127,28 +102,43 @@ def _call(system, content, schema, effort="high"):
     return json.loads(text), resp.usage
 
 
-def draft(ref_image, catalog, examples, sheet=None):
+def draft(ref_image, catalog):
     content = [{"type": "text", "text": "Reference image:"}, image_block(ref_image)]
-    if sheet:
-        content += [{"type": "text", "text": "Thumbnails of the library parts (labelled by id):"}, image_block(sheet, 1600)]
     content.append({"type": "text", "text":
         "Identify the subject and list its distinguishing features by importance (3 = defines the subject). "
         "Estimate the camera view. Then write a complete recipe that captures it with this library, choosing "
         "the best part for each feature and setting params/scales/positions to match proportions. "
         "Ignore clothing, props and background."})
-    return _call(_system(catalog, examples), content, DRAFT_SCHEMA)
+    return _call(_system(catalog), content, DRAFT_SCHEMA)
 
 
-def critique(ref_image, renders, analysis, recipe, scores, warnings, catalog, examples):
+def critique(ref_image, renders, analysis, recipe, scores, warnings, catalog):
     content = [{"type": "text", "text": "Reference image:"}, image_block(ref_image)]
     for label, path in renders:
         content += [{"type": "text", "text": "Current build, %s:" % label}, image_block(path, 512)]
     content.append({"type": "text", "text": json.dumps({
-        "features": analysis["features"], "current_recipe": recipe, "scores": scores,
+        "features": analysis["features"], "current_recipe": public_recipe(recipe), "available_edits": catalog["ops"], "scores": scores,
         "normalizer_warnings": warnings[:30]}, separators=(",", ":"))})
     content.append({"type": "text", "text":
         "Score each feature against the reference (judge recognizability within the library style). "
         "Then propose ops that most improve the weakest high-importance features; prefer part swaps and "
         "placement fixes over tiny numeric tweaks (proportions are also fitted numerically afterwards). "
         "List features the library cannot express as library_gaps."})
-    return _call(_system(catalog, examples), content, CRITIQUE_SCHEMA)
+    return _call(_system(catalog), content, CRITIQUE_SCHEMA)
+
+def public_recipe(recipe):
+    r = dict(recipe)
+    r["spine"] = [{k: v for k, v in ring.items() if k != "id"} for ring in recipe["spine"]]
+    for key in ("parts", "limbs"):
+        r[key] = [{k: v for k, v in item.items() if k != "bind"} for item in recipe[key]]
+    return r
+
+
+def refine_shape(reference, views, shape, controls):
+    schema = {"type": "object", "properties": {"accept": {"type": "boolean"},
+              "shape_json": {"type": "string"}}, "required": ["accept", "shape_json"], "additionalProperties": False}
+    content = [image_block(reference)] + [image_block(path, 384) for path in views]
+    content.append({"type": "text", "text": json.dumps({"shape": shape, "controls": controls})})
+    return _call("Compare the selected part in the reference with the isolated front and side views. "
+                 "Accept its silhouette or return the revised local shape JSON. Preserve the part or tip type. "
+                 "Only edit params, segments, radii or tip_params; placement is handled separately.", content, schema)

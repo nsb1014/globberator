@@ -1,11 +1,10 @@
 """Part catalog: every part definition in polyforge/parts, keyed by id."""
 from .parts import face, head, body, tips
 
-LIBRARY_VERSION = "4.0.0"
+LIBRARY_VERSION = "5.0.0"
 
 PARTS = face.PARTS + head.PARTS + body.PARTS + tips.PARTS
-BY_ID = {p.id: p for p in PARTS}
-assert len(BY_ID) == len(PARTS), "duplicate part ids"
+BY_ID = {p.id: p for p in head.LEGACY + PARTS}
 
 
 def get(pid):
@@ -38,7 +37,7 @@ def normalize_params(part, src, what, warns):
 
 def describe_part(p):
     return {"id": p.id, "category": p.category, "desc": p.desc, "tags": p.tags, "attach": p.attach,
-            "orient": p.orient, "capability": p.cap, "mirror_default": p.mirror, "hint": p.hint,
+            "orient": p.orient, "capability": p.cap, "hint": p.hint,
             "params": {k: {"min": v[0], "max": v[1], "default": v[2]} for k, v in p.params.items()}}
 
 

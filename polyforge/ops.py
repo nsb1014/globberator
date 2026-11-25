@@ -6,6 +6,8 @@ from . import catalog, placement
 from . import recipe as R
 
 SPEC = {
+    "attach_shape": {"shape": "{part,params} or {segments,radii,tip,tip_params,motion}", "u": "float", "theta": "degrees", "uid?": "string", "scale?": "float", "rot?": "[x,y,z]"},
+    "reground": {},
     "set_name": {"name": "string"},
     "set_spine": {"spine": "array of {y,z,w,h} (rear to front)"},
     "set_vertebra": {"index": "int", "y?": "float", "z?": "float", "w?": "float", "h?": "float"},
@@ -61,13 +63,48 @@ def apply(r, op):
     r.setdefault("parts", [])
     r.setdefault("spine", R.default_recipe()["spine"])
     name = str(op.get("op", ""))
+    if name in ("set_spine", "insert_vertebra", "remove_vertebra", "set_vertebra", "scale_body"):
+        # Bind legacy or newly added instances BEFORE changing the shape.
+        normalized, _ = R.normalize(r)
+        r.update(normalized)
+    if name == "attach_shape":
+        from .shapes import extract
+        shape = op.get("shape")
+        if not isinstance(shape, dict) or not ("segments" in shape or "part" in shape):
+            return "attach_shape requires a part or limb shape"
+        fields = {k: op[k] for k in ("uid", "u", "theta", "on", "offset", "rot", "scale") if k in op}
+        if "segments" in shape and fields.get("on", "body") != "body":
+            return "limbs attach to the body surface"
+        part = catalog.get(shape.get("part", ""))
+        if part and part.attach == "tip":
+            target = fields.get("on")
+            if not target or _find(r["limbs"], target) < 0:
+                return "tip shapes require a host limb uid in on"
+            return apply(r, {"op": "set_limb", "uid": target, "tip": part.id,
+                             "tip_params": shape.get("params", {})})
+        return apply(r, {**extract(shape), **fields, "op": "add_limb" if "segments" in shape else "add_part"})
+    if name == "reground":
+        r.pop("ground_y", None)
+        return ""
+    if r["limbs"] and "ground_y" not in r and name in (
+            "set_limb", "remove_limb", "set_vertebra", "insert_vertebra", "remove_vertebra", "scale_body", "set_spine"):
+        from .builder import Builder
+        current = Builder(r, "preview")
+        surface = R.Spine(current.recipe["spine"])
+        current.resolve_limbs(surface)
+        r["ground_y"] = current.ground_level(surface)
     sp = r["spine"]
     if name == "set_name":
         r["name"] = str(op.get("name", r.get("name", "")))
     elif name == "set_spine":
         if not isinstance(op.get("spine"), list):
             return "set_spine needs an array"
-        r["spine"] = copy.deepcopy(op["spine"])
+        replacement = copy.deepcopy(op["spine"])
+        if len(replacement) == len(sp):
+            for old, new in zip(sp, replacement):
+                if isinstance(new, dict):
+                    new.setdefault("id", old["id"])
+        r["spine"] = replacement
     elif name == "set_vertebra":
         i = int(op.get("index", -1))
         if not 0 <= i < len(sp):
@@ -99,6 +136,14 @@ def apply(r, op):
             return "spine needs at least 2 vertebrae"
         if not 0 <= i < len(sp):
             return "vertebra index out of range"
+        # Merge adjacent strips locally when an endpoint is removed.
+        ids = ["@rear"] + [v["id"] for v in sp] + ["@front"]
+        left, gone, right = ids[i:i + 3]
+        for item in r["limbs"] + r["parts"]:
+            bind = item.get("bind")
+            if bind and gone in bind[:2]:
+                t = bind[2] * 0.5 if bind[1] == gone else 0.5 + bind[2] * 0.5
+                item["bind"] = [left, right, t]
         sp.pop(i)
     elif name == "scale_body":
         for v in sp:
@@ -115,6 +160,8 @@ def apply(r, op):
         i = _find(r["limbs"], str(op.get("uid", "")))
         if i < 0:
             return "no limb %s" % op.get("uid", "")
+        if "u" in op or op.get("snap") or "on" in op:
+            r["limbs"][i].pop("bind", None)
         for k, v in op.items():
             if k in ("op", "uid"):
                 continue
@@ -143,6 +190,8 @@ def apply(r, op):
         i = _find(r["parts"], str(op.get("uid", "")))
         if i < 0:
             return "no part %s" % op.get("uid", "")
+        if "u" in op or op.get("snap") or "on" in op:
+            r["parts"][i].pop("bind", None)
         for k, v in op.items():
             if k in ("op", "uid"):
                 continue
@@ -150,6 +199,10 @@ def apply(r, op):
                 r["parts"][i].setdefault("params", {}).update(v)
             else:
                 r["parts"][i][k] = v
+        if "theta" in op and r["parts"][i].get("on", "body") == "body":
+            angle = R.wrap_angle(float(op["theta"]))
+            if abs(abs(angle) - 90) <= placement.CENTER_SNAP_DEG:
+                r["parts"][i]["theta"] = 90.0 if angle > 0 else -90.0
         _snap_part(r["parts"][i], op)
     elif name == "remove_part":
         i = _find(r["parts"], str(op.get("uid", "")))
@@ -165,7 +218,7 @@ def apply(r, op):
 
 
 def apply_all(src, ops):
-    r = copy.deepcopy(src)
+    r = R.normalize(src)[0] if src.get("shapes") or src.get("version", 1) == 1 else copy.deepcopy(src)
     errors = []
     for i, op in enumerate(ops):
         if not isinstance(op, dict):

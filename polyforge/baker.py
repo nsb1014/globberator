@@ -14,7 +14,7 @@ def rig_of(arm):
     return json.loads(arm["polyforge_rig"])
 
 
-def _record(arm, rig, clip):
+def _record(arm, rig, clip, contacts=None):
     an = Animator(rig)
     loop, frames, dt = True, 0, 1.0 / FPS
     if clip == "idle":
@@ -40,6 +40,9 @@ def _record(arm, rig, clip):
         dt = length / frames
     poses = []
     for f in range(frames + 1):
+        if contacts is not None and clip == "walk" and f < frames:
+            contacts.append({"time": f / FPS, "travel": list(an.world.o),
+                             "stance": [rig["names"][leg["bones"][-1]] for leg in an.legs if not leg["swinging"]]})
         write_pose(arm, an)
         poses.append({pb.name: (pb.location.copy(), pb.rotation_quaternion.copy(), pb.scale.copy()) for pb in arm.pose.bones})
         an.step(dt)
@@ -48,9 +51,9 @@ def _record(arm, rig, clip):
     return poses, length, loop
 
 
-def bake(arm, clip):
+def bake(arm, clip, contacts=None):
     rig = rig_of(arm)
-    poses, length, loop = _record(arm, rig, clip)
+    poses, length, loop = _record(arm, rig, clip, contacts)
     act = bpy.data.actions.new("%s_%s" % (arm.name.replace("_rig", ""), clip))
     act.use_fake_user = True
     arm.animation_data_create()
@@ -68,14 +71,14 @@ def bake(arm, clip):
     return act
 
 
-def bake_all(arm, clips=CLIPS):
+def bake_all(arm, clips=CLIPS, contacts=None):
     bpy.context.scene.render.fps = FPS
     ad = arm.animation_data_create()
     for t in list(ad.nla_tracks):
         ad.nla_tracks.remove(t)
     out = {}
     for clip in clips:
-        act = bake(arm, clip)
+        act = bake(arm, clip, contacts)
         track = ad.nla_tracks.new()
         track.name = clip
         strip = track.strips.new(clip, 1, act)

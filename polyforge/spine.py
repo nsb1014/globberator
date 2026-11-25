@@ -5,6 +5,7 @@ ellipse radii, arc parameter u in [0, 1] (rear tip to front tip, end caps
 included) and a fractional vertebra index used for skin weights.
 """
 import math
+from bisect import bisect_left, bisect_right
 
 from mathutils import Vector, Matrix
 
@@ -28,7 +29,34 @@ class Spine:
         self.vpos = [Vector((0.0, v["y"], v["z"])) + shift for v in spine]
         self.vw = [v["w"] for v in spine]
         self.vh = [v["h"] for v in spine]
+        self.ring_ids = ["@rear", *(v.get("id", "r%d" % i) for i, v in enumerate(spine)), "@front"]
+        self.ring_samples = [0, *(CAP + i * SUB for i in range(len(spine))), 2 * CAP + (len(spine) - 1) * SUB]
         self._sample()
+        self.arc = [sample["u"] for sample in self.samples]
+
+    def bind(self, u):
+        """Store the local strip and fraction including the two rounded caps."""
+        i = min(max(bisect_left(self.arc, u), 1), len(self.arc) - 1)
+        a, b = self.arc[i - 1:i + 1]
+        sample = i - 1 + min(1.0, max(0.0, (u - a) / max(b - a, 1e-12)))
+        strip = min(bisect_right(self.ring_samples, sample) - 1, len(self.ring_ids) - 2)
+        lo, hi = self.ring_samples[strip:strip + 2]
+        return [*self.ring_ids[strip:strip + 2], round((sample - lo) / (hi - lo), 9)]
+
+    def resolve(self, binding):
+        """Resolve a saved strip in this spine. Intervening inserted rings subdivide it."""
+        if not isinstance(binding, list) or len(binding) != 3:
+            return None
+        left, right, t = binding
+        if left not in self.ring_ids or right not in self.ring_ids or not isinstance(t, (float, int)) or not 0 <= t <= 1:
+            return None
+        a, b = (self.ring_samples[self.ring_ids.index(r)] for r in (left, right))
+        if a >= b:
+            return None
+        pos = a + (b - a) * t
+        i = min(int(pos), len(self.arc) - 2)
+        return self.arc[i] + (self.arc[i + 1] - self.arc[i]) * (pos - i)
+
 
     def _sample(self):
         n = len(self.vpos)

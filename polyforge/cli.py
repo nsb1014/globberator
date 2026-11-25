@@ -91,8 +91,56 @@ def frames_to_video(frames_dir, out, fps=30):
 
 # ------------------------------------------------------------------ commands
 
+def cmd_part(a):
+    """Render a standalone draft, or extract one selected instance to local coordinates."""
+    from . import shapes
+    reset()
+    shape = R.load(a.input)
+    if a.uid:
+        r, _ = R.normalize(shape)
+        item = next((i for i in r["limbs"] + r["parts"] if i["uid"] == a.uid), None)
+        if item is None:
+            raise ValueError("unknown instance " + a.uid)
+        shape = shapes.extract(item)
+    shape, warnings = shapes.normalize_shape(shape)
+    objects, build_warnings = shapes.isolated(shape)
+    warnings.extend(build_warnings)
+    os.makedirs(a.out, exist_ok=True)
+    R.save(shapes.extract(shape), os.path.join(a.out, "shape.json"))
+    cam = render.setup("workbench", a.size)
+    lo, hi = render.bounds(objects)
+    for view in a.views.split(","):
+        render.frame(cam, lo, hi, *render.view_angles(view))
+        render.render(os.path.join(a.out, view + ".png"), transparent=True)
+    print(json.dumps({"warnings": warnings, "out": a.out}))
+
+
+def cmd_attach(a):
+    from .shapes import normalize_shape
+    shape, warnings = normalize_shape(R.load(a.shape))
+    op = {"op": "attach_shape", "shape": shape, "on": a.on, "u": a.u, "theta": a.theta,
+          "scale": a.scale, "rot": a.rot}
+    if a.uid:
+        op["uid"] = a.uid
+    r, errors = ops.apply_all(R.normalize(R.load(a.recipe))[0], [op])
+    if errors:
+        raise ValueError("; ".join(errors))
+    r, changes = R.normalize(r)
+    for warning in warnings + changes:
+        print("warning:", warning, file=sys.stderr)
+    R.save(r, a.out)
+
+
 def cmd_describe(a):
     d = catalog.describe()
+    if a.part:
+        selected = catalog.get(a.part)
+        if selected is None:
+            raise ValueError("unknown part " + a.part)
+        d["parts"] = [catalog.describe_part(selected)]
+    elif not a.full:
+        d["parts"] = [{"id": item.id, "category": item.category, "attach": item.attach} for item in catalog.PARTS]
+    d["placement"] = "u rear-to-front [0,1], theta degrees around the surface; midline single, lateral paired"
     d["recipe_limits"] = R.LIMITS
     d["patterns"] = R.PATTERNS
     d["ops"] = ops.SPEC
@@ -131,7 +179,12 @@ def cmd_build(a):
     res = build(a.recipe, "preview" if a.preview else "final")
     report = dict(res["report"])
     if not a.no_anim:
-        report["clips"] = baker.bake_all(res["armature"])
+        contact_frames = [] if a.contacts else None
+        report["clips"] = baker.bake_all(res["armature"], contacts=contact_frames)
+        if a.contacts:
+            rig = res["rig"]
+            report["contact"] = {"frames": contact_frames, "legs": {
+                rig["names"][l["bones"][-1]]: l["length"] for l in rig["limbs"] if l["role"] == "leg"}}
     os.makedirs(a.out, exist_ok=True)
     name = (res["recipe"]["name"] or "creature").lower().replace(" ", "_")
     report["files"] = []
@@ -317,10 +370,19 @@ def cmd_test(a):
 def main(argv=None):
     ap = argparse.ArgumentParser(prog="pf", description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = ap.add_subparsers(dest="cmd", required=True)
-    s = sub.add_parser("describe"); s.add_argument("--out")
+    s = sub.add_parser("part", help="preview a local shape or extract one instance")
+    s.add_argument("input"); s.add_argument("--uid"); s.add_argument("--out", required=True)
+    s.add_argument("--size", type=int, default=384); s.add_argument("--views", default="front,side,threequarter")
+    s = sub.add_parser("attach", help="attach a local shape to a creature")
+    s.add_argument("recipe"); s.add_argument("shape"); s.add_argument("--out", required=True)
+    s.add_argument("--on", default="body"); s.add_argument("--u", required=True, type=float)
+    s.add_argument("--theta", required=True, type=float); s.add_argument("--uid")
+    s.add_argument("--scale", type=float, default=1.0); s.add_argument("--rot", type=float, nargs=3, default=[0, 0, 0])
+    s = sub.add_parser("describe"); s.add_argument("--out"); s.add_argument("--part"); s.add_argument("--full", action="store_true")
     s = sub.add_parser("normalize"); s.add_argument("recipe"); s.add_argument("--out")
     s = sub.add_parser("apply"); s.add_argument("recipe"); s.add_argument("ops"); s.add_argument("--out", required=True)
     s = sub.add_parser("build"); s.add_argument("recipe"); s.add_argument("--out", required=True)
+    s.add_argument("--contacts", action="store_true", help="include walk stance samples in the build report")
     s.add_argument("--formats", default="glb,blend"); s.add_argument("--no-anim", action="store_true"); s.add_argument("--preview", action="store_true")
     for name in ("render", "animate", "turntable"):
         s = sub.add_parser(name)

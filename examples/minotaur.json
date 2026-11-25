@@ -1,0 +1,23 @@
+{
+  "name": "Minotaur",
+  "spine": [
+    {"y": 1.05, "z": -0.02, "w": 0.3, "h": 0.24},
+    {"y": 1.32, "z": 0.0, "w": 0.33, "h": 0.25},
+    {"y": 1.62, "z": 0.02, "w": 0.48, "h": 0.32},
+    {"y": 1.88, "z": 0.05, "w": 0.5, "h": 0.3},
+    {"y": 2.05, "z": 0.16, "w": 0.2, "h": 0.2},
+    {"y": 2.16, "z": 0.38, "w": 0.24, "h": 0.25}
+  ],
+  "limbs": [
+    {"uid": "leg", "u": 0.1, "theta": -10, "segments": [[0.08, -0.45, 0.08], [0.0, -0.45, -0.1]], "radii": [0.17, 0.12, 0.08], "tip": "foot_hoof", "tip_params": {"size": 1.2}, "mirror": true},
+    {"uid": "arm", "u": 0.62, "theta": 5, "segments": [[0.22, -0.32, -0.02], [0.05, -0.34, 0.12]], "radii": [0.15, 0.11, 0.08], "tip": "hand_basic", "tip_params": {"size": 1.4}, "mirror": true}
+  ],
+  "parts": [
+    {"uid": "horns", "part": "horn_bull", "u": 0.95, "theta": 60, "params": {"length": 1.1, "thickness": 1.2}, "mirror": true},
+    {"uid": "eyes", "part": "eye_slit", "u": 0.95, "theta": 15, "params": {"size": 0.9}, "mirror": true},
+    {"uid": "snout", "part": "mouth_snout", "u": 0.99, "theta": -30, "params": {"length": 1.2, "width": 1.4}},
+    {"uid": "ears", "part": "ear_pointy", "u": 0.93, "theta": 30, "rot": [0, 0, -50], "params": {"size": 0.8}, "mirror": true},
+    {"uid": "mane", "part": "mane", "u": 0.78, "theta": 80, "params": {"size": 1.4, "length": 1.0}}
+  ],
+  "paint": {"base": "#7a5236", "accent": "#3a2618", "detail": "#cfb38f", "pattern": "none", "pattern_scale": 1.0, "belly": true}
+}

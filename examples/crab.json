@@ -1,0 +1,19 @@
+{
+  "name": "Crab",
+  "spine": [
+    {"y": 0.42, "z": -0.3, "w": 0.45, "h": 0.17},
+    {"y": 0.45, "z": 0.0, "w": 0.6, "h": 0.22},
+    {"y": 0.43, "z": 0.3, "w": 0.45, "h": 0.17}
+  ],
+  "limbs": [
+    {"uid": "l1", "u": 0.32, "theta": -20, "segments": [[0.3, 0.12, -0.12], [0.15, -0.5, -0.08]], "radii": [0.06, 0.045, 0.03], "tip": "foot_spike", "tip_params": {"size": 0.6}, "mirror": true},
+    {"uid": "l2", "u": 0.46, "theta": -20, "segments": [[0.34, 0.12, 0.0], [0.16, -0.5, 0.0]], "radii": [0.06, 0.045, 0.03], "tip": "foot_spike", "tip_params": {"size": 0.6}, "mirror": true},
+    {"uid": "l3", "u": 0.6, "theta": -20, "segments": [[0.3, 0.12, 0.1], [0.15, -0.5, 0.08]], "radii": [0.06, 0.045, 0.03], "tip": "foot_spike", "tip_params": {"size": 0.6}, "mirror": true},
+    {"uid": "claw", "u": 0.78, "theta": -5, "segments": [[0.2, 0.05, 0.2], [0.05, 0.05, 0.25]], "radii": [0.07, 0.06, 0.05], "tip": "hand_pincer", "tip_params": {"size": 1.6, "bulk": 1.3}, "mirror": true}
+  ],
+  "parts": [
+    {"uid": "eyes", "part": "eye_stalk", "u": 0.86, "theta": 70, "params": {"size": 0.8, "height": 0.3}, "mirror": true},
+    {"uid": "mouth", "part": "mouth_mandibles", "u": 0.97, "theta": -20, "params": {"length": 0.5}}
+  ],
+  "paint": {"base": "#d0563a", "accent": "#8a2c1e", "detail": "#f1c6a3", "pattern": "spots", "pattern_scale": 1.0, "belly": true}
+}

@@ -1,115 +1,128 @@
-# PolyForge · Character studies
+# PolyForge
 
-## Solifuge
+A Spore-style creature builder that runs inside Blender. You assemble creatures from a library of sculpted parts on a bendable spine. The body, limbs and every skin part fuse into one sculpted surface. The creature rigs itself, animates procedurally, and exports to glTF/GLB, FBX, USD or OBJ, so any engine can use it. An AI loop builds a creature from a reference image within the library's style.
 
-![Solifuge in its neutral stance](preview/arachnid.jpg)
+![Examples](preview/gallery.png)
 
-[Neutral turntable](preview/arachnid-turntable.mp4) · [Sensing idle](preview/arachnid-idle.mp4) · [Walking clip](preview/arachnid-walk.mp4) · [Rigged GLB](godot/arachnid.glb) · [Recipe](models/arachnid.json)
+![Part library](preview/parts.png)
 
-The supplied dorsal-oblique photograph shows a solifuge with forward-facing paired chelicerae, long pedipalps and a visibly segmented abdomen. The abdomen occupies roughly half the length from jaw tip to rump in the image. The neutral model preserves this proportion and separates the front appendages so their functions read during motion. Surface heights, hidden joints and the mirrored far side are estimates. Model coordinates use Blender units, +Z up and −Y forward.
+## Install
 
-The studio variant uses four pairs of walking legs. All eight soles meet the floor in neutral and idle. The shorter pedipalps sweep in front of the jaws. During the crawl, one foot lifts at a time and the other seven hold their footprints. Two strides cover 1.30 model units.
+**Into Blender (the editor).** Requires Blender 4.2 or later with `scipy` available to Blender's Python.
 
-### Procedural locomotion
+```sh
+<blender python> -m pip install scipy          # once
+blender -b -P tools/install.py                  # installs the add-on + app template
+blender --app-template PolyForge                # opens Blender as PolyForge
+```
 
-PolyForge assigns each walking foot a phase from its socket position. During stance the sole keeps one ground-space footprint. During swing it follows an arc to the next footprint. A two-link inverse kinematics solver bends the leg in its rest plane while the hip moves. The same planner supplies the minotaur, bull and jointed-appendage generator. Each rig supplies its own joint bindings, reach and distal articulation. This follows the footprint and pose-goal approach described in section 4.2 of the Spore animation paper. [Hecker et al., SIGGRAPH 2008](https://chrishecker.com/images/c/cb/Sporeanim-siggraph08.pdf)
+The editor lives in the 3D viewport sidebar, under the **PolyForge** tab.
 
-| Walking legs | Level-ground movement |
+**Headless (CLI, tests, AI loop).** Uses Blender as a Python module:
+
+```sh
+pip install bpy numpy scipy pillow
+python3 pf.py --help
+```
+
+Any command also runs through a regular Blender: `blender -b -P pf.py -- <command>`.
+
+## Using the editor
+
+1. **Creature panel:** start a new creature or open an example. **Preview** rebuilds fast. **Sculpt** fuses the skin into one remeshed surface, which is what exports use. Spine edits keep the floor fixed so the legs don't jump. Leg edits re-find the floor automatically, and **Reground** re-finds it on demand.
+2. **Parts panel.** Pick a shape and click anywhere on the body. A lateral drop creates a reflected twin. A drop within 12 degrees of the midline creates one centered instance. Tails are flexible joint chains and can be placed in the center.
+3. **Selection panel.** Use **Isolate shape** to inspect one part or limb and edit its controls. Limbs have editable joint offsets and radii. Switch back to the creature to change instance scale, rotation, or placement. **Move to surface** picks a new location for the selected instance and its twin.
+4. **Spine and paint.** Edit body rings or paint the assembled creature. A saved body attachment records two ring IDs and its fractional position between them. A distant edit to the spine preserves that binding. Widening its own strip carries the part outward.
+5. **Animate & export panel:** bake idle, walk, run, roar, wave and hop, play them, and export GLB, FBX, USDZ or OBJ.
+
+Every edit goes through the recipe, so Blender's undo covers it.
+
+## How it works
+
+- **Recipe:** a small JSON file holding the spine, limbs, parts, parameters and paint (`examples/*.json`). The editor and the AI change it through the same operations (`polyforge/ops.py`). `polyforge/recipe.py` clamps every value into the library's style ranges and enforces the placement rules.
+- **Parts** (`polyforge/parts/`) are modelled in code with the sculpt kit (`polyforge/kit.py`): smooth PCHIP lofts and dense ovals, boolean carving, then a voxel remesh, smoothing and decimation per paint region (`polyforge/finish.py`). Thin plates use subdivision instead. Parameters are exact, because each part is rebuilt from its parameters and cached.
+- **Builder** (`polyforge/builder.py`):
+  - Sweeps the spine body and smooth limbs, places the parts, and voxel-remeshes the body, limbs and all skin-slot regions into one surface. Detail parts (eyes, horns, hooves, teeth) stay as separate finished meshes.
+  - Builds the armature (spine chain, limb chains, part and jaw bones) and computes skin weights that blend across joints and where limbs meet the body.
+  - Paints vertex colours (patterns, belly) and sets one material per paint slot.
+- **Animation** (`polyforge/animator.py`):
+  - Footprint gait planning for 0 to 8 or more legs, with FABRIK leg IK and a standing clearance chosen once for each walk.
+  - Spine, tail and neck motion, plus part behaviours: eyes look and blink, jaws open, ears flop, wings flap.
+  - Role-based actions (roar, wave, hop) that work on any creature.
+  - `polyforge/baker.py` bakes each clip to an action on its own NLA track, so every exporter carries all clips.
+
+## Commands
+
+```sh
+python3 pf.py review examples/bull.json --out out/bull-review
+# Inspect the four images, then record your observations.
+python3 pf.py review examples/bull.json --out out/bull-review --accept "$REVIEW_NOTE"
+python3 pf.py build examples/bull.json --review out/bull-review/review.json --out out/bull --formats glb,fbx,usdz,blend
+python3 pf.py render examples/bull.json --out out/bull --views front,side,threequarter [--engine cycles]
+python3 pf.py animate examples/bull.json --review out/bull-review/review.json --clip walk --out out/bull_walk.mp4
+python3 pf.py turntable examples/bull.json --review out/bull-review/review.json --out out/bull_turntable.mp4
+python3 pf.py gallery examples/*.json --out out/gallery.png
+python3 pf.py library --out out/parts       # each part as its own GLB, for engines that assemble parts themselves
+python3 pf.py describe                       # family index, placement rules and operations
+python3 pf.py describe --part horn_sweep     # controls and ranges for one family
+python3 pf.py test [--fast]
+
+# Image -> creature (needs ANTHROPIC_API_KEY)
+pip install anthropic
+python3 ai/forge.py photo.png --out runs/photo
+python3 ai/forge.py photo.png --out runs/x --init examples/bull.json --no-llm --accept "checked the review views"   # numeric fit only; --accept lets it export
+python3 ai/benchmark.py                      # known-recipe numeric fit, no API key needed
+python3 ai/benchmark.py --reference held-out.png --out runs/held-out
+```
+
+## Edit one shape
+
+A shape file holds local geometry. A surface part uses `part` and `params`. A limb uses `segments`, `radii`, `tip` and `tip_params`; set `motion` to `tail` for a flexible chain. Fit belongs to the instance. Recipes may define local templates under `shapes` and instantiate one by name, as in `examples/spider.json`. Normalization expands them to independently editable instances.
+
+```sh
+python3 pf.py part examples/bull.json --uid fore --out out/fore
+# Edit the local joint offsets or radii in out/fore/shape.json.
+python3 pf.py part out/fore/shape.json --out out/fore-review
+python3 pf.py attach examples/bull.json out/fore-review/shape.json --uid extra_leg --u .37 --theta -40 --out out/six-legged.json
+```
+
+Version 1 recipes migrate on load with their original placement. Version 2 saves the ring binding and a derived `u` for the slider. To slide an existing instance, use `set_limb` or `set_part` with a new `u`. To refit the creation floor after a limb edit, apply `{"op":"reground"}`.
+
+Use `horn_sweep` for an unbranched horn and `ear_leaf` for round, pointed, long, or drooping ears. The bull and minotaur use both families. Existing recipes can still load the older specialized shapes. A branched antler and an articulated pincer retain their own construction.
+
+The image loop defaults to Claude Haiku and accepts a model override through `POLYFORGE_MODEL`. It starts with a compact family index. For an identified feature, it requests that family's controls and critiques isolated views before the assembly fit. `--part-rounds` sets the local revision budget. The held-out benchmark writes first-pass validity, edit turns, renders and token usage. Review the rendered views against the input image to record artistic acceptance.
+
+## Review assembly before animation
+
+Shape the torso with the spine. Each leg owns its joint chain and foot, and each tail owns its flexible chain and attached ornaments. The leg solver poses the torso first, selects standing clearance from leg reach and stride, then solves the limbs. The legless gait retains spine undulation. Walk previews use a stationary camera with world travel.
+
+In Blender, use **Render assembly review views** in **Animate & export**. Inspect the front, side, three-quarter and head views against the reference or intended anatomy, then accept the assembly. Check the eye relative to the jaw and horn roots, wing roots relative to the shoulders, foot placement and tail attachment wherever applicable. Recipe edits invalidate the previous acceptance.
+
+For the CLI, generate and inspect the views, then record the observed result. Pass the resulting review file to build, animate or turntable commands. Commands also discover a review.json beside the input recipe. Static modeling and inspection remain available while review is pending.
+
+```sh
+python3 pf.py review examples/dragon.json --out out/dragon-review
+python3 pf.py review examples/dragon.json --out out/dragon-review --accept "Eyes ahead of horn roots; both wings seated at shoulders"
+python3 pf.py animate examples/dragon.json --review out/dragon-review/review.json --clip walk --out out/dragon-walk.mp4
+```
+
+## Verify the exported walk
+
+```sh
+python3 pf.py build examples/spider.json --review out/spider-review/review.json --out out/spider --formats glb --contacts
+blender -b --python-exit-code 1 -P tools/tests/export_contact.py -- out/spider/spider.glb
+```
+
+The build report supplies stance timing and travel for the in-place clip. The Blender check locates rigidly weighted sole vertices in the imported mesh, measures their height and world-space drift during stance, and requires each foot to lift. Run the same commands with the bull and minotaur recipes. The regular test suite also checks the bull.
+
+## Layout
+
+| Path | What it is |
 | --- | --- |
-| 0 | The belly rests on the floor. A lateral wave travels along the spine as the body advances. |
-| 1 | A centered leg compresses, pushes off, clears the floor in flight and lands at the next footprint. |
-| 2 | Feet alternate with a short interval of double support. The minotaur keeps its in-place step. |
-| 3–8 | One foot swings at a time. The other feet hold their footprints. Odd-count presets add a centered leg to the paired sockets. |
-
-The GLB stores both the clips and the gait bindings. Godot uses the clip for timing and secondary motion, then solves walking legs or the grounded spine each frame. Use **Open creature GLB** in the studio to load a generated rig. Other viewers can play the baked clips. The solver uses a level floor and straight travel.
-
-[Compare all nine leg counts](preview/leg-counts.mp4)
-
-### Generate a creature from a recipe
-
-A lightweight agent can select the solifuge preset and supply a few numeric controls. With Blender 4.3.2 (including NumPy and SciPy), Python 3 and FFmpeg on PATH, this command builds the mesh and rig, bakes idle and walk, reimports the GLB for contact checks, then writes the resolved recipe, GLB, neutral PNG, turntable, sensing idle and walking video to the output folder.
-
-```sh
-python tools/generate.py --preset solifuge --out review/solifuge
-```
-
-Pass `--legs 0` through `--legs 8` to select a preset anatomy. The glide and hop presets omit the sensory appendages so their support is visible. Custom recipes retain their explicitly declared appendages.
-
-Build, reimport and test all counts with `python tools/tests/leg_counts.py --out review/gaits`. This also opens all nine GLBs in Godot, perturbs the chains and checks the recovered poses.
-
-Run `python tools/generate.py --describe` to get the default recipe, role choices and numeric bounds as JSON without opening Blender. Use `--shape abdomen_width=1.12` to adjust a preset. Use `--recipe models/arachnid.json` in place of `--preset` to edit the assembly. The optional `--oidn /path/to/oidnDenoise` filters the rendered frames. The checked-in example uses the supplied photo as a human-interpreted reference. The automated pipeline begins with the preset or JSON.
-
-| Recipe field | Effect |
-| --- | --- |
-| `shape` | Abdomen length, abdomen width and jaw width each accept 0.75–1.25. |
-| `mounts[].id` | A unique identifier for the paired joint chains. |
-| `role` | `foot` receives a contact pad, claws and foot-planting IK. `feeler` and `palp` use the same limb builder with a different taper, tip and hovering motion. |
-| `socket_y` | Front-to-back position along the prosoma, from −1.05 to 0.18. The shared placement function reflects the complete part and joint chain. |
-| `sweep`, `reach` | Angle from the lateral axis in degrees (−78 to 65) and horizontal reach in model units (1.4–2.7). Negative sweep points forward. |
-| `center` | Set to `true` on a foot mount for one sagittal leg. Paired mounts mirror automatically. The gait planner sorts actual socket positions. |
-
-To update only the studio asset, run `blender -b --python-exit-code 1 -P tools/build.py -- --recipe models/arachnid.json`. The studio exposes abdomen width, abdomen depth and jaw breadth as live blend shapes.
-
-## Bull
-
-An unarmored adult bull built from a fresh recipe. Its bovine head, swept horns, split hooves and tufted tail are the same catalog parts used by the minotaur. The `heavy_quadruped` body supplies a horizontal torso with paired shoulder and hip sockets. Each socket accepts one `ungulate_leg` part. The recipe selects the fore or hind profile and can set fullness from 0 to 1. A continuous surface connects brisket, belly and rump.
-
-![Neutral bull](preview/bull.jpg)
-
-[Earlier foreleg shape comparison](preview/bull-forelegs.jpg) · [Neutral turntable](preview/bull-turntable.mp4) · [Side-view walk](preview/bull-walk.mp4) · [Rigged bull](godot/bull.glb) · [Bull recipe](models/bull.json)
-
-At build time each socket constructs its leg and shared hoof once. The attachment mirrors the assembled geometry and joint positions across the body. An edit to the shoulder attachment updates both forelegs on rebuild. Each side gets its own bones in the 28-joint skeleton. During its walk the bull advances 2.08 model units over two strides. Each hoof bears weight for 80% of its cycle and lifts in turn. Both the idle and walk are baked into the GLB.
-
-## Minotaur
-
-A runnable Godot character study of the far-right minotaur in the supplied lineup. The model opens in a neutral stance, uses one matte gray material, and has a 24-joint skeleton.
-
-![Neutral minotaur](preview/minotaur.jpg)
-
-[Earlier rear mane detail](preview/minotaur-mane.jpg) · [Earlier rear shape comparison](preview/minotaur-back.jpg) · [Step in place from behind](preview/minotaur-motion.mp4) · [Neutral turntable](preview/minotaur-turntable.mp4) · [Rigged 3D model](godot/minotaur.glb)
-
-## Place one part and reuse it
-
-The builder uses the attachment root to choose how many instances to place. A socket on the host’s X=0 plane emits one assembly. A lateral socket emits the authored assembly and its reflection, with corrected face winding and matching joint positions. The mesh can cross the midline freely. The same rule places horns, ears, eyes, limbs and their attached details on both characters. Sculpted locks within a mane and the two toes within a cloven hoof travel with their owning part.
-
-Both recipes mount one tufted tail at the center of the pelvis. Its shaft blends across three bones and the tuft follows the tip. Idle and walk apply a delayed bend along the chain. This is baked animation. To try a pair, change the recipe’s `"socket_x": {"tail": 0.0}` to `"socket_x": {"tail": 0.20}` and rebuild. Both tails receive their own skin weights and animation. The same optional map accepts `horn`, `ear`, and `eye` in head-local units. Tail offsets use body-local units. Existing recipes can omit the map.
-
-## Open the studio
-
-Import `godot/project.godot` in Godot 4.3 and press **F6** with the studio scene open, or **F5** to launch the project. Choose **Minotaur**, **Bull** or **Solifuge** in the character menu. Drag the viewport to orbit, scroll to zoom, and use the shape sliders for the selected character. Select **Idle** for any character, **Walk forward** for the bull or solifuge, or **Step in place** for the minotaur. **Neutral** restores the original stance. **Save proportions** remembers the slider values for that character on that computer.
-
-The minotaur GLB also opens independently in Blender or another glTF viewer. It carries the neutral mesh, shape controls, and baked idle and step-in-place clips (the latter uses the animation key `Walk`). The Godot studio stores edits locally. To bake a different base model for distribution, edit the JSON recipe and rebuild it.
-
-## How this reference is fitted
-
-The anatomical interpretation of the supplied image is in `models/reference.json` and `models/minotaur.json`. The fitting tool uses the annotated horn windows to detect the visible tips and outside contours, calibrates their size from eye height above the ground, and solves for the corresponding catalog horn width and rise. The source image stays local. The exposed muzzle, torso, arms, hooves, and tail are shaped in the procedural builder. Hidden anatomy is estimated. The bull uses an authored recipe. Image fitting currently supports the annotated minotaur horns.
-
-With Python, NumPy, SciPy, and Pillow installed:
-
-```sh
-python tools/fit_reference.py path/to/lineup.png --output models/minotaur.json
-```
-
-## Generate the rig and previews
-
-The generator was run with Blender 4.3.2, NumPy, and SciPy. The recipe selects the core parts and sets horn span and rise, shoulder width, chest depth, and muzzle length. The builder creates the anatomy, binds the skeleton, adds shape controls, and solves and bakes the gait. The minotaur’s two-second step cycle keeps each hoof fixed in world space for 60% of its cycle. Both feet briefly share the load as the pelvis shifts toward the next support. The ribs turn against the pelvis, followed by the arms, head and tail. The idle breath originates in the upper body.
-
-```sh
-blender -b --python-exit-code 1 -P tools/build.py
-blender -b --python-exit-code 1 -P tools/build.py -- --recipe models/bull.json
-blender -b --python-exit-code 1 -P tools/render.py -- godot/minotaur.glb review --clip still
-```
-
-For the editable Blender scene, pass `-- --review review` to the build script. Render accepts `--clip turn`, `--clip idle` or `--clip walk` for PNG sequences. The review uses independent videos for the neutral orbit and the stationary step. The step preview uses `--azimuth 146` to show how the back and hips deform under load. The full renderer defaults to 64 samples per minotaur motion frame and 36 per bull motion frame. The included motion previews use `--samples 10 --frame-step 2` with denoising, encoded at 12 fps for the walks and 9 fps for the turntables. The bull walk uses a fixed side camera. Supply `--oidn /path/to/oidnDenoise` to apply Open Image Denoise before the display transform. The preview images come from reimporting the exported GLB.
-
-To check the imported sole contacts, run `godot --headless --editor --import --path godot`, then `godot --headless --path godot --script "$PWD/tools/tests/ground_contact.gd"` from the repository root. The check samples the soles through idle and both sides of the step, including between baked keyframes.
-
-To verify centered and bilateral placement on rotated and translated sockets, run `blender -b --python-exit-code 1 -P tools/tests/paired_attachment.py`.
-
-For the bull, run `godot --headless --path godot --script "$PWD/tools/tests/bull_walk.gd"`. This checks all four soles, forward displacement, shape controls and character switching. The Blender check `blender -b --python-exit-code 1 -P tools/tests/back_deformation.py -- godot/bull.glb` measures how the flank stretches across the walk.
-
-To verify the exported tail hierarchy, skin weights and local motion in both clips, run
-`blender -b --python-exit-code 1 -P tools/tests/tail_rig.py -- godot/bull.glb`.
-Use the same command with the minotaur GLB, or add `--paired` for a lateral-tail build.
-
-The design plan and research are in [PLAN.md](PLAN.md).
+| `polyforge/` | The Blender add-on: kit, parts, recipe, placement, builder, animator, baker, export, render, UI, CLI, tests |
+| `app_template/` | Starts Blender as PolyForge |
+| `tools/install.py` | Installs the add-on and app template into a Blender install |
+| `pf.py` | Command-line entry point |
+| `ai/` | Image-to-recipe loop (Claude + numeric fitting), scoring, benchmark |
+| `examples/` | Example recipes |
+| `library/thumbs/` | Part thumbnails used by the editor palette |

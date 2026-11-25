@@ -10,17 +10,21 @@
   "image": {
     "file_page": "https://commons.wikimedia.org/wiki/File:Moon_Jellies_(Aurelia_aurita)_(7153399193).jpg",
     "direct_url": "https://upload.wikimedia.org/wikipedia/commons/c/c4/Moon_Jellies_%28Aurelia_aurita%29_%287153399193%29.jpg",
-    "author": "Cliff from Arlington, Virginia, USA (Flickr user; per the Commons file page)",
+    "author": "Cliff from Arlington, Virginia, USA",
     "license": "CC BY 2.0 (Attribution 2.0 Generic), per the Commons file page",
     "species_shown": "Aurelia aurita",
-    "view": "unknown (not viewed; image download returned HTTP 429 from upload.wikimedia.org)",
-    "image_viewed": false
+    "view": "Oblique, from below and to the side, in a crowded aquarium tank with dark blue background. Most bells are seen from the subumbrella (underside), so the four horseshoe gonads show as a four-lobed clover in the centre; a few bells are seen edge-on, showing the dome profile. The parsed bell is the clearest disc in the centre-lower part of the frame.",
+    "image_viewed": true
   },
-  "image_observations": "NOT COMPLETED. The Commons file page was fetched and its licence (CC BY 2.0) and author were verified there, and the direct image URL was taken from the page. The image itself could not be downloaded because upload.wikimedia.org returned HTTP 429 (rate limiting) for every attempt, including retries after waits, and the Commons API also returned rate-limit errors. The bounding box, part positions and flexion values were therefore NOT revised from a photo and still reflect the first-pass estimates.",
+  "image_observations": "The photo shows many Aurelia aurita (moon jellyfish) in an aquarium, identified by the four-lobed gonads seen through the translucent bell. The clearest bell is seen from below at an oblique angle, so its outline is an ellipse about 1.9 times wider than tall, and edge-on bells show a dome about 0.3 to 0.4 of the bell diameter in height. Changes: bounding box height raised from 0.10 to 0.11 m and dome height from 0.07 to 0.08 m; margin and rhopalia y raised to 0.27 and gonad y to 0.41 to match the new frame; gonad cluster length raised to 0.07 m, since the four lobes span about half the bell diameter. Frilly oral arms and tentacle lengths were kept, because they are not resolved at this scale. Confidence raised from 0.4 to 0.55.",
   "physical_parsing": {
-    "bounding_box_m": {"width_x": 0.25, "height_y": 0.10, "length_z": 0.25},
-    "approx_volume_m3": 0.0023,
-    "volume_method": "Bell approximated as a hemi-ellipsoid (2/3 * pi * r^2 * h) with r = 0.125 m and h = 0.07 m (dome height above the margin). Upper-bound estimate; the bell is mostly water and the tentacles/oral arms are excluded. The full bounding box is 0.25 x 0.10 x 0.25 m = 0.00625 m^3.",
+    "bounding_box_m": {
+      "width_x": 0.25,
+      "height_y": 0.11,
+      "length_z": 0.25
+    },
+    "approx_volume_m3": 0.0026,
+    "volume_method": "Bell approximated as a hemi-ellipsoid (2/3 * pi * r^2 * h) with r = 0.125 m and h = 0.08 m (dome height above the margin, from the photo). Upper-bound estimate; the bell is mostly water and the tentacles/oral arms are excluded. The full bounding box is 0.25 x 0.11 x 0.25 m = 0.006875 m^3.",
     "shape_class": "Oblate hemi-ellipsoid (flattened dome / umbrella), radially symmetric, swims bell-first with +Y toward the apex",
     "core": {
       "description": "Gelatinous bell (umbrella) of mesoglea, mostly water, with a subumbrellar cavity beneath. The central manubrium hangs from the subumbrellar floor. The bell is the body; it is not a rigid skeleton.",
@@ -37,13 +41,38 @@
       "symmetry": "radial",
       "count": 1,
       "order": "continuous annulus",
-      "attach_pos": [0, 0.3, 0],
+      "attach_pos": [
+        0,
+        0.27,
+        0
+      ],
       "joints": [
-        {"name": "subumbrellar_margin_ring", "pos": [0, 0.3, 0], "type": "hydrostatic", "pivot_axes": ["x", "y", "z"], "range_deg": [0, 0]}
+        {
+          "name": "subumbrellar_margin_ring",
+          "pos": [
+            0,
+            0.27,
+            0
+          ],
+          "type": "hydrostatic",
+          "pivot_axes": [
+            "x",
+            "y",
+            "z"
+          ],
+          "range_deg": [
+            0,
+            0
+          ]
+        }
       ],
       "root_radius_m": 0.125,
       "length_m": 0.785,
-      "penetration": {"depth_m": 0.005, "fraction_of_root_radius": 0.04, "overlap_region": "Bell margin rim, a circumferential band in the outer mesoglea; the coronal muscle is a thin ring in the subumbrella"},
+      "penetration": {
+        "depth_m": 0.005,
+        "fraction_of_root_radius": 0.04,
+        "overlap_region": "Bell margin rim, a circumferential band in the outer mesoglea; the coronal muscle is a thin ring in the subumbrella"
+      },
       "library_hint": null,
       "notes": "The coronal muscle contracts the bell margin to expel water and drive pulsation (jet propulsion). It is an annular ring, not a limb. length_m is the ring circumference (2 pi r). No PolyForge equivalent. Contraction is continuous, not hinged. Bell pulsation is a hydrostatic mechanism."
     },
@@ -54,14 +83,56 @@
       "symmetry": "radial",
       "count": 80,
       "order": "ring around bell margin",
-      "attach_pos": [0.48, 0.3, 0],
+      "attach_pos": [
+        0.48,
+        0.27,
+        0
+      ],
       "joints": [
-        {"name": "margin_root", "pos": [0.48, 0.3, 0], "type": "fixed", "pivot_axes": ["x", "y", "z"], "range_deg": [0, 0]},
-        {"name": "tentacle_mid", "pos": [0.46, 0.15, 0], "type": "hydrostatic", "pivot_axes": ["x", "y", "z"], "range_deg": [0, 0]}
+        {
+          "name": "margin_root",
+          "pos": [
+            0.48,
+            0.27,
+            0
+          ],
+          "type": "fixed",
+          "pivot_axes": [
+            "x",
+            "y",
+            "z"
+          ],
+          "range_deg": [
+            0,
+            0
+          ]
+        },
+        {
+          "name": "tentacle_mid",
+          "pos": [
+            0.46,
+            0.14,
+            0
+          ],
+          "type": "hydrostatic",
+          "pivot_axes": [
+            "x",
+            "y",
+            "z"
+          ],
+          "range_deg": [
+            0,
+            0
+          ]
+        }
       ],
       "root_radius_m": 0.0008,
       "length_m": 0.03,
-      "penetration": {"depth_m": 0.002, "fraction_of_root_radius": 2.5, "overlap_region": "Bell margin rim, where fine tentacles root into the mesoglea"},
+      "penetration": {
+        "depth_m": 0.002,
+        "fraction_of_root_radius": 2.5,
+        "overlap_region": "Bell margin rim, where fine tentacles root into the mesoglea"
+      },
       "library_hint": "hand_tentacle",
       "notes": "Numerous short, fine tentacles (roughly 80 to 100 on an adult, count approximate and not verified) bearing nematocysts that catch plankton. Feeding category, since their function is prey capture. Their individual size is tiny, so they are a texture-level detail. Penetration is 2 mm into the bell margin; the depth is large relative to the root radius because the root is very thin."
     },
@@ -72,14 +143,56 @@
       "symmetry": "radial",
       "count": 4,
       "order": "4-fold, around the manubrium",
-      "attach_pos": [0, 0.5, 0],
+      "attach_pos": [
+        0,
+        0.5,
+        0
+      ],
       "joints": [
-        {"name": "arm_root_at_manubrium", "pos": [0, 0.5, 0], "type": "hydrostatic", "pivot_axes": ["x", "y", "z"], "range_deg": [0, 0]},
-        {"name": "arm_mid", "pos": [0.05, 0.3, 0], "type": "hydrostatic", "pivot_axes": ["x", "y", "z"], "range_deg": [0, 0]}
+        {
+          "name": "arm_root_at_manubrium",
+          "pos": [
+            0,
+            0.5,
+            0
+          ],
+          "type": "hydrostatic",
+          "pivot_axes": [
+            "x",
+            "y",
+            "z"
+          ],
+          "range_deg": [
+            0,
+            0
+          ]
+        },
+        {
+          "name": "arm_mid",
+          "pos": [
+            0.05,
+            0.3,
+            0
+          ],
+          "type": "hydrostatic",
+          "pivot_axes": [
+            "x",
+            "y",
+            "z"
+          ],
+          "range_deg": [
+            0,
+            0
+          ]
+        }
       ],
       "root_radius_m": 0.006,
       "length_m": 0.04,
-      "penetration": {"depth_m": 0.01, "fraction_of_root_radius": 1.67, "overlap_region": "Manubrium base and the central subumbrellar floor, where the arms join the manubrium"},
+      "penetration": {
+        "depth_m": 0.01,
+        "fraction_of_root_radius": 1.67,
+        "overlap_region": "Manubrium base and the central subumbrellar floor, where the arms join the manubrium"
+      },
       "library_hint": "hand_tentacle",
       "notes": "Four short, frilly, ruffled oral arms hang from the manubrium and carry food to the mouth. They are flexible and have no rigid joints. Feeding category, since they serve ingestion. Relative to the bell they are small and do not extend far below the margin. length_m is an estimate."
     },
@@ -89,13 +202,38 @@
       "category": "feeding",
       "symmetry": "centre",
       "count": 1,
-      "attach_pos": [0, 0.5, 0],
+      "attach_pos": [
+        0,
+        0.5,
+        0
+      ],
       "joints": [
-        {"name": "manubrium_root", "pos": [0, 0.5, 0], "type": "fixed", "pivot_axes": ["x", "y", "z"], "range_deg": [0, 0]}
+        {
+          "name": "manubrium_root",
+          "pos": [
+            0,
+            0.5,
+            0
+          ],
+          "type": "fixed",
+          "pivot_axes": [
+            "x",
+            "y",
+            "z"
+          ],
+          "range_deg": [
+            0,
+            0
+          ]
+        }
       ],
       "root_radius_m": 0.012,
       "length_m": 0.02,
-      "penetration": {"depth_m": 0.02, "fraction_of_root_radius": 1.67, "overlap_region": "Central subumbrellar cavity, the apex of the core bell"},
+      "penetration": {
+        "depth_m": 0.02,
+        "fraction_of_root_radius": 1.67,
+        "overlap_region": "Central subumbrellar cavity, the apex of the core bell"
+      },
       "library_hint": null,
       "notes": "Central, four-lobed mouth at the tip of the manubrium, a short tube hanging from the subumbrella. Axial and single, so symmetry is centre. No PolyForge equivalent for a mouth on a radial body; mouth_snout is the nearest but does not fit."
     },
@@ -106,13 +244,38 @@
       "symmetry": "radial",
       "count": 8,
       "order": "8-fold (4 pairs of 2 around the margin)",
-      "attach_pos": [0.45, 0.3, 0],
+      "attach_pos": [
+        0.45,
+        0.27,
+        0
+      ],
       "joints": [
-        {"name": "rhopalium_niche", "pos": [0.45, 0.3, 0], "type": "fixed", "pivot_axes": ["x", "y", "z"], "range_deg": [0, 0]}
+        {
+          "name": "rhopalium_niche",
+          "pos": [
+            0.45,
+            0.27,
+            0
+          ],
+          "type": "fixed",
+          "pivot_axes": [
+            "x",
+            "y",
+            "z"
+          ],
+          "range_deg": [
+            0,
+            0
+          ]
+        }
       ],
       "root_radius_m": 0.003,
       "length_m": 0.005,
-      "penetration": {"depth_m": 0.002, "fraction_of_root_radius": 0.67, "overlap_region": "Rhopalial niche at the bell margin rim"},
+      "penetration": {
+        "depth_m": 0.002,
+        "fraction_of_root_radius": 0.67,
+        "overlap_region": "Rhopalial niche at the bell margin rim"
+      },
       "library_hint": null,
       "notes": "Small club-shaped marginal sense organs with statoliths for balance and light-sensing eyespots. They sit in niches at the margin. Eight in Aurelia (count from general knowledge, not verified in session). Fixed to the margin. Sensory category. No direct PolyForge equivalent (eye_bead is the closest sensory shape but does not match)."
     },
@@ -123,15 +286,40 @@
       "symmetry": "radial",
       "count": 4,
       "order": "4-fold",
-      "attach_pos": [0.25, 0.45, 0],
+      "attach_pos": [
+        0.25,
+        0.41,
+        0
+      ],
       "joints": [
-        {"name": "gonad_pocket", "pos": [0.25, 0.45, 0], "type": "fixed", "pivot_axes": ["x", "y", "z"], "range_deg": [0, 0]}
+        {
+          "name": "gonad_pocket",
+          "pos": [
+            0.25,
+            0.41,
+            0
+          ],
+          "type": "fixed",
+          "pivot_axes": [
+            "x",
+            "y",
+            "z"
+          ],
+          "range_deg": [
+            0,
+            0
+          ]
+        }
       ],
       "root_radius_m": 0.015,
-      "length_m": 0.06,
-      "penetration": {"depth_m": 0.003, "fraction_of_root_radius": 0.2, "overlap_region": "Subumbrellar floor, in four horseshoe-shaped pockets"},
+      "length_m": 0.07,
+      "penetration": {
+        "depth_m": 0.003,
+        "fraction_of_root_radius": 0.2,
+        "overlap_region": "Subumbrellar floor, in four horseshoe-shaped pockets"
+      },
       "library_hint": null,
-      "notes": "Four horseshoe-shaped reproductive gonads visible through the translucent bell, often coloured. Reproduction does not fit any of the five categories. They are placed under aesthetics as non-functional for locomotion, sensing, feeding or manipulation, and this is a judgement call. Flag for the schema owner."
+      "notes": "Four horseshoe-shaped reproductive gonads visible through the translucent bell, often coloured. Reproduction does not fit any of the five categories. They are placed under aesthetics as non-functional for locomotion, sensing, feeding or manipulation, and this is a judgement call. Flag for the schema owner. Photo check: the four lobes span about half the bell diameter, so length_m was raised from 0.06 to 0.07 m."
     },
     {
       "id": "radial_canals",
@@ -140,35 +328,87 @@
       "symmetry": "radial",
       "count": 4,
       "order": "4-fold gastric pouches, with radial canals extending to the margin",
-      "attach_pos": [0, 0.6, 0],
+      "attach_pos": [
+        0,
+        0.6,
+        0
+      ],
       "joints": [
-        {"name": "gastric_pouch_root", "pos": [0, 0.6, 0], "type": "fixed", "pivot_axes": ["x", "y", "z"], "range_deg": [0, 0]}
+        {
+          "name": "gastric_pouch_root",
+          "pos": [
+            0,
+            0.6,
+            0
+          ],
+          "type": "fixed",
+          "pivot_axes": [
+            "x",
+            "y",
+            "z"
+          ],
+          "range_deg": [
+            0,
+            0
+          ]
+        }
       ],
       "root_radius_m": 0.002,
       "length_m": 0.1,
-      "penetration": {"depth_m": 0, "fraction_of_root_radius": 0, "overlap_region": "Fully internal to the core bell; no surface mesh needed"},
+      "penetration": {
+        "depth_m": 0,
+        "fraction_of_root_radius": 0,
+        "overlap_region": "Fully internal to the core bell; no surface mesh needed"
+      },
       "library_hint": null,
       "notes": "Internal digestive network (gastric pouches and radial canals) that distributes food through the bell. It is visible only as faint lines through the translucent bell. It is listed for completeness and has no external mesh. Feeding category, since it is digestive."
     }
   ],
-  "category_summary": {"locomotion": 1, "sensory": 1, "feeding": 4, "manipulation": 0, "aesthetics": 1},
+  "category_summary": {
+    "locomotion": 1,
+    "sensory": 1,
+    "feeding": 4,
+    "manipulation": 0,
+    "aesthetics": 1
+  },
   "constraints": {
     "symmetry": "Radial (4-fold and 8-fold) about the vertical +Y axis, not bilateral. PolyForge's bilateral spine sweep cannot express this directly.",
     "gait": "Bell pulsation (jet propulsion). The coronal muscle contracts the margin rhythmically; appendages trail passively. Hydrostatic, with no rigid joints.",
     "other": [
       "Apply the normalized frame as given: +Y is the swimming direction (bell apex), x and z span the bell, y in [0,1] with 0 at tentacle tips.",
       "Bell-to-appendage attachments are soft, so use hydrostatic joints. Rigid joints would misrepresent the body.",
-      "Coordinates assume a bell 0.25 m across and 0.10 m tall including tentacles. Tentacle and arm lengths are estimates."
+      "Coordinates assume a bell 0.25 m across and 0.11 m tall including tentacles. Tentacle and arm lengths are estimates."
     ]
   },
   "library_gaps": [
-    {"feature": "Radial (4-fold and 8-fold) symmetry", "why": "PolyForge body is a bilateral spine sweep. Parts cannot be placed around a central axis without a radial-array primitive."},
-    {"feature": "Translucent gelatinous bell as the core", "why": "The core is a flattened dome of mesoglea, not a bilateral spine. No library shape matches an umbrella-shaped core."},
-    {"feature": "Annular coronal muscle ring", "why": "The contractile muscle is a continuous ring around the bell margin, not a discrete limb or part."},
-    {"feature": "Many small marginal tentacles (about 80 to 100)", "why": "A dense ring of fine tentacles needs an instancing or array primitive. Individual parts are too small to model one by one."},
-    {"feature": "Reproductive gonads", "why": "None of the five categories is reproductive, so gonads are forced into aesthetics."},
-    {"feature": "Rhopalia (sense club with statocysts)", "why": "No PolyForge sensory part is a marginal club on a rim. eye_bead is the nearest and does not fit."},
-    {"feature": "Manubrium mouth on a radial body", "why": "mouth_snout and mouth_jaws assume a bilateral head with a front face, not a central mouth on an underside."}
+    {
+      "feature": "Radial (4-fold and 8-fold) symmetry",
+      "why": "PolyForge body is a bilateral spine sweep. Parts cannot be placed around a central axis without a radial-array primitive."
+    },
+    {
+      "feature": "Translucent gelatinous bell as the core",
+      "why": "The core is a flattened dome of mesoglea, not a bilateral spine. No library shape matches an umbrella-shaped core."
+    },
+    {
+      "feature": "Annular coronal muscle ring",
+      "why": "The contractile muscle is a continuous ring around the bell margin, not a discrete limb or part."
+    },
+    {
+      "feature": "Many small marginal tentacles (about 80 to 100)",
+      "why": "A dense ring of fine tentacles needs an instancing or array primitive. Individual parts are too small to model one by one."
+    },
+    {
+      "feature": "Reproductive gonads",
+      "why": "None of the five categories is reproductive, so gonads are forced into aesthetics."
+    },
+    {
+      "feature": "Rhopalia (sense club with statocysts)",
+      "why": "No PolyForge sensory part is a marginal club on a rim. eye_bead is the nearest and does not fit."
+    },
+    {
+      "feature": "Manubrium mouth on a radial body",
+      "why": "mouth_snout and mouth_jaws assume a bilateral head with a front face, not a central mouth on an underside."
+    }
   ],
   "sources": [
     "Search result list for Aurelia aurita (WebSearch, this session): https://commons.wikimedia.org/wiki/Category:Aurelia_aurita (listed, not opened, Commons unreachable)",
@@ -176,5 +416,5 @@
     "Search result: https://www.inaturalist.org/guide_taxa/464336 (listed, not opened)",
     "Anatomy and sizes: general biology of Aurelia aurita (bell diameter, rhopalia count, oral arms, marginal tentacles, horseshoe gonads, gastric pouches and radial canals). From knowledge, not retrieved in session. Verify against the Wikipedia species article https://en.wikipedia.org/wiki/Aurelia_aurita before use."
   ],
-  "confidence": 0.4
+  "confidence": 0.55
 }

@@ -9,16 +9,20 @@
   },
   "image": {
     "file_page": "https://commons.wikimedia.org/wiki/File:Green_shore_crab_(Carcinus_maenas)_in_the_Baltic_Sea.jpg",
-    "direct_url": null,
-    "author": "Ansgar Gruber (per search summary; not verified on the file page)",
-    "license": "CC BY-SA 4.0 (per search summary; not verified on the file page)",
-    "species_shown": "Carcinus maenas (green/shore crab), Baltic Sea off Kuhlungsborn, 2015",
-    "view": "not verified; the search summary does not state the view, so the parsing below assumes a dorsal three-quarter view",
-    "image_viewed": false
+    "direct_url": "https://upload.wikimedia.org/wikipedia/commons/d/d0/Green_shore_crab_%28Carcinus_maenas%29_in_the_Baltic_Sea.jpg",
+    "author": "Ansgar Gruber",
+    "license": "CC BY-SA 4.0",
+    "species_shown": "Carcinus maenas (green shore crab) underwater in the Baltic Sea, resting among red algae and barnacle-encrusted rock",
+    "view": "Underwater, oblique front view from slightly above. The carapace, frontal margin and stalked eyes face the camera; one cheliped reaches forward and a second is partly hidden by weed. Walking legs are mostly occluded. Camera is off the sagittal axis, so left and right are not resolved.",
+    "image_viewed": true
   },
   "physical_parsing": {
-    "bounding_box_m": {"width_x": 0.14, "height_y": 0.04, "length_z": 0.10},
-    "approx_volume_m3": 0.000035,
+    "bounding_box_m": {
+      "width_x": 0.14,
+      "height_y": 0.04,
+      "length_z": 0.1
+    },
+    "approx_volume_m3": 3.5e-05,
     "volume_method": "Rough estimate. Carapace as a half-ellipsoid with semi-axes 0.030 (x), 0.015 (y), 0.0225 (z) m, about 2.1e-5 m3, plus an estimated ventral thoracic and tucked-abdomen block of about 1.4e-5 m3. Chelipeds, walking legs and antennae are excluded. Total is about 3.5e-5 m3 (roughly 35 cm3). Not calibrated against a measured mass.",
     "shape_class": "Flattened, laterally expanded dorsal shell (carapace) with a tucked ventral abdomen; legs splay laterally from the body sides. Wider than long.",
     "core": {
@@ -35,13 +39,34 @@
       "category": "aesthetics",
       "symmetry": "centre",
       "count": 1,
-      "attach_pos": [0, 0.38, 0],
+      "attach_pos": [
+        0,
+        0.38,
+        0
+      ],
       "joints": [
-        {"name": "sternum (ventral attachment, abdomen and legs)", "pos": [0, 0.1, 0], "type": "fixed", "pivot_axes": [], "range_deg": [0, 0]}
+        {
+          "name": "sternum (ventral attachment, abdomen and legs)",
+          "pos": [
+            0,
+            0.1,
+            0
+          ],
+          "type": "fixed",
+          "pivot_axes": [],
+          "range_deg": [
+            0,
+            0
+          ]
+        }
       ],
       "root_radius_m": 0.03,
       "length_m": 0.045,
-      "penetration": {"depth_m": 0, "fraction_of_root_radius": 0, "overlap_region": "Is the core itself; no penetration required."},
+      "penetration": {
+        "depth_m": 0,
+        "fraction_of_root_radius": 0,
+        "overlap_region": "Is the core itself; no penetration required."
+      },
       "library_hint": "shell",
       "notes": "Category is a forced fit. The carapace protects the body and is not clearly ornamental, so 'aesthetics' is used as the closest bucket. Carries the stalked eyes, antennae and antennules on its front margin. Carcinus has five frontal teeth on each side of the front, which are useful for identification."
     },
@@ -51,24 +76,76 @@
       "category": "manipulation",
       "symmetry": "pair",
       "count": 1,
-      "attach_pos": [0.157, 0.30, 0.20],
+      "attach_pos": [
+        0.157,
+        0.3,
+        0.24
+      ],
       "joints": [
-        {"name": "ischium-body shoulder", "pos": [0.157, 0.30, 0.20], "type": "ball", "pivot_axes": ["x", "y", "z"], "range_deg": [-30, 30]},
-        {"name": "carpus (wrist)", "pos": [0.229, 0.30, 0.35], "type": "hinge", "pivot_axes": ["y"], "range_deg": [-60, 60]},
-        {"name": "propodus-dactyl pincer", "pos": [0.18, 0.30, 0.45], "type": "hinge", "pivot_axes": ["y"], "range_deg": [0, 35]}
+        {
+          "name": "ischium-body shoulder",
+          "pos": [
+            0.157,
+            0.3,
+            0.24
+          ],
+          "type": "ball",
+          "pivot_axes": [
+            "x",
+            "y",
+            "z"
+          ],
+          "range_deg": [
+            -30,
+            30
+          ]
+        },
+        {
+          "name": "carpus (wrist)",
+          "pos": [
+            0.229,
+            0.3,
+            0.39
+          ],
+          "type": "hinge",
+          "pivot_axes": [
+            "y"
+          ],
+          "range_deg": [
+            -60,
+            60
+          ]
+        },
+        {
+          "name": "propodus-dactyl pincer",
+          "pos": [
+            0.18,
+            0.3,
+            0.49
+          ],
+          "type": "hinge",
+          "pivot_axes": [
+            "y"
+          ],
+          "range_deg": [
+            0,
+            35
+          ]
+        }
       ],
       "root_radius_m": 0.004,
-      "length_m": 0.03,
-      "penetration": {"depth_m": 0.006, "fraction_of_root_radius": 1.5, "overlap_region": "Anterolateral margin of the carapace, the first pereiopod socket (coxa and ischium region), overlapping about 6 mm into the core."},
+      "length_m": 0.035,
+      "penetration": {
+        "depth_m": 0.006,
+        "fraction_of_root_radius": 1.5,
+        "overlap_region": "Anterolateral margin of the carapace, the first pereiopod socket (coxa and ischium region), overlapping about 6 mm into the core."
+      },
       "library_hint": "hand_pincer",
-      "notes": "Chelipeds are often unequal in size in adults (handedness not verified for this species). This is a left member; the right is a mirror, so the size asymmetry can be ignored for a symmetric model. Claw is small (about 3 cm) and the dactyl and propodus pinch in the horizontal plane. Fingers have blunt tubercles."
+      "notes": "Chelipeds are often unequal in size in adults (handedness not verified for this species). This is a left member; the right is a mirror, so the size asymmetry can be ignored for a symmetric model. Claw is small (about 3.5 cm, raised from 3 cm after the photo showed the claws projecting forward) and the dactyl and propodus pinch in the horizontal plane. Fingers have blunt tubercles."
     },
     {
       "id": "cheliped_R",
-      "mirror_of": "cheliped_L",
-      "symmetry": "pair",
-      "count": 1,
-      "notes": "Mirror of cheliped_L across the sagittal plane."
+      "mirror_of": "cheliped_L"
     },
     {
       "id": "walking_leg_L",
@@ -76,24 +153,76 @@
       "category": "locomotion",
       "symmetry": "pair",
       "count": 4,
-      "attach_pos": [0.214, 0.25, 0.0],
+      "attach_pos": [
+        0.214,
+        0.25,
+        0.0
+      ],
       "joints": [
-        {"name": "coxa-body attachment (representative P2)", "pos": [0.214, 0.25, 0.05], "type": "ball", "pivot_axes": ["x", "y", "z"], "range_deg": [-25, 25]},
-        {"name": "merus-carpus (knee)", "pos": [0.40, 0.22, 0.05], "type": "hinge", "pivot_axes": ["y"], "range_deg": [-70, 70]},
-        {"name": "propodus-dactyl (tip)", "pos": [0.50, 0.00, 0.05], "type": "hinge", "pivot_axes": ["y"], "range_deg": [-50, 30]}
+        {
+          "name": "coxa-body attachment (representative P2)",
+          "pos": [
+            0.214,
+            0.25,
+            0.05
+          ],
+          "type": "ball",
+          "pivot_axes": [
+            "x",
+            "y",
+            "z"
+          ],
+          "range_deg": [
+            -25,
+            25
+          ]
+        },
+        {
+          "name": "merus-carpus (knee)",
+          "pos": [
+            0.4,
+            0.22,
+            0.05
+          ],
+          "type": "hinge",
+          "pivot_axes": [
+            "y"
+          ],
+          "range_deg": [
+            -70,
+            70
+          ]
+        },
+        {
+          "name": "propodus-dactyl (tip)",
+          "pos": [
+            0.5,
+            0.0,
+            0.05
+          ],
+          "type": "hinge",
+          "pivot_axes": [
+            "y"
+          ],
+          "range_deg": [
+            -50,
+            30
+          ]
+        }
       ],
       "root_radius_m": 0.0025,
       "length_m": 0.04,
-      "penetration": {"depth_m": 0.004, "fraction_of_root_radius": 1.6, "overlap_region": "Lateral margin and epimeral region of the carapace, where each leg's coxa sits. Legs P2 to P5 attach along the side at z normalized about +0.05, -0.08, -0.20, -0.30 with y about 0.25."},
+      "penetration": {
+        "depth_m": 0.004,
+        "fraction_of_root_radius": 1.6,
+        "overlap_region": "Lateral margin and epimeral region of the carapace, where each leg's coxa sits. Legs P2 to P5 attach along the side at z normalized about +0.05, -0.08, -0.20, -0.30 with y about 0.25."
+      },
       "library_hint": "foot_claw",
       "notes": "Count is 4 per side (8 total). Legs P2 to P5 are slender and end in a pointed dactyl that grips substrate. Crabs walk sideways (lateral gait), with legs moving in alternating groups. P1 is the cheliped, so these are the walking legs only."
     },
     {
       "id": "walking_leg_R",
-      "mirror_of": "walking_leg_L",
-      "symmetry": "pair",
-      "count": 4,
-      "notes": "Mirror of walking_leg_L across the sagittal plane."
+      "mirror_of": "walking_leg_L"
     },
     {
       "id": "eye_stalk_L",
@@ -101,22 +230,44 @@
       "category": "sensory",
       "symmetry": "pair",
       "count": 1,
-      "attach_pos": [0.071, 0.625, 0.40],
+      "attach_pos": [
+        0.071,
+        0.625,
+        0.4
+      ],
       "joints": [
-        {"name": "stalk base in orbit", "pos": [0.071, 0.625, 0.40], "type": "ball", "pivot_axes": ["x", "y", "z"], "range_deg": [-20, 40]}
+        {
+          "name": "stalk base in orbit",
+          "pos": [
+            0.071,
+            0.625,
+            0.4
+          ],
+          "type": "ball",
+          "pivot_axes": [
+            "x",
+            "y",
+            "z"
+          ],
+          "range_deg": [
+            -20,
+            40
+          ]
+        }
       ],
       "root_radius_m": 0.0015,
       "length_m": 0.006,
-      "penetration": {"depth_m": 0.003, "fraction_of_root_radius": 2.0, "overlap_region": "Anterior-lateral orbit of the carapace front margin, between the frontal teeth."},
+      "penetration": {
+        "depth_m": 0.003,
+        "fraction_of_root_radius": 2.0,
+        "overlap_region": "Anterior-lateral orbit of the carapace front margin, between the frontal teeth."
+      },
       "library_hint": "eye_stalk",
       "notes": "Stalk can retract into the orbit. Eyes are compound and sit at the tips of short stalks."
     },
     {
       "id": "eye_stalk_R",
-      "mirror_of": "eye_stalk_L",
-      "symmetry": "pair",
-      "count": 1,
-      "notes": "Mirror of eye_stalk_L."
+      "mirror_of": "eye_stalk_L"
     },
     {
       "id": "antennule_L",
@@ -124,22 +275,44 @@
       "category": "sensory",
       "symmetry": "pair",
       "count": 1,
-      "attach_pos": [0.057, 0.50, 0.35],
+      "attach_pos": [
+        0.057,
+        0.5,
+        0.35
+      ],
       "joints": [
-        {"name": "antennule base on the frontal margin", "pos": [0.057, 0.50, 0.35], "type": "ball", "pivot_axes": ["x", "y", "z"], "range_deg": [-30, 30]}
+        {
+          "name": "antennule base on the frontal margin",
+          "pos": [
+            0.057,
+            0.5,
+            0.35
+          ],
+          "type": "ball",
+          "pivot_axes": [
+            "x",
+            "y",
+            "z"
+          ],
+          "range_deg": [
+            -30,
+            30
+          ]
+        }
       ],
       "root_radius_m": 0.0008,
       "length_m": 0.004,
-      "penetration": {"depth_m": 0.002, "fraction_of_root_radius": 2.5, "overlap_region": "Frontal margin of the carapace, the antennule socket beneath the eye stalks."},
+      "penetration": {
+        "depth_m": 0.002,
+        "fraction_of_root_radius": 2.5,
+        "overlap_region": "Frontal margin of the carapace, the antennule socket beneath the eye stalks."
+      },
       "library_hint": "antenna",
       "notes": "Short, two-branched chemosensory and balance organ. Tucked beneath the front of the carapace."
     },
     {
       "id": "antennule_R",
-      "mirror_of": "antennule_L",
-      "symmetry": "pair",
-      "count": 1,
-      "notes": "Mirror of antennule_L."
+      "mirror_of": "antennule_L"
     },
     {
       "id": "antenna_L",
@@ -147,22 +320,44 @@
       "category": "sensory",
       "symmetry": "pair",
       "count": 1,
-      "attach_pos": [0.086, 0.55, 0.40],
+      "attach_pos": [
+        0.086,
+        0.55,
+        0.4
+      ],
       "joints": [
-        {"name": "antenna base on the frontal margin", "pos": [0.086, 0.55, 0.40], "type": "ball", "pivot_axes": ["x", "y", "z"], "range_deg": [-30, 30]}
+        {
+          "name": "antenna base on the frontal margin",
+          "pos": [
+            0.086,
+            0.55,
+            0.4
+          ],
+          "type": "ball",
+          "pivot_axes": [
+            "x",
+            "y",
+            "z"
+          ],
+          "range_deg": [
+            -30,
+            30
+          ]
+        }
       ],
       "root_radius_m": 0.0008,
       "length_m": 0.012,
-      "penetration": {"depth_m": 0.002, "fraction_of_root_radius": 2.5, "overlap_region": "Frontal margin and orbit wall, beside the eye stalk."},
+      "penetration": {
+        "depth_m": 0.002,
+        "fraction_of_root_radius": 2.5,
+        "overlap_region": "Frontal margin and orbit wall, beside the eye stalk."
+      },
       "library_hint": "antenna",
       "notes": "Longer antenna, about 1 cm, that sweeps forward to sense the environment."
     },
     {
       "id": "antenna_R",
-      "mirror_of": "antenna_L",
-      "symmetry": "pair",
-      "count": 1,
-      "notes": "Mirror of antenna_L."
+      "mirror_of": "antenna_L"
     },
     {
       "id": "maxilliped_3",
@@ -170,13 +365,36 @@
       "category": "feeding",
       "symmetry": "centre",
       "count": 3,
-      "attach_pos": [0, 0.10, 0.40],
+      "attach_pos": [
+        0,
+        0.1,
+        0.4
+      ],
       "joints": [
-        {"name": "maxilliped coxa on the buccal frame", "pos": [0, 0.10, 0.40], "type": "hinge", "pivot_axes": ["x"], "range_deg": [-15, 25]}
+        {
+          "name": "maxilliped coxa on the buccal frame",
+          "pos": [
+            0,
+            0.1,
+            0.4
+          ],
+          "type": "hinge",
+          "pivot_axes": [
+            "x"
+          ],
+          "range_deg": [
+            -15,
+            25
+          ]
+        }
       ],
       "root_radius_m": 0.005,
       "length_m": 0.01,
-      "penetration": {"depth_m": 0.006, "fraction_of_root_radius": 1.2, "overlap_region": "Ventral sternum and buccal frame at the front of the thorax. Mouthparts sit on the underside and are hidden from above."},
+      "penetration": {
+        "depth_m": 0.006,
+        "fraction_of_root_radius": 1.2,
+        "overlap_region": "Ventral sternum and buccal frame at the front of the thorax. Mouthparts sit on the underside and are hidden from above."
+      },
       "library_hint": "mouth_mandibles",
       "notes": "Three pairs of maxillipeds form a lid over the mouth that holds and shreds food. Mouthparts are ventral and not visible from the dorsal view. Categorised as feeding. Library hint is a loose fit, since mandibles are not the same structure."
     },
@@ -186,18 +404,45 @@
       "category": "aesthetics",
       "symmetry": "centre",
       "count": 1,
-      "attach_pos": [0, 0.10, -0.30],
+      "attach_pos": [
+        0,
+        0.1,
+        -0.3
+      ],
       "joints": [
-        {"name": "abdomen-sternum hinge (tucked against the thorax)", "pos": [0, 0.10, -0.30], "type": "fixed", "pivot_axes": [], "range_deg": [0, 0]}
+        {
+          "name": "abdomen-sternum hinge (tucked against the thorax)",
+          "pos": [
+            0,
+            0.1,
+            -0.3
+          ],
+          "type": "fixed",
+          "pivot_axes": [],
+          "range_deg": [
+            0,
+            0
+          ]
+        }
       ],
       "root_radius_m": 0.012,
       "length_m": 0.02,
-      "penetration": {"depth_m": 0.012, "fraction_of_root_radius": 1.0, "overlap_region": "Ventral sternum of the thorax, the full-thickness abdominal socket beneath the carapace."},
+      "penetration": {
+        "depth_m": 0.012,
+        "fraction_of_root_radius": 1.0,
+        "overlap_region": "Ventral sternum of the thorax, the full-thickness abdominal socket beneath the carapace."
+      },
       "library_hint": null,
       "notes": "Narrow, seven-segmented abdomen folded flat against the sternum. Narrow and T-shaped in males, broad and rounded in females (brood carrying). No functional category fits well, so 'aesthetics' is used as a placeholder for the non-locomotor, non-sensory body flap. See library_gaps."
     }
   ],
-  "category_summary": {"locomotion": 2, "sensory": 6, "feeding": 1, "manipulation": 2, "aesthetics": 2},
+  "category_summary": {
+    "locomotion": 2,
+    "sensory": 6,
+    "feeding": 1,
+    "manipulation": 2,
+    "aesthetics": 2
+  },
   "constraints": {
     "symmetry": "Bilateral about the sagittal (+X/-X) plane. Chelipeds are unequal in size in adults, with the larger usually on the right. Abdomen is midline and sex-dimorphic.",
     "gait": "Lateral (sideways) walking on four pairs of walking legs. The chelipeds are not used for locomotion.",
@@ -210,19 +455,35 @@
     ]
   },
   "library_gaps": [
-    {"feature": "Tucked ventral abdomen with brood (female) or narrow T-shaped (male) form", "why": "No library part represents a folded ventral flap. The closest choice is a placeholder aesthetic part, and the category is not a true fit."},
-    {"feature": "Carapace as a protective dorsal shell", "why": "The shell library part is ornamental-coded, but the carapace is a functional protective and attachment body. Closer to 'shell' than to any other part, but the category is a forced fit."},
-    {"feature": "Retractable stalked compound eyes that sink into orbits", "why": "eye_stalk covers the stalk, but not retraction into a socket. Modelled as a ball joint with a range limit."},
-    {"feature": "Mouthpart set (three pairs of maxillipeds forming a ventral lid)", "why": "mouth_mandibles is a loose fit. Nothing in the library represents a multi-pair ventral mouth frame."},
-    {"feature": "Lateral-walking leg set (four pairs splayed laterally)", "why": "foot_claw covers a single claw foot. No library part represents a set of four splayed walking legs per side."}
+    {
+      "feature": "Tucked ventral abdomen with brood (female) or narrow T-shaped (male) form",
+      "why": "No library part represents a folded ventral flap. The closest choice is a placeholder aesthetic part, and the category is not a true fit."
+    },
+    {
+      "feature": "Carapace as a protective dorsal shell",
+      "why": "The shell library part is ornamental-coded, but the carapace is a functional protective and attachment body. Closer to 'shell' than to any other part, but the category is a forced fit."
+    },
+    {
+      "feature": "Retractable stalked compound eyes that sink into orbits",
+      "why": "eye_stalk covers the stalk, but not retraction into a socket. Modelled as a ball joint with a range limit."
+    },
+    {
+      "feature": "Mouthpart set (three pairs of maxillipeds forming a ventral lid)",
+      "why": "mouth_mandibles is a loose fit. Nothing in the library represents a multi-pair ventral mouth frame."
+    },
+    {
+      "feature": "Lateral-walking leg set (four pairs splayed laterally)",
+      "why": "foot_claw covers a single claw foot. No library part represents a set of four splayed walking legs per side."
+    }
   ],
   "sources": [
-    "https://commons.wikimedia.org/wiki/File:Green_shore_crab_(Carcinus_maenas)_in_the_Baltic_Sea.jpg (file page found via web search; licence and author from search summary, not verified on the page; image not downloaded because commons.wikimedia.org and upload.wikimedia.org were refused by the egress proxy)",
+    "https://commons.wikimedia.org/wiki/File:Green_shore_crab_(Carcinus_maenas)_in_the_Baltic_Sea.jpg (Ansgar Gruber, CC BY-SA 4.0; image viewed locally from the Commons direct URL; author and licence from the Commons API)",
     "https://www.marlin.ac.uk/species/detail/1497 (MarLIN: Carcinus maenas, carapace width up to 8 cm; found via search, not fetched in full)",
     "https://en.wikipedia.org/wiki/Carcinus_maenas (carapace up to about 60 mm long and 90 mm wide; search snippet)",
     "https://nimpis.marinepests.gov.au/species/species/84 (NIMPIS: 9 to 10 cm maximum width, common size 5 to 7 cm; search snippet)",
     "https://sealifebase.nrm.se/summary/speciessummary.php?id=26397 (SeaLifeBase: maximum carapace width 7.7 cm, commonly 5 cm; search snippet)",
     "https://www.mass.gov/files/documents/2016/08/xb/c-maenas.pdf (Massachusetts guidance: carapace width up to 7.6 cm; search snippet)"
   ],
-  "confidence": 0.55
+  "confidence": 0.6,
+  "image_observations": "The photo shows a green shore crab in a frontal three-quarter view from slightly above, with the carapace domed and the stalked eyes and frontal margin toward the camera. The chelipeds reach forward and look large relative to the carapace, so the cheliped attachment is moved forward and the claw length is raised from 3 to 3.5 cm. The walking legs are mostly hidden by weed, so their positions are unchanged. The bounding box and cited real-world sizes are kept because one oblique photo cannot calibrate them."
 }

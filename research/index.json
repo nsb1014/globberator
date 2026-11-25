@@ -67,8 +67,8 @@
       "label": "Crab (Brachyura)",
       "scientific": "Carcinus maenas",
       "image": "https://commons.wikimedia.org/wiki/File:Green_shore_crab_(Carcinus_maenas)_in_the_Baltic_Sea.jpg",
-      "license": "CC BY-SA 4.0 (per search summary; not verified on the file page)",
-      "image_viewed": false,
+      "license": "CC BY-SA 4.0",
+      "image_viewed": true,
       "bounding_box_m": {
         "width_x": 0.14,
         "height_y": 0.04,
@@ -89,14 +89,8 @@
         "Mouthpart set (three pairs of maxillipeds forming a ventral lid)",
         "Lateral-walking leg set (four pairs splayed laterally)"
       ],
-      "confidence": 0.55,
-      "problems": [
-        "cheliped_R: bad category None",
-        "walking_leg_R: bad category None",
-        "eye_stalk_R: bad category None",
-        "antennule_R: bad category None",
-        "antenna_R: bad category None"
-      ]
+      "confidence": 0.6,
+      "problems": []
     },
     {
       "species_id": "feline",
@@ -161,10 +155,10 @@
       "scientific": "Aurelia aurita",
       "image": "https://commons.wikimedia.org/wiki/File:Moon_Jellies_(Aurelia_aurita)_(7153399193).jpg",
       "license": "CC BY 2.0 (Attribution 2.0 Generic), per the Commons file page",
-      "image_viewed": false,
+      "image_viewed": true,
       "bounding_box_m": {
         "width_x": 0.25,
-        "height_y": 0.1,
+        "height_y": 0.11,
         "length_z": 0.25
       },
       "parts": 7,
@@ -184,7 +178,7 @@
         "Rhopalia (sense club with statocysts)",
         "Manubrium mouth on a radial body"
       ],
-      "confidence": 0.4,
+      "confidence": 0.55,
       "problems": []
     },
     {
@@ -193,7 +187,7 @@
       "scientific": "Iguana iguana",
       "image": "https://commons.wikimedia.org/wiki/File:Iguana-001.jpg",
       "license": "CC BY-SA 3.0",
-      "image_viewed": false,
+      "image_viewed": true,
       "bounding_box_m": {
         "width_x": 0.4,
         "height_y": 0.3,
@@ -215,7 +209,7 @@
         "Forked chemosensory tongue",
         "Keeled body scales"
       ],
-      "confidence": 0.45,
+      "confidence": 0.55,
       "problems": []
     },
     {

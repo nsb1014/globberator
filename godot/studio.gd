@@ -1,14 +1,23 @@
 extends Node3D
 
-const MODELS := [preload("res://minotaur.glb"), preload("res://bull.glb")]
-const SAVE_PATHS := ["user://minotaur_shapes.cfg", "user://bull_shapes.cfg"]
+const SHAPES := ["Horn span", "Muzzle length", "Chest depth"]
+const CHARACTERS := [
+    {"name":"Minotaur", "scene":preload("res://minotaur.glb"), "save":"user://minotaur_shapes.cfg",
+     "shapes":SHAPES, "focus":Vector3(0,2.42,0), "azimuth":0.12, "elevation":0.07, "width":0.0},
+    {"name":"Bull", "scene":preload("res://bull.glb"), "save":"user://bull_shapes.cfg",
+     "shapes":SHAPES, "focus":Vector3(0,1.52,0.42), "azimuth":0.55, "elevation":0.12,
+     "width":5.5, "travel":2.08, "walk_width":7.65, "walk_azimuth":1.48},
+    {"name":"Solifuge", "scene":preload("res://arachnid.glb"), "save":"user://arachnid_shapes.cfg",
+     "shapes":["Abdomen width","Abdomen depth","Jaw breadth"], "focus":Vector3(0,0.49,0.25),
+     "azimuth":0.97, "elevation":0.68, "width":5.85, "travel":1.30, "walk_width":6.65, "walk_azimuth":1.33},
+]
+var shape_panel := VBoxContainer.new()
 var character := 0
 var selector := OptionButton.new()
 var panel := PanelContainer.new()
-var bull_view_width := 5.5
+var view_width := 0.0
 var walk_button: Button
 var target := Vector3(0,2.42,0)
-const SHAPES := ["Horn span", "Muzzle length", "Chest depth"]
 var model: Node3D
 var skin: MeshInstance3D
 var player: AnimationPlayer
@@ -49,16 +58,16 @@ func select_character(index: int) -> void:
 		model.queue_free()
 	character = index
 	selector.select(index)
-	model = MODELS[index].instantiate()
+	var entry: Dictionary = CHARACTERS[index]
+	model = entry.scene.instantiate()
 	add_child(model)
 	skin = model.find_children("*", "MeshInstance3D", true, false)[0]
 	player = model.find_children("*", "AnimationPlayer", true, false)[0]
-	walk_button.text = "Walk forward" if character == 1 else "Step in place"
-	azimuth = 0.55 if character == 1 else 0.12
-	elevation = 0.12 if character == 1 else 0.07
+	walk_button.text = "Walk forward" if entry.has("travel") else "Step in place"
+	azimuth = entry.azimuth
+	elevation = entry.elevation
 	camera.size = 5.8
-	for slider in sliders.values():
-		slider.value = 0
+	configure_shapes(entry.shapes)
 	restore_shapes()
 	status.text = "Drag to orbit · scroll to zoom"
 	neutral()
@@ -94,22 +103,11 @@ func make_controls() -> void:
 	var box := VBoxContainer.new()
 	margin.add_child(box)
 	box.add_theme_constant_override("separation", 7)
-	selector.add_item("Minotaur")
-	selector.add_item("Bull")
+	for entry in CHARACTERS:
+		selector.add_item(entry.name)
 	box.add_child(selector)
 	selector.item_selected.connect(select_character)
-	for feature in SHAPES:
-		var label := Label.new()
-		label.text = feature
-		box.add_child(label)
-		var slider := HSlider.new()
-		slider.min_value = -1.0
-		slider.max_value = 1.0
-		slider.step = 0.02
-		slider.custom_minimum_size.x = 170
-		box.add_child(slider)
-		sliders[feature] = slider
-		slider.value_changed.connect(set_shape.bind(feature))
+	box.add_child(shape_panel)
 	var motion := HBoxContainer.new()
 	box.add_child(motion)
 	button(motion, "Neutral", neutral)
@@ -120,6 +118,24 @@ func make_controls() -> void:
 	button(box, "Reset proportions", reset_shapes)
 	box.add_child(status)
 	status.text = "Drag to orbit · scroll to zoom"
+
+func configure_shapes(features: Array) -> void:
+	sliders.clear()
+	for child in shape_panel.get_children():
+		shape_panel.remove_child(child)
+		child.queue_free()
+	for feature in features:
+		var label := Label.new()
+		label.text = feature
+		shape_panel.add_child(label)
+		var slider := HSlider.new()
+		slider.min_value = -1.0
+		slider.max_value = 1.0
+		slider.step = 0.02
+		slider.custom_minimum_size.x = 170
+		shape_panel.add_child(slider)
+		sliders[feature] = slider
+		slider.value_changed.connect(set_shape.bind(feature))
 
 func button(parent: Control, label: String, callback: Callable) -> Button:
 	var item := Button.new()
@@ -137,36 +153,35 @@ func neutral() -> void:
 	player.stop()
 	var skeleton: Skeleton3D = model.find_children("*", "Skeleton3D", true, false)[0]
 	skeleton.reset_bone_poses()
-	target = Vector3(0,1.52,0.42) if character == 1 else Vector3(0,2.42,0)
-	bull_view_width = 5.5
+	target = CHARACTERS[character].focus
+	view_width = CHARACTERS[character].width
 	fit_character()
 
 func play_motion(clip: String) -> void:
-	var forward := character == 1 and clip == "Walk"
+	var entry: Dictionary = CHARACTERS[character]
+	var forward := entry.has("travel") and clip == "Walk"
+	target = entry.focus
+	view_width = entry.width
 	if forward:
-		target = Vector3(0,1.52,1.48)
-		azimuth = 1.48
-		bull_view_width = 7.65
-		fit_character()
-	elif character == 1:
-		target = Vector3(0,1.52,0.42)
-		bull_view_width = 5.5
-		fit_character()
+		target.z += 0.5 * float(entry.travel)
+		azimuth = entry.walk_azimuth
+		view_width = entry.walk_width
+	fit_character()
 	player.stop()
 	player.get_animation(clip).loop_mode = Animation.LOOP_NONE if forward else Animation.LOOP_LINEAR
 	player.play(clip)
 
 func save_shapes() -> void:
 	var cfg := ConfigFile.new()
-	for feature in SHAPES:
+	for feature in sliders:
 		cfg.set_value("shape",feature,sliders[feature].value)
-	var err := cfg.save(SAVE_PATHS[character])
+	var err := cfg.save(CHARACTERS[character].save)
 	status.text = "Proportions saved" if err == OK else "Could not save proportions"
 
 func restore_shapes() -> void:
 	var cfg := ConfigFile.new()
-	if cfg.load(SAVE_PATHS[character]) == OK:
-		for feature in SHAPES:
+	if cfg.load(CHARACTERS[character].save) == OK:
+		for feature in sliders:
 			sliders[feature].value = cfg.get_value("shape",feature,0.0)
 
 func reset_shapes() -> void:
@@ -181,17 +196,17 @@ func controls_width(view_size: Vector2) -> float:
 	return minf(panel.position.x + panel.get_combined_minimum_size().x + 12.0,view_size.x*0.6)
 
 func fit_character() -> void:
-	if character == 1:
+	if view_width > 0:
 		var view_size := get_viewport().get_visible_rect().size
 		var width := maxf(1.0,view_size.x-controls_width(view_size))
-		camera.size = maxf(3.9,bull_view_width*view_size.y/width)
+		camera.size = maxf(3.9,view_width*view_size.y/width)
 	set_camera()
 
 func set_camera() -> void:
 	camera.position = target + 9.0 * Vector3(sin(azimuth)*cos(elevation),sin(elevation),cos(azimuth)*cos(elevation))
 	camera.look_at(target)
 	camera.h_offset = 0.0
-	if character == 1:
+	if view_width > 0:
 		var view_size := get_viewport().get_visible_rect().size
 		camera.h_offset = -0.5*controls_width(view_size)*camera.size/maxf(view_size.y,1.0)
 
@@ -203,7 +218,7 @@ func _unhandled_input(event: InputEvent) -> void:
 			camera.size = max(2.4,camera.size-0.25)
 			set_camera()
 		elif event.pressed and event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
-			camera.size = camera.size+0.25 if character == 1 else minf(9.0,camera.size+0.25)
+			camera.size = camera.size+0.25 if view_width > 0 else minf(9.0,camera.size+0.25)
 			set_camera()
 	elif event is InputEventMouseMotion and rotating:
 		azimuth -= event.relative.x*0.009

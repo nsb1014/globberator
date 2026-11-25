@@ -25,6 +25,7 @@ bpy.ops.wm.read_factory_settings(use_empty=True)
 bpy.ops.import_scene.gltf(filepath=str(args.model.resolve()))
 rig=next(o for o in bpy.context.scene.objects if o.type=="ARMATURE")
 bull = rig.name.startswith("Bull")
+arachnid = rig.name.startswith("Solifuge")
 if rig.animation_data:
     for t in rig.animation_data.nla_tracks:t.mute=True
     rig.animation_data.action=None
@@ -41,7 +42,7 @@ scene.cycles.sample_clamp_indirect=2.5
 scene.cycles.use_denoising=False
 scene.render.resolution_x=800 if args.clip=="still" else 576
 scene.render.resolution_y=scene.render.resolution_x
-if bull:
+if bull or arachnid:
     scene.render.resolution_x,scene.render.resolution_y = (960,660) if args.clip=="still" else (720,480)
 scene.render.resolution_percentage=100
 scene.world=bpy.data.worlds.new("Studio")
@@ -122,6 +123,15 @@ for output_frame,i in enumerate(range(0,length,args.frame_step)):
             cam_data.ortho_scale = 7.45
             angle = math.radians(87) if args.azimuth is None else math.radians(args.azimuth)
             height = 2.62
+    if arachnid:
+        target = Vector((0,-.25,.49))
+        height = 8.65
+        cam_data.ortho_scale = 6.90
+        if args.azimuth is None:
+            angle += .79
+        if args.clip == "walk":
+            target.y -= .65
+            cam_data.ortho_scale = 7.70
     cam.location=(target.x+10*math.sin(angle),target.y-10*math.cos(angle),height)
     aim(cam,target)
     render_frame((args.folder/f"{args.clip}-{output_frame:03}.png").resolve())

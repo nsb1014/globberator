@@ -1,5 +1,36 @@
 # PolyForge · Character studies
 
+## Solifuge
+
+![Solifuge in its neutral stance](preview/arachnid.jpg)
+
+[Neutral turntable](preview/arachnid-turntable.mp4) · [Walking clip](preview/arachnid-walk.mp4) · [Rigged GLB](godot/arachnid.glb) · [Recipe](models/arachnid.json)
+
+The supplied dorsal-oblique photograph shows a solifuge with forward-facing paired chelicerae, long pedipalps and a visibly segmented abdomen. The abdomen occupies roughly half the length from jaw tip to rump in the image. The neutral model preserves this proportion and separates the front appendages so their functions read during motion. Surface heights, hidden joints and the mirrored far side are estimates. Model coordinates use Blender units, +Z up and −Y forward.
+
+The three rear pairs support the body in a low, symmetric stance with flexed joints. The sensory first leg pair and pedipalps hover above the floor. The fixed and movable fingers of each chelicera have separate bones. The walk alternates tripods, solves each supporting leg to its foot target, and advances the body 1.30 units over two cycles. [Solifuge anatomy reference](https://ph.health.mil/resources/ento-arachnids-afghan-poster.pdf)
+
+### Generate a creature from a recipe
+
+A lightweight agent can select the solifuge preset and supply a few numeric controls. With Blender 4.3.2 (including NumPy and SciPy), Python 3 and FFmpeg on PATH, this command builds the mesh and rig, bakes idle and walk, reimports the GLB for contact checks, then writes the resolved recipe, GLB, neutral PNG, turntable and walking video to the output folder.
+
+```sh
+python tools/generate.py --preset solifuge --out review/solifuge
+```
+
+Run `python tools/generate.py --describe` to get the default recipe, role choices and numeric bounds as JSON without opening Blender. Use `--shape abdomen_width=1.12` to adjust a preset. Use `--recipe models/arachnid.json` in place of `--preset` to edit the assembly. The optional `--oidn /path/to/oidnDenoise` filters the rendered frames. The checked-in example uses the supplied photo as a human-interpreted reference. The automated pipeline begins with the preset or JSON.
+
+| Recipe field | Effect |
+| --- | --- |
+| `shape` | Abdomen length, abdomen width and jaw width each accept 0.75–1.25. |
+| `mounts[].id` | A unique identifier for the paired joint chains. |
+| `role` | `foot` receives a contact pad, claws and foot-planting IK. `feeler` and `palp` use the same limb builder with a different taper, tip and hovering motion. |
+| `socket_y` | Front-to-back position along the prosoma, from −1.05 to 0.18. The shared placement function reflects the complete part and joint chain. |
+| `sweep`, `reach` | Angle from the lateral axis in degrees (−78 to 65) and horizontal reach in model units (1.4–2.7). Negative sweep points forward. |
+| Mount order | Weight-bearing pairs alternate phase in recipe order. Each mirrored partner walks half a cycle later. |
+
+To update only the studio asset, run `blender -b --python-exit-code 1 -P tools/build.py -- --recipe models/arachnid.json`. The studio exposes abdomen width, abdomen depth and jaw breadth as live blend shapes.
+
 ## Bull
 
 An unarmored adult bull built from a fresh recipe. Its bovine head, swept horns, split hooves and tufted tail are the same catalog parts used by the minotaur. The `heavy_quadruped` body supplies a horizontal torso with paired shoulder and hip sockets. Each socket accepts one `ungulate_leg` part. The recipe selects the fore or hind profile and can set fullness from 0 to 1. A continuous surface connects brisket, belly and rump.
@@ -26,7 +57,7 @@ Both recipes mount one tufted tail at the center of the pelvis. Its shaft blends
 
 ## Open the studio
 
-Import `godot/project.godot` in Godot 4.3 and press **F6** with the studio scene open, or **F5** to launch the project. Both models are included. Choose **Minotaur** or **Bull** in the character menu. Drag the viewport to orbit, scroll to zoom, and use the sliders for horn span, muzzle length, and chest depth. Select **Idle** for either character, **Walk forward** for the bull, or **Step in place** for the minotaur. **Neutral** restores the original stance. **Save proportions** remembers the slider values for that character on that computer.
+Import `godot/project.godot` in Godot 4.3 and press **F6** with the studio scene open, or **F5** to launch the project. Choose **Minotaur**, **Bull** or **Solifuge** in the character menu. Drag the viewport to orbit, scroll to zoom, and use the shape sliders for the selected character. Select **Idle** for any character, **Walk forward** for the bull or solifuge, or **Step in place** for the minotaur. **Neutral** restores the original stance. **Save proportions** remembers the slider values for that character on that computer.
 
 The minotaur GLB also opens independently in Blender or another glTF viewer. It carries the neutral mesh, shape controls, and baked idle and step-in-place clips (the latter uses the animation key `Walk`). The Godot studio stores edits locally. To bake a different base model for distribution, edit the JSON recipe and rebuild it.
 

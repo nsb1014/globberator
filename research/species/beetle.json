@@ -535,51 +535,6 @@
       },
       "library_hint": "foot_claw",
       "notes": "Longest leg pair. Walking and grip on bark."
-    },
-    {
-      "id": "mandible_R",
-      "mirror_of": "mandible_L",
-      "name": "mandible (male, enlarged, branched)"
-    },
-    {
-      "id": "palp_R",
-      "mirror_of": "palp_L",
-      "name": "maxillary palp"
-    },
-    {
-      "id": "antenna_R",
-      "mirror_of": "antenna_L",
-      "name": "antenna (geniculate, 10-segment, short club)"
-    },
-    {
-      "id": "eye_R",
-      "mirror_of": "eye_L",
-      "name": "compound eye"
-    },
-    {
-      "id": "elytron_R",
-      "mirror_of": "elytron_L",
-      "name": "elytron (hardened forewing cover)"
-    },
-    {
-      "id": "hindwing_R",
-      "mirror_of": "hindwing_L",
-      "name": "hind wing (membranous)"
-    },
-    {
-      "id": "foreleg_R",
-      "mirror_of": "foreleg_L",
-      "name": "foreleg (fore coxa, femur, tibia with teeth, 5-segment tarsus)"
-    },
-    {
-      "id": "midleg_R",
-      "mirror_of": "midleg_L",
-      "name": "midleg (5-segment tarsus)"
-    },
-    {
-      "id": "hindleg_R",
-      "mirror_of": "hindleg_L",
-      "name": "hindleg (5-segment tarsus)"
     }
   ],
   "category_summary": {

@@ -144,10 +144,6 @@
       "notes": "Chelipeds are often unequal in size in adults (handedness not verified for this species). This is a left member; the right is a mirror, so the size asymmetry can be ignored for a symmetric model. Claw is small (about 3.5 cm, raised from 3 cm after the photo showed the claws projecting forward) and the dactyl and propodus pinch in the horizontal plane. Fingers have blunt tubercles."
     },
     {
-      "id": "cheliped_R",
-      "mirror_of": "cheliped_L"
-    },
-    {
       "id": "walking_leg_L",
       "name": "Walking legs (pereiopods P2 to P5)",
       "category": "locomotion",
@@ -221,10 +217,6 @@
       "notes": "Count is 4 per side (8 total). Legs P2 to P5 are slender and end in a pointed dactyl that grips substrate. Crabs walk sideways (lateral gait), with legs moving in alternating groups. P1 is the cheliped, so these are the walking legs only."
     },
     {
-      "id": "walking_leg_R",
-      "mirror_of": "walking_leg_L"
-    },
-    {
       "id": "eye_stalk_L",
       "name": "Stalked compound eye",
       "category": "sensory",
@@ -264,10 +256,6 @@
       },
       "library_hint": "eye_stalk",
       "notes": "Stalk can retract into the orbit. Eyes are compound and sit at the tips of short stalks."
-    },
-    {
-      "id": "eye_stalk_R",
-      "mirror_of": "eye_stalk_L"
     },
     {
       "id": "antennule_L",
@@ -311,10 +299,6 @@
       "notes": "Short, two-branched chemosensory and balance organ. Tucked beneath the front of the carapace."
     },
     {
-      "id": "antennule_R",
-      "mirror_of": "antennule_L"
-    },
-    {
       "id": "antenna_L",
       "name": "Antenna (long sensory antenna)",
       "category": "sensory",
@@ -354,10 +338,6 @@
       },
       "library_hint": "antenna",
       "notes": "Longer antenna, about 1 cm, that sweeps forward to sense the environment."
-    },
-    {
-      "id": "antenna_R",
-      "mirror_of": "antenna_L"
     },
     {
       "id": "maxilliped_3",

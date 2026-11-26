@@ -40,10 +40,6 @@
       "category": "locomotion",
       "symmetry": "pair",
       "count": 1,
-      "partner": {
-        "id": "legs_fore_R",
-        "mirror_of": "legs_fore_L"
-      },
       "attach_pos": [
         0.2,
         0.62,
@@ -117,10 +113,6 @@
       "category": "locomotion",
       "symmetry": "pair",
       "count": 1,
-      "partner": {
-        "id": "legs_hind_R",
-        "mirror_of": "legs_hind_L"
-      },
       "attach_pos": [
         0.2,
         0.52,
@@ -194,10 +186,6 @@
       "category": "locomotion",
       "symmetry": "pair",
       "count": 1,
-      "partner": {
-        "id": "paws_fore_R",
-        "mirror_of": "paws_fore_L"
-      },
       "attach_pos": [
         0.2,
         0.09,
@@ -237,10 +225,6 @@
       "category": "locomotion",
       "symmetry": "pair",
       "count": 1,
-      "partner": {
-        "id": "paws_hind_R",
-        "mirror_of": "paws_hind_L"
-      },
       "attach_pos": [
         0.2,
         0.22,
@@ -280,10 +264,6 @@
       "category": "locomotion",
       "symmetry": "pair",
       "count": 9,
-      "partner": {
-        "id": "claws_R",
-        "mirror_of": "claws_L"
-      },
       "attach_pos": [
         0.2,
         0.0,
@@ -479,10 +459,6 @@
       "category": "sensory",
       "symmetry": "pair",
       "count": 1,
-      "partner": {
-        "id": "eyes_R",
-        "mirror_of": "eyes_L"
-      },
       "attach_pos": [
         0.14,
         0.74,
@@ -523,10 +499,6 @@
       "category": "sensory",
       "symmetry": "pair",
       "count": 1,
-      "partner": {
-        "id": "ears_R",
-        "mirror_of": "ears_L"
-      },
       "attach_pos": [
         0.16,
         0.88,
@@ -567,10 +539,6 @@
       "category": "sensory",
       "symmetry": "pair",
       "count": 1,
-      "partner": {
-        "id": "vibrissae_R",
-        "mirror_of": "vibrissae_L"
-      },
       "attach_pos": [
         0.088,
         0.66,

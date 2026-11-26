@@ -43,15 +43,17 @@ def check(data):
     radial = (data.get("species_id") == "jellyfish")
     for part in data.get("parts") or []:
         pid = part.get("id", "?")
-        if "mirror_of" in part and len(part) <= 3:
-            continue                                   # mirror stub
+        if "mirror_of" in part or "partner" in part:
+            problems.append("%s: mirror entries are not recorded; symmetry 'pair' implies the twin" % pid)
+            continue
         cat = part.get("category")
         if cat not in CATEGORIES:
             problems.append("%s: bad category %r" % (pid, cat))
             continue
-        # Distinct part types per category (a bilateral pair or a repeated structure
-        # counts once), so files written with different counting habits compare fairly.
+        # Distinct part types per category: a pair or a repeated structure is one entry.
         counts[cat] += 1
+        if part.get("symmetry") == "pair" and in_box(part.get("attach_pos")) and part["attach_pos"][0] < 0:
+            problems.append("%s: paired parts are recorded on the +X side" % pid)
         if part.get("attach_pos") is not None and not in_box(part["attach_pos"], radial):
             problems.append("%s: attach_pos outside normalized box %s" % (pid, part["attach_pos"]))
         for j in part.get("joints") or []:

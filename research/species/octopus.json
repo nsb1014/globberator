@@ -112,10 +112,6 @@
       "notes": "Muscular hydrostat, no rigid joints: bending is produced by transverse, longitudinal and helical muscle layers, so the joint 'pos' values are bend zones, not pivots. Two rows of suckers on the oral surface (distal to the base) give grip. Arm length is approximate (about 1.5-2x mantle length in adult O. vulgaris); range 0-180 deg per zone, distal zone allows coiling (0-360)."
     },
     {
-      "id": "arm_R1",
-      "mirror_of": "arm_L1"
-    },
-    {
       "id": "arm_L2",
       "name": "Arm L2 (animal's left, arm 2 from dorsal)",
       "category": "manipulation",
@@ -191,10 +187,6 @@
       },
       "library_hint": "hand_tentacle",
       "notes": "Muscular hydrostat, no rigid joints: bending is produced by transverse, longitudinal and helical muscle layers, so the joint 'pos' values are bend zones, not pivots. Two rows of suckers on the oral surface (distal to the base) give grip. Arm length is approximate (about 1.5-2x mantle length in adult O. vulgaris); range 0-180 deg per zone, distal zone allows coiling (0-360)."
-    },
-    {
-      "id": "arm_R2",
-      "mirror_of": "arm_L2"
     },
     {
       "id": "arm_L3",
@@ -274,10 +266,6 @@
       "notes": "Muscular hydrostat, no rigid joints: bending is produced by transverse, longitudinal and helical muscle layers, so the joint 'pos' values are bend zones, not pivots. Two rows of suckers on the oral surface (distal to the base) give grip. Arm length is approximate (about 1.5-2x mantle length in adult O. vulgaris); range 0-180 deg per zone, distal zone allows coiling (0-360)."
     },
     {
-      "id": "arm_R3",
-      "mirror_of": "arm_L3"
-    },
-    {
       "id": "arm_L4",
       "name": "Arm L4 (animal's left, arm 4 from dorsal)",
       "category": "manipulation",
@@ -355,10 +343,6 @@
       "notes": "Muscular hydrostat, no rigid joints: bending is produced by transverse, longitudinal and helical muscle layers, so the joint 'pos' values are bend zones, not pivots. Two rows of suckers on the oral surface (distal to the base) give grip. Arm length is approximate (about 1.5-2x mantle length in adult O. vulgaris); range 0-180 deg per zone, distal zone allows coiling (0-360)."
     },
     {
-      "id": "arm_R4",
-      "mirror_of": "arm_L4"
-    },
-    {
       "id": "eye_L",
       "name": "Camera eye (animal's left)",
       "category": "sensory",
@@ -394,10 +378,6 @@
       },
       "library_hint": "eye_round",
       "notes": "Image-forming camera eye, about 1 cm diameter in adults; lidless, with a pupil. Octopus eyes are largely fixed in the orbit."
-    },
-    {
-      "id": "eye_R",
-      "mirror_of": "eye_L"
     },
     {
       "id": "funnel",

@@ -107,10 +107,6 @@
       "notes": "Folded-wing pose when perched, lying along the flank with the carpal bend projecting forward. In the photo the shoulder-to-primary-tip projection is about 0.29 m because of foreshortening, so length_m is kept at the 0.40 m wing chord estimate. Full span ~1.14-1.32 m in flight. Humerus-radius-ulna plus long primary/secondary feathers. Shoulder is a ball joint, elbow and wrist are hinges with the wrist the flexing point for folding. Flight feathers should be a separate sub-mesh."
     },
     {
-      "id": "wing_R",
-      "mirror_of": "wing_L"
-    },
-    {
       "id": "leg_L",
       "name": "Leg (left)",
       "category": "locomotion",
@@ -184,10 +180,6 @@
       "notes": "In the photo the belly feathers cover the thigh, and only the bare yellow tarsus (about 0.05 m projected) and the toes show, gripping the stump top. Feathered thigh, then a bare scaled tarsus (digitigrade bird leg). The knee is hidden in the thigh feathers and is not modelled; the visible joint is the ankle (intertarsal). Length is hip to toe base, estimated at 0.12 m from anatomy. The tarsus is an unfeathered cylinder with scutes and is the main gap in the library."
     },
     {
-      "id": "leg_R",
-      "mirror_of": "leg_L"
-    },
-    {
       "id": "talon_L",
       "name": "Talons (left foot)",
       "category": "manipulation",
@@ -227,10 +219,6 @@
       "notes": "Four digits (three forward, one hallux back); hallux talon is the largest. In the photo the front talons curve down over the stump edge and the hallux hangs back, all dark-tipped. Talons are curved, sharp keratin claws, used to grip and kill prey. Lengths are estimates (~3-4 cm). Good fit for foot_claw, but there are four or five per foot instead of one."
     },
     {
-      "id": "talon_R",
-      "mirror_of": "talon_L"
-    },
-    {
       "id": "eye_L",
       "name": "Eye (left)",
       "category": "sensory",
@@ -268,10 +256,6 @@
       "notes": "Large forward-facing eyes give binocular vision for hunting; the globe is fixed in the orbit, so the head moves instead of the eyes. In the photo the visible iris is amber-yellow. Diameter ~2.5 cm estimated. Eyes are set front-to-side with a bony sclerotic ring, so eye_round is close but not exact."
     },
     {
-      "id": "eye_R",
-      "mirror_of": "eye_L"
-    },
-    {
       "id": "brow_ridge_L",
       "name": "Brow (supraorbital) ridge (left)",
       "category": "sensory",
@@ -307,10 +291,6 @@
       },
       "library_hint": "brow_ridge",
       "notes": "Bony supraorbital shelf above each eye, strongly developed in Buteo, shades the eye from sun and glare. In the photo it gives the fierce, hooded look above the eye. Treated as sensory support. Its visual effect is the brow shelf that is typical of hawks. Could also be aesthetics, but the function is eye protection."
-    },
-    {
-      "id": "brow_ridge_R",
-      "mirror_of": "brow_ridge_L"
     },
     {
       "id": "beak",

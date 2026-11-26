@@ -18,7 +18,11 @@
   },
   "image_observations": "The photo shows a chimpanzee walking on all fours, not sitting or standing upright. The near forelimb is nearly straight with a mild elbow bend and its hand rests on the ground, and the hind feet are flat on the ground. The trunk is roughly horizontal with the head carried forward, and the back slopes down toward the hindquarters, so the hips sit lower than the shoulders. Relative to the head and shoulder height, the head is held lower than the file assumed, and the forelimb is long and nearly vertical. The knuckle-walking bounding box is kept, but the length is reduced from 1.0 to 0.9 m, the hips are placed below the shoulders, the eyes and brow are lowered, and the limb segments are re-measured to the photo's proportions.",
   "physical_parsing": {
-    "bounding_box_m": {"width_x": 0.5, "height_y": 0.9, "length_z": 0.9},
+    "bounding_box_m": {
+      "width_x": 0.5,
+      "height_y": 0.9,
+      "length_z": 0.9
+    },
     "approx_volume_m3": 0.045,
     "volume_method": "Mass over density: about 45 kg adult body mass divided by about 1000 kg/m^3 (tissue approximately water density). This is a mass-based estimate, not a geometric one. Bounding box volume is about 0.41 m^3 (0.5 x 0.9 x 0.9), so the body fills roughly 11% of it.",
     "shape_class": "Quadrupedal, knuckle-walking mammal with a barrel-shaped trunk, a forward-carried head on a short neck, long forelimbs and a tailless rump. The posture is knuckle-walking (quadrupedal), not upright, and matches the walking pose in the Commons photo. Standing bipedally, the same animal reaches about 1.0 to 1.5 m.",
@@ -36,11 +40,62 @@
       "category": "manipulation",
       "symmetry": "pair",
       "count": 1,
-      "attach_pos": [0.22, 0.756, 0.10],
+      "attach_pos": [
+        0.22,
+        0.756,
+        0.1
+      ],
       "joints": [
-        {"name": "shoulder", "pos": [0.22, 0.756, 0.10], "type": "ball", "pivot_axes": ["x", "y", "z"], "range_deg": [-90, 150]},
-        {"name": "elbow", "pos": [0.24, 0.456, 0.33], "type": "hinge", "pivot_axes": ["x"], "range_deg": [0, 150]},
-        {"name": "wrist", "pos": [0.24, 0.10, 0.38], "type": "hinge", "pivot_axes": ["x"], "range_deg": [-70, 70]}
+        {
+          "name": "shoulder",
+          "pos": [
+            0.22,
+            0.756,
+            0.1
+          ],
+          "type": "ball",
+          "pivot_axes": [
+            "x",
+            "y",
+            "z"
+          ],
+          "range_deg": [
+            -90,
+            150
+          ]
+        },
+        {
+          "name": "elbow",
+          "pos": [
+            0.24,
+            0.456,
+            0.33
+          ],
+          "type": "hinge",
+          "pivot_axes": [
+            "x"
+          ],
+          "range_deg": [
+            0,
+            150
+          ]
+        },
+        {
+          "name": "wrist",
+          "pos": [
+            0.24,
+            0.1,
+            0.38
+          ],
+          "type": "hinge",
+          "pivot_axes": [
+            "x"
+          ],
+          "range_deg": [
+            -70,
+            70
+          ]
+        }
       ],
       "root_radius_m": 0.045,
       "length_m": 0.6,
@@ -53,19 +108,49 @@
       "notes": "Shoulder to wrist length is about 0.6 m, an estimate from Napier and Napier. In the photo the near forelimb is nearly vertical and forward of the shoulder, with the elbow only mildly bent, and it carries the body's weight in the walking stride. Chimpanzee forelimbs are longer than the hindlimbs. The arm is classed as manipulation per the taxonomy, with a note that its primary role here is locomotion."
     },
     {
-      "id": "arm_R",
-      "mirror_of": "arm_L"
-    },
-    {
       "id": "hand_L",
       "name": "Hand (knuckle-walking and grasping hand)",
       "category": "manipulation",
       "symmetry": "pair",
       "count": 1,
-      "attach_pos": [0.24, 0.10, 0.38],
+      "attach_pos": [
+        0.24,
+        0.1,
+        0.38
+      ],
       "joints": [
-        {"name": "wrist", "pos": [0.24, 0.10, 0.38], "type": "hinge", "pivot_axes": ["x"], "range_deg": [-70, 70]},
-        {"name": "metacarpophalangeal", "pos": [0.24, 0.033, 0.42], "type": "hinge", "pivot_axes": ["x"], "range_deg": [0, 90]}
+        {
+          "name": "wrist",
+          "pos": [
+            0.24,
+            0.1,
+            0.38
+          ],
+          "type": "hinge",
+          "pivot_axes": [
+            "x"
+          ],
+          "range_deg": [
+            -70,
+            70
+          ]
+        },
+        {
+          "name": "metacarpophalangeal",
+          "pos": [
+            0.24,
+            0.033,
+            0.42
+          ],
+          "type": "hinge",
+          "pivot_axes": [
+            "x"
+          ],
+          "range_deg": [
+            0,
+            90
+          ]
+        }
       ],
       "root_radius_m": 0.025,
       "length_m": 0.18,
@@ -78,20 +163,67 @@
       "notes": "Hand length is about 0.18 m (Napier and Napier). In the photo the hand is planted flat on the grass with the digits flexed under the wrist, the knuckle-walking contact. Thumb is opposable but short relative to the fingers. Hand_basic is the closest library fit, but it has no knuckle-walking pose."
     },
     {
-      "id": "hand_R",
-      "mirror_of": "hand_L"
-    },
-    {
       "id": "leg_L",
       "name": "Hindlimb (thigh and shank)",
       "category": "locomotion",
       "symmetry": "pair",
       "count": 1,
-      "attach_pos": [0.24, 0.60, -0.27],
+      "attach_pos": [
+        0.24,
+        0.6,
+        -0.27
+      ],
       "joints": [
-        {"name": "hip", "pos": [0.24, 0.60, -0.27], "type": "ball", "pivot_axes": ["x", "y", "z"], "range_deg": [-30, 90]},
-        {"name": "knee", "pos": [0.22, 0.278, -0.233], "type": "hinge", "pivot_axes": ["x"], "range_deg": [0, 150]},
-        {"name": "ankle", "pos": [0.16, 0.078, -0.156], "type": "hinge", "pivot_axes": ["x"], "range_deg": [-40, 40]}
+        {
+          "name": "hip",
+          "pos": [
+            0.24,
+            0.6,
+            -0.27
+          ],
+          "type": "ball",
+          "pivot_axes": [
+            "x",
+            "y",
+            "z"
+          ],
+          "range_deg": [
+            -30,
+            90
+          ]
+        },
+        {
+          "name": "knee",
+          "pos": [
+            0.22,
+            0.278,
+            -0.233
+          ],
+          "type": "hinge",
+          "pivot_axes": [
+            "x"
+          ],
+          "range_deg": [
+            0,
+            150
+          ]
+        },
+        {
+          "name": "ankle",
+          "pos": [
+            0.16,
+            0.078,
+            -0.156
+          ],
+          "type": "hinge",
+          "pivot_axes": [
+            "x"
+          ],
+          "range_deg": [
+            -40,
+            40
+          ]
+        }
       ],
       "root_radius_m": 0.07,
       "length_m": 0.48,
@@ -104,19 +236,49 @@
       "notes": "Hip to ankle is about 0.48 m, measured from the photo's proportions and consistent with Napier and Napier. The hip sits about 0.6 m above the ground, which is lower than the shoulder. In the photo the hip and knee are flexed moderately, and the hind foot is planted under the body. The leg is classed as locomotion per the taxonomy. The foot is a separate part."
     },
     {
-      "id": "leg_R",
-      "mirror_of": "leg_L"
-    },
-    {
       "id": "foot_L",
       "name": "Grasping foot (plantigrade with opposable hallux)",
       "category": "locomotion",
       "symmetry": "pair",
       "count": 1,
-      "attach_pos": [0.16, 0.078, -0.156],
+      "attach_pos": [
+        0.16,
+        0.078,
+        -0.156
+      ],
       "joints": [
-        {"name": "ankle", "pos": [0.16, 0.078, -0.156], "type": "hinge", "pivot_axes": ["x"], "range_deg": [-40, 40]},
-        {"name": "hallux_mtp", "pos": [0.14, 0.022, -0.078], "type": "hinge", "pivot_axes": ["x"], "range_deg": [0, 45]}
+        {
+          "name": "ankle",
+          "pos": [
+            0.16,
+            0.078,
+            -0.156
+          ],
+          "type": "hinge",
+          "pivot_axes": [
+            "x"
+          ],
+          "range_deg": [
+            -40,
+            40
+          ]
+        },
+        {
+          "name": "hallux_mtp",
+          "pos": [
+            0.14,
+            0.022,
+            -0.078
+          ],
+          "type": "hinge",
+          "pivot_axes": [
+            "x"
+          ],
+          "range_deg": [
+            0,
+            45
+          ]
+        }
       ],
       "root_radius_m": 0.03,
       "length_m": 0.2,
@@ -129,18 +291,31 @@
       "notes": "Foot length is about 0.2 m (Napier and Napier). The photo shows the hind foot flat on the ground, the plantigrade stance. The chimpanzee foot is plantigrade and the big toe (hallux) is opposable, so the foot can grasp branches. Foot_paw is the closest library fit but it has no opposable toe."
     },
     {
-      "id": "foot_R",
-      "mirror_of": "foot_L"
-    },
-    {
       "id": "eye_L",
       "name": "Eye (forward-facing, binocular)",
       "category": "sensory",
       "symmetry": "pair",
       "count": 1,
-      "attach_pos": [0.07, 0.778, 0.322],
+      "attach_pos": [
+        0.07,
+        0.778,
+        0.322
+      ],
       "joints": [
-        {"name": "orbit_fixed", "pos": [0.07, 0.778, 0.322], "type": "fixed", "pivot_axes": [], "range_deg": [0, 0]}
+        {
+          "name": "orbit_fixed",
+          "pos": [
+            0.07,
+            0.778,
+            0.322
+          ],
+          "type": "fixed",
+          "pivot_axes": [],
+          "range_deg": [
+            0,
+            0
+          ]
+        }
       ],
       "root_radius_m": 0.012,
       "length_m": 0.024,
@@ -153,18 +328,31 @@
       "notes": "Forward-facing eyes give stereoscopic depth vision. The photo shows the eyes set in a dark, close-set face, about 0.07 m apart. The eye is fixed in the orbit, so the only movement is by head turn. Eye diameter is about 0.024 m (approximate)."
     },
     {
-      "id": "eye_R",
-      "mirror_of": "eye_L"
-    },
-    {
       "id": "ear_L",
       "name": "Ear (flat, close-set, rounded)",
       "category": "sensory",
       "symmetry": "pair",
       "count": 1,
-      "attach_pos": [0.18, 0.844, 0.144],
+      "attach_pos": [
+        0.18,
+        0.844,
+        0.144
+      ],
       "joints": [
-        {"name": "ear_fixed", "pos": [0.18, 0.844, 0.144], "type": "fixed", "pivot_axes": [], "range_deg": [0, 0]}
+        {
+          "name": "ear_fixed",
+          "pos": [
+            0.18,
+            0.844,
+            0.144
+          ],
+          "type": "fixed",
+          "pivot_axes": [],
+          "range_deg": [
+            0,
+            0
+          ]
+        }
       ],
       "root_radius_m": 0.02,
       "length_m": 0.06,
@@ -177,18 +365,31 @@
       "notes": "In the photo the ear is flat, rounded and close to the side of the head, with little pinna projection. Its visible extent is about 0.06 m (photo estimate, up from 0.045 m). The ear is not a flared or leaf shape, so none of the library ears fits well."
     },
     {
-      "id": "ear_R",
-      "mirror_of": "ear_L"
-    },
-    {
       "id": "nose",
       "name": "Nose (broad, flat, with forward nostrils)",
       "category": "sensory",
       "symmetry": "centre",
       "count": 1,
-      "attach_pos": [0.0, 0.656, 0.344],
+      "attach_pos": [
+        0.0,
+        0.656,
+        0.344
+      ],
       "joints": [
-        {"name": "nasal_fixed", "pos": [0.0, 0.656, 0.344], "type": "fixed", "pivot_axes": [], "range_deg": [0, 0]}
+        {
+          "name": "nasal_fixed",
+          "pos": [
+            0.0,
+            0.656,
+            0.344
+          ],
+          "type": "fixed",
+          "pivot_axes": [],
+          "range_deg": [
+            0,
+            0
+          ]
+        }
       ],
       "root_radius_m": 0.012,
       "length_m": 0.02,
@@ -206,9 +407,28 @@
       "category": "feeding",
       "symmetry": "centre",
       "count": 1,
-      "attach_pos": [0.0, 0.589, 0.333],
+      "attach_pos": [
+        0.0,
+        0.589,
+        0.333
+      ],
       "joints": [
-        {"name": "temporomandibular", "pos": [0.0, 0.733, 0.222], "type": "hinge", "pivot_axes": ["x"], "range_deg": [0, 35]}
+        {
+          "name": "temporomandibular",
+          "pos": [
+            0.0,
+            0.733,
+            0.222
+          ],
+          "type": "hinge",
+          "pivot_axes": [
+            "x"
+          ],
+          "range_deg": [
+            0,
+            35
+          ]
+        }
       ],
       "root_radius_m": 0.03,
       "length_m": 0.06,
@@ -226,9 +446,26 @@
       "category": "aesthetics",
       "symmetry": "centre",
       "count": 1,
-      "attach_pos": [0.0, 0.80, 0.344],
+      "attach_pos": [
+        0.0,
+        0.8,
+        0.344
+      ],
       "joints": [
-        {"name": "supraorbital_fixed", "pos": [0.0, 0.80, 0.344], "type": "fixed", "pivot_axes": [], "range_deg": [0, 0]}
+        {
+          "name": "supraorbital_fixed",
+          "pos": [
+            0.0,
+            0.8,
+            0.344
+          ],
+          "type": "fixed",
+          "pivot_axes": [],
+          "range_deg": [
+            0,
+            0
+          ]
+        }
       ],
       "root_radius_m": 0.015,
       "length_m": 0.09,
@@ -241,7 +478,13 @@
       "notes": "Bony supraorbital torus across both orbits, about 0.09 m wide. The photo shows a heavy brow overhanging the eyes. It is largely structural and partly functional (it reinforces the face), so aesthetics is a loose fit. Brow_ridge is the library match."
     }
   ],
-  "category_summary": {"locomotion": 4, "sensory": 5, "feeding": 1, "manipulation": 4, "aesthetics": 1},
+  "category_summary": {
+    "locomotion": 4,
+    "sensory": 5,
+    "feeding": 1,
+    "manipulation": 4,
+    "aesthetics": 1
+  },
   "constraints": {
     "symmetry": "Bilateral about the sagittal plane (+X = animal's left). Limbs and sense organs are paired; the mouth, nose and brow ridge are midline. Counts are per instance, so each pair contributes two to category_summary.",
     "gait": "Knuckle-walking quadruped: forelimbs bear weight on the dorsal middle phalanges, hindlimbs on the plantigrade foot. The photo confirms a walking stride on all fours. Bipedal stance is possible but brief. Limb and joint ranges are for the walking stance.",
@@ -252,11 +495,26 @@
     ]
   },
   "library_gaps": [
-    {"feature": "Forelimb (shoulder, elbow, wrist, knuckle-walking)", "why": "No library part for a jointed limb. The library has hands and feet but no limb segment with a hinge elbow."},
-    {"feature": "Hindlimb (hip, knee, ankle)", "why": "No library limb part for a multi-joint leg."},
-    {"feature": "Opposable hallux (grasping foot)", "why": "Foot_paw is plantigrade with no opposable big toe, so grasping is missing."},
-    {"feature": "Knuckle-walking hand posture", "why": "Hand_basic has no flexed-digit, knuckle-bearing pose."},
-    {"feature": "Flat, close-set rounded ear", "why": "Library ears are leaf or flared shapes. No flat rounded ear exists."}
+    {
+      "feature": "Forelimb (shoulder, elbow, wrist, knuckle-walking)",
+      "why": "No library part for a jointed limb. The library has hands and feet but no limb segment with a hinge elbow."
+    },
+    {
+      "feature": "Hindlimb (hip, knee, ankle)",
+      "why": "No library limb part for a multi-joint leg."
+    },
+    {
+      "feature": "Opposable hallux (grasping foot)",
+      "why": "Foot_paw is plantigrade with no opposable big toe, so grasping is missing."
+    },
+    {
+      "feature": "Knuckle-walking hand posture",
+      "why": "Hand_basic has no flexed-digit, knuckle-bearing pose."
+    },
+    {
+      "feature": "Flat, close-set rounded ear",
+      "why": "Library ears are leaf or flared shapes. No flat rounded ear exists."
+    }
   ],
   "sources": [
     "Wikimedia Commons, File:Pan_troglodytes_(male).jpg, photo by Hans Hillewaert, licence CC BY-SA 3.0. https://commons.wikimedia.org/wiki/File:Pan_troglodytes_(male).jpg (Posture, view and relative proportions. Viewed locally.)",

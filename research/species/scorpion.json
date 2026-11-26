@@ -41,7 +41,7 @@
       "symmetry": "pair",
       "count": 1,
       "attach_pos": [
-        -0.22,
+        0.22,
         0.25,
         0.2
       ],
@@ -49,7 +49,7 @@
         {
           "name": "coxa-trochanter (shoulder, on prosoma)",
           "pos": [
-            -0.22,
+            0.22,
             0.25,
             0.2
           ],
@@ -67,7 +67,7 @@
         {
           "name": "femur-patella (elbow)",
           "pos": [
-            -0.27,
+            0.27,
             0.25,
             0.3
           ],
@@ -83,7 +83,7 @@
         {
           "name": "chela (pincer closure, fixed finger vs movable finger)",
           "pos": [
-            -0.31,
+            0.31,
             0.25,
             0.42
           ],
@@ -114,7 +114,7 @@
       "symmetry": "pair",
       "count": 1,
       "attach_pos": [
-        -0.05,
+        0.05,
         0.2,
         0.31
       ],
@@ -122,7 +122,7 @@
         {
           "name": "chelicera base (articulates on the anterior prosoma)",
           "pos": [
-            -0.05,
+            0.05,
             0.2,
             0.3
           ],
@@ -138,7 +138,7 @@
         {
           "name": "movable finger",
           "pos": [
-            -0.05,
+            0.05,
             0.2,
             0.34
           ],
@@ -169,7 +169,7 @@
       "symmetry": "pair",
       "count": 4,
       "attach_pos": [
-        -0.18,
+        0.18,
         0.15,
         0.22
       ],
@@ -177,7 +177,7 @@
         {
           "name": "coxa (ball joint on prosoma sternum)",
           "pos": [
-            -0.18,
+            0.18,
             0.15,
             0.22
           ],
@@ -195,7 +195,7 @@
         {
           "name": "trochanter-femur",
           "pos": [
-            -0.26,
+            0.26,
             0.15,
             0.22
           ],
@@ -211,7 +211,7 @@
         {
           "name": "patella (knee)",
           "pos": [
-            -0.33,
+            0.33,
             0.12,
             0.2
           ],
@@ -227,7 +227,7 @@
         {
           "name": "tibia-tarsus (ankle, tarsus tip claw)",
           "pos": [
-            -0.38,
+            0.38,
             0.05,
             0.16
           ],
@@ -258,7 +258,7 @@
       "symmetry": "pair",
       "count": 1,
       "attach_pos": [
-        -0.05,
+        0.05,
         0.02,
         0.12
       ],
@@ -266,7 +266,7 @@
         {
           "name": "pectine base (fixed to second mesosomal sternite)",
           "pos": [
-            -0.05,
+            0.05,
             0.02,
             0.12
           ],
@@ -332,7 +332,7 @@
       "symmetry": "pair",
       "count": 2,
       "attach_pos": [
-        -0.1,
+        0.1,
         0.55,
         0.16
       ],
@@ -340,7 +340,7 @@
         {
           "name": "fixed on prosomal dorsal lateral margin",
           "pos": [
-            -0.1,
+            0.1,
             0.55,
             0.16
           ],
@@ -519,7 +519,8 @@
       "Frame normalised to the bounding box: x and z in [-0.5, 0.5], y in [0, 1]; ground is y = 0, +Z is forward (toward the prosoma front).",
       "Metasoma is an appended articulated chain; the core is the prosoma-mesosoma pair.",
       "Pedipalps and legs are jointed appendages attached to the core by ball joints at the coxae, so penetration is measured at the coxal socket.",
-      "Box length and x positions were set from a dorsal photo of Pandinus imperator (whole animal, pincer tip to telson = z -0.5 to 0.5). Heights, pectines and the lower leg joints are not visible and remain estimates."
+      "Box length and x positions were set from a dorsal photo of Pandinus imperator (whole animal, pincer tip to telson = z -0.5 to 0.5). Heights, pectines and the lower leg joints are not visible and remain estimates.",
+      "Paired parts are recorded once, on the +X side; x was negated from the first pass so every species uses the same side."
     ]
   },
   "library_gaps": [

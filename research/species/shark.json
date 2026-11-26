@@ -76,10 +76,6 @@
       "notes": "Large, broad-based, wing-like, mainly for lift and steering. Photo shows the fin low on the flank behind the gill region, with a tip reaching about 0.13 of total length. Hint is a loose match: fin_dorsal is the closest fin shape in the library."
     },
     {
-      "id": "pectoral_fin_R",
-      "mirror_of": "pectoral_fin_L"
-    },
-    {
       "id": "pelvic_fin_L",
       "name": "Pelvic fin (left)",
       "category": "locomotion",
@@ -119,10 +115,6 @@
       },
       "library_hint": "fin_dorsal",
       "notes": "Smaller ventral fin, used for stability and pitch control. Photo places the pelvic root at about 0.55 of total length from the snout, as the first pass estimated. Hint is a loose match only."
-    },
-    {
-      "id": "pelvic_fin_R",
-      "mirror_of": "pelvic_fin_L"
     },
     {
       "id": "dorsal_fin_1",
@@ -316,10 +308,6 @@
       "notes": "Dorsolateral placement on the head with a nictitating membrane. Small and mostly stationary. The hint is a rough match."
     },
     {
-      "id": "eye_R",
-      "mirror_of": "eye_L"
-    },
-    {
       "id": "nostril_L",
       "name": "Nostril / nasal capsule (left)",
       "category": "sensory",
@@ -355,10 +343,6 @@
       },
       "library_hint": null,
       "notes": "Ventral nostril, a non-protruding inhalant opening for olfaction. No library equivalent. Symmetric pair on the ventral snout."
-    },
-    {
-      "id": "nostril_R",
-      "mirror_of": "nostril_L"
     },
     {
       "id": "ampullae_of_lorenzini_L",
@@ -398,10 +382,6 @@
       "notes": "Electroreceptive jelly-filled canals opening through pores on the ventral snout and head. Flush with the skin, so it needs only a shallow surface overlap. No library equivalent."
     },
     {
-      "id": "ampullae_of_lorenzini_R",
-      "mirror_of": "ampullae_of_lorenzini_L"
-    },
-    {
       "id": "lateral_line_L",
       "name": "Lateral line canal (left)",
       "category": "sensory",
@@ -437,10 +417,6 @@
       },
       "library_hint": null,
       "notes": "Mechanosensory canal along each flank, running from head to tail. Sensitive to water movement. Flush with the skin, so it is a surface detail. No library equivalent."
-    },
-    {
-      "id": "lateral_line_R",
-      "mirror_of": "lateral_line_L"
     },
     {
       "id": "upper_jaw",
@@ -556,10 +532,6 @@
       "notes": "Five slits per side for respiratory water outflow. In the photo the slit row spans about 0.05-0.06 m, so length_m is revised. Not used for prey capture, so the feeding category is the closest fit in this taxonomy. Count is per side."
     },
     {
-      "id": "gill_slits_R",
-      "mirror_of": "gill_slits_L"
-    },
-    {
       "id": "claspers_L",
       "name": "Pelvic clasper (left, males only)",
       "category": "manipulation",
@@ -597,10 +569,6 @@
       },
       "library_hint": "hand_claw",
       "notes": "Male-only reproductive grasping organ, a modified inner edge of the pelvic fin. It grasps during mating and is the only manipulation structure. Hint is a poor match, so this is a low-confidence category assignment. Females lack it."
-    },
-    {
-      "id": "claspers_R",
-      "mirror_of": "claspers_L"
     }
   ],
   "category_summary": {

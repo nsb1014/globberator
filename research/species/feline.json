@@ -108,10 +108,6 @@
       "notes": "Digitigrade: the carpus is raised about 0.06 m off the ground and only the digits contact the floor, so the lower leg behaves like a short lever. Shoulder has no bony clavicle; the scapula floats on muscle and is attached by a ball-like muscular joint. Joint ranges are approximate, from published cat gait kinematics and general mammal anatomy, not measured. In the photo the elbow sits at about belly height, so the elbow joint was lowered to 0.50 of box height (about 0.135 m)."
     },
     {
-      "id": "forelimb_R",
-      "mirror_of": "forelimb_L"
-    },
-    {
       "id": "hindlimb_L",
       "name": "Hindlimb (left)",
       "category": "locomotion",
@@ -185,10 +181,6 @@
       "notes": "Digitigrade hindleg with the hock raised about 0.08 m off the ground. The hock is the high joint behind the knee, and the foot contacts ground only through the toes. The hip is a deep ball joint inside the pelvis, so the thigh is the thickest part of the leg. The stifle is largely hidden in the flank, and its range is approximate. The photo puts the rump top a little below the withers (hip near 0.21 m), so the hip was lowered from 0.90 to 0.78 of box height, and the stifle to 0.43 (about 0.12 m), near belly level."
     },
     {
-      "id": "hindlimb_R",
-      "mirror_of": "hindlimb_L"
-    },
-    {
       "id": "paw_pads_L",
       "name": "Paw pads (left)",
       "category": "locomotion",
@@ -224,10 +216,6 @@
       },
       "library_hint": "foot_pad",
       "notes": "Count is 2 per side: one fore paw and one hind paw pad group. Each pad group has a central metacarpal/metatarsal pad and digital pads, and the cushions take impact and give grip. They are modelled as one surface per paw. Count 2 per side is an assumption based on the two paws on each side of the body."
-    },
-    {
-      "id": "paw_pads_R",
-      "mirror_of": "paw_pads_L"
     },
     {
       "id": "claws_L",
@@ -267,10 +255,6 @@
       },
       "library_hint": "foot_claw",
       "notes": "Forefoot has 5 digits and the hindfoot has 4 (the dewclaw is on the forelimb). Claws retract by a ligament mechanism, so the claw is folded inside a sheath unless extended. The count shown is forefoot only; the hindfoot has 4 claws. Claw length is about 1 cm. Used for grasping prey and climbing."
-    },
-    {
-      "id": "claws_R",
-      "mirror_of": "claws_L"
     },
     {
       "id": "tail",
@@ -354,10 +338,6 @@
       "notes": "Forward-facing with binocular overlap for depth. Pupil is a vertical slit in bright light and round in dim light. Eye is very large relative to the head. Visible on the front of the head."
     },
     {
-      "id": "eye_R",
-      "mirror_of": "eye_L"
-    },
-    {
       "id": "ear_L",
       "name": "Ear (left)",
       "category": "sensory",
@@ -399,10 +379,6 @@
       "notes": "Upright, mobile, triangular pinnae that can rotate independently for directional hearing. Closest library fit is ear_leaf, although the cat ear is a rigid cartilage cone rather than a leaf. The pinna base is mobile at the ball joint."
     },
     {
-      "id": "ear_R",
-      "mirror_of": "ear_L"
-    },
-    {
       "id": "whiskers_L",
       "name": "Whiskers (vibrissae, left)",
       "category": "sensory",
@@ -442,10 +418,6 @@
       },
       "library_hint": null,
       "notes": "Several rows of long, stiff vibrissae on each side of the muzzle, each seated in a follicle with a dense nerve supply. They sense touch and air movement. No library part for thin radiating whiskers. Count is per side, with several whiskers per row."
-    },
-    {
-      "id": "whiskers_R",
-      "mirror_of": "whiskers_L"
     },
     {
       "id": "nose",

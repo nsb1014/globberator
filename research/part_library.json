@@ -574,7 +574,7 @@
         },
         {
           "name": "wrist",
-          "type": "hinge",
+          "type": "fixed",
           "pivot_axes": [
             "x"
           ],
@@ -3058,7 +3058,7 @@
       "joints": [
         {
           "name": "follicle base",
-          "type": "ball",
+          "type": "fixed",
           "pivot_axes": [
             "x",
             "y",
@@ -3498,7 +3498,7 @@
       "joints": [
         {
           "name": "skull fixed (cere / upper mandible)",
-          "type": "hinge",
+          "type": "fixed",
           "pivot_axes": [
             "x"
           ],
@@ -3696,7 +3696,7 @@
       "joints": [
         {
           "name": "palp base",
-          "type": "hinge",
+          "type": "ball",
           "pivot_axes": [
             "x",
             "y",
@@ -3877,7 +3877,7 @@
       "joints": [
         {
           "name": "arm_root_at_manubrium",
-          "type": "hydrostatic",
+          "type": "fixed",
           "pivot_axes": [
             "x",
             "y",
@@ -4709,7 +4709,7 @@
       "joints": [
         {
           "name": "phalangeal joint (claw retraction)",
-          "type": "hinge",
+          "type": "fixed",
           "pivot_axes": [
             "x"
           ],

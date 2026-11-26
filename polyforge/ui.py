@@ -149,6 +149,8 @@ def sync_edit(scene):
             e.scale = l["scale"]
             e.rot = [math.radians(a) for a in l["rot"]]
             params = l.get("params", l["tip_params"])
+            if l["tip"] == "foot_hoof":
+                e.hoof_split = l["tip_params"]["split"]
         if part:
             for i, (k, (lo, hi, d)) in enumerate(part.params.items()):
                 if i < PARAM_SLOTS:
@@ -206,6 +208,8 @@ def _edit_update(field):
                     return
                 lo, hi, _ = part.params[keys[i]]
                 op["params" if l.get("family") else "tip_params"] = {keys[i]: lo + (hi - lo) * getattr(self, field)}
+            elif field == "hoof_split" and l["tip"] == "foot_hoof":
+                op["tip_params"] = {"split": self.hoof_split}
             elif field == "joint_index":
                 sync_edit(scene)
                 return
@@ -240,6 +244,8 @@ class PF_Edit(bpy.types.PropertyGroup):
     joint_index: IntProperty(name="Segment", min=0, max=4, update=_edit_update("joint_index"))
     segment: FloatVectorProperty(name="Joint offset", size=3, update=_edit_update("segment"))
     joint_radius: FloatProperty(name="End radius", min=0.02, max=1.2, update=_edit_update("joint_radius"))
+    hoof_split: FloatProperty(name="Groove width", description="Set to zero for a closed, boot-shaped toe",
+                              min=0.0, max=1.0, default=0.6, update=_edit_update("hoof_split"))
     radius: FloatProperty(name="Thickness", min=0.02, max=1.2, default=0.1, update=_edit_update("radius"))
     base: FloatVectorProperty(name="Base", subtype="COLOR", min=0, max=1, update=_edit_update("base"))
     accent: FloatVectorProperty(name="Accent", subtype="COLOR", min=0, max=1, update=_edit_update("accent"))
@@ -739,8 +745,10 @@ class PF_PT_edit(PF_PT_base, bpy.types.Panel):
             if part:
                 params = l.get("params", l["tip_params"])
                 for i, (k, (lo, hi, d)) in enumerate(part.params.items()):
-                    if i < PARAM_SLOTS:
+                    if i < PARAM_SLOTS and not (part.id == "foot_hoof" and k == "split"):
                         box.prop(e, "p%d" % i, text="%s (%.2f)" % (k, params.get(k, d)), slider=True)
+            if l["tip"] == "foot_hoof":
+                box.prop(e, "hoof_split", slider=True)
             box.operator("polyforge.remove", icon="TRASH")
 
 

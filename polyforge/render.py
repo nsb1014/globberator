@@ -1,9 +1,10 @@
-"""Studio renders: Workbench (fast matte clay, the default) or Cycles.
+"""Studio renders: fast Workbench with vertex colors, or Cycles.
 
 Camera views use the same convention as the recipe: yaw 0 looks at the
 creature's face, yaw 90 shows its +X side, pitch is elevation in degrees.
 """
 import math
+import os
 
 import bpy
 from mathutils import Vector
@@ -140,7 +141,9 @@ def render(path, transparent=False):
     sc = bpy.context.scene
     sc.render.film_transparent = transparent
     sc.render.filepath = path
-    bpy.ops.render.render(write_still=True)
+    result = bpy.ops.render.render(write_still=True)
+    if "FINISHED" not in result or not os.path.isfile(path) or os.path.getsize(path) == 0:
+        raise RuntimeError(f"Blender did not write a render to {path}")
     return path
 
 

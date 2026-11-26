@@ -15,7 +15,7 @@ def _select(objs):
     bpy.context.view_layer.objects.active = objs[0]
 
 
-def export(result, path, fmt=None):
+def export(result, path, fmt=None, *, animated=True):
     fmt = (fmt or os.path.splitext(path)[1].lstrip(".")).lower()
     if fmt not in FORMATS:
         raise ValueError("unknown export format %s (use one of %s)" % (fmt, ", ".join(FORMATS)))
@@ -25,7 +25,7 @@ def export(result, path, fmt=None):
     if fmt in ("glb", "gltf"):
         bpy.ops.export_scene.gltf(filepath=path, export_format="GLB" if fmt == "glb" else "GLTF_SEPARATE",
                                   use_selection=True, export_yup=True, export_apply=False, export_skins=True,
-                                  export_animations=True, export_animation_mode="NLA_TRACKS",
+                                  export_animations=animated, export_animation_mode="NLA_TRACKS",
                                   export_materials="EXPORT", export_extras=False)
     elif fmt == "fbx":
         bpy.ops.export_scene.fbx(filepath=path, use_selection=True, add_leaf_bones=False, bake_anim=True,

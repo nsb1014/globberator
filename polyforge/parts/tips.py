@@ -19,8 +19,8 @@ def foot_paw(g, p):
 
 
 def foot_hoof(g, p):
-    """Two weight-bearing claws under a shared pastern, with a level sole."""
-    s = p["size"]
+    """A rounded foot with a level sole and an optional cloven groove."""
+    s, split = p["size"], p["split"]
     g.setup(slot_finish={"dark": "direct", "skin": "subsurf_low"})
     g.slot("dark")
     # Heights, outer walls, heels and toes. The rearward shift at the crown
@@ -32,18 +32,26 @@ def foot_hoof(g, p):
         (-.043, .077, -.063, .080), (-.035, .065, -.056, .068),
     )
     sides = 40
-    for side in (-1, 1):
+    lobe_roundness = min(split / .6, 1.0)
+    # At zero, a single perimeter makes a closed toe and sole.
+    for side in (-1, 1) if split else (0,):
         verts = []
         for y, outer, heel, toe in sections:
             for i in range(sides):
                 a = math.tau * i / sides
                 cx, cz = math.cos(a), math.sin(a)
-                width = .5 + .5 * math.copysign(abs(cx) ** .67, cx)
+                width = math.copysign(abs(cx) ** .67, cx)
                 depth = .5 + .5 * math.copysign(abs(cz) ** .73, cz)
-                cleft = .004 + p["split"] * (.003 + .014 * depth ** 1.7)
-                # Broader lateral heel and straighter medial wall at the toe.
-                x = lerp(cleft, outer - .011 * depth ** 2, width)
-                verts.append(V(side * x, y, lerp(heel, toe, depth)) * s)
+                wall = outer - .011 * depth ** 2
+                if side:
+                    cleft = min(.004, .04 * split) + split * (.003 + .014 * depth ** 1.7)
+                    # Narrow grooves follow the closed toe outline. Widening
+                    # the groove rounds the two lobes into the cloven profile.
+                    across = lerp(max(0.0, width), .5 + .5 * width, lobe_roundness)
+                    x = side * lerp(cleft, wall, across)
+                else:
+                    x = width * wall
+                verts.append(V(x, y, lerp(heel, toe, depth)) * s)
         faces = [tuple(range(sides))]
         for row in range(len(sections) - 1):
             base = row * sides
@@ -51,7 +59,7 @@ def foot_hoof(g, p):
                 j = (i + 1) % sides
                 faces.append((base + i, base + sides + i, base + sides + j, base + j))
         faces.append(tuple(reversed(range(len(verts) - sides, len(verts)))))
-        g._add(verts, faces if side == 1 else [tuple(reversed(face)) for face in faces])
+        g._add(verts, faces if side >= 0 else [tuple(reversed(face)) for face in faces])
     g.slot("skin")
     stations = [(0, .052, -.024), (0, .014, -.010), (0, -.017, -.002),
                 (0, -.045, .004), (0, -.060, .012), (0, -.070, .014)]
@@ -199,8 +207,10 @@ T = dict(attach="tip")
 PARTS = [
     Part("foot_paw", "foot", "Padded paw with four toe pads (cats, dogs, bears).", ["mammal", "cat", "dog", "bear", "cute"],
          {"size": (0.4, 3.0, 1.0), "toes": (0.0, 1.5, 1.0)}, foot_paw, cap="foot", **T),
-    Part("foot_hoof", "foot", "Rounded cloven hoof (bulls, goats, deer, minotaurs).", ["bovine", "goat", "deer", "minotaur", "horse"],
-         {"size": (0.4, 3.0, 1.0), "split": (0.0, 1.0, 0.6)}, foot_hoof, cap="foot", **T),
+    Part("foot_hoof", "foot", "Rounded hoof with adjustable groove width. Set split to 0 for a closed, boot-shaped toe.",
+         ["bovine", "goat", "deer", "minotaur", "horse"],
+         {"size": (0.4, 3.0, 1.0), "split": (0.0, 1.0, 0.6)}, foot_hoof,
+         cap="foot", topology_changes=("split",), **T),
     Part("foot_claw", "foot", "Bird / raptor foot: three forward toes and one back toe with talons.", ["bird", "dinosaur", "raptor", "dragon"],
          {"size": (0.4, 3.0, 1.0), "spread": (0.3, 1.5, 1.0), "talons": (0.0, 2.0, 1.0)}, foot_claw, cap="foot", **T),
     Part("foot_pad", "foot", "Thick round column foot with toenails (elephants, sauropods, golems).", ["elephant", "sauropod", "heavy"],

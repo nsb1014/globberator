@@ -4,7 +4,11 @@
     blender -b -P pf.py -- <command> [args]
 
 Commands
+  new --out file.json [--name name]             start a blank recipe
+  search "plain language" [--limit 5]          find active part families and preview paths
   describe [--out f.json]                      part catalog, recipe limits and ops as JSON
+  surface <recipe> X Y Z                       estimate spine coordinates for a body landmark
+  character <brief.json> --out dir             compile an animated humanoid GLB
   normalize <recipe> [--out r.json]            clamp into the style ranges, print warnings
   apply <recipe> <ops.json> --out r.json       apply editor operations
   build <recipe> --out dir [--formats glb,fbx,usdz,obj,blend] [--no-anim] [--preview]
@@ -131,24 +135,69 @@ def cmd_attach(a):
     R.save(r, a.out)
 
 
+def cmd_new(a):
+    recipe = R.default_recipe()
+    recipe["name"] = a.name
+    R.save(R.normalize(recipe)[0], a.out)
+
+
+def cmd_search(a):
+    if a.limit < 1:
+        raise ValueError("--limit must be positive")
+    results = []
+    for part in catalog.search(a.query, a.limit):
+        host = "limb" if part.attach == "tip" else part.host
+        result = {"id": part.id, "description": part.desc, "category": part.category,
+                  "attach": part.attach, "host": host,
+                  "shape": catalog.search_shape(part, a.query)}
+        for key, folder in (("thumbnail", "thumbs"), ("part_reference", "references")):
+            path = os.path.join("library", folder, part.id + ".png")
+            if os.path.isfile(os.path.join(ROOT, path)):
+                result[key] = path
+        results.append(result)
+    print(json.dumps(results, indent=2))
+
+
 def cmd_describe(a):
-    d = catalog.describe()
     if a.part:
         selected = catalog.get(a.part)
         if selected is None:
             raise ValueError("unknown part " + a.part)
-        d["parts"] = [catalog.describe_part(selected)]
-    elif not a.full:
-        d["parts"] = [{"id": item.id, "category": item.category, "attach": item.attach} for item in catalog.PARTS]
-    d["placement"] = "u rear-to-front [0,1], theta degrees around the surface; midline single, lateral paired"
-    d["recipe_limits"] = R.LIMITS
-    d["patterns"] = R.PATTERNS
-    d["ops"] = ops.SPEC
+        d = {"library_version": catalog.LIBRARY_VERSION, "parts": [catalog.describe_part(selected)]}
+    else:
+        d = catalog.describe() if a.full else {
+            "library_version": catalog.LIBRARY_VERSION,
+            "parts": [{"id": item.id, "category": item.category, "attach": item.attach} for item in catalog.PARTS],
+        }
+    if not a.part or a.full:
+        d["placement"] = "u from first to last spine ring, including caps [0,1]; theta around the local spine frame"
+        d["recipe_limits"] = R.LIMITS
+        d["patterns"] = R.PATTERNS
+        d["ops"] = ops.SPEC
     text = json.dumps(d, indent=2, sort_keys=True)
     if a.out:
         open(a.out, "w").write(text)
     else:
         print(text)
+
+
+def cmd_surface(a):
+    from .spine import Spine
+
+    recipe, warnings = R.normalize(R.load(a.recipe))
+    for warning in warnings:
+        print("warning:", warning, file=sys.stderr)
+    spine = Spine(recipe["spine"])
+    point = Vector(a.point)
+    if not all(math.isfinite(value) for value in point):
+        raise ValueError("surface needs a finite X Y Z landmark")
+    projected = spine.project(point)
+    u, theta = projected["u"], projected["theta"]
+    surface = spine.surface(u, theta)
+    print(json.dumps({"u": round(u, 5), "theta": round(theta, 3),
+                      "surface": [round(value, 5) for value in surface["p"]],
+                      "normal": [round(value, 5) for value in surface["n"]],
+                      "distance": round((point - surface["p"]).length, 5)}))
 
 
 def cmd_normalize(a):
@@ -177,22 +226,30 @@ def cmd_review(a):
     source = R.load(a.recipe)
     os.makedirs(a.out, exist_ok=True)
     path = os.path.join(a.out, "review.json")
+    views = (("front", "front"), ("side", "side"), ("threequarter", "threequarter"), ("head", "side"))
     if a.accept:
         previous = R.load(path)
         if previous["recipe_hash"] != review.signature(source):
             raise ValueError("Recipe changed; regenerate review images")
+        images = [os.path.join(a.out, name + ".png") for name, _ in views]
+        if not previous.get("renders_complete", True) or any(
+            not os.path.isfile(image) or os.path.getsize(image) == 0 for image in images
+        ):
+            raise ValueError("Review images are missing or empty; regenerate them before accepting")
         R.save(review.record(source, True, a.accept), path)
         return
+    pending = review.record(source, False, "")
+    R.save({**pending, "renders_complete": False}, path)
     reset()
     res = build(source, "final")
     pose_at(res, None)
     cam = render.setup("workbench", 640)
     render.floor(True)
-    for view, focus in (("front", False), ("side", False), ("threequarter", False), ("side", True)):
-        bounds = head_bounds(res) if focus else render.bounds(objs(res))
+    for name, view in views:
+        bounds = head_bounds(res) if name == "head" else render.bounds(objs(res))
         render.frame(cam, *bounds, *render.view_angles(view))
-        render.render(os.path.join(a.out, ("head" if focus else view) + ".png"))
-    R.save(review.record(source, False, ""), path)
+        render.render(os.path.join(a.out, name + ".png"))
+    R.save(pending, path)
 
 
 def require_review(a):
@@ -205,13 +262,14 @@ def require_review(a):
 
 def cmd_build(a):
     from . import baker
-    if not a.no_anim:
+    baked = not (a.no_anim or a.runtime_motion)
+    if baked:
         require_review(a)       # check the gate before the (slow) sculpted build
     reset()
     t = time.time()
     res = build(a.recipe, "preview" if a.preview else "final")
     report = dict(res["report"])
-    if not a.no_anim:
+    if baked:
         contact_frames = [] if a.contacts else None
         report["clips"] = baker.bake_all(res["armature"], contacts=contact_frames)
         if a.contacts:
@@ -224,7 +282,13 @@ def cmd_build(a):
     for fmt in a.formats.split(","):
         fmt = fmt.strip()
         if fmt:
-            report["files"].append(export.export(res, os.path.join(a.out, "%s.%s" % (name, fmt)), fmt))
+            report["files"].append(export.export(res, os.path.join(a.out, "%s.%s" % (name, fmt)), fmt, animated=baked))
+    if a.runtime_motion:
+        from . import runtime_motion
+
+        motion_path = os.path.join(a.out, name + ".motion.json")
+        runtime_motion.save(res["rig"], motion_path)
+        report["files"].append(motion_path)
     R.save(res["recipe"], os.path.join(a.out, name + ".recipe.json"))
     report["seconds"] = round(time.time() - t, 1)
     json.dump(report, open(os.path.join(a.out, name + ".report.json"), "w"), indent=2)
@@ -422,9 +486,23 @@ def cmd_test(a):
     return tests.run(fast=a.fast)
 
 
+def cmd_character(a):
+    from . import character
+
+    reset()
+    report = character.build(R.load(a.brief), a.out)
+    with open(os.path.join(a.out, "report.json"), "w") as file:
+        json.dump(report, file, indent=2)
+    print(json.dumps(report))
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(prog="pf", description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = ap.add_subparsers(dest="cmd", required=True)
+    s = sub.add_parser("new", help="start a blank recipe")
+    s.add_argument("--out", required=True); s.add_argument("--name", default="Creature")
+    s = sub.add_parser("search", help="find active part families using plain language")
+    s.add_argument("query"); s.add_argument("--limit", type=int, default=5)
     s = sub.add_parser("part", help="preview a local shape or extract one instance")
     s.add_argument("input"); s.add_argument("--uid"); s.add_argument("--out", required=True)
     s.add_argument("--size", type=int, default=384); s.add_argument("--views", default="front,side,threequarter")
@@ -434,12 +512,17 @@ def main(argv=None):
     s.add_argument("--theta", required=True, type=float); s.add_argument("--uid")
     s.add_argument("--scale", type=float, default=1.0); s.add_argument("--rot", type=float, nargs=3, default=[0, 0, 0])
     s = sub.add_parser("describe"); s.add_argument("--out"); s.add_argument("--part"); s.add_argument("--full", action="store_true")
+    s = sub.add_parser("surface", help="estimate body attachment coordinates from a recipe-space landmark")
+    s.add_argument("recipe"); s.add_argument("point", metavar="XYZ", type=float, nargs=3)
+    s = sub.add_parser("character", help="compile a classified humanoid into a clay GLB with runtime motion bindings")
+    s.add_argument("brief"); s.add_argument("--out", required=True)
     s = sub.add_parser("normalize"); s.add_argument("recipe"); s.add_argument("--out")
     s = sub.add_parser("apply"); s.add_argument("recipe"); s.add_argument("ops"); s.add_argument("--out", required=True)
     s = sub.add_parser("review"); s.add_argument("recipe"); s.add_argument("--out", required=True); s.add_argument("--accept", metavar="INSPECTION_NOTE")
     s = sub.add_parser("build"); s.add_argument("--review"); s.add_argument("recipe"); s.add_argument("--out", required=True)
     s.add_argument("--contacts", action="store_true", help="include walk stance samples in the build report")
     s.add_argument("--formats", default="glb,blend"); s.add_argument("--no-anim", action="store_true"); s.add_argument("--preview", action="store_true")
+    s.add_argument("--runtime-motion", action="store_true", help="export rig and runtime IK bindings without baked clips")
     for name in ("render", "animate", "turntable"):
         s = sub.add_parser(name)
         s.add_argument("recipe"); s.add_argument("--out", required=True)

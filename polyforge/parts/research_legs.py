@@ -30,9 +30,10 @@ def _digitigrade_joints(p):
 
 def _plantigrade_joints(p):
     half_angle = math.radians(p.get("knee_bend_deg", 20) / 2)
-    incline = math.radians(12)
-    knee = V(-.038, -.37 * math.cos(incline + half_angle), .37 * math.sin(incline + half_angle))
-    ankle = knee + V(.017, -.32 * math.cos(incline - half_angle), .32 * math.sin(incline - half_angle))
+    incline = math.radians(p.get("incline_deg", 12))
+    half_outset = .5 * p.get("ankle_outset", 0)
+    knee = V(-.038 + half_outset, -.37 * math.cos(incline + half_angle), .37 * math.sin(incline + half_angle))
+    ankle = knee + V(.017 + half_outset, -.32 * math.cos(incline - half_angle), .32 * math.sin(incline - half_angle))
     return [V(0, 0, 0), knee, ankle], [.139, .093, .072]
 
 
@@ -217,6 +218,8 @@ def _plantigrade(g, p, joints):
            [(.020, .021), (.086, .078), (.14, .125), (.151, .136), (.127, .111), (.098, .092),
             (.115, .102), (.093, .092), (.061, .055), (.049, .049), (.044, .043), (.038, .036)], up=RIGHT, sides=26)
     g.oval(knee + V(0, .009, .060), (.067, .080, .049))
+    if not p.get("bare_foot", 1):
+        return
     _plantar_surface(g, ankle)
     # The lateral malleolus lies lower and farther back than the medial one.
     g.loft([ankle + V(.041, .050, -.002), ankle + V(.046, .015, -.008),
@@ -407,4 +410,6 @@ def _preset(joints_fn, p):
 
 BUILDERS = {name: partial(_build, joints, sculpt) for name, (joints, sculpt) in _FAMILIES.items()}
 PRESETS = {name: partial(_preset, joints) for name, (joints, _) in _FAMILIES.items()}
+EXTRA_PARAMS = {"leg_plantigrade": {"incline_deg": (0.0, 24.0, 12.0),
+                                  "ankle_outset": (0.0, .18, 0.0), "bare_foot": (0, 1, 1)}}
 OVERRIDES = {"leg_bird": {"topology_changes": ("feathered",)}}

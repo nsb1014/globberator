@@ -169,3 +169,27 @@ PARTS = [
 ]
 # Branched and helical horns retain their distinct topology/curve construction.
 PARTS.extend(p for p in LEGACY if p.id in ("horn_antler", "horn_curl"))
+
+
+def hair_crown(g, p):
+    """A scalp cap with optional tapered locks, in the upright body frame."""
+    w, d, h, locks = p["width"], p["depth"], p["height"], p["locks"]
+    g.setup(voxel=.004, detail=3)
+    g.slot("accent")
+    g.oval(V(0, -.60 * h, -.015), (w, h, d), segs=34, rings=18)
+    for index in range(locks):
+        t = 2 * index / max(1, locks - 1) - 1
+        root = V(.59 * w * t, -.66 * h, d * (.42 - .13 * t * t))
+        crown = root + V(.16 * w * t, h * (.88 - .14 * abs(t)), -.10 * d)
+        lift = (1.23 if locks == 3 else .59) - .26 * abs(t)
+        tip = crown + V(w * (.37 * t + p["sweep"]), h * lift, -.35 * d)
+        g.loft([root, crown, tip], [(.32 * w, .38 * d), (.18 * w, .27 * d), (.010 * w, .015 * d)],
+               sides=16, density=4, up=BACK)
+
+
+CHARACTER_PARTS = [
+    Part("hair_crown", "detail", "Upright scalp cap with styled locks.", ["hair", "humanoid"],
+         {"width": (.06, .70, .24), "depth": (.06, .55, .20), "height": (.04, .36, .12),
+          "locks": (0, 7, 5), "sweep": (-.65, .65, .0)}, hair_crown,
+         orient="native", symmetry="center", discrete=("locks",)),
+]

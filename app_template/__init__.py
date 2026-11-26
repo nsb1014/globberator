@@ -40,6 +40,7 @@ def _on_load(_):
 
 def register():
     import addon_utils
+    bpy.utils.refresh_script_paths()
     addon_utils.enable("polyforge", default_set=True, persistent=True)
     bpy.app.handlers.load_post.append(_on_load)
     bpy.app.timers.register(_configure, first_interval=0.5)

@@ -1,0 +1,532 @@
+{
+  "species_id": "octopus",
+  "label": "Common octopus (Octopus vulgaris)",
+  "taxon": {
+    "common": "common octopus",
+    "scientific": "Octopus vulgaris",
+    "order": "Octopoda",
+    "class": "Cephalopoda"
+  },
+  "image": {
+    "file_page": "https://commons.wikimedia.org/wiki/File:Octopus_vulgaris2.jpg",
+    "direct_url": "https://upload.wikimedia.org/wikipedia/commons/6/65/Octopus_vulgaris2.jpg",
+    "author": "Beckmannjan",
+    "license": "CC BY-SA 3.0",
+    "species_shown": "Octopus vulgaris per the Commons description (Gewoehnlicher Krake, east Crete, 2-4 m); the photo is visually consistent with it: mottled brown skin with raised pale papillae, a large orange-rimmed eye, a funnel under the head and a bulbous mantle. Species is from the Commons description, not confirmed by taxonomy",
+    "view": "Lateral side view, slightly from below, of a live animal on a rocky seabed in shallow water. Head and eye at the image right, mantle at the image left, funnel protruding forward under the head; arms trail and curl along the substrate. Which lateral side of the animal faces the camera cannot be determined from the photo.",
+    "image_viewed": true
+  },
+  "image_observations": "The photo is a lateral side view of a live common octopus on rock: a bulbous, elongated mantle with the head and a large eye at the front, a funnel protruding forward under the head, and two or three arms trailing and curling along the substrate with one arm rising off it. The overall form is draped rather than flat, so the bounding box height rises from 0.15 m to 0.30 m, the width is reduced to 0.60 m, and the arm roots, crown, eye and funnel positions were moved to the front-of-body layout seen here (the funnel was moved from the rear to the front). Arm trajectories were read from the visible arms; lateral (x) spread of the far arms is inferred, not seen. Confidence is raised modestly from 0.45 to 0.55.",
+  "physical_parsing": {
+    "bounding_box_m": {
+      "width_x": 0.6,
+      "height_y": 0.3,
+      "length_z": 0.72
+    },
+    "approx_volume_m3": 0.0007,
+    "volume_method": "Core modelled as a mantle ellipsoid (semi-axes 0.035 x 0.035 x 0.06 m, about 3.1e-4 m3) plus head (~1e-4 m3); eight tapered arm cones (root r 0.012 m, length 0.35 m, about 5e-5 m3 each, about 4e-4 m3 total). Total about 7e-4 m3, against a draped bounding box of about 0.13 m3 (0.6 x 0.3 x 0.72 m), so the solid fraction is about 0.5 percent.",
+    "shape_class": "draped radial soft body: a lifted, elongated mantle with the head at its front and eight arms radiating and trailing along the substrate",
+    "core": {
+      "description": "Mantle (muscular, mostly visceral mass with the gills and the jet cavity) plus the head with the eyes, and the buccal mass at the centre of the arm crown.",
+      "segments": 2,
+      "cross_section": "mantle: elliptical, about 7 cm wide and 12 cm long; head: roughly circular, about 4 cm diameter"
+    },
+    "size_source": "Typical adult O. vulgaris: mantle length about 10 cm (larger individuals to about 20-25 cm), total arm span roughly 0.6-1.0 m (Norman 2000; Wikipedia 'Common octopus', recalled and not re-checked this session). Dimensions above are a mid-size adult and approximate."
+  },
+  "parts": [
+    {
+      "id": "arm_L1",
+      "name": "Arm L1 (animal's left, arm 1 from dorsal)",
+      "category": "manipulation",
+      "symmetry": "pair",
+      "count": 1,
+      "attach_pos": [
+        0.04,
+        0.4,
+        0.14
+      ],
+      "joints": [
+        {
+          "name": "basal bend zone (hydrostatic, ~10% arm length)",
+          "pos": [
+            0.06,
+            0.44,
+            0.08
+          ],
+          "type": "hydrostatic",
+          "pivot_axes": [
+            "x",
+            "y",
+            "z"
+          ],
+          "range_deg": [
+            0,
+            180
+          ]
+        },
+        {
+          "name": "mid-arm bend zone (hydrostatic, ~50% arm length)",
+          "pos": [
+            0.1,
+            0.5,
+            -0.1
+          ],
+          "type": "hydrostatic",
+          "pivot_axes": [
+            "x",
+            "y",
+            "z"
+          ],
+          "range_deg": [
+            0,
+            180
+          ]
+        },
+        {
+          "name": "distal coil zone (hydrostatic, ~85% arm length)",
+          "pos": [
+            0.12,
+            0.46,
+            -0.3
+          ],
+          "type": "hydrostatic",
+          "pivot_axes": [
+            "x",
+            "y",
+            "z"
+          ],
+          "range_deg": [
+            0,
+            360
+          ]
+        }
+      ],
+      "root_radius_m": 0.01,
+      "length_m": 0.35,
+      "penetration": {
+        "depth_m": 0.012,
+        "fraction_of_root_radius": 1.2,
+        "overlap_region": "oral crown / ventral head wall at arm base; arm base is embedded in the buccal-crown ring"
+      },
+      "notes": "Muscular hydrostat, no rigid joints: bending is produced by transverse, longitudinal and helical muscle layers, so the joint 'pos' values are bend zones, not pivots. Two rows of suckers on the oral surface (distal to the base) give grip. Arm length is approximate (about 1.5-2x mantle length in adult O. vulgaris); range 0-180 deg per zone, distal zone allows coiling (0-360)."
+    },
+    {
+      "id": "arm_L2",
+      "name": "Arm L2 (animal's left, arm 2 from dorsal)",
+      "category": "manipulation",
+      "symmetry": "pair",
+      "count": 1,
+      "attach_pos": [
+        0.07,
+        0.36,
+        0.12
+      ],
+      "joints": [
+        {
+          "name": "basal bend zone (hydrostatic, ~10% arm length)",
+          "pos": [
+            0.09,
+            0.36,
+            0.06
+          ],
+          "type": "hydrostatic",
+          "pivot_axes": [
+            "x",
+            "y",
+            "z"
+          ],
+          "range_deg": [
+            0,
+            180
+          ]
+        },
+        {
+          "name": "mid-arm bend zone (hydrostatic, ~50% arm length)",
+          "pos": [
+            0.12,
+            0.22,
+            -0.06
+          ],
+          "type": "hydrostatic",
+          "pivot_axes": [
+            "x",
+            "y",
+            "z"
+          ],
+          "range_deg": [
+            0,
+            180
+          ]
+        },
+        {
+          "name": "distal coil zone (hydrostatic, ~85% arm length)",
+          "pos": [
+            0.14,
+            0.12,
+            -0.3
+          ],
+          "type": "hydrostatic",
+          "pivot_axes": [
+            "x",
+            "y",
+            "z"
+          ],
+          "range_deg": [
+            0,
+            360
+          ]
+        }
+      ],
+      "root_radius_m": 0.01,
+      "length_m": 0.35,
+      "penetration": {
+        "depth_m": 0.012,
+        "fraction_of_root_radius": 1.2,
+        "overlap_region": "oral crown / ventral head wall at arm base; arm base is embedded in the buccal-crown ring"
+      },
+      "notes": "Muscular hydrostat, no rigid joints: bending is produced by transverse, longitudinal and helical muscle layers, so the joint 'pos' values are bend zones, not pivots. Two rows of suckers on the oral surface (distal to the base) give grip. Arm length is approximate (about 1.5-2x mantle length in adult O. vulgaris); range 0-180 deg per zone, distal zone allows coiling (0-360)."
+    },
+    {
+      "id": "arm_L3",
+      "name": "Arm L3 (animal's left, arm 3 from dorsal)",
+      "category": "manipulation",
+      "symmetry": "pair",
+      "count": 1,
+      "attach_pos": [
+        0.1,
+        0.32,
+        0.1
+      ],
+      "joints": [
+        {
+          "name": "basal bend zone (hydrostatic, ~10% arm length)",
+          "pos": [
+            0.12,
+            0.24,
+            0.02
+          ],
+          "type": "hydrostatic",
+          "pivot_axes": [
+            "x",
+            "y",
+            "z"
+          ],
+          "range_deg": [
+            0,
+            180
+          ]
+        },
+        {
+          "name": "mid-arm bend zone (hydrostatic, ~50% arm length)",
+          "pos": [
+            0.14,
+            0.1,
+            -0.14
+          ],
+          "type": "hydrostatic",
+          "pivot_axes": [
+            "x",
+            "y",
+            "z"
+          ],
+          "range_deg": [
+            0,
+            180
+          ]
+        },
+        {
+          "name": "distal coil zone (hydrostatic, ~85% arm length)",
+          "pos": [
+            0.16,
+            0.04,
+            -0.38
+          ],
+          "type": "hydrostatic",
+          "pivot_axes": [
+            "x",
+            "y",
+            "z"
+          ],
+          "range_deg": [
+            0,
+            360
+          ]
+        }
+      ],
+      "root_radius_m": 0.01,
+      "length_m": 0.35,
+      "penetration": {
+        "depth_m": 0.012,
+        "fraction_of_root_radius": 1.2,
+        "overlap_region": "oral crown / ventral head wall at arm base; arm base is embedded in the buccal-crown ring"
+      },
+      "notes": "Muscular hydrostat, no rigid joints: bending is produced by transverse, longitudinal and helical muscle layers, so the joint 'pos' values are bend zones, not pivots. Two rows of suckers on the oral surface (distal to the base) give grip. Arm length is approximate (about 1.5-2x mantle length in adult O. vulgaris); range 0-180 deg per zone, distal zone allows coiling (0-360)."
+    },
+    {
+      "id": "arm_L4",
+      "name": "Arm L4 (animal's left, arm 4 from dorsal)",
+      "category": "manipulation",
+      "symmetry": "pair",
+      "count": 1,
+      "attach_pos": [
+        0.1,
+        0.3,
+        0.22
+      ],
+      "joints": [
+        {
+          "name": "basal bend zone (hydrostatic, ~10% arm length)",
+          "pos": [
+            0.12,
+            0.22,
+            0.26
+          ],
+          "type": "hydrostatic",
+          "pivot_axes": [
+            "x",
+            "y",
+            "z"
+          ],
+          "range_deg": [
+            0,
+            180
+          ]
+        },
+        {
+          "name": "mid-arm bend zone (hydrostatic, ~50% arm length)",
+          "pos": [
+            0.16,
+            0.04,
+            0.32
+          ],
+          "type": "hydrostatic",
+          "pivot_axes": [
+            "x",
+            "y",
+            "z"
+          ],
+          "range_deg": [
+            0,
+            180
+          ]
+        },
+        {
+          "name": "distal coil zone (hydrostatic, ~85% arm length)",
+          "pos": [
+            0.2,
+            0.3,
+            0.46
+          ],
+          "type": "hydrostatic",
+          "pivot_axes": [
+            "x",
+            "y",
+            "z"
+          ],
+          "range_deg": [
+            0,
+            360
+          ]
+        }
+      ],
+      "root_radius_m": 0.01,
+      "length_m": 0.35,
+      "penetration": {
+        "depth_m": 0.012,
+        "fraction_of_root_radius": 1.2,
+        "overlap_region": "oral crown / ventral head wall at arm base; arm base is embedded in the buccal-crown ring"
+      },
+      "notes": "Muscular hydrostat, no rigid joints: bending is produced by transverse, longitudinal and helical muscle layers, so the joint 'pos' values are bend zones, not pivots. Two rows of suckers on the oral surface (distal to the base) give grip. Arm length is approximate (about 1.5-2x mantle length in adult O. vulgaris); range 0-180 deg per zone, distal zone allows coiling (0-360)."
+    },
+    {
+      "id": "eye_L",
+      "name": "Camera eye (animal's left)",
+      "category": "sensory",
+      "symmetry": "pair",
+      "count": 1,
+      "attach_pos": [
+        0.05,
+        0.88,
+        0.22
+      ],
+      "joints": [
+        {
+          "name": "eyeball in orbit (near-fixed, slight rotation)",
+          "pos": [
+            0.05,
+            0.88,
+            0.22
+          ],
+          "type": "fixed",
+          "pivot_axes": [],
+          "range_deg": [
+            0,
+            0
+          ]
+        }
+      ],
+      "root_radius_m": 0.006,
+      "length_m": 0.012,
+      "penetration": {
+        "depth_m": 0.004,
+        "fraction_of_root_radius": 0.67,
+        "overlap_region": "lateral wall of the cranium / orbital cartilage"
+      },
+      "notes": "Image-forming camera eye, about 1 cm diameter in adults; lidless, with a pupil. Octopus eyes are largely fixed in the orbit."
+    },
+    {
+      "id": "funnel",
+      "name": "Funnel (hyponome, siphon)",
+      "category": "locomotion",
+      "symmetry": "centre",
+      "count": 1,
+      "attach_pos": [
+        0.0,
+        0.62,
+        0.24
+      ],
+      "joints": [
+        {
+          "name": "funnel base (muscular, orientable)",
+          "pos": [
+            0.0,
+            0.62,
+            0.24
+          ],
+          "type": "ball",
+          "pivot_axes": [
+            "x",
+            "y",
+            "z"
+          ],
+          "range_deg": [
+            0,
+            90
+          ]
+        }
+      ],
+      "root_radius_m": 0.008,
+      "length_m": 0.03,
+      "penetration": {
+        "depth_m": 0.008,
+        "fraction_of_root_radius": 1.0,
+        "overlap_region": "ventral mantle wall at the head-mantle junction"
+      },
+      "notes": "Jet propulsion: water is drawn into the mantle cavity and expelled through the funnel. Steerable by muscle, so it orients the jet. Placed at the ventral head-mantle junction at the front of the body (+Z), as in the photo."
+    },
+    {
+      "id": "beak",
+      "name": "Chitinous beak (upper and lower mandibles)",
+      "category": "feeding",
+      "symmetry": "centre",
+      "count": 1,
+      "attach_pos": [
+        0.0,
+        0.3,
+        0.16
+      ],
+      "joints": [
+        {
+          "name": "beak jaw hinge (approximate)",
+          "pos": [
+            0.0,
+            0.3,
+            0.16
+          ],
+          "type": "hinge",
+          "pivot_axes": [
+            "x"
+          ],
+          "range_deg": [
+            0,
+            30
+          ]
+        }
+      ],
+      "root_radius_m": 0.004,
+      "length_m": 0.015,
+      "penetration": {
+        "depth_m": 0.004,
+        "fraction_of_root_radius": 1.0,
+        "overlap_region": "buccal mass at the centre of the arm crown, ventral"
+      },
+      "notes": "Parrot-like beak, hidden in the centre of the arm crown on the ventral side. Opening range is approximate. Works with a radula (not modelled)."
+    },
+    {
+      "id": "web",
+      "name": "Interbrachial web",
+      "category": "locomotion",
+      "symmetry": "centre",
+      "count": 1,
+      "attach_pos": [
+        0.0,
+        0.32,
+        0.15
+      ],
+      "joints": [
+        {
+          "name": "web attachment to arm bases",
+          "pos": [
+            0.0,
+            0.32,
+            0.15
+          ],
+          "type": "fixed",
+          "pivot_axes": [],
+          "range_deg": [
+            0,
+            0
+          ]
+        }
+      ],
+      "root_radius_m": 0.002,
+      "length_m": 0.04,
+      "penetration": {
+        "depth_m": 0.002,
+        "fraction_of_root_radius": 1.0,
+        "overlap_region": "bases of all eight arms and the ventral margin of the mantle"
+      },
+      "notes": "Thin muscular membrane between arm bases. Used for swimming, for sheltering, and for the 'web-up' posture. Hint is by form only."
+    }
+  ],
+  "category_summary": {
+    "locomotion": 2,
+    "sensory": 2,
+    "feeding": 1,
+    "manipulation": 8,
+    "aesthetics": 0
+  },
+  "constraints": {
+    "symmetry": "bilateral (L/R mirror) for arms and eyes; radial-bilateral arm crown with eight arms; centre for funnel, beak, web",
+    "gait": "Crawling on arms (alternating and reaching gait), with jet propulsion via the funnel for fast escape, and web-assisted swimming. Arms are the primary propulsion; the mantle is not a rigid skeletal frame.",
+    "other": [
+      "No rigid skeleton: all arm bends are muscular hydrostat zones, not joints (see arm joint notes).",
+      "category_summary counts individual structures, so mirrored partners are counted (8 arms, 2 eyes).",
+      "Chromatophores and dermal papillae give colour and texture change for camouflage. They sit in the skin and are not modelled as separate parts.",
+      "Skin and ink sac are not modelled (ink is an internal defensive organ)."
+    ]
+  },
+  "sources": [
+    "Norman, M. (2000). Cephalopods: A World Guide. ConchBooks. (species size and anatomy; recalled, not re-checked)",
+    "Hanlon, R.T. & Messenger, J.B. (2018). Cephalopod Behaviour, 2nd ed. Cambridge Univ. Press. (camouflage, web use, arm function)",
+    "Wells, M.J. (1978). Octopus: Physiology and Behaviour of an Advanced Invertebrate. Chapman & Hall. (muscular hydrostat arms; funnel jet propulsion)",
+    "Kier, W.M. & Smith, K.K. (1985). Tongues, tentacles and trunks: the biomechanics of movement in muscular-hydrostats. Zoological Journal of the Linnean Society 83: 307-324. (hydrostat bending model)",
+    "Wikipedia, 'Common octopus' (size, anatomy overview; recalled, not re-checked this session)",
+    "Wikimedia Commons, File:Octopus_vulgaris2.jpg (metadata and CC BY-SA 3.0 licence verified via the Commons API, author Beckmannjan; image viewed from a local copy and used for the visual pass)"
+  ],
+  "confidence": 0.55,
+  "other_features": [
+    {
+      "feature": "Mantle",
+      "description": "Large soft sac behind the head holding the viscera; it is most of the visible body."
+    },
+    {
+      "feature": "Chromatophores and papillae",
+      "description": "Skin changes colour and raises small papillae for camouflage."
+    },
+    {
+      "feature": "Radula",
+      "description": "Toothed rasping ribbon inside the beak; not visible."
+    }
+  ]
+}

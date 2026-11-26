@@ -1,0 +1,558 @@
+{
+  "species_id": "beetle",
+  "label": "Beetle (Coleoptera), representative: European stag beetle, Lucanus cervus (male)",
+  "taxon": {
+    "common": "European stag beetle",
+    "scientific": "Lucanus cervus",
+    "order": "Coleoptera",
+    "class": "Insecta"
+  },
+  "image": {
+    "file_page": "https://commons.wikimedia.org/wiki/File:Lucanus_cervus_male_Orchi_010.jpg",
+    "direct_url": "https://upload.wikimedia.org/wikipedia/commons/9/91/Lucanus_cervus_male_Orchi_010.jpg",
+    "author": "Orchi (Commons 'Photographer' field; user page https://commons.wikimedia.org/wiki/User:Orchi)",
+    "license": "CC BY-SA 3.0 (file page licence template; GFDL 1.2+ also offered)",
+    "species_shown": "Lucanus cervus, adult male, self-photographed in Germany (Saarland); uploaded 4 June 2013. Whole beetle in frame, dorsal-oblique view on weathered wood.",
+    "view": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/91/Lucanus_cervus_male_Orchi_010.jpg/1280px-Lucanus_cervus_male_Orchi_010.jpg",
+    "image_viewed": true,
+    "image_observations": "The photo shows a whole adult male stag beetle in a dorsal-oblique view, so the body outline, head, pronotum, elytra and all six legs are visible, but the angle foreshortens the length and hides the underside. The mandibles are the dominant feature: long, dark red-brown, strongly curved upward and forward, with a sharp forward tooth near the tip and smaller inner teeth. The elytra are a glossy, elongated oval making up most of the body width; the pronotum is a darker, more matte, granulated shield in front of the scutellum. Antennae are elbowed with a fan-shaped (lamellate) club. Legs are long and slender with dark tarsi, the hind pair reaching furthest. Proportions are estimates from this oblique view, checked against the photo rather than measured."
+  },
+  "physical_parsing": {
+    "bounding_box_m": {
+      "width_x": 0.02,
+      "height_y": 0.016,
+      "length_z": 0.055
+    },
+    "approx_volume_m3": 6e-06,
+    "volume_method": "Ellipsoid over the body (elytra and pronotum, excluding mandibles): semi-axes 0.0175 x 0.010 x 0.0075 m, V = 4/3 pi abc. Mandibles add a small amount. Ellipsoid is a rough upper-bound estimate.",
+    "shape_class": "elongated ovoid (body) with long forward mandibles; overall a slender, dorsoventrally flattened prism",
+    "core": {
+      "description": "Torso core: head capsule anterior, prothorax, meso/metathorax and abdomen under the elytra. Leg roots attach at the thoracic sides; elytra and hind wings sit dorsally on the abdomen.",
+      "segments": 3,
+      "cross_section": "rounded, slightly flattened dorsoventrally (oval)"
+    },
+    "size_source": "Typical male Lucanus cervus body length 35-75 mm including mandibles (Wikipedia, Lucanus cervus; general reference knowledge, not fetched in this session). Modelled size 55 mm is a typical large male."
+  },
+  "parts": [
+    {
+      "id": "head",
+      "name": "head (with compound-eye bearing capsule)",
+      "category": "sensory",
+      "symmetry": "centre",
+      "count": 1,
+      "attach_pos": [
+        0,
+        0.45,
+        0.3
+      ],
+      "joints": [
+        {
+          "name": "neck (prothorax articulation)",
+          "pos": [
+            0,
+            0.45,
+            0.24
+          ],
+          "type": "hinge",
+          "pivot_axes": [
+            "x"
+          ],
+          "range_deg": [
+            -20,
+            25
+          ]
+        }
+      ],
+      "root_radius_m": 0.0045,
+      "length_m": 0.0085,
+      "penetration": {
+        "depth_m": 0.003,
+        "fraction_of_root_radius": 0.67,
+        "overlap_region": "anterior tip of pronotum collar, z 0.18-0.24 normalized"
+      },
+      "notes": "Head capsule carries mandibles, palps, antennae and eyes. Modelled as a block; hinge lets it tilt a little."
+    },
+    {
+      "id": "pronotum",
+      "name": "pronotum (thoracic shield)",
+      "category": "aesthetics",
+      "symmetry": "centre",
+      "count": 1,
+      "attach_pos": [
+        0,
+        0.6,
+        0.12
+      ],
+      "joints": [
+        {
+          "name": "pronotum-elytra junction",
+          "pos": [
+            0,
+            0.56,
+            0.02
+          ],
+          "type": "fixed",
+          "pivot_axes": [],
+          "range_deg": [
+            0,
+            0
+          ]
+        }
+      ],
+      "root_radius_m": 0.01,
+      "length_m": 0.009,
+      "penetration": {
+        "depth_m": 0.004,
+        "fraction_of_root_radius": 0.4,
+        "overlap_region": "dorsal core under the pronotum, z 0.08-0.16"
+      },
+      "notes": "Broad, slightly convex, granulated (matte) shield over the prothorax in the photo, darker than the glossy elytra. Mostly ornamental/protective; hides the head-thorax join."
+    },
+    {
+      "id": "mandible_L",
+      "name": "mandible (male, enlarged, branched)",
+      "category": "feeding",
+      "symmetry": "pair",
+      "count": 1,
+      "attach_pos": [
+        0.06,
+        0.45,
+        0.44
+      ],
+      "joints": [
+        {
+          "name": "mandible base hinge",
+          "pos": [
+            0.06,
+            0.45,
+            0.42
+          ],
+          "type": "hinge",
+          "pivot_axes": [
+            "y"
+          ],
+          "range_deg": [
+            -15,
+            35
+          ]
+        }
+      ],
+      "root_radius_m": 0.003,
+      "length_m": 0.02,
+      "penetration": {
+        "depth_m": 0.0025,
+        "fraction_of_root_radius": 0.83,
+        "overlap_region": "head front, x 0.00-0.12, z 0.36-0.44"
+      },
+      "notes": "Male mandibles are very long, strongly curved and antler-like, with a sharp forward tooth near the tip and smaller inner teeth (seen in the photo). Functionally a manipulation/combat structure: used in male-male contests (pushing and levering) and for gripping mates and prey. Categorised as feeding because the mandible base is part of the mouthpart apparatus; sexual-display and combat function is primary, feeding secondary. Length roughly a third to a half of body length; the 0.02 m estimate comes from the oblique view."
+    },
+    {
+      "id": "palp_L",
+      "name": "maxillary palp",
+      "category": "feeding",
+      "symmetry": "pair",
+      "count": 1,
+      "attach_pos": [
+        0.05,
+        0.3,
+        0.44
+      ],
+      "joints": [
+        {
+          "name": "palp base",
+          "pos": [
+            0.05,
+            0.3,
+            0.43
+          ],
+          "type": "ball",
+          "pivot_axes": [
+            "x",
+            "y",
+            "z"
+          ],
+          "range_deg": [
+            -30,
+            30
+          ]
+        }
+      ],
+      "root_radius_m": 0.0006,
+      "length_m": 0.002,
+      "penetration": {
+        "depth_m": 0.0004,
+        "fraction_of_root_radius": 0.67,
+        "overlap_region": "mouthparts base, z 0.40-0.44"
+      },
+      "notes": "Small sensory-feeding palps near the mouth, tasting food. Very small; penetration is shallow."
+    },
+    {
+      "id": "antenna_L",
+      "name": "antenna (geniculate, 10-segment, lamellate club)",
+      "category": "sensory",
+      "symmetry": "pair",
+      "count": 1,
+      "attach_pos": [
+        0.12,
+        0.6,
+        0.38
+      ],
+      "joints": [
+        {
+          "name": "scape-pedicel elbow",
+          "pos": [
+            0.14,
+            0.6,
+            0.4
+          ],
+          "type": "hinge",
+          "pivot_axes": [
+            "x",
+            "y"
+          ],
+          "range_deg": [
+            -60,
+            60
+          ]
+        },
+        {
+          "name": "antennal base",
+          "pos": [
+            0.12,
+            0.6,
+            0.38
+          ],
+          "type": "ball",
+          "pivot_axes": [
+            "x",
+            "y",
+            "z"
+          ],
+          "range_deg": [
+            -40,
+            40
+          ]
+        }
+      ],
+      "root_radius_m": 0.0004,
+      "length_m": 0.01,
+      "penetration": {
+        "depth_m": 0.0003,
+        "fraction_of_root_radius": 0.75,
+        "overlap_region": "head side, x 0.08-0.14, y 0.56-0.62, z 0.34-0.40"
+      },
+      "notes": "Elbowed (geniculate) antenna: long scape, flexible flagellum ending in a fan-shaped (lamellate) club, visible in the photo. Chemo/mechanosensory."
+    },
+    {
+      "id": "eye_L",
+      "name": "compound eye",
+      "category": "sensory",
+      "symmetry": "pair",
+      "count": 1,
+      "attach_pos": [
+        0.38,
+        0.55,
+        0.3
+      ],
+      "joints": [
+        {
+          "name": "eye capsule (fixed)",
+          "pos": [
+            0.38,
+            0.55,
+            0.3
+          ],
+          "type": "fixed",
+          "pivot_axes": [],
+          "range_deg": [
+            0,
+            0
+          ]
+        }
+      ],
+      "root_radius_m": 0.003,
+      "length_m": 0.003,
+      "penetration": {
+        "depth_m": 0.0015,
+        "fraction_of_root_radius": 0.5,
+        "overlap_region": "head side, x 0.30-0.40, y 0.50-0.60"
+      },
+      "notes": "Large lateral compound eyes, kidney shaped, fixed in the head capsule. Larger in males. Little or no eye movement."
+    },
+    {
+      "id": "elytron_L",
+      "name": "elytron (hardened forewing cover)",
+      "category": "locomotion",
+      "symmetry": "pair",
+      "count": 1,
+      "attach_pos": [
+        0.02,
+        0.5,
+        -0.08
+      ],
+      "joints": [
+        {
+          "name": "scutellar hinge",
+          "pos": [
+            0.01,
+            0.5,
+            -0.02
+          ],
+          "type": "hinge",
+          "pivot_axes": [
+            "y"
+          ],
+          "range_deg": [
+            0,
+            60
+          ]
+        }
+      ],
+      "root_radius_m": 0.008,
+      "length_m": 0.02,
+      "penetration": {
+        "depth_m": 0.001,
+        "fraction_of_root_radius": 0.12,
+        "overlap_region": "dorsal midline, scutellum, z -0.02 to 0.02, x 0 to 0.04"
+      },
+      "notes": "Hardened forewings that cover the hind wings and abdomen; they open upward to free the hind wings for flight. Protective; locomotion only when flying. Category kept as locomotion because they are part of flight mechanics."
+    },
+    {
+      "id": "hindwing_L",
+      "name": "hind wing (membranous)",
+      "category": "locomotion",
+      "symmetry": "pair",
+      "count": 1,
+      "attach_pos": [
+        0.04,
+        0.4,
+        -0.1
+      ],
+      "joints": [
+        {
+          "name": "wing base (axillary)",
+          "pos": [
+            0.04,
+            0.4,
+            -0.1
+          ],
+          "type": "ball",
+          "pivot_axes": [
+            "x",
+            "y",
+            "z"
+          ],
+          "range_deg": [
+            -50,
+            90
+          ]
+        }
+      ],
+      "root_radius_m": 0.003,
+      "length_m": 0.03,
+      "penetration": {
+        "depth_m": 0.002,
+        "fraction_of_root_radius": 0.67,
+        "overlap_region": "metathorax under elytra, x 0.00-0.06, z -0.14 to -0.06"
+      },
+      "notes": "Membranous flight wings folded under the elytra at rest."
+    },
+    {
+      "id": "foreleg_L",
+      "name": "foreleg (fore coxa, femur, tibia with teeth, 5-segment tarsus)",
+      "category": "locomotion",
+      "symmetry": "pair",
+      "count": 1,
+      "attach_pos": [
+        0.25,
+        0.3,
+        0.16
+      ],
+      "joints": [
+        {
+          "name": "coxa",
+          "pos": [
+            0.25,
+            0.3,
+            0.16
+          ],
+          "type": "ball",
+          "pivot_axes": [
+            "x",
+            "y",
+            "z"
+          ],
+          "range_deg": [
+            -45,
+            45
+          ]
+        },
+        {
+          "name": "femur-tibia",
+          "pos": [
+            0.35,
+            0.22,
+            0.16
+          ],
+          "type": "hinge",
+          "pivot_axes": [
+            "x"
+          ],
+          "range_deg": [
+            0,
+            120
+          ]
+        }
+      ],
+      "root_radius_m": 0.0012,
+      "length_m": 0.02,
+      "penetration": {
+        "depth_m": 0.001,
+        "fraction_of_root_radius": 0.83,
+        "overlap_region": "thoracic side, x 0.20-0.28, y 0.26-0.34, z 0.12-0.20"
+      },
+      "notes": "Tibia has toothed edge, used for digging and grasping. Males use foreleg mandibles to grip the female in mating. Locomotion is primary."
+    },
+    {
+      "id": "midleg_L",
+      "name": "midleg (5-segment tarsus)",
+      "category": "locomotion",
+      "symmetry": "pair",
+      "count": 1,
+      "attach_pos": [
+        0.25,
+        0.3,
+        -0.02
+      ],
+      "joints": [
+        {
+          "name": "coxa",
+          "pos": [
+            0.25,
+            0.3,
+            -0.02
+          ],
+          "type": "ball",
+          "pivot_axes": [
+            "x",
+            "y",
+            "z"
+          ],
+          "range_deg": [
+            -45,
+            45
+          ]
+        },
+        {
+          "name": "femur-tibia",
+          "pos": [
+            0.35,
+            0.22,
+            -0.02
+          ],
+          "type": "hinge",
+          "pivot_axes": [
+            "x"
+          ],
+          "range_deg": [
+            0,
+            120
+          ]
+        }
+      ],
+      "root_radius_m": 0.0011,
+      "length_m": 0.019,
+      "penetration": {
+        "depth_m": 0.0009,
+        "fraction_of_root_radius": 0.82,
+        "overlap_region": "thoracic side, x 0.20-0.28, y 0.26-0.34, z -0.06 to 0.02"
+      },
+      "notes": "Walking leg with a 5-segment tarsus and paired claws."
+    },
+    {
+      "id": "hindleg_L",
+      "name": "hindleg (5-segment tarsus)",
+      "category": "locomotion",
+      "symmetry": "pair",
+      "count": 1,
+      "attach_pos": [
+        0.25,
+        0.3,
+        -0.22
+      ],
+      "joints": [
+        {
+          "name": "coxa",
+          "pos": [
+            0.25,
+            0.3,
+            -0.22
+          ],
+          "type": "ball",
+          "pivot_axes": [
+            "x",
+            "y",
+            "z"
+          ],
+          "range_deg": [
+            -40,
+            40
+          ]
+        },
+        {
+          "name": "femur-tibia",
+          "pos": [
+            0.35,
+            0.22,
+            -0.22
+          ],
+          "type": "hinge",
+          "pivot_axes": [
+            "x"
+          ],
+          "range_deg": [
+            0,
+            120
+          ]
+        }
+      ],
+      "root_radius_m": 0.0013,
+      "length_m": 0.022,
+      "penetration": {
+        "depth_m": 0.0011,
+        "fraction_of_root_radius": 0.85,
+        "overlap_region": "metathoracic side, x 0.20-0.28, y 0.26-0.34, z -0.28 to -0.16"
+      },
+      "notes": "Longest leg pair. Walking and grip on bark."
+    }
+  ],
+  "category_summary": {
+    "locomotion": 10,
+    "sensory": 5,
+    "feeding": 4,
+    "manipulation": 0,
+    "aesthetics": 1
+  },
+  "constraints": {
+    "symmetry": "bilateral about the sagittal (x=0) plane for all paired parts; head, pronotum on the midline",
+    "gait": "hexapodal alternating tripod gait (fore + hind + opposite mid); tibial teeth for digging",
+    "other": [
+      "Male mandibles are heavy; model a hinge with limited range so the mandibles do not clip the core.",
+      "Elytra hinge at the scutellum; open range limited to about 60 deg for flight.",
+      "Legs are pinned to the thorax, so the tarsi must stay in contact with the ground at y=0."
+    ]
+  },
+  "sources": [
+    "https://commons.wikimedia.org/wiki/File:Lucanus_cervus_male_Orchi_010.jpg (file page fetched: photographer Orchi, CC BY-SA 3.0 licence template, 2000x1500 original, self-photographed; Commons API metadata unavailable due to rate limiting)",
+    "Image viewed locally: 1280px thumbnail https://thumb.wikimedia.org/wikipedia/commons/thumb/9/91/Lucanus_cervus_male_Orchi_010.jpg/1280px-Lucanus_cervus_male_Orchi_010.jpg (fetched via upload.wikimedia.org after rate limiting)",
+    "Lucanus cervus, Wikipedia: adult size and male mandible description (general reference knowledge; not fetched in this session)",
+    "Coleoptera anatomy (head, pronotum, elytra, hind wing, five-segment tarsus, geniculate antenna): general entomology reference, not fetched in this session"
+  ],
+  "confidence": 0.6,
+  "other_features": [
+    {
+      "feature": "Toothed tibia",
+      "description": "Fore tibiae carry teeth along the outer edge for digging and grip."
+    }
+  ]
+}

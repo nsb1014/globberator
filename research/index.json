@@ -1,0 +1,428 @@
+{
+  "species": [
+    {
+      "species_id": "beetle",
+      "label": "Beetle (Coleoptera), representative: European stag beetle, Lucanus cervus (male)",
+      "scientific": "Lucanus cervus",
+      "image": "https://commons.wikimedia.org/wiki/File:Lucanus_cervus_male_Orchi_010.jpg",
+      "license": "CC BY-SA 3.0 (file page licence template; GFDL 1.2+ also offered)",
+      "image_viewed": true,
+      "bounding_box_m": {
+        "width_x": 0.02,
+        "height_y": 0.016,
+        "length_z": 0.055
+      },
+      "parts": 11,
+      "category_summary": {
+        "locomotion": 10,
+        "sensory": 5,
+        "feeding": 4,
+        "manipulation": 0,
+        "aesthetics": 1
+      },
+      "part_types_by_category": {
+        "feeding": 2,
+        "locomotion": 5,
+        "manipulation": 0,
+        "aesthetics": 1,
+        "sensory": 3
+      },
+      "other_features": [
+        "Toothed tibia"
+      ],
+      "confidence": 0.6,
+      "problems": []
+    },
+    {
+      "species_id": "canine",
+      "label": "Red fox (Canidae, canine representative)",
+      "scientific": "Vulpes vulpes",
+      "image": "https://commons.wikimedia.org/wiki/File:Vulpes_vulpes_standing.jpg",
+      "license": "Public domain",
+      "image_viewed": true,
+      "bounding_box_m": {
+        "width_x": 0.25,
+        "height_y": 0.48,
+        "length_z": 1.1
+      },
+      "parts": 12,
+      "category_summary": {
+        "locomotion": 6,
+        "sensory": 4,
+        "feeding": 2,
+        "manipulation": 0,
+        "aesthetics": 0
+      },
+      "part_types_by_category": {
+        "feeding": 2,
+        "locomotion": 6,
+        "manipulation": 0,
+        "aesthetics": 0,
+        "sensory": 4
+      },
+      "other_features": [
+        "Dewclaw"
+      ],
+      "confidence": 0.6,
+      "problems": []
+    },
+    {
+      "species_id": "crab",
+      "label": "Crab (Brachyura)",
+      "scientific": "Carcinus maenas",
+      "image": "https://commons.wikimedia.org/wiki/File:Green_shore_crab_(Carcinus_maenas)_in_the_Baltic_Sea.jpg",
+      "license": "CC BY-SA 4.0",
+      "image_viewed": true,
+      "bounding_box_m": {
+        "width_x": 0.14,
+        "height_y": 0.04,
+        "length_z": 0.1
+      },
+      "parts": 8,
+      "category_summary": {
+        "locomotion": 2,
+        "sensory": 6,
+        "feeding": 1,
+        "manipulation": 2,
+        "aesthetics": 2
+      },
+      "part_types_by_category": {
+        "feeding": 1,
+        "locomotion": 1,
+        "manipulation": 1,
+        "aesthetics": 2,
+        "sensory": 3
+      },
+      "other_features": [],
+      "confidence": 0.6,
+      "problems": []
+    },
+    {
+      "species_id": "feline",
+      "label": "Feline (domestic cat)",
+      "scientific": "Felis catus",
+      "image": "https://commons.wikimedia.org/wiki/File:Domestic_cat_in_Poland_1.jpg",
+      "license": "CC BY-SA 4.0",
+      "image_viewed": true,
+      "bounding_box_m": {
+        "width_x": 0.13,
+        "height_y": 0.27,
+        "length_z": 0.76
+      },
+      "parts": 11,
+      "category_summary": {
+        "locomotion": 4,
+        "sensory": 4,
+        "feeding": 1,
+        "manipulation": 1,
+        "aesthetics": 0
+      },
+      "part_types_by_category": {
+        "feeding": 1,
+        "locomotion": 4,
+        "manipulation": 1,
+        "aesthetics": 1,
+        "sensory": 4
+      },
+      "other_features": [
+        "Rounded skull"
+      ],
+      "confidence": 0.6,
+      "problems": []
+    },
+    {
+      "species_id": "frog",
+      "label": "Amphibian / Frog (order Anura), representative: American bullfrog",
+      "scientific": "Lithobates catesbeianus",
+      "image": "https://commons.wikimedia.org/wiki/File:Lithobates_catesbeianus_PP.jpg",
+      "license": "CC BY-SA 3.0 (verified: Commons API extmetadata LicenseShortName)",
+      "image_viewed": true,
+      "bounding_box_m": {
+        "width_x": 0.12,
+        "height_y": 0.07,
+        "length_z": 0.2
+      },
+      "parts": 8,
+      "category_summary": {
+        "locomotion": 2,
+        "sensory": 3,
+        "feeding": 2,
+        "manipulation": 1,
+        "aesthetics": 0
+      },
+      "part_types_by_category": {
+        "feeding": 2,
+        "locomotion": 2,
+        "manipulation": 1,
+        "aesthetics": 0,
+        "sensory": 3
+      },
+      "other_features": [],
+      "confidence": 0.55,
+      "problems": []
+    },
+    {
+      "species_id": "jellyfish",
+      "label": "Moon jellyfish (Aurelia aurita), adult medusa",
+      "scientific": "Aurelia aurita",
+      "image": "https://commons.wikimedia.org/wiki/File:Moon_Jellies_(Aurelia_aurita)_(7153399193).jpg",
+      "license": "CC BY 2.0 (Attribution 2.0 Generic), per the Commons file page",
+      "image_viewed": true,
+      "bounding_box_m": {
+        "width_x": 0.25,
+        "height_y": 0.11,
+        "length_z": 0.25
+      },
+      "parts": 7,
+      "category_summary": {
+        "locomotion": 1,
+        "sensory": 1,
+        "feeding": 4,
+        "manipulation": 0,
+        "aesthetics": 1
+      },
+      "part_types_by_category": {
+        "feeding": 4,
+        "locomotion": 1,
+        "manipulation": 0,
+        "aesthetics": 1,
+        "sensory": 1
+      },
+      "other_features": [
+        "Translucent bell tissue"
+      ],
+      "confidence": 0.55,
+      "problems": []
+    },
+    {
+      "species_id": "lizard",
+      "label": "Lizard (Squamata, Lacertilia) - representative: green iguana",
+      "scientific": "Iguana iguana",
+      "image": "https://commons.wikimedia.org/wiki/File:Iguana-001.jpg",
+      "license": "CC BY-SA 3.0",
+      "image_viewed": true,
+      "bounding_box_m": {
+        "width_x": 0.4,
+        "height_y": 0.3,
+        "length_z": 1.4
+      },
+      "parts": 11,
+      "category_summary": {
+        "locomotion": 5,
+        "sensory": 5,
+        "feeding": 2,
+        "manipulation": 0,
+        "aesthetics": 3
+      },
+      "part_types_by_category": {
+        "feeding": 2,
+        "locomotion": 3,
+        "manipulation": 0,
+        "aesthetics": 3,
+        "sensory": 3
+      },
+      "other_features": [],
+      "confidence": 0.55,
+      "problems": []
+    },
+    {
+      "species_id": "octopus",
+      "label": "Common octopus (Octopus vulgaris)",
+      "scientific": "Octopus vulgaris",
+      "image": "https://commons.wikimedia.org/wiki/File:Octopus_vulgaris2.jpg",
+      "license": "CC BY-SA 3.0",
+      "image_viewed": true,
+      "bounding_box_m": {
+        "width_x": 0.6,
+        "height_y": 0.3,
+        "length_z": 0.72
+      },
+      "parts": 8,
+      "category_summary": {
+        "locomotion": 2,
+        "sensory": 2,
+        "feeding": 1,
+        "manipulation": 8,
+        "aesthetics": 0
+      },
+      "part_types_by_category": {
+        "feeding": 1,
+        "locomotion": 2,
+        "manipulation": 4,
+        "aesthetics": 0,
+        "sensory": 1
+      },
+      "other_features": [
+        "Mantle",
+        "Chromatophores and papillae",
+        "Radula"
+      ],
+      "confidence": 0.55,
+      "problems": []
+    },
+    {
+      "species_id": "primate",
+      "label": "Chimpanzee (Pan troglodytes), quadrupedal knuckle-walking posture",
+      "scientific": "Pan troglodytes",
+      "image": "https://commons.wikimedia.org/wiki/File:Pan_troglodytes_(male).jpg",
+      "license": "CC BY-SA 3.0",
+      "image_viewed": true,
+      "bounding_box_m": {
+        "width_x": 0.5,
+        "height_y": 0.9,
+        "length_z": 0.9
+      },
+      "parts": 9,
+      "category_summary": {
+        "locomotion": 4,
+        "sensory": 5,
+        "feeding": 1,
+        "manipulation": 4,
+        "aesthetics": 1
+      },
+      "part_types_by_category": {
+        "feeding": 1,
+        "locomotion": 2,
+        "manipulation": 2,
+        "aesthetics": 1,
+        "sensory": 3
+      },
+      "other_features": [
+        "Knuckle-walking posture"
+      ],
+      "confidence": 0.6,
+      "problems": []
+    },
+    {
+      "species_id": "raptor",
+      "label": "Red-tailed hawk (Buteo jamaicensis), perched, age not confirmed from the photo",
+      "scientific": "Buteo jamaicensis",
+      "image": "https://commons.wikimedia.org/wiki/File:Red-tailed-hawk-perched.jpg",
+      "license": "CC BY-SA 4.0",
+      "image_viewed": true,
+      "bounding_box_m": {
+        "width_x": 0.2,
+        "height_y": 0.5,
+        "length_z": 0.32
+      },
+      "parts": 7,
+      "category_summary": {
+        "locomotion": 3,
+        "sensory": 2,
+        "feeding": 1,
+        "manipulation": 1,
+        "aesthetics": 0
+      },
+      "part_types_by_category": {
+        "feeding": 1,
+        "locomotion": 3,
+        "manipulation": 1,
+        "aesthetics": 0,
+        "sensory": 2
+      },
+      "other_features": [],
+      "confidence": 0.7,
+      "problems": []
+    },
+    {
+      "species_id": "scorpion",
+      "label": "Scorpion (typical adult body plan; photo shows Emperor scorpion, Pandinus imperator)",
+      "scientific": "Scorpiones (photo: Pandinus imperator; size scale: Buthus spp.)",
+      "image": "https://commons.wikimedia.org/wiki/File:Emporer_scorpion.jpg",
+      "license": "CC BY 2.0 (Creative Commons Attribution 2.0 Generic)",
+      "image_viewed": true,
+      "bounding_box_m": {
+        "width_x": 0.04,
+        "height_y": 0.025,
+        "length_z": 0.065
+      },
+      "parts": 8,
+      "category_summary": {
+        "locomotion": 2,
+        "sensory": 3,
+        "feeding": 1,
+        "manipulation": 2,
+        "aesthetics": 0
+      },
+      "part_types_by_category": {
+        "feeding": 1,
+        "locomotion": 2,
+        "manipulation": 2,
+        "aesthetics": 0,
+        "sensory": 3
+      },
+      "other_features": [],
+      "confidence": 0.65,
+      "problems": []
+    },
+    {
+      "species_id": "shark",
+      "label": "Blacktip reef shark (Carcharhinus melanopterus), typical adult, side view",
+      "scientific": "Carcharhinus melanopterus",
+      "image": "https://commons.wikimedia.org/wiki/File:Blacktip_reef_shark._(Tsumaguro).jpg",
+      "license": "CC BY-SA 3.0 (from Commons API extmetadata LicenseShortName)",
+      "image_viewed": true,
+      "bounding_box_m": {
+        "width_x": 0.35,
+        "height_y": 0.42,
+        "length_z": 1.6
+      },
+      "parts": 14,
+      "category_summary": {
+        "locomotion": 6,
+        "sensory": 4,
+        "feeding": 3,
+        "manipulation": 1,
+        "aesthetics": 0
+      },
+      "part_types_by_category": {
+        "feeding": 3,
+        "locomotion": 6,
+        "manipulation": 1,
+        "aesthetics": 0,
+        "sensory": 4
+      },
+      "other_features": [
+        "Teeth",
+        "Dermal denticles"
+      ],
+      "confidence": 0.55,
+      "problems": []
+    },
+    {
+      "species_id": "worm",
+      "label": "Earthworm (Lumbricus terrestris)",
+      "scientific": "Lumbricus terrestris",
+      "image": "https://commons.wikimedia.org/wiki/File:Lumbricus.terrestris.jpg",
+      "license": "CC BY-SA 3.0 (Commons API LicenseShortName; corrected from the earlier CC BY-SA 2.5 entry)",
+      "image_viewed": true,
+      "bounding_box_m": {
+        "width_x": 0.064,
+        "height_y": 0.006,
+        "length_z": 0.09
+      },
+      "parts": 5,
+      "category_summary": {
+        "locomotion": 2,
+        "sensory": 2,
+        "feeding": 2,
+        "manipulation": 0,
+        "aesthetics": 0
+      },
+      "part_types_by_category": {
+        "feeding": 2,
+        "locomotion": 1,
+        "manipulation": 0,
+        "aesthetics": 0,
+        "sensory": 2
+      },
+      "other_features": [
+        "Clitellum",
+        "Hydrostatic segmented body"
+      ],
+      "confidence": 0.6,
+      "problems": []
+    }
+  ],
+  "missing": []
+}

@@ -1,0 +1,501 @@
+{
+  "species_id": "primate",
+  "label": "Chimpanzee (Pan troglodytes), quadrupedal knuckle-walking posture",
+  "taxon": {
+    "common": "Common chimpanzee",
+    "scientific": "Pan troglodytes",
+    "order": "Primates",
+    "class": "Mammalia"
+  },
+  "image": {
+    "file_page": "https://commons.wikimedia.org/wiki/File:Pan_troglodytes_(male).jpg",
+    "direct_url": "https://upload.wikimedia.org/wikipedia/commons/8/8c/Pan_troglodytes_%28male%29.jpg",
+    "author": "Hans Hillewaert",
+    "license": "CC BY-SA 3.0",
+    "species_shown": "Pan troglodytes (common chimpanzee), adult male, in a grassy outdoor enclosure at La Vallee de Singes, Romagne (Vienne), France. Commons description: 'Male Chimpanzee at La Vallee de Singes, at Romagne (Vienne, Poitou-Charentes), France.'",
+    "view": "Near-lateral view from the animal's left side, roughly eye level, about three-quarter front. The head is turned toward the camera and the body runs in profile to the right. The animal walks toward the left of the frame: the near (left) forelimb reaches forward and its hand is planted on the grass, and both hind feet are on the ground.",
+    "image_viewed": true
+  },
+  "image_observations": "The photo shows a chimpanzee walking on all fours, not sitting or standing upright. The near forelimb is nearly straight with a mild elbow bend and its hand rests on the ground, and the hind feet are flat on the ground. The trunk is roughly horizontal with the head carried forward, and the back slopes down toward the hindquarters, so the hips sit lower than the shoulders. Relative to the head and shoulder height, the head is held lower than the file assumed, and the forelimb is long and nearly vertical. The knuckle-walking bounding box is kept, but the length is reduced from 1.0 to 0.9 m, the hips are placed below the shoulders, the eyes and brow are lowered, and the limb segments are re-measured to the photo's proportions.",
+  "physical_parsing": {
+    "bounding_box_m": {
+      "width_x": 0.5,
+      "height_y": 0.9,
+      "length_z": 0.9
+    },
+    "approx_volume_m3": 0.045,
+    "volume_method": "Mass over density: about 45 kg adult body mass divided by about 1000 kg/m^3 (tissue approximately water density). This is a mass-based estimate, not a geometric one. Bounding box volume is about 0.41 m^3 (0.5 x 0.9 x 0.9), so the body fills roughly 11% of it.",
+    "shape_class": "Quadrupedal, knuckle-walking mammal with a barrel-shaped trunk, a forward-carried head on a short neck, long forelimbs and a tailless rump. The posture is knuckle-walking (quadrupedal), not upright, and matches the walking pose in the Commons photo. Standing bipedally, the same animal reaches about 1.0 to 1.5 m.",
+    "core": {
+      "description": "Single fused torso mesh: head on a short neck, thorax, and pelvis at the rear. No tail. Shoulder girdle and pelvis are the main anchors for the limbs. In the walking pose from the photo the spine is roughly horizontal and slopes down toward the rump, so the hip joint sits about 0.14 m below the shoulder joint. The head is carried forward and is lower than the crown line.",
+      "segments": 3,
+      "cross_section": "Oval. Thorax about 0.25 m wide by 0.2 m deep (laterally compressed). Pelvis narrower and lower. Head roughly spherical, about 0.18 m diameter."
+    },
+    "size_source": "Body mass and size: Nowak RM (1999) Walker's Mammals of the World, 6th ed., Johns Hopkins University Press (Pan troglodytes adults roughly 30 to 60 kg, depending on sex). Limb and hand proportions: Napier JR and Napier PH (1985) The Natural History of the Primates, MIT Press. Mass to volume conversion is the estimator above. The Commons photo was used for relative posture and proportions (joint heights, head position, limb angles) only, not for absolute scale. Those values are approximate and not re-verified against the source text in this session."
+  },
+  "parts": [
+    {
+      "id": "arm_L",
+      "name": "Forelimb (upper arm and forearm)",
+      "category": "manipulation",
+      "symmetry": "pair",
+      "count": 1,
+      "attach_pos": [
+        0.22,
+        0.756,
+        0.1
+      ],
+      "joints": [
+        {
+          "name": "shoulder",
+          "pos": [
+            0.22,
+            0.756,
+            0.1
+          ],
+          "type": "ball",
+          "pivot_axes": [
+            "x",
+            "y",
+            "z"
+          ],
+          "range_deg": [
+            -90,
+            150
+          ]
+        },
+        {
+          "name": "elbow",
+          "pos": [
+            0.24,
+            0.456,
+            0.33
+          ],
+          "type": "hinge",
+          "pivot_axes": [
+            "x"
+          ],
+          "range_deg": [
+            0,
+            150
+          ]
+        },
+        {
+          "name": "wrist",
+          "pos": [
+            0.24,
+            0.1,
+            0.38
+          ],
+          "type": "hinge",
+          "pivot_axes": [
+            "x"
+          ],
+          "range_deg": [
+            -70,
+            70
+          ]
+        }
+      ],
+      "root_radius_m": 0.045,
+      "length_m": 0.6,
+      "penetration": {
+        "depth_m": 0.03,
+        "fraction_of_root_radius": 0.67,
+        "overlap_region": "Shoulder girdle, the scapula and the lateral thoracic wall. The root sits under the upper trunk mesh at the shoulder joint."
+      },
+      "notes": "Shoulder to wrist length is about 0.6 m, an estimate from Napier and Napier. In the photo the near forelimb is nearly vertical and forward of the shoulder, with the elbow only mildly bent, and it carries the body's weight in the walking stride. Chimpanzee forelimbs are longer than the hindlimbs. The arm is classed as manipulation per the taxonomy, with a note that its primary role here is locomotion."
+    },
+    {
+      "id": "hand_L",
+      "name": "Hand (knuckle-walking and grasping hand)",
+      "category": "manipulation",
+      "symmetry": "pair",
+      "count": 1,
+      "attach_pos": [
+        0.24,
+        0.1,
+        0.38
+      ],
+      "joints": [
+        {
+          "name": "wrist",
+          "pos": [
+            0.24,
+            0.1,
+            0.38
+          ],
+          "type": "hinge",
+          "pivot_axes": [
+            "x"
+          ],
+          "range_deg": [
+            -70,
+            70
+          ]
+        },
+        {
+          "name": "metacarpophalangeal",
+          "pos": [
+            0.24,
+            0.033,
+            0.42
+          ],
+          "type": "hinge",
+          "pivot_axes": [
+            "x"
+          ],
+          "range_deg": [
+            0,
+            90
+          ]
+        }
+      ],
+      "root_radius_m": 0.025,
+      "length_m": 0.18,
+      "penetration": {
+        "depth_m": 0.012,
+        "fraction_of_root_radius": 0.48,
+        "overlap_region": "Distal forearm, the wrist. Knuckle-walking digits are flexed and rest on the dorsal middle phalanges, so the mesh contact is at the knuckle region."
+      },
+      "notes": "Hand length is about 0.18 m (Napier and Napier). In the photo the hand is planted flat on the grass with the digits flexed under the wrist, the knuckle-walking contact. Thumb is opposable but short relative to the fingers."
+    },
+    {
+      "id": "leg_L",
+      "name": "Hindlimb (thigh and shank)",
+      "category": "locomotion",
+      "symmetry": "pair",
+      "count": 1,
+      "attach_pos": [
+        0.24,
+        0.6,
+        -0.27
+      ],
+      "joints": [
+        {
+          "name": "hip",
+          "pos": [
+            0.24,
+            0.6,
+            -0.27
+          ],
+          "type": "ball",
+          "pivot_axes": [
+            "x",
+            "y",
+            "z"
+          ],
+          "range_deg": [
+            -30,
+            90
+          ]
+        },
+        {
+          "name": "knee",
+          "pos": [
+            0.22,
+            0.278,
+            -0.233
+          ],
+          "type": "hinge",
+          "pivot_axes": [
+            "x"
+          ],
+          "range_deg": [
+            0,
+            150
+          ]
+        },
+        {
+          "name": "ankle",
+          "pos": [
+            0.16,
+            0.078,
+            -0.156
+          ],
+          "type": "hinge",
+          "pivot_axes": [
+            "x"
+          ],
+          "range_deg": [
+            -40,
+            40
+          ]
+        }
+      ],
+      "root_radius_m": 0.07,
+      "length_m": 0.48,
+      "penetration": {
+        "depth_m": 0.04,
+        "fraction_of_root_radius": 0.57,
+        "overlap_region": "Pelvis, the acetabular region and the lower trunk mesh. The hip ball socket sits in the lateral pelvis."
+      },
+      "notes": "Hip to ankle is about 0.48 m, measured from the photo's proportions and consistent with Napier and Napier. The hip sits about 0.6 m above the ground, which is lower than the shoulder. In the photo the hip and knee are flexed moderately, and the hind foot is planted under the body. The leg is classed as locomotion per the taxonomy. The foot is a separate part."
+    },
+    {
+      "id": "foot_L",
+      "name": "Grasping foot (plantigrade with opposable hallux)",
+      "category": "locomotion",
+      "symmetry": "pair",
+      "count": 1,
+      "attach_pos": [
+        0.16,
+        0.078,
+        -0.156
+      ],
+      "joints": [
+        {
+          "name": "ankle",
+          "pos": [
+            0.16,
+            0.078,
+            -0.156
+          ],
+          "type": "hinge",
+          "pivot_axes": [
+            "x"
+          ],
+          "range_deg": [
+            -40,
+            40
+          ]
+        },
+        {
+          "name": "hallux_mtp",
+          "pos": [
+            0.14,
+            0.022,
+            -0.078
+          ],
+          "type": "hinge",
+          "pivot_axes": [
+            "x"
+          ],
+          "range_deg": [
+            0,
+            45
+          ]
+        }
+      ],
+      "root_radius_m": 0.03,
+      "length_m": 0.2,
+      "penetration": {
+        "depth_m": 0.012,
+        "fraction_of_root_radius": 0.4,
+        "overlap_region": "Distal shank and the ankle, where it meets the leg mesh."
+      },
+      "notes": "Foot length is about 0.2 m (Napier and Napier). The photo shows the hind foot flat on the ground, the plantigrade stance. The chimpanzee foot is plantigrade and the big toe (hallux) is opposable, so the foot can grasp branches. The big toe is opposable."
+    },
+    {
+      "id": "eye_L",
+      "name": "Eye (forward-facing, binocular)",
+      "category": "sensory",
+      "symmetry": "pair",
+      "count": 1,
+      "attach_pos": [
+        0.07,
+        0.778,
+        0.322
+      ],
+      "joints": [
+        {
+          "name": "orbit_fixed",
+          "pos": [
+            0.07,
+            0.778,
+            0.322
+          ],
+          "type": "fixed",
+          "pivot_axes": [],
+          "range_deg": [
+            0,
+            0
+          ]
+        }
+      ],
+      "root_radius_m": 0.012,
+      "length_m": 0.024,
+      "penetration": {
+        "depth_m": 0.004,
+        "fraction_of_root_radius": 0.33,
+        "overlap_region": "Orbital socket at the front of the skull."
+      },
+      "notes": "Forward-facing eyes give stereoscopic depth vision. The photo shows the eyes set in a dark, close-set face, about 0.07 m apart. The eye is fixed in the orbit, so the only movement is by head turn. Eye diameter is about 0.024 m (approximate)."
+    },
+    {
+      "id": "ear_L",
+      "name": "Ear (flat, close-set, rounded)",
+      "category": "sensory",
+      "symmetry": "pair",
+      "count": 1,
+      "attach_pos": [
+        0.18,
+        0.844,
+        0.144
+      ],
+      "joints": [
+        {
+          "name": "ear_fixed",
+          "pos": [
+            0.18,
+            0.844,
+            0.144
+          ],
+          "type": "fixed",
+          "pivot_axes": [],
+          "range_deg": [
+            0,
+            0
+          ]
+        }
+      ],
+      "root_radius_m": 0.02,
+      "length_m": 0.06,
+      "penetration": {
+        "depth_m": 0.004,
+        "fraction_of_root_radius": 0.2,
+        "overlap_region": "Lateral skull above the temporal bone."
+      },
+      "notes": "In the photo the ear is flat, rounded and close to the side of the head, with little pinna projection. Its visible extent is about 0.06 m (photo estimate, up from 0.045 m). The ear is not flared or leaf-shaped."
+    },
+    {
+      "id": "nose",
+      "name": "Nose (broad, flat, with forward nostrils)",
+      "category": "sensory",
+      "symmetry": "centre",
+      "count": 1,
+      "attach_pos": [
+        0.0,
+        0.656,
+        0.344
+      ],
+      "joints": [
+        {
+          "name": "nasal_fixed",
+          "pos": [
+            0.0,
+            0.656,
+            0.344
+          ],
+          "type": "fixed",
+          "pivot_axes": [],
+          "range_deg": [
+            0,
+            0
+          ]
+        }
+      ],
+      "root_radius_m": 0.012,
+      "length_m": 0.02,
+      "penetration": {
+        "depth_m": 0.004,
+        "fraction_of_root_radius": 0.33,
+        "overlap_region": "Front of the maxilla and nasal bones."
+      },
+      "notes": "Broad, flat nose with forward-facing nostrils, centred on the muzzle below the brow. The photo shows a dark, flat nose tip with a pale lower face. Olfaction supports the sensory category. Nose_button is an approximate fit."
+    },
+    {
+      "id": "jaws",
+      "name": "Mouth and jaws (large canines, incisors and molars)",
+      "category": "feeding",
+      "symmetry": "centre",
+      "count": 1,
+      "attach_pos": [
+        0.0,
+        0.589,
+        0.333
+      ],
+      "joints": [
+        {
+          "name": "temporomandibular",
+          "pos": [
+            0.0,
+            0.733,
+            0.222
+          ],
+          "type": "hinge",
+          "pivot_axes": [
+            "x"
+          ],
+          "range_deg": [
+            0,
+            35
+          ]
+        }
+      ],
+      "root_radius_m": 0.03,
+      "length_m": 0.06,
+      "penetration": {
+        "depth_m": 0.01,
+        "fraction_of_root_radius": 0.33,
+        "overlap_region": "Mandibular ramus and the front of the skull, at the jaw joint."
+      },
+      "notes": "Feeding apparatus for fruit, leaves and insects, with large canines. The photo shows a closed, protruding muzzle with the mouth about 0.1 m below the eyes. The jaw joint is under the ear. The canines are not a prey-capture structure, so this part is a general feeding category. Jaw opening range is an approximate value."
+    },
+    {
+      "id": "supraorbital_torus",
+      "name": "Supraorbital brow ridge",
+      "category": "aesthetics",
+      "symmetry": "centre",
+      "count": 1,
+      "attach_pos": [
+        0.0,
+        0.8,
+        0.344
+      ],
+      "joints": [
+        {
+          "name": "supraorbital_fixed",
+          "pos": [
+            0.0,
+            0.8,
+            0.344
+          ],
+          "type": "fixed",
+          "pivot_axes": [],
+          "range_deg": [
+            0,
+            0
+          ]
+        }
+      ],
+      "root_radius_m": 0.015,
+      "length_m": 0.09,
+      "penetration": {
+        "depth_m": 0.004,
+        "fraction_of_root_radius": 0.27,
+        "overlap_region": "Frontal bone above the orbits."
+      },
+      "notes": "Bony supraorbital torus across both orbits, about 0.09 m wide. The photo shows a heavy brow overhanging the eyes. It is largely structural and partly functional (it reinforces the face), so aesthetics is a loose fit."
+    }
+  ],
+  "category_summary": {
+    "locomotion": 4,
+    "sensory": 5,
+    "feeding": 1,
+    "manipulation": 4,
+    "aesthetics": 1
+  },
+  "constraints": {
+    "symmetry": "Bilateral about the sagittal plane (+X = animal's left). Limbs and sense organs are paired; the mouth, nose and brow ridge are midline. Counts are per instance, so each pair contributes two to category_summary.",
+    "gait": "Knuckle-walking quadruped: forelimbs bear weight on the dorsal middle phalanges, hindlimbs on the plantigrade foot. The photo confirms a walking stride on all fours. Bipedal stance is possible but brief. Limb and joint ranges are for the walking stance.",
+    "other": [
+      "No tail: the rump is tailless, so there is no tail part.",
+      "Body fur and facial skin are not modelled.",
+      "Penetration depths are estimates from typical joint and bone radii; the overlap regions are the core features that would need to match."
+    ]
+  },
+  "sources": [
+    "Wikimedia Commons, File:Pan_troglodytes_(male).jpg, photo by Hans Hillewaert, licence CC BY-SA 3.0. https://commons.wikimedia.org/wiki/File:Pan_troglodytes_(male).jpg (Posture, view and relative proportions. Viewed locally.)",
+    "Napier JR and Napier PH (1985) The Natural History of the Primates. MIT Press. (Limb and hand and foot proportions.)",
+    "Nowak RM (1999) Walker's Mammals of the World, 6th ed. Johns Hopkins University Press. (Pan troglodytes body mass and size.)",
+    "Hunt KD (1991) Mechanical implications of chimpanzee positional behavior. American Journal of Physical Anthropology 86: 521-536. (Knuckle-walking mechanics; cited from memory, not re-verified in this session.)"
+  ],
+  "confidence": 0.6,
+  "other_features": [
+    {
+      "feature": "Knuckle-walking posture",
+      "description": "Forelimbs bear weight on the backs of the flexed middle finger bones."
+    }
+  ]
+}

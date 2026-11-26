@@ -1,0 +1,389 @@
+{
+  "species_id": "jellyfish",
+  "label": "Moon jellyfish (Aurelia aurita), adult medusa",
+  "taxon": {
+    "common": "Moon jellyfish",
+    "scientific": "Aurelia aurita",
+    "order": "Semaeostomeae",
+    "class": "Scyphozoa"
+  },
+  "image": {
+    "file_page": "https://commons.wikimedia.org/wiki/File:Moon_Jellies_(Aurelia_aurita)_(7153399193).jpg",
+    "direct_url": "https://upload.wikimedia.org/wikipedia/commons/c/c4/Moon_Jellies_%28Aurelia_aurita%29_%287153399193%29.jpg",
+    "author": "Cliff from Arlington, Virginia, USA",
+    "license": "CC BY 2.0 (Attribution 2.0 Generic), per the Commons file page",
+    "species_shown": "Aurelia aurita",
+    "view": "Oblique, from below and to the side, in a crowded aquarium tank with dark blue background. Most bells are seen from the subumbrella (underside), so the four horseshoe gonads show as a four-lobed clover in the centre; a few bells are seen edge-on, showing the dome profile. The parsed bell is the clearest disc in the centre-lower part of the frame.",
+    "image_viewed": true
+  },
+  "image_observations": "The photo shows many Aurelia aurita (moon jellyfish) in an aquarium, identified by the four-lobed gonads seen through the translucent bell. The clearest bell is seen from below at an oblique angle, so its outline is an ellipse about 1.9 times wider than tall, and edge-on bells show a dome about 0.3 to 0.4 of the bell diameter in height. Changes: bounding box height raised from 0.10 to 0.11 m and dome height from 0.07 to 0.08 m; margin and rhopalia y raised to 0.27 and gonad y to 0.41 to match the new frame; gonad cluster length raised to 0.07 m, since the four lobes span about half the bell diameter. Frilly oral arms and tentacle lengths were kept, because they are not resolved at this scale. Confidence raised from 0.4 to 0.55.",
+  "physical_parsing": {
+    "bounding_box_m": {
+      "width_x": 0.25,
+      "height_y": 0.11,
+      "length_z": 0.25
+    },
+    "approx_volume_m3": 0.0026,
+    "volume_method": "Bell approximated as a hemi-ellipsoid (2/3 * pi * r^2 * h) with r = 0.125 m and h = 0.08 m (dome height above the margin, from the photo). Upper-bound estimate; the bell is mostly water and the tentacles/oral arms are excluded. The full bounding box is 0.25 x 0.11 x 0.25 m = 0.006875 m^3.",
+    "shape_class": "Oblate hemi-ellipsoid (flattened dome / umbrella), radially symmetric, swims bell-first with +Y toward the apex",
+    "core": {
+      "description": "Gelatinous bell (umbrella) of mesoglea, mostly water, with a subumbrellar cavity beneath. The central manubrium hangs from the subumbrellar floor. The bell is the body; it is not a rigid skeleton.",
+      "segments": 1,
+      "cross_section": "Circular in plan view; dome-shaped in side profile, thickened at the apex and thin at the margin"
+    },
+    "size_source": "Typical adult bell diameter of about 0.25 m (range roughly 0.1 to 0.4 m), from general marine biology references for Aurelia aurita (for example the Wikipedia species article). NOT retrieved in this session: the Wikipedia and Commons hosts were unreachable, so treat the size as unverified until checked."
+  },
+  "parts": [
+    {
+      "id": "coronal_muscle_bell",
+      "name": "Bell margin (coronal muscle band)",
+      "category": "locomotion",
+      "symmetry": "radial",
+      "count": 1,
+      "order": "continuous annulus",
+      "attach_pos": [
+        0,
+        0.27,
+        0
+      ],
+      "joints": [
+        {
+          "name": "subumbrellar_margin_ring",
+          "pos": [
+            0,
+            0.27,
+            0
+          ],
+          "type": "hydrostatic",
+          "pivot_axes": [
+            "x",
+            "y",
+            "z"
+          ],
+          "range_deg": [
+            0,
+            0
+          ]
+        }
+      ],
+      "root_radius_m": 0.125,
+      "length_m": 0.785,
+      "penetration": {
+        "depth_m": 0.005,
+        "fraction_of_root_radius": 0.04,
+        "overlap_region": "Bell margin rim, a circumferential band in the outer mesoglea; the coronal muscle is a thin ring in the subumbrella"
+      },
+      "notes": "The coronal muscle contracts the bell margin to expel water and drive pulsation (jet propulsion). It is an annular ring, not a limb. length_m is the ring circumference (2 pi r). Contraction is continuous, not hinged. Bell pulsation is a hydrostatic mechanism."
+    },
+    {
+      "id": "marginal_tentacles",
+      "name": "Marginal tentacles",
+      "category": "feeding",
+      "symmetry": "radial",
+      "count": 80,
+      "order": "ring around bell margin",
+      "attach_pos": [
+        0.48,
+        0.27,
+        0
+      ],
+      "joints": [
+        {
+          "name": "margin_root",
+          "pos": [
+            0.48,
+            0.27,
+            0
+          ],
+          "type": "fixed",
+          "pivot_axes": [
+            "x",
+            "y",
+            "z"
+          ],
+          "range_deg": [
+            0,
+            0
+          ]
+        },
+        {
+          "name": "tentacle_mid",
+          "pos": [
+            0.46,
+            0.14,
+            0
+          ],
+          "type": "hydrostatic",
+          "pivot_axes": [
+            "x",
+            "y",
+            "z"
+          ],
+          "range_deg": [
+            0,
+            0
+          ]
+        }
+      ],
+      "root_radius_m": 0.0008,
+      "length_m": 0.03,
+      "penetration": {
+        "depth_m": 0.002,
+        "fraction_of_root_radius": 2.5,
+        "overlap_region": "Bell margin rim, where fine tentacles root into the mesoglea"
+      },
+      "notes": "Numerous short, fine tentacles (roughly 80 to 100 on an adult, count approximate and not verified) bearing nematocysts that catch plankton. Feeding category, since their function is prey capture. Their individual size is tiny, so they are a texture-level detail. Penetration is 2 mm into the bell margin; the depth is large relative to the root radius because the root is very thin."
+    },
+    {
+      "id": "oral_arms",
+      "name": "Oral arms",
+      "category": "feeding",
+      "symmetry": "radial",
+      "count": 4,
+      "order": "4-fold, around the manubrium",
+      "attach_pos": [
+        0,
+        0.5,
+        0
+      ],
+      "joints": [
+        {
+          "name": "arm_root_at_manubrium",
+          "pos": [
+            0,
+            0.5,
+            0
+          ],
+          "type": "hydrostatic",
+          "pivot_axes": [
+            "x",
+            "y",
+            "z"
+          ],
+          "range_deg": [
+            0,
+            0
+          ]
+        },
+        {
+          "name": "arm_mid",
+          "pos": [
+            0.05,
+            0.3,
+            0
+          ],
+          "type": "hydrostatic",
+          "pivot_axes": [
+            "x",
+            "y",
+            "z"
+          ],
+          "range_deg": [
+            0,
+            0
+          ]
+        }
+      ],
+      "root_radius_m": 0.006,
+      "length_m": 0.04,
+      "penetration": {
+        "depth_m": 0.01,
+        "fraction_of_root_radius": 1.67,
+        "overlap_region": "Manubrium base and the central subumbrellar floor, where the arms join the manubrium"
+      },
+      "notes": "Four short, frilly, ruffled oral arms hang from the manubrium and carry food to the mouth. They are flexible and have no rigid joints. Feeding category, since they serve ingestion. Relative to the bell they are small and do not extend far below the margin. length_m is an estimate."
+    },
+    {
+      "id": "manubrium_mouth",
+      "name": "Manubrium and mouth",
+      "category": "feeding",
+      "symmetry": "centre",
+      "count": 1,
+      "attach_pos": [
+        0,
+        0.5,
+        0
+      ],
+      "joints": [
+        {
+          "name": "manubrium_root",
+          "pos": [
+            0,
+            0.5,
+            0
+          ],
+          "type": "fixed",
+          "pivot_axes": [
+            "x",
+            "y",
+            "z"
+          ],
+          "range_deg": [
+            0,
+            0
+          ]
+        }
+      ],
+      "root_radius_m": 0.012,
+      "length_m": 0.02,
+      "penetration": {
+        "depth_m": 0.02,
+        "fraction_of_root_radius": 1.67,
+        "overlap_region": "Central subumbrellar cavity, the apex of the core bell"
+      },
+      "notes": "Central, four-lobed mouth at the tip of the manubrium, a short tube hanging from the subumbrella. Axial and single, so symmetry is centre."
+    },
+    {
+      "id": "rhopalia",
+      "name": "Rhopalia (marginal sensory bodies)",
+      "category": "sensory",
+      "symmetry": "radial",
+      "count": 8,
+      "order": "8-fold (4 pairs of 2 around the margin)",
+      "attach_pos": [
+        0.45,
+        0.27,
+        0
+      ],
+      "joints": [
+        {
+          "name": "rhopalium_niche",
+          "pos": [
+            0.45,
+            0.27,
+            0
+          ],
+          "type": "fixed",
+          "pivot_axes": [
+            "x",
+            "y",
+            "z"
+          ],
+          "range_deg": [
+            0,
+            0
+          ]
+        }
+      ],
+      "root_radius_m": 0.003,
+      "length_m": 0.005,
+      "penetration": {
+        "depth_m": 0.002,
+        "fraction_of_root_radius": 0.67,
+        "overlap_region": "Rhopalial niche at the bell margin rim"
+      },
+      "notes": "Small club-shaped marginal sense organs with statoliths for balance and light-sensing eyespots. They sit in niches at the margin. Eight in Aurelia (count from general knowledge, not verified in session). Fixed to the margin. Sensory category."
+    },
+    {
+      "id": "gonads",
+      "name": "Gonads (horseshoe-shaped)",
+      "category": "aesthetics",
+      "symmetry": "radial",
+      "count": 4,
+      "order": "4-fold",
+      "attach_pos": [
+        0.25,
+        0.41,
+        0
+      ],
+      "joints": [
+        {
+          "name": "gonad_pocket",
+          "pos": [
+            0.25,
+            0.41,
+            0
+          ],
+          "type": "fixed",
+          "pivot_axes": [
+            "x",
+            "y",
+            "z"
+          ],
+          "range_deg": [
+            0,
+            0
+          ]
+        }
+      ],
+      "root_radius_m": 0.015,
+      "length_m": 0.07,
+      "penetration": {
+        "depth_m": 0.003,
+        "fraction_of_root_radius": 0.2,
+        "overlap_region": "Subumbrellar floor, in four horseshoe-shaped pockets"
+      },
+      "notes": "Four horseshoe-shaped reproductive gonads visible through the translucent bell, often coloured. Reproduction does not fit any of the five categories. They are placed under aesthetics as non-functional for locomotion, sensing, feeding or manipulation, and this is a judgement call. Flag for the schema owner. Photo check: the four lobes span about half the bell diameter, so length_m was raised from 0.06 to 0.07 m."
+    },
+    {
+      "id": "radial_canals",
+      "name": "Gastrovascular radial canals",
+      "category": "feeding",
+      "symmetry": "radial",
+      "count": 4,
+      "order": "4-fold gastric pouches, with radial canals extending to the margin",
+      "attach_pos": [
+        0,
+        0.6,
+        0
+      ],
+      "joints": [
+        {
+          "name": "gastric_pouch_root",
+          "pos": [
+            0,
+            0.6,
+            0
+          ],
+          "type": "fixed",
+          "pivot_axes": [
+            "x",
+            "y",
+            "z"
+          ],
+          "range_deg": [
+            0,
+            0
+          ]
+        }
+      ],
+      "root_radius_m": 0.002,
+      "length_m": 0.1,
+      "penetration": {
+        "depth_m": 0,
+        "fraction_of_root_radius": 0,
+        "overlap_region": "Fully internal to the core bell; no surface mesh needed"
+      },
+      "notes": "Internal digestive network (gastric pouches and radial canals) that distributes food through the bell. It is visible only as faint lines through the translucent bell. It is listed for completeness and has no external mesh. Feeding category, since it is digestive."
+    }
+  ],
+  "category_summary": {
+    "locomotion": 1,
+    "sensory": 1,
+    "feeding": 4,
+    "manipulation": 0,
+    "aesthetics": 1
+  },
+  "constraints": {
+    "symmetry": "Radial (4-fold and 8-fold) about the vertical +Y axis, not bilateral.",
+    "gait": "Bell pulsation (jet propulsion). The coronal muscle contracts the margin rhythmically; appendages trail passively. Hydrostatic, with no rigid joints.",
+    "other": [
+      "Apply the normalized frame as given: +Y is the swimming direction (bell apex), x and z span the bell, y in [0,1] with 0 at tentacle tips.",
+      "Bell-to-appendage attachments are soft, so use hydrostatic joints. Rigid joints would misrepresent the body.",
+      "Coordinates assume a bell 0.25 m across and 0.11 m tall including tentacles. Tentacle and arm lengths are estimates."
+    ]
+  },
+  "sources": [
+    "Search result list for Aurelia aurita (WebSearch, this session): https://commons.wikimedia.org/wiki/Category:Aurelia_aurita (listed, not opened, Commons unreachable)",
+    "Search result: https://commons.wikimedia.org/wiki/File:Moon_Jellies_(Aurelia_aurita)_(7153399193).jpg (licence from search snippet only, not opened)",
+    "Search result: https://www.inaturalist.org/guide_taxa/464336 (listed, not opened)",
+    "Anatomy and sizes: general biology of Aurelia aurita (bell diameter, rhopalia count, oral arms, marginal tentacles, horseshoe gonads, gastric pouches and radial canals). From knowledge, not retrieved in session. Verify against the Wikipedia species article https://en.wikipedia.org/wiki/Aurelia_aurita before use."
+  ],
+  "confidence": 0.55,
+  "other_features": [
+    {
+      "feature": "Translucent bell tissue",
+      "description": "The bell is gelatinous mesoglea; the four gonad rings show through it."
+    }
+  ]
+}

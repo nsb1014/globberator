@@ -124,8 +124,12 @@ class Animator:
         for p in rig["parts"]:
             p["_F"] = Matrix(p["frame"])
             p["_Fi"] = p["_F"].inverted_safe()
+        self.humanoid = rig.get("gait") == "humanoid" and len(self.legs) == 2 and all(
+            len(leg["lengths"]) == 2 for leg in self.legs
+        )
         self._setup_gait()
         self.walk_settle = self._standing_clearance()
+        self.run_settle = self._standing_clearance("run") if self.humanoid else self.walk_settle
         self.reset()
 
     # ---------------------------------------------------------- gait setup
@@ -174,14 +178,15 @@ class Animator:
             half = min(half, -v.z + math.sqrt(disc), v.z + math.sqrt(disc))
         return 2.0 * max(half, 0.02) * 0.9
 
-    def _standing_clearance(self):
+    def _standing_clearance(self, profile="walk"):
         """Choose one reachable pelvis height for the stride before any foot swings."""
         drop = 0.0
+        speed = self.run_speed if profile == "run" else self.walk_speed
+        half_stride = speed * self._duty(profile) / self._freq(profile) * .5
         for leg in self.legs:
             hip, sole = leg["rest_j"][0], leg["rest_j"][-1]
-            half_stride = self.walk_speed * self._duty("walk") / self._freq("walk") * 0.5
             horizontal = math.hypot(sole.x - hip.x, abs(sole.z - hip.z) + half_stride)
-            reach = 0.94 * leg["length"]
+            reach = (.985 if self.humanoid else .94) * leg["length"]
             vertical = math.sqrt(max(0.0, reach * reach - horizontal * horizontal))
             drop = max(drop, hip.y + leg["sole_local"].y - vertical)
         return min(drop, 0.45 * self.leg_len)
@@ -195,6 +200,8 @@ class Animator:
         return 0.6 if n == 2 else (0.75 if n == 4 else 0.65 if n <= 4 else 0.55)
 
     def _freq(self, p):
+        if self.humanoid:
+            return 1 / (.64 if p == "run" else .92)
         s = 1.1 if p == "walk" else 1.75
         if len(self.legs) == 1:
             s *= 0.9
@@ -239,6 +246,11 @@ class Animator:
         for st in self.legs:
             st["offset"] = st.get(self.profile + "_offset", st["offset"])
 
+    def _lift_height(self):
+        if self.humanoid:
+            return self.leg_len * (.11 if self.profile == "walk" else .15)
+        return self.leg_len * (.16 if self.profile == "walk" else .18)
+
     def _prime(self):
         """Start a gait in its steady state, as if already walking."""
         if not self.legs:
@@ -259,7 +271,7 @@ class Animator:
                 st["swinging"] = True
                 st["swing_dur"] = (1.0 - self.duty) / self.gait_freq
                 st["swing_t"] = s
-                st["lift_h"] = self.leg_len * (0.16 if self.profile == "walk" else 0.18)
+                st["lift_h"] = self._lift_height()
                 st["lift"] = rest_fp + fwd * (-0.5 * stride - self.speed * s * st["swing_dur"])
                 st["plant"] = st["lift"].copy()
         self.pose()
@@ -320,7 +332,7 @@ class Animator:
                     st["swing_t"] = 0.0
                     st["swing_dur"] = (1.0 - duty) / self.gait_freq if mv else 0.22 * math.sqrt(self.leg_len)
                     st["lift"] = st["plant"].copy()
-                    st["lift_h"] = self.leg_len * (0.16 if self.profile == "walk" else 0.18)
+                    st["lift_h"] = self._lift_height()
             if st["swinging"]:
                 st["swing_t"] += dt / st["swing_dur"]
                 s = clamp(st["swing_t"], 0.0, 1.0)
@@ -414,7 +426,12 @@ class Animator:
         hb = euler(pitch, 0.0, roll)
         pivot = self.rest[hub_bone]
         if legs and jump <= 0.0:
-            off.y -= self.walk_settle
+            if self.humanoid:
+                settle = self.run_settle if self.profile == "run" else self.walk_settle
+                speed = self.run_speed if self.profile == "run" else self.walk_speed
+                off.y -= settle * clamp(abs(self.speed) / speed, 0, 1)
+            else:
+                off.y -= self.walk_settle
         self._set(hub_bone, X(hb, pivot + off))
         self.bob_vel = off.y - self.prev_bob
         self.prev_bob = off.y
@@ -445,12 +462,14 @@ class Animator:
             target = inv @ st["foot"]
             if jump > 0.0:
                 target = target + UPV * jump * 0.85
-            self._solve(st, target - st["sole_local"], True)
+            self._solve(st, target, True)
         for ai, st in enumerate(self.arms):
             base = self._rest_end(st)
             L = st["length"]
-            swing = math.sin(TAU * (self.gait_clock + (0.0 if st["side"] > 0 else 0.5))) * 0.35 * L * min(moving, 1.2)
-            t = base + Vector((0, 0, swing)) + Vector((0, 0.03 * L * self.osc(2.0, ai), 0)) * idle_w
+            swing = math.sin(TAU * (self.gait_clock + (0.0 if st["side"] > 0 else 0.5))) * (.24 if self.humanoid else .35) * L * min(moving, 1.2)
+            # Keep the hanging hands outside the knees' forward swing envelope.
+            clearance = st["side"] * .20 * L * min(moving, 1.0) if self.humanoid else 0.0
+            t = base + Vector((clearance, 0, swing)) + Vector((0, 0.03 * L * self.osc(2.0, ai), 0)) * idle_w
             up_w = self.track("arms_up")
             if up_w > 0.0:
                 head = G[spine[-1]].o
@@ -501,14 +520,28 @@ class Animator:
         return self.G[p] @ (st["rest_j"][-1] - self.rest[p])
 
     def _solve(self, st, target, is_leg):
-        """FABRIK from the rest shape carried by the parent bone."""
+        """A forward knee for humanoids, FABRIK for the other limb chains."""
         pb = st["l"]["parent_bone"]
         gp = self.G[pb]
         rj, lens = st["rest_j"], st["lengths"]
         n = len(rj)
         j = [gp @ (rj[k] - self.rest[pb]) for k in range(n)]
         root = j[0].copy()
-        if (target - root).length >= sum(lens) * 0.999:
+        humanoid_leg = self.humanoid and is_leg
+        if is_leg:
+            pitch = .20 if humanoid_leg else .35
+            end_b = rot(RIGHTV, -pitch * math.sin(math.pi * clamp(st["swing_t"], 0, 1))) if st["swinging"] else Matrix.Identity(3)
+            target = target - (end_b @ st["sole_local"] if humanoid_leg else st["sole_local"])
+        if humanoid_leg:
+            d = target - root
+            distance = clamp(d.length, abs(lens[0] - lens[1]) + 1e-5, sum(lens) - 1e-5)
+            axis = d.normalized() if d.length_squared > 1e-10 else (j[-1] - root).normalized()
+            forward = BACKV - axis * BACKV.dot(axis)
+            knee_plane = forward.normalized() if forward.length_squared > 1e-10 else RIGHTV
+            along = (lens[0] ** 2 - lens[1] ** 2 + distance ** 2) / (2 * distance)
+            bend = math.sqrt(max(0.0, lens[0] ** 2 - along ** 2))
+            j = [root, root + axis * along + knee_plane * bend, root + axis * distance]
+        elif (target - root).length >= sum(lens) * 0.999:
             d = (target - root).normalized()
             for k in range(1, n):
                 j[k] = j[k - 1] + d * lens[k - 1]
@@ -530,9 +563,8 @@ class Animator:
             b = arc(d0, d1) @ gp.b
             self._set(bones[k], X(b, j[k]))
             prev = b
-        end_b = prev
-        if is_leg:
-            end_b = rot(RIGHTV, -0.35 * math.sin(math.pi * clamp(st["swing_t"], 0, 1))) if st["swinging"] else Matrix.Identity(3)
+        if not is_leg:
+            end_b = prev
         self._set(bones[-1], X(end_b.copy(), j[-1]))
         open_ = max(self.track("mouth"), self.track("arms_up")) * 0.8 + 0.15 * (0.5 + 0.5 * self.osc(3.0, st["side"]))
         F = st["tip_frame"]

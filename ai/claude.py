@@ -9,7 +9,6 @@ import io
 import json
 import os
 
-
 from PIL import Image
 
 MODEL = os.environ.get("GLOBBERATOR_MODEL", os.environ.get("POLYFORGE_MODEL", "claude-haiku-4-5"))
@@ -89,9 +88,9 @@ CRITIQUE_SCHEMA = {
 }
 
 
-def _call(system, content, schema, effort="high"):
+def _call(system, content, schema, effort="high", max_tokens=8192):
     resp = client().messages.create(
-        model=MODEL, max_tokens=8192,
+        model=MODEL, max_tokens=max_tokens,
         output_config={"format": {"type": "json_schema", "schema": schema}},
         cache_control={"type": "ephemeral"},
         system=system,
@@ -103,6 +102,20 @@ def _call(system, content, schema, effort="high"):
         raise RuntimeError("response hit max_tokens")
     text = next(b.text for b in resp.content if b.type == "text")
     return json.loads(text), resp.usage
+
+
+def character_brief(image):
+    from polyforge.character_brief import SCHEMA
+
+    return _call(
+        "Classify the main figure for a neutral-clay game character. An upright human-shaped "
+        "figure has two arms and two legs, regardless of stylization. Mark other body plans unsupported. "
+        "Judge the figure itself, excluding keychain hardware, stands, handheld objects and background. "
+        "Estimate its proportions in a neutral standing pose. Infer occluded anatomy conservatively. "
+        "Ignore paint, patterns and facial markings.",
+        [image_block(image, 768), {"type": "text", "text": "Return only the character classification."}],
+        SCHEMA, max_tokens=384,
+    )
 
 
 def draft(ref_image, catalog):

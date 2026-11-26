@@ -1,6 +1,7 @@
 """Image -> Globberator creature.
 
     python3 ai/forge.py reference.png --out runs/myfox [--iterations 4] [--tolerance 0.8]
+    python3 ai/forge.py reference.png --one-shot --out runs/character
     python3 ai/forge.py reference.png --out runs/x --init examples/bull.json --no-llm   (numeric fit only)
     python3 ai/forge.py reference.png --out runs/x --init examples/bull.json --no-llm --accept "checked by hand"
 
@@ -23,10 +24,14 @@ import json
 import os
 import shutil
 import sys
+import tempfile
 import time
+from pathlib import Path
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
+ROOT = os.path.dirname(HERE)
+sys.path.insert(1, ROOT)
 
 import numpy as np  # noqa: E402
 from PIL import Image  # noqa: E402
@@ -35,7 +40,6 @@ import optimize  # noqa: E402
 import pf  # noqa: E402
 import vision  # noqa: E402
 
-ROOT = os.path.dirname(HERE)
 WEIGHTS = {"features": 0.4, "silhouette": 0.3, "proportion": 0.2, "palette": 0.1}
 
 
@@ -272,10 +276,46 @@ class Run:
         self.log("best total %.3f -> %s" % (best["scores"]["total"], self.out))
 
 
+def one_shot(args):
+    from polyforge.character_brief import validate
+
+    image = Path(args.image).resolve()
+    with Image.open(image) as source:
+        source.verify()
+    usage = None
+    model = None
+    if args.brief:
+        brief = json.loads(Path(args.brief).read_text())
+    else:
+        import claude
+
+        brief, usage = claude.character_brief(image)
+        model = claude.MODEL
+    validate(brief)
+    out = Path(args.out).resolve()
+    out.mkdir(parents=True, exist_ok=True)
+    with tempfile.TemporaryDirectory(dir=out) as temp:
+        stage = Path(temp)
+        brief_path = stage / "character-brief.json"
+        brief_path.write_text(json.dumps(brief, indent=2) + "\n")
+        pf.run(["character", str(brief_path), "--out", str(stage)])
+        report_path = stage / "report.json"
+        report = json.loads(report_path.read_text())
+        report["classification"] = {"model": model, "requests": int(model is not None),
+                                    "input_tokens": usage.input_tokens if usage else 0,
+                                    "output_tokens": usage.output_tokens if usage else 0}
+        report_path.write_text(json.dumps(report, indent=2) + "\n")
+        for name in [*report["files"], "character-brief.json", "report.json"]:
+            (stage / name).replace(out / name)
+    print(out / "character.glb")
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("image")
     ap.add_argument("--out", required=True)
+    ap.add_argument("--one-shot", action="store_true", help="one image classification followed by a deterministic humanoid rig with runtime motion")
+    ap.add_argument("--brief", help="use a previously classified image brief with --one-shot")
     ap.add_argument("--part-rounds", type=int, default=1, help="maximum isolated shape revisions; 0 disables")
     ap.add_argument("--iterations", type=int, default=4)
     ap.add_argument("--tolerance", type=float, default=0.8, help="stop when the total score reaches this")
@@ -288,7 +328,18 @@ def main():
     ap.add_argument("--yaw", type=float, default=None, help="camera yaw of the reference (with --init)")
     ap.add_argument("--pitch", type=float, default=16.0)
     ap.add_argument("--no-export", action="store_true")
-    Run(ap.parse_args()).go()
+    args = ap.parse_args()
+    if args.one_shot:
+        if args.init or args.no_llm or args.accept or args.no_export:
+            ap.error("--one-shot exports automatically and accepts --brief to run without an API call")
+        try:
+            one_shot(args)
+        except (OSError, RuntimeError, ValueError) as exc:
+            ap.exit(1, f"{ap.prog}: {exc}\n")
+    elif args.brief:
+        ap.error("--brief requires --one-shot")
+    else:
+        Run(args).go()
 
 
 if __name__ == "__main__":

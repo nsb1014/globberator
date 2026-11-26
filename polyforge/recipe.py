@@ -114,6 +114,8 @@ def normalize(src):
         return {**base, **item}
 
     r = {"format": FORMAT, "version": VERSION, "name": str(src.get("name", "Untitled"))}
+    if src.get("gait") == "humanoid":
+        r["gait"] = "humanoid"
     if isinstance(src.get("ground_y"), (float, int)):
         r["ground_y"] = float(src["ground_y"])
     s_in = src.get("spine")

@@ -55,7 +55,43 @@ Every edit goes through the recipe, so Blender's undo covers it.
 
 ## Commands
 
+For a reference-driven build, follow the [agent workflow](AGENTS.md) from target selection through independent review. Examples and library images show tool usage and part shapes.
+
+### One-shot characters
+
+For an upright humanoid, pass a single reference image and an output directory.
+
 ```sh
+PF_BLENDER=blender python3 ai/forge.py reference.png --one-shot --out out/character
+```
+
+The one-shot command makes one structured classification request through the existing hosted classifier. It uses the `anthropic` package, `ANTHROPIC_API_KEY`, and the model selected by `GLOBBERATOR_MODEL`. A pipeline that already classifies the image can pass `--brief brief.json` and skip inference. See the [classification schema](polyforge/character_brief.py).
+
+The compiler handles proportions, paired limbs, face, hair, footwear, and rigging. It writes a neutral-clay `character.glb` with skin weights and an accompanying `character.motion.json` with role bindings and reusable pose rules. The GLB contains no baked clips. The export also includes `recipe.json`, `preview.png`, the classification, and `report.json`. The one-shot preset supports upright humanoids.
+
+Changing the head fraction recomputes the body proportions and attachment positions. The recipe `scale` controls resize joint chains and attached hands or footwear together. The Blender builder regenerates and weights the mesh, and the runtime controller measures the resulting skeleton on bind.
+
+### Runtime motion in Godot
+
+Export any creature recipe with `pf.py build RECIPE --runtime-motion --formats glb --out DIR` to get a rigged GLB and its motion JSON. The editable `poses` section describes ground-relative steps, lift and stride scaled by leg length, a limb-relative reach pose, and spring settings. The `limbs` and `parts` sections bind named joints to roles for the generated body.
+
+Add [creature_motion.gd](godot/creature_motion.gd) below the imported `Skeleton3D` and call `configure()` with the parsed motion JSON. Call `drive("walk", forward_speed)` or `drive("run", forward_speed)` with the speed of the actor that owns movement. The skeleton modifier groups legs by length, holds stance targets in world space, and solves the current chains. Set `ground_at` to a callable that returns ground height at a world position for uneven terrain. Call `reach(limb_id, world_target)` for a grasper or `set_part_amount(part_id, amount)` for a hinged part. Uncontrolled chains receive spring motion.
+
+Blender handles mesh generation, assembly, and skin weighting at build time. Godot loads the finished asset and evaluates motion from its bindings. Call `configure()` again if you replace the imported asset with a rebuilt version. The editor's explicit baked export is still available for compatible playback tools.
+
+Run the headless runtime checks on freshly generated fixtures.
+
+```sh
+blender -b --python-exit-code 1 -P tools/tests/make_runtime_fixtures.py -- out/runtime-fixtures
+godot --headless --path tools/tests --script runtime_motion.gd -- "$PWD/out/runtime-fixtures"
+```
+
+### Recipe and library commands
+
+```sh
+mkdir -p out/asset
+python3 pf.py new --name "My creature" --out out/asset/recipe.json
+python3 pf.py search "human hand"            # active families, attachment types and thumbnails
 python3 pf.py review examples/bull.json --out out/bull-review
 # Inspect the four images, then record your observations.
 python3 pf.py review examples/bull.json --out out/bull-review --accept "$REVIEW_NOTE"
@@ -67,6 +103,7 @@ python3 pf.py gallery examples/*.json --out out/gallery.png
 python3 pf.py library --out out/parts       # each part as its own GLB, for engines that assemble parts themselves
 python3 pf.py describe                       # family index, placement rules and operations
 python3 pf.py describe --part horn_sweep     # controls and ranges for one family
+python3 pf.py surface RECIPE X Y Z          # estimate u/theta for a body landmark
 python3 pf.py test [--fast]
 
 # Image -> creature (needs ANTHROPIC_API_KEY)
@@ -97,6 +134,10 @@ Use `horn_sweep` for unbranched horns and `ear_pinna` for adjustable ear profile
 The 13 species files contain 119 recorded structures. The library groups 105 usable source records into 54 model families. Round and slit pupils share the camera-eye family. Paired structures use a single authored model, and repeated anatomy such as shark median fins uses shape controls. The same octopus arm record supplies two independent models, a tapered limb and its sucker rows. The 14 exclusions include internal structures, texture features, and regions handled by the existing spine body.
 
 The [research specification](research/part_library.json) records the sources, measured dimensions, and shape controls. Each research family has a [clay reference](library/references) named by part ID. The palette thumbnails render the procedural models. The complementary group retains 16 earlier shapes for gaps such as cloven hooves, horns, bat wings, turtle shells, and trunks. Older recipes still resolve their original part IDs.
+
+Use `pf.py search` to find active families by plain-language terms, then `pf.py describe --part` for exact controls. Search returns an empty list when no family matches all terms. Use the result's `shape` object with `pf.py part` to inspect an individual candidate.
+
+For a simple rounded boot, `pf.py search "boot"` supplies `{"part":"foot_hoof","params":{"split":0}}`. On a limb, set `tip_params.split` or use **Groove width** in Blender's Selection panel. Zero closes the toe and sole. Higher values widen the groove, with `0.6` as the cloven default.
 
 The sculpts use the recipe frame with +Y up, +Z forward, and the local origin at the mount. A paired model is authored on the +X side. The clay views show a neutral pose with stylized volume for surfaces hidden from the research camera.
 

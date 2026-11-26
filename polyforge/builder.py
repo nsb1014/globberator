@@ -644,6 +644,8 @@ class Builder:
             "body_len": self.spine.length, "body_h": self.spine.vh[self.hub], "hub_height": self.spine.vpos[self.hub].y,
             "body_w": max(self.spine.vw), "shift_y": self.shift_y,
         }
+        if rc.get("gait") == "humanoid":
+            rig["gait"] = "humanoid"
         tris = sum(len(p.vertices) - 2 for p in skin.data.polygons) + (sum(len(p.vertices) - 2 for p in parts_ob.data.polygons) if parts_ob else 0)
         report = {"name": name, "library_version": catalog.LIBRARY_VERSION, "warnings": self.warnings, "triangles": tris,
                   "bones": len(self.names), "legs": len(legs), "arms": sum(1 for l in self.limbs if l["role"] == "arm"),

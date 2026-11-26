@@ -145,6 +145,15 @@ def test_research_library(t):
     t.check(len(catalog.RESEARCH) == 54 and catalog.get("eye_slit_pupil") is None,
             "camera-eye variants share one research family")
     t.check(catalog.get("eye_round") not in catalog.PARTS, "old eye IDs load outside the active palette")
+    for query, expected in (("human hands", "hand_basic"), ("round pupil", "eye_camera"),
+                            ("bird foot", "talons"), ("dorsal crest", "crest_dorsal")):
+        t.check([part.id for part in catalog.search(query, limit=1)] == [expected],
+                f"catalog search finds the current family for {query}")
+    for query in ("spiked hair", "eye_round", "   "):
+        t.check(not catalog.search(query), f"catalog search does not substitute a part for {query!r}")
+    boots = catalog.search("boots", limit=1)
+    t.check(bool(boots) and catalog.search_shape(boots[0], "boots") == {"part": "foot_hoof", "params": {"split": 0}},
+            "boot search supplies the closed hoof settings")
     shape, warnings = normalize_shape({"family": "leg_arthropod", "params": {"segments": 5}})
     r, errors = ops.apply_all(R.default_recipe(), [
         {"op": "attach_shape", "shape": shape, "uid": "leg", "u": .55, "theta": -54},
@@ -422,6 +431,95 @@ def test_review_fixes(t):
     t.check(not any(m.name.startswith("PF_skin.") for m in bpy.data.materials if m.users == 0), "rebuilds reuse the skin material")
 
 
+def test_hoof_groove(t):
+    from mathutils.bvhtree import BVHTree
+
+    part = catalog.get("foot_hoof")
+    gaps = []
+    for split in (0.0, .0001, .05, .25, .6, 1.0):
+        _, regions = finish.part_regions(part, {**part.defaults(), "split": split})
+        _, verts, faces = next(region for region in regions["self"] if region[0] == "dark")
+        tree = BVHTree.FromPolygons(verts, faces)
+        hit = tree.ray_cast(Vector((0, -.116, .25)), Vector((0, 0, -1)))[0]
+        t.check((hit is not None) == (split == 0), f"hoof split {split} has the expected center toe opening")
+        gaps.append(0.0 if split == 0 else min(abs(v.x) for v in verts))
+    t.check(all(a < b for a, b in zip(gaps, gaps[1:])), "hoof groove widens as split increases")
+
+
+def test_character_compile(t):
+    from .character import compile_recipe
+
+    brief = {"body_plan": "humanoid", "style": "standard", "head_fraction": .05,
+             "face": "oval", "eyes": "small", "hair": "bald", "feet": "bare"}
+    regular = compile_recipe(brief)
+    chibi = compile_recipe({**brief, "style": "chibi", "head_fraction": .93,
+                            "hair": "spiky", "feet": "boots"})
+    t.check(len(regular["limbs"]) == len(chibi["limbs"]) == 2 and
+            regular["limbs"][0]["family"] == chibi["limbs"][0]["family"] == "leg_plantigrade" and
+            chibi["limbs"][0]["tip_params"]["split"] == 0,
+            "character compiler fits valid rigs at proportion bounds and chooses footwear")
+    t.check(all(a["segments"] == b["segments"] and a["radii"] == b["radii"] and a["scale"] > b["scale"]
+                for a, b in zip(regular["limbs"], chibi["limbs"])),
+            "proportion changes scale complete limb chains while preserving their local shapes")
+    t.check(max(r["w"] for r in chibi["spine"]) > max(r["w"] for r in regular["spine"]) and
+            any(part["part"] == "hair_crown" for part in chibi["parts"]),
+            "chibi classification yields an oversized head and styled hair")
+    booted = compile_recipe({**brief, "feet": "boots"})
+    from .spine import Spine
+    model = builder.Builder(booted, "preview")
+    model.resolve_limbs(Spine(booted["spine"]))
+    leg = model.limbs[0]
+    toe = catalog.get(leg["tip"]).build(leg["tip_params"]).pieces["self"].cage("dark")[0]
+    t.check(leg["joints"][-1].x + leg["scale"] * min(point.x for point in toe) > .01,
+            "full-size boots clear the midline on long-legged proportions")
+
+
+def test_humanoid_gait(t):
+    from .character import compile_recipe
+
+    source = compile_recipe({"body_plan": "humanoid", "style": "chibi", "head_fraction": .57,
+                             "face": "round", "eyes": "angled", "hair": "bald", "feet": "boots"})
+    reset()
+    result = builder.build(source, "preview")
+    scale = 1.25
+    resized, errors = ops.apply_all(source, [
+        {"op": "set_limb", "uid": limb["uid"], "scale": limb["scale"] * scale} for limb in source["limbs"]
+    ])
+    reset()
+    resized_result = builder.build(resized, "preview")
+    t.check(not errors and all(
+        abs(a["length"] * scale - b["length"]) < .001 and
+        (Vector(a["sole_local"]) * scale - Vector(b["sole_local"])).length < .001
+        for a, b in zip(result["rig"]["limbs"], resized_result["rig"]["limbs"])
+    ), "resizing rebuilds limb lengths and sole offsets at the same scale")
+    for label, rig in (("humanoid", result["rig"]), ("resized humanoid", resized_result["rig"])):
+        _check_humanoid_gait(t, label, rig)
+
+
+def _check_humanoid_gait(t, label, rig):
+    for clip, minimum_period in (("walk", .85), ("run", .58)):
+        anim = Animator(rig)
+        anim.play(clip)
+        dt = anim.cycle_length() / 60
+        worst_plant, least_forward, lateral = 0.0, float("inf"), 0.0
+        for frame in range(120):
+            anim.step(dt)
+            if frame < 60:
+                continue
+            for leg in anim.legs:
+                hip, knee, ankle = (anim.G[bone].o for bone in leg["bones"])
+                axis = (ankle - hip).normalized()
+                bend = knee - hip - axis * (knee - hip).dot(axis)
+                least_forward = min(least_forward, bend.z)
+                lateral = max(lateral, abs(bend.x))
+                if not leg["swinging"]:
+                    worst_plant = max(worst_plant, (anim.posed_sole(leg) - leg["plant"]).length)
+        t.check(anim.cycle_length() >= minimum_period, f"{label} {clip} has a readable cadence")
+        t.check(least_forward > 0 and lateral < .04 * anim.leg_len,
+                f"{label} {clip} knees stay forward through the cycle")
+        t.check(worst_plant < .004 * anim.leg_len, f"{label} {clip} keeps stance feet planted ({worst_plant:.5f})")
+
+
 def run(fast=False):
     t = T()
     t0 = time.time()
@@ -431,6 +529,9 @@ def run(fast=False):
     test_research_library(t)
     test_isolated_edits(t)
     test_review_fixes(t)
+    test_hoof_groove(t)
+    test_character_compile(t)
+    test_humanoid_gait(t)
     test_parts(t, fast)
     test_animation(t)
     test_build_and_export(t)

@@ -165,15 +165,21 @@ def normalize(src):
         if not isinstance(l, dict):
             continue
         uid = _unique(l.get("uid", "limb%d" % i), used)
-        s_src = l.get("segments")
+        family = catalog.get(l.get("family")) if isinstance(l.get("family"), str) else None
+        if l.get("family") and (family is None or family.preset is None):
+            w.append("limb %s: unknown limb family '%s'" % (uid, l["family"]))
+            family = None
+        shape_params = catalog.normalize_params(family, l.get("params"), uid, w) if family else None
+        shape = family.preset(shape_params) if family else l
+        s_src = shape.get("segments")
         if not isinstance(s_src, list) or not s_src:
             w.append("limb %s has no segments; using a default leg" % uid)
             s_src = [[0.1, -0.3, 0.0], [0.0, -0.3, 0.0]]
         segs = []
-        for k, sv in enumerate(s_src[:LIMITS["segments"][1]]):
-            x, y, z = _vec(sv, [0.0, -0.3, 0.0])
+        for k, sv in enumerate(s_src if family else s_src[:LIMITS["segments"][1]]):
+            x, y, z = _vec(list(sv), [0.0, -0.3, 0.0]) if family else _vec(sv, [0.0, -0.3, 0.0])
             ln = (x * x + y * y + z * z) ** 0.5
-            lo, hi = LIMITS["segment_len"]
+            lo, hi = (0.001, 8.0) if family else LIMITS["segment_len"]
             if ln < lo:
                 w.append("limb %s segment %d too short" % (uid, k))
                 x, y, z = (0.0, -lo, 0.0) if ln < 1e-6 else (x / ln * lo, y / ln * lo, z / ln * lo)
@@ -181,13 +187,13 @@ def normalize(src):
                 w.append("limb %s segment %d too long (%.2f), scaled to %.2f" % (uid, k, ln, hi))
                 x, y, z = x / ln * hi, y / ln * hi, z / ln * hi
             segs.append([round(x, 4), round(y, 4), round(z, 4)])
-        r_src = l.get("radii") if isinstance(l.get("radii"), list) else []
+        r_src = list(shape.get("radii", [])) if family else (l.get("radii") if isinstance(l.get("radii"), list) else [])
         radii = []
         for k in range(len(segs) + 1):
             dr = 0.12 + (0.06 - 0.12) * k / len(segs)
             rv = _num(r_src[k], dr) if k < len(r_src) else (_num(r_src[-1], dr) if r_src else dr)
-            radii.append(_clamp(rv, LIMITS["limb_radius"], "limb %s radius %d" % (uid, k), w))
-        tip = str(l.get("tip", "") or "")
+            radii.append(_clamp(rv, (0.001, 3.0) if family else LIMITS["limb_radius"], "limb %s radius %d" % (uid, k), w))
+        tip = str(l.get("tip", shape.get("tip", "")) or "")
         tip_params = {}
         if tip:
             part = catalog.get(tip)
@@ -198,10 +204,10 @@ def normalize(src):
                 w.append("limb %s: part '%s' is not a limb tip; removed" % (uid, tip))
                 tip = ""
             else:
-                tip_params = catalog.normalize_params(part, l.get("tip_params", {}), "limb %s tip" % uid, w)
+                tip_params = catalog.normalize_params(part, l.get("tip_params", shape.get("tip_params")), "limb %s tip" % uid, w)
         # Symmetry rules: author on the +X side; near the midline snaps to centre (x = 0).
         raw = wrap_angle(_num(l.get("theta"), -45.0))
-        theta, centre = placement.centred(raw, "any")
+        theta, centre = placement.centred(raw, placement.symmetry(family) if family else "any")
         if src.get("version", 1) == 1 and abs(raw) > 90.0:
             segs = [[-sg[0], sg[1], sg[2]] for sg in segs]
         limb_rot = [wrap_angle(a) for a in _vec(l.get("rot"), [0, 0, 0])]
@@ -211,17 +217,22 @@ def normalize(src):
             "uid": uid, "u": _clamp(_num(l.get("u"), 0.5), [0.0, 1.0], "limb %s u" % uid, w),
             "theta": round(theta, 4), "segments": segs, "radii": radii,
             "tip": tip, "tip_params": tip_params,
-            "motion": "tail" if l.get("motion") == "tail" else "auto",
+            "motion": "tail" if shape.get("motion") == "tail" or l.get("motion") == "tail" else "auto",
             "scale": _clamp(_num(l.get("scale"), 1.0), LIMITS["scale"], uid + ".scale", w),
             "rot": limb_rot,
         })
+        if family:
+            limbs[-1].update(family=family.id, params=shape_params)
         locate(l, limbs[-1])
     r["limbs"] = limbs
     limb_ids = {l["uid"] for l in limbs}
     parts = []
+    has_core = False
     p_in = src.get("parts") if isinstance(src.get("parts"), list) else []
-    for i, p in enumerate(p_in[:LIMITS["parts"]]):
-        p = expand(p)
+    source_parts = [expand(p) for p in p_in[:LIMITS["parts"]]]
+    muzzle_ids = {str(p["uid"]).strip() for p in source_parts
+                  if isinstance(p, dict) and p.get("part") == "muzzle" and "uid" in p}
+    for i, p in enumerate(source_parts):
         if not isinstance(p, dict):
             continue
         pid = str(p.get("part", ""))
@@ -229,20 +240,31 @@ def normalize(src):
         if part is None:
             w.append("unknown part '%s' removed" % pid)
             continue
-        if part.attach == "tip":
-            w.append("part '%s' is a limb tip; set it as a limb's tip instead (removed)" % pid)
+        if part.attach in ("tip", "limb"):
+            w.append("part '%s' belongs in limbs (removed from surface parts)" % pid)
             continue
+        core = part.attach == "core"
+        if core and has_core:
+            w.append("only one body plan is allowed; removed '%s'" % pid)
+            continue
+        has_core |= core
         uid = _unique(p.get("uid", "p%d" % i), used)
         on = str(p.get("on", "body"))
-        if on != "body" and on not in limb_ids:
+        on_muzzle = pid == "nose_pad" and on in muzzle_ids
+        if on != "body" and on not in limb_ids and not on_muzzle:
             w.append("part %s attached to unknown limb '%s'; moved to body" % (uid, on))
+            on = "body"
+        if part.host == "limb" and on == "body":
+            w.append("part '%s' requires a host limb (removed)" % pid)
+            continue
+        if core:
             on = "body"
         rot = _vec(p.get("rot", [0, 0, 0]), [0.0, 0.0, 0.0])
         theta = wrap_angle(_num(p.get("theta"), 90.0))
         if on == "body":
             raw = theta
             mode = "any"
-            if src.get("version", 1) == 1:
+            if part.symmetry is not None or src.get("version", 1) == 1:
                 mode = placement.symmetry(part)
             elif p.get("bind") and abs(raw) != 90:
                 mode = "pair"  # retain previously bound angles on load, including legacy pairs
@@ -261,6 +283,12 @@ def normalize(src):
             "params": catalog.normalize_params(part, p.get("params", {}), "part %s" % uid, w),
         })
         locate(p, parts[-1])
+    placed_muzzles = {p["uid"] for p in parts if p["part"] == "muzzle"}
+    for p in parts:
+        if p["part"] == "nose_pad" and p["on"] not in {"body"} | limb_ids | placed_muzzles:
+            w.append("nose pad %s has no muzzle host; moved to body" % p["uid"])
+            p.update(on="body", **catalog.get("nose_pad").hint)
+            locate({}, p)
     r["parts"] = parts
     pa = src.get("paint") if isinstance(src.get("paint"), dict) else {}
     dp = default_paint()

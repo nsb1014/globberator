@@ -12,7 +12,7 @@ import os
 
 from PIL import Image
 
-MODEL = os.environ.get("POLYFORGE_MODEL", "claude-haiku-4-5")
+MODEL = os.environ.get("GLOBBERATOR_MODEL", os.environ.get("POLYFORGE_MODEL", "claude-haiku-4-5"))
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 _client = None

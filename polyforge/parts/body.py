@@ -57,7 +57,7 @@ def mane(g, p):
     """Soft clumps of hair over the neck, in the style of the original minotaur mane."""
     s = p["size"]
     L, sp = 0.2 * p["length"] * s, p["spread"]
-    g.setup(voxel=0.004 * s, detail=1.5, smooth=0.4)
+    g.setup(voxel=0.004 * s, detail=6, smooth=0.4)
     g.slot("accent")
     k = 0
     for row in range(3):

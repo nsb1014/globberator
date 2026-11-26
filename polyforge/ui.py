@@ -1,4 +1,4 @@
-"""PolyForge editor inside Blender: View3D > Sidebar > PolyForge.
+"""Globberator editor inside Blender: View3D > Sidebar > Globberator.
 
 The recipe (JSON) lives on the scene, so Blender's undo covers every edit.
 Each edit rebuilds a fast preview (parts finished, skin not fused); "Sculpt"
@@ -23,7 +23,8 @@ _HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.join(_HERE, "_data") if os.path.isdir(os.path.join(_HERE, "_data")) else os.path.dirname(_HERE)
 EXAMPLES = os.path.join(ROOT, "examples")
 THUMBS = os.path.join(ROOT, "library", "thumbs")
-COLLECTION = "PolyForge"
+COLLECTION = "Globberator"
+LEGACY_COLLECTION = "PolyForge"
 PARAM_SLOTS = 8
 _previews = None
 _busy = False
@@ -52,11 +53,21 @@ def apply_ops(scene, op_list, rebuild=True):
     return errs
 
 
+def _find_creature_collection(scene):
+    for name in (COLLECTION, LEGACY_COLLECTION):
+        col = scene.collection.children.get(name)
+        if col is not None:
+            return col
+    return bpy.data.collections.get(COLLECTION)
+
+
 def creature_collection(scene):
-    col = bpy.data.collections.get(COLLECTION)
+    col = _find_creature_collection(scene)
     if col is None:
         col = bpy.data.collections.new(COLLECTION)
         scene.collection.children.link(col)
+    elif col.name == LEGACY_COLLECTION and COLLECTION not in bpy.data.collections:
+        col.name = COLLECTION
     return col
 
 
@@ -86,7 +97,7 @@ def rebuild_creature(scene, quality="preview"):
 
 
 def creature_armature(scene):
-    col = bpy.data.collections.get(COLLECTION)
+    col = _find_creature_collection(scene)
     if col:
         for ob in col.objects:
             if ob.type == "ARMATURE":
@@ -128,7 +139,7 @@ def sync_edit(scene):
             e.rot = [math.radians(a) for a in p["rot"]]
             params = p["params"]
         elif l:
-            target, part = l, catalog.get(l["tip"]) if l["tip"] else None
+            part = catalog.get(l.get("family") or l["tip"])
             e.u, e.theta = l["u"], l["theta"]
             idx = min(e.joint_index, len(l["segments"]) - 1)
             e.joint_index = idx
@@ -137,7 +148,7 @@ def sync_edit(scene):
             e.radius = l["radii"][0]
             e.scale = l["scale"]
             e.rot = [math.radians(a) for a in l["rot"]]
-            params = l["tip_params"]
+            params = l.get("params", l["tip_params"])
         if part:
             for i, (k, (lo, hi, d)) in enumerate(part.params.items()):
                 if i < PARAM_SLOTS:
@@ -187,14 +198,14 @@ def _edit_update(field):
                 op[field] = getattr(self, field)
         elif l is not None:
             op = {"op": "set_limb", "uid": l["uid"]}
-            if field.startswith("p") and field[1:].isdigit() and l["tip"]:
-                part = catalog.get(l["tip"])
+            part = catalog.get(l.get("family") or l["tip"])
+            if field.startswith("p") and field[1:].isdigit() and part:
                 keys = list(part.params)
                 i = int(field[1:])
                 if i >= len(keys):
                     return
                 lo, hi, _ = part.params[keys[i]]
-                op["tip_params"] = {keys[i]: lo + (hi - lo) * getattr(self, field)}
+                op["params" if l.get("family") else "tip_params"] = {keys[i]: lo + (hi - lo) * getattr(self, field)}
             elif field == "joint_index":
                 sync_edit(scene)
                 return
@@ -341,11 +352,16 @@ def _hit_to_recipe(context, event):
     return Vector((loc.x, loc.z, -loc.y))
 
 
-def _attach_point(scene, p, body_only=False):
+def _attach_point(scene, p, body_only=False, snap_nose=False):
     """Nearest attachment for a recipe-space point: body (u, theta) or a limb."""
     arm = creature_armature(scene)
     r = get_recipe(scene)
     rig = json.loads(arm["polyforge_rig"]) if arm else None
+    if rig and snap_nose:
+        mounts = [item for item in rig["parts"] if "nose_socket" in item]
+        closest = min(mounts, key=lambda item: (p - Vector(item["nose_socket"])).length, default=None)
+        if closest and (p - Vector(closest["nose_socket"])).length <= closest["nose_snap_radius"]:
+            return {"on": closest["uid"], "u": closest["u"], "theta": 90.0}
     sp = Spine(r["spine"], Vector((0, rig.get("shift_y", 0.0), 0)) if rig else Vector())
     body = sp.project(p)
     best = {"on": "body", "u": body["u"], "theta": body["theta"], "d": body["d"]}
@@ -383,6 +399,12 @@ class PF_OT_place(bpy.types.Operator):
         if context.area.type != "VIEW_3D":
             self.report({"WARNING"}, "Use this in a 3D viewport")
             return {"CANCELLED"}
+        part = catalog.get(self.what)
+        if part and part.attach == "core":
+            apply_ops(context.scene, [{"op": "add_part", "part": part.id}])
+            context.scene.pf_selected = get_recipe(context.scene)["parts"][-1]["uid"]
+            sync_edit(context.scene)
+            return {"FINISHED"}
         context.window_manager.modal_handler_add(self)
         context.workspace.status_text_set("Click the creature to place %s · Shift-click keeps placing · Esc cancels" % self.what)
         return {"RUNNING_MODAL"}
@@ -403,7 +425,11 @@ class PF_OT_place(bpy.types.Operator):
 
     def place(self, scene, p):
         w = self.what
-        at = _attach_point(scene, p, body_only=w.startswith("limb:") or w == "move_limb")
+        part = catalog.get(w)
+        moving = selected_part(scene) if w == "move_part" else None
+        snap_nose = w == "nose_pad" or bool(moving and moving["part"] == "nose_pad")
+        at = _attach_point(scene, p, body_only=w.startswith("limb:") or w == "move_limb" or bool(part and part.preset),
+                           snap_nose=snap_nose)
         if w in ("move_limb", "move_part"):
             op = {"op": "set_limb" if w == "move_limb" else "set_part", "uid": scene.pf_selected,
                   "u": at["u"], "theta": at["theta"]}
@@ -420,14 +446,19 @@ class PF_OT_place(bpy.types.Operator):
             apply_ops(scene, [{"op": "add_limb", "u": at["u"], "theta": theta, "segments": seg,
                                "radii": [0.11, 0.08, 0.06, 0.04][:len(seg) + 1], "motion": "tail" if kind == "tail" else "auto", "tip": tip}])
             scene.pf_selected = get_recipe(scene)["limbs"][-1]["uid"]
-        else:
-            part = catalog.get(w)
-            if part.attach == "tip":
+        elif part:
+            if part.preset:
+                apply_ops(scene, [{"op": "add_limb", "family": w, "u": at["u"], "theta": at["theta"]}])
+                scene.pf_selected = get_recipe(scene)["limbs"][-1]["uid"]
+            elif part.attach == "tip":
                 if at["on"] == "body":
                     return
                 apply_ops(scene, [{"op": "set_limb", "uid": at["on"], "tip": w, "tip_params": {}}])
                 scene.pf_selected = at["on"]
             else:
+                if part.host == "limb" and at["on"] == "body":
+                    self.report({"INFO"}, "Place this part on a limb")
+                    return
                 apply_ops(scene, [{"op": "add_part", "part": w, "on": at["on"], "u": at["u"], "theta": at["theta"]}])
                 scene.pf_selected = get_recipe(scene)["parts"][-1]["uid"]
         sync_edit(scene)
@@ -499,7 +530,7 @@ class PF_OT_review_views(bpy.types.Operator):
         from pathlib import Path
         from .review import signature
         source = get_recipe(context.scene)
-        folder = Path(tempfile.mkdtemp(prefix="polyforge-review-"))
+        folder = Path(tempfile.mkdtemp(prefix="globberator-review-"))
         path = folder / "creature.json"
         R.save(source, path)
         # Render in a separate Blender process to preserve this scene and its undo history.
@@ -612,7 +643,7 @@ def thumbs():
 class PF_PT_base:
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
-    bl_category = "PolyForge"
+    bl_category = "Globberator"
 
 
 class PF_PT_creature(PF_PT_base, bpy.types.Panel):
@@ -655,13 +686,10 @@ class PF_PT_palette(PF_PT_base, bpy.types.Panel):
         for cat, ids in catalog.by_category().items():
             box = lay.box()
             box.label(text=cat.title())
-            grid = box.grid_flow(columns=4, even_columns=True, align=True)
+            grid = box.grid_flow(columns=2, even_columns=True, align=True)
             for pid in ids:
                 icon = pv[pid].icon_id if pid in pv else 0
-                if icon:
-                    grid.operator("polyforge.place", text="", icon_value=icon).what = pid
-                else:
-                    grid.operator("polyforge.place", text=pid).what = pid
+                grid.operator("polyforge.place", text=pid.replace("_", " ").capitalize(), icon_value=icon).what = pid
 
 
 class PF_PT_edit(PF_PT_base, bpy.types.Panel):
@@ -680,13 +708,19 @@ class PF_PT_edit(PF_PT_base, bpy.types.Panel):
         e = s.pf_edit
         if p or l or s.pf_solo:
             lay.prop(s, "pf_solo", toggle=True)
-            if not s.pf_solo:
+            if not s.pf_solo and (l or catalog.get(p["part"]).attach != "core"):
                 lay.operator("polyforge.place", text="Move to surface").what = "move_limb" if l else "move_part"
         if p:
             part = catalog.get(p["part"])
             box = lay.box()
             box.label(text=part.id)
-            for k in ("u", "theta", "offset", "scale", "rot"):
+            fields = ("u", "theta", "offset", "scale", "rot")
+            if part.attach == "core":
+                fields = ("offset", "scale")
+            elif part.id == "nose_pad" and any(other["uid"] == p["on"] and other["part"] == "muzzle" for other in r["parts"]):
+                box.label(text="Mounted on " + p["on"])
+                fields = ("offset", "scale", "rot")
+            for k in fields:
                 box.prop(e, k)
             for i, (k, (lo, hi, d)) in enumerate(part.params.items()):
                 if i < PARAM_SLOTS:
@@ -694,16 +728,19 @@ class PF_PT_edit(PF_PT_base, bpy.types.Panel):
             box.operator("polyforge.remove", icon="TRASH")
         elif l:
             box = lay.box()
-            box.label(text="Limb %s" % l["uid"])
-            for k in ("u", "theta", "scale", "rot", "radius"):
+            family = l.get("family")
+            box.label(text=family or "Limb %s" % l["uid"])
+            for k in ("u", "theta", "scale", "rot"):
                 box.prop(e, k)
-            for field in ("joint_index", "segment", "joint_radius"):
-                box.prop(e, field)
-            if l["tip"]:
-                part = catalog.get(l["tip"])
+            if not family:
+                for field in ("radius", "joint_index", "segment", "joint_radius"):
+                    box.prop(e, field)
+            part = catalog.get(family or l["tip"])
+            if part:
+                params = l.get("params", l["tip_params"])
                 for i, (k, (lo, hi, d)) in enumerate(part.params.items()):
                     if i < PARAM_SLOTS:
-                        box.prop(e, "p%d" % i, text="%s (%.2f)" % (k, l["tip_params"].get(k, d)), slider=True)
+                        box.prop(e, "p%d" % i, text="%s (%.2f)" % (k, params.get(k, d)), slider=True)
             box.operator("polyforge.remove", icon="TRASH")
 
 

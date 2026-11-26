@@ -19,21 +19,45 @@ def foot_paw(g, p):
 
 
 def foot_hoof(g, p):
-    """Cloven hoof from the original bull: each toe widens at the ground, the cleft stays open."""
+    """Two weight-bearing claws under a shared pastern, with a level sole."""
     s = p["size"]
-    k = 0.385 * s
-    gap = 1.0 + 0.35 * p["split"]
-    data = [(.000, .110, -.10, .104, .260), (.058, .111, -.109, .108, .268), (.145, .103, -.082, .108, .237),
-            (.23, .086, -.038, .095, .192), (.30, .068, -.004, .075, .144), (.336, .050, .019, .05, .09)]
-    sole = -0.13 * s
-    g.setup(voxel=0.0028 * s)
+    g.setup(slot_finish={"dark": "direct", "skin": "subsurf_low"})
     g.slot("dark")
-    for j in (-1, 1):
-        pts = [V(j * x * 1.22 * gap * k * 0.9, sole + z * k, -y * k + 0.01 * s) for z, x, y, w, d in data]
-        rad = [(w * 1.23 * k * 0.95, d * 1.1 * k * 0.95) for z, x, y, w, d in data]
-        g.loft(pts, rad, sides=24, up=BACK, exponent=0.72, density=4)
+    # Heights, outer walls, heels and toes. The rearward shift at the crown
+    # slopes the dorsal wall while keeping the ground contact horizontal.
+    sections = (
+        (-.138, .097, -.069, .121), (-.134, .103, -.075, .130),
+        (-.124, .107, -.077, .133), (-.101, .104, -.076, .124),
+        (-.075, .097, -.072, .112), (-.054, .085, -.067, .092),
+        (-.043, .077, -.063, .080), (-.035, .065, -.056, .068),
+    )
+    sides = 40
+    for side in (-1, 1):
+        verts = []
+        for y, outer, heel, toe in sections:
+            for i in range(sides):
+                a = math.tau * i / sides
+                cx, cz = math.cos(a), math.sin(a)
+                width = .5 + .5 * math.copysign(abs(cx) ** .67, cx)
+                depth = .5 + .5 * math.copysign(abs(cz) ** .73, cz)
+                cleft = .004 + p["split"] * (.003 + .014 * depth ** 1.7)
+                # Broader lateral heel and straighter medial wall at the toe.
+                x = lerp(cleft, outer - .011 * depth ** 2, width)
+                verts.append(V(side * x, y, lerp(heel, toe, depth)) * s)
+        faces = [tuple(range(sides))]
+        for row in range(len(sections) - 1):
+            base = row * sides
+            for i in range(sides):
+                j = (i + 1) % sides
+                faces.append((base + i, base + sides + i, base + sides + j, base + j))
+        faces.append(tuple(reversed(range(len(verts) - sides, len(verts)))))
+        g._add(verts, faces if side == 1 else [tuple(reversed(face)) for face in faces])
     g.slot("skin")
-    g.loft([V(0, 0.03 * s, 0), V(0, -0.02 * s, 0.005 * s), V(0, sole + 0.12 * k, 0.012 * s)], [(0.055 * s, 0.055 * s), (0.065 * s, 0.062 * s), (0.08 * s, 0.07 * s)], sides=22, up=BACK)
+    stations = [(0, .052, -.024), (0, .014, -.010), (0, -.017, -.002),
+                (0, -.045, .004), (0, -.060, .012), (0, -.070, .014)]
+    radii = [(.055, .063), (.059, .067), (.064, .073), (.080, .074), (.080, .072), (.067, .063)]
+    g.loft([V(station) * s for station in stations],
+           [(depth * s, width * s) for width, depth in radii], sides=32, up=RIGHT)
 
 
 def foot_claw(g, p):
@@ -87,20 +111,40 @@ def foot_webbed(g, p):
 
 
 def hand_basic(g, p):
-    """Palm, four fingers and a thumb sculpted as one mass (after the original minotaur hand)."""
+    """Left hand with palm toward +Z, fingertips toward +Y and thumb on -X."""
     s = p["size"]
-    fl, c = 0.085 * s * p["fingers"], p["curl"]
-    g.setup(voxel=0.0028 * s)
+    length, curl = p["fingers"], p["curl"]
+    g.setup(voxel=0.0020 * s, detail=12, smooth=.42)
     g.slot("skin")
-    g.oval(V(0, 0.06 * s, 0), (0.06 * s, 0.075 * s, 0.04 * s))
-    for j, drop in enumerate([0.9, 1.0, 0.95, 0.75]):
-        x = (j - 1.5) * 0.03 * s
-        L = fl * drop
-        b = V(x, 0.11 * s, 0.005 * s)
-        g.loft([b, b + V(0, L * 0.45, c * L * 0.12), b + V(0, L * (0.85 - 0.25 * c), c * L * 0.45), b + V(0, L * (1.0 - 0.45 * c), c * L * 0.8)],
-               [0.017 * s, 0.016 * s, 0.014 * s, 0.011 * s], sides=14, up=BACK)
-    tb = V(0.05 * s, 0.05 * s, 0.022 * s)
-    g.loft([tb, tb + V(0.022 * s, 0.025 * s, 0.022 * s), tb + V(0.03 * s, 0.05 * s, 0.035 * s)], [0.02 * s, 0.017 * s, 0.013 * s], sides=14, up=BACK)
+
+    def loft(stations, radii, sides=20, exponent=1.0):
+        g.loft([V(v) * s for v in stations], [(a * s, b * s) for a, b in radii],
+               sides=sides, up=BACK, exponent=exponent)
+
+    loft([(0, -.055, -.003), (0, -.015, -.002), (-.002, .013, -.001),
+          (.002, .047, -.004), (.006, .074, -.004), (.003, .093, -.003), (.001, .104, 0)],
+         [(.040, .047), (.029, .039), (.025, .037), (.025, .048),
+          (.024, .055), (.019, .053), (.012, .041)], sides=32, exponent=.81)
+    # Volumes for the thumb web and the ulnar pad leave a shallow palm hollow.
+    g.oval(V(-.025, .045, .007) * s, V(.025, .038, .022) * s, rot(BACK, .28))
+    g.oval(V(.032, .050, .004) * s, V(.020, .037, .019) * s, rot(BACK, -.14))
+    for x, y, span, radius, splay in (
+        (-.043, .087, .090, .0140, -.010), (-.014, .095, .100, .0140, -.002),
+        (.015, .093, .090, .0125, .006), (.043, .084, .072, .0105, .014),
+    ):
+        reach = span * length
+        flex = (.20 + curl * .53) * reach
+        loft([(x, y, -.004), (x + splay * .28, y + reach * .29, -.004),
+              (x + splay * .52, y + reach * .53, flex * .17),
+              (x + splay * .75, y + reach * (.76 - .11 * curl), flex * .47),
+              (x + splay, y + reach * (.97 - .32 * curl), flex * .92)],
+             [(r * radius, w * radius) for r, w in
+              ((1.04, 1.08), (.92, .90), (.94, .83), (.76, .69), (.61, .57))])
+    loft([(-.027, .018, .010), (-.044, .033, .021), (-.058, .051, .029),
+          (-.070, .064, .038), (-.077 + .007 * curl, .079, .053 + .012 * curl),
+          (-.073 + .009 * curl, .083, .061 + .012 * curl)],
+         [(.021, .019), (.021, .018), (.017, .014), (.015, .013),
+          (.011, .010), (.007, .007)], sides=22)
 
 
 def hand_claw(g, p):
@@ -166,7 +210,8 @@ PARTS = [
     Part("foot_webbed", "foot", "Flat webbed foot or flipper (ducks, frogs, seals).", ["duck", "frog", "aquatic"],
          {"size": (0.4, 3.0, 1.0), "length": (0.5, 2.0, 1.0)}, foot_webbed, cap="foot", **T),
     Part("hand_basic", "hand", "Four-fingered hand with palm and thumb (humanoids, apes, minotaurs).", ["humanoid", "ape", "minotaur", "cartoon"],
-         {"size": (0.4, 3.0, 1.0), "fingers": (0.5, 1.8, 1.0), "curl": (0.0, 1.0, 0.4)}, hand_basic, cap="hand", **T),
+         {"size": (0.4, 3.0, 1.0), "fingers": (0.5, 1.8, 1.0), "curl": (0.0, 1.0, 0.4)},
+         hand_basic, cap="hand", orient="palm_in", **T),
     Part("hand_claw", "hand", "Clawed hand with three long curved talons (raptors, monsters, sloths).", ["monster", "raptor", "dragon", "menacing"],
          {"size": (0.4, 3.0, 1.0), "claw": (0.4, 2.5, 1.0)}, hand_claw, cap="hand", **T),
     Part("hand_pincer", "hand", "Crab / scorpion pincer with a hinged finger.", ["crab", "scorpion", "lobster", "arthropod"],

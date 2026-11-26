@@ -9,6 +9,8 @@ from mathutils import Vector
 from . import kit
 
 FACE_BUDGET = 1100
+SCULPT_LEVELS = {"sculpt": 2, "sculpt_low": 1}
+SUBDIVISION_LEVELS = {"subsurf": 2, "subsurf_low": 1, **SCULPT_LEVELS}
 _cache = {}
 
 
@@ -88,11 +90,14 @@ def carve(ob, cut_verts, cut_faces, voxel):
 
 
 def finish_region(piece, slot, verts, faces, cut, detail=1.0):
+    finishing = piece.finish_for(slot)
+    if finishing == "direct" and not cut[0]:
+        return verts, faces
     ob = new_object("work", verts, faces)
-    if piece.finish_for(slot) == "subsurf":
+    if finishing in SUBDIVISION_LEVELS:
         m = ob.modifiers.new("sub", "SUBSURF")
-        m.levels = 2
-        m.render_levels = 2
+        m.levels = SUBDIVISION_LEVELS[finishing]
+        m.render_levels = m.levels
         bake(ob)
     else:
         voxel = piece.voxel or auto_voxel(verts)
@@ -107,18 +112,30 @@ def finish_region(piece, slot, verts, faces, cut, detail=1.0):
     return out
 
 
-def part_regions(part, params, skip_slots=()):
-    """Finished regions of a part: {piece: [(slot, verts, faces)]} in the part frame. Cached."""
-    key = hashlib.sha1(json.dumps([part.id, params, sorted(skip_slots)], sort_keys=True).encode()).hexdigest()
+def part_regions(part, params, skip_slots=(), *, assembly=False):
+    """Cached regions in the part frame, including the skin input to fusion."""
+    key = hashlib.sha1(json.dumps([part.id, params, sorted(skip_slots), assembly], sort_keys=True).encode()).hexdigest()
     if key in _cache:
         return _cache[key]
     ctx = part.build(params)
     out = {}
     for pn, piece in ctx.pieces.items():
         cut = piece.cage(None, True)
-        slots = [s for s in piece.slots() if s not in skip_slots]
-        detail = 1.0 / max(1, len(piece.slots())) ** 0.5
-        out[pn] = [(s,) + finish_region(piece, s, *piece.cage(s), cut, detail) for s in slots]
+        slots = piece.slots()
+        detail = 1.0 / max(1, len(slots)) ** 0.5
+        regions = []
+        for slot in slots:
+            if slot in skip_slots:
+                continue
+            cage = piece.cage(slot)
+            if assembly and slot == "skin" and piece.finish_for(slot) not in SCULPT_LEVELS:
+                # Ordinary skin cages go straight to the creature's voxel
+                # pass. Sculpt cages rely on subdivision for their silhouette.
+                mesh = cage
+            else:
+                mesh = finish_region(piece, slot, *cage, cut, detail)
+            regions.append((slot, *mesh))
+        out[pn] = regions
     _cache[key] = (ctx, out)
     return _cache[key]
 

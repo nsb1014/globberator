@@ -1,7 +1,7 @@
-"""PolyForge application template: starts Blender as the creature builder.
+"""Globberator application template: starts Blender as the creature builder.
 
-Installed to <blender user scripts>/startup/bl_app_templates_user/PolyForge by
-tools/install.py, then launched with:  blender --app-template PolyForge
+Installed to <blender user scripts>/startup/bl_app_templates_user/Globberator by
+tools/install.py, then launched with:  blender --app-template Globberator
 """
 import bpy
 from bpy.app.handlers import persistent
@@ -29,7 +29,7 @@ def _configure():
         try:
             bpy.ops.polyforge.example(name="bull")
         except Exception as exc:  # the add-on may not be enabled yet
-            print("PolyForge:", exc)
+            print("Globberator:", exc)
     return None
 
 
@@ -40,6 +40,7 @@ def _on_load(_):
 
 def register():
     import addon_utils
+    bpy.utils.refresh_script_paths()
     addon_utils.enable("polyforge", default_set=True, persistent=True)
     bpy.app.handlers.load_post.append(_on_load)
     bpy.app.timers.register(_configure, first_interval=0.5)

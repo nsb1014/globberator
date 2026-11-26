@@ -9,18 +9,21 @@ from .builder import Builder
 from .recipe import default_recipe, normalize
 
 LIMB_FIELDS = ("segments", "radii", "tip", "tip_params", "motion")
+FAMILY_FIELDS = ("family", "params", "tip", "tip_params")
 PART_FIELDS = ("part", "params")
 
 
 def extract(item):
-    fields = LIMB_FIELDS if "segments" in item else PART_FIELDS
+    fields = FAMILY_FIELDS if item.get("family") else LIMB_FIELDS if "segments" in item else PART_FIELDS
     return {key: deepcopy(item[key]) for key in fields if key in item}
 
 
 def normalize_shape(raw):
     if not isinstance(raw, dict):
         raise ValueError("expected a shape object")
-    if "segments" in raw:
+    if "segments" in raw or "family" in raw:
+        if "family" in raw and not getattr(catalog.get(raw["family"]), "preset", None):
+            raise ValueError("expected a known research limb family")
         r = default_recipe()
         r["limbs"] = [dict(extract(raw), uid="draft", theta=0)]
         normalized, warnings = normalize(r)
@@ -36,7 +39,7 @@ def normalize_shape(raw):
 def isolated(shape, collection=None):
     """Emit just one local mesh assembly, using the creature's actual part builders."""
     r = default_recipe()
-    if "segments" in shape:
+    if "segments" in shape or "family" in shape:
         r["limbs"] = [dict(extract(shape), uid="draft", theta=0)]
     elif catalog.get(shape.get("part", "")):
         part = catalog.get(shape["part"])

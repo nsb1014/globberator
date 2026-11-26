@@ -113,6 +113,29 @@ def frame(cam, lo, hi, yaw, pitch, margin=1.08):
     cam.rotation_euler = (-d).to_track_quat("-Z", "Y").to_euler()
 
 
+def clay_camera(cam, objects, yaw, pitch):
+    """Frame a standalone clay sculpt from its actual render silhouette."""
+    scene = bpy.context.scene
+    shading = scene.display.shading
+    shading.color_type = "SINGLE"
+    shading.single_color = (0.78, 0.79, 0.80)
+    shading.background_type = "WORLD"
+    if scene.world is None:
+        scene.world = bpy.data.worlds.new("Clay Background")
+    scene.world.color = (0.019, 0.022, 0.027)
+    lo, hi = bounds(objects)
+    frame(cam, lo, hi, yaw, pitch)
+    cam.data.type = "ORTHO"
+    basis = cam.rotation_euler.to_matrix().transposed()
+    points = [basis @ (obj.matrix_world @ v.co) for obj in objects for v in obj.data.vertices]
+    left, right = min(p.x for p in points), max(p.x for p in points)
+    bottom, top = min(p.y for p in points), max(p.y for p in points)
+    center = basis @ cam.location
+    center.x, center.y = (left + right) / 2, (bottom + top) / 2
+    cam.location = basis.transposed() @ center
+    cam.data.ortho_scale = max(right - left, top - bottom) * 1.22
+
+
 def render(path, transparent=False):
     sc = bpy.context.scene
     sc.render.film_transparent = transparent

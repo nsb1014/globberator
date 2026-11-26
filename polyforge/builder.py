@@ -16,6 +16,7 @@ import math
 import bpy
 import numpy as np
 from mathutils import Vector, Matrix, Euler
+from mathutils.bvhtree import BVHTree
 
 from . import catalog, finish, kit, placement
 from . import recipe as R
@@ -53,17 +54,69 @@ def xform(basis3, origin):
     return m
 
 
-def part_sole(part, params):
+def part_sole(part, params, basis=None):
     ctx = part.build(params)
-    pts = []
-    for pc in ctx.pieces.values():
-        pts += pc.cage(None, False)[0]
+    if any(pc.finish_for(slot) in finish.SCULPT_LEVELS
+           for pc in ctx.pieces.values() for slot in pc.slots()):
+        _, regions = finish.part_regions(part, params, assembly=True)
+        pts = [v for piece in regions.values() for _, verts, _ in piece for v in verts]
+    else:
+        pts = [p for pc in ctx.pieces.values() for p in pc.cage()[0]]
+    if basis is not None:
+        pts = [basis @ p for p in pts]
     if not pts:
         return Vector((0, -0.1, 0))
     lo = min(p.y for p in pts)
     low = [p for p in pts if p.y < lo + 0.012]
     c = sum(low, Vector((0, 0, 0))) / len(low)
     return Vector((c.x, lo, c.z))
+
+
+def limb_weights(vertices, joints, bones):
+    """Blend a detailed region over the adjacent joints of its own chain."""
+    vertices = np.asarray(vertices, dtype=float)
+    a = np.asarray(joints[:-1], dtype=float)
+    directions = np.asarray(joints[1:], dtype=float) - a
+    offset = vertices[:, None] - a
+    progress = np.clip(np.einsum("nsc,sc->ns", offset, directions)
+                       / np.einsum("sc,sc->s", directions, directions), 0, 1)
+    delta = offset - progress[..., None] * directions
+    segment = np.einsum("nsc,nsc->ns", delta, delta).argmin(axis=1)
+    t = progress[np.arange(len(vertices)), segment]
+    pair = t + segment
+    result = []
+    for k in pair:
+        left = int(k)
+        right = min(left + 1, len(bones) - 1)
+        f = k - left
+        right_weight = f * f * (3 - 2 * f)
+        row = ((bones[left], 1 - right_weight), (bones[right], right_weight))
+        result.append(tuple((bone, weight) for bone, weight in row if weight > 1e-6))
+    return result
+
+
+def shell_weights(vertices, faces, joints, bones):
+    """Each hard tail segment follows one hinge instead of bending across it."""
+    neighbors = [set() for _ in vertices]
+    for face in faces:
+        for a, b in zip(face, (*face[1:], face[0])):
+            neighbors[a].add(b)
+            neighbors[b].add(a)
+    centers = [a.lerp(b, .5) for a, b in zip(joints, joints[1:])]
+    weights = [None] * len(vertices)
+    for seed in range(len(vertices)):
+        if weights[seed] is not None:
+            continue
+        component, queue = {seed}, [seed]
+        while queue:
+            added = neighbors[queue.pop()] - component
+            component.update(added)
+            queue.extend(added)
+        center = sum((vertices[i] for i in component), Vector((0, 0, 0))) / len(component)
+        joint = min(range(len(centers)), key=lambda i: (centers[i] - center).length_squared)
+        for i in component:
+            weights[i] = ((bones[joint], 1.0),)
+    return weights
 
 
 class Builder:
@@ -74,11 +127,60 @@ class Builder:
         self.limbs, self.parts_rig = [], []
         self.skin_prims = []        # [(verts, faces)] recipe coords
         self.details = []           # [(slot, verts, faces, bone)]
+        self.core = next((p for p in self.recipe["parts"] if catalog.get(p["part"]).attach == "core"), None)
+        self.core_geometry = None
+        if self.core:
+            part = catalog.get(self.core["part"])
+            _, regions = finish.part_regions(part, self.core["params"])
+            self.core_geometry = next((v, f) for slot, v, f in regions["self"] if slot == "skin")
+            self.core_bvh = BVHTree.FromPolygons(*self.core_geometry)
+
+    def core_origin(self, sp):
+        return sp.at(0.5)["p"] + Vector((0, self.core["offset"], 0))
+
+    def body_surface(self, sp, u, theta, offset=0.0):
+        surface = sp.surface(u, theta, offset if not self.core else 0.0)
+        if self.core:
+            origin, scale = self.core_origin(sp), self.core["scale"]
+            point, normal, _, _ = self.core_bvh.find_nearest((surface["p"] - origin) / scale)
+            surface.update(p=origin + point * scale + normal * offset, n=normal)
+        return surface
+
+    def body_bottom(self, sp):
+        if not self.core:
+            return sp.bottom_y()
+        return self.core_origin(sp).y + min(v.y for v in self.core_geometry[0]) * self.core["scale"]
+
+    def fringe_mount(self, instance):
+        from .parts.research_feeding import TENTACLE_FRINGE_RADIUS
+
+        radius = max(math.hypot(v.x, v.z) for v in self.core_geometry[0])
+        steps = 120
+        rim = []
+        for i in range(steps):
+            angle = math.tau * i / steps
+            query = Vector((radius * math.cos(angle), 0, radius * math.sin(angle)))
+            point, _, _, _ = self.core_bvh.find_nearest(query)
+            rim.append((math.hypot(point.x, point.z), point.y))
+        radius_model = TENTACLE_FRINGE_RADIUS * instance["params"]["size"]
+        origin, core_scale = self.core_origin(self.spine), self.core["scale"]
+
+        def mount(vertex):
+            angle = math.atan2(vertex.z, vertex.x)
+            step = angle * steps / math.tau
+            i = math.floor(step)
+            a, b = rim[i % steps], rim[(i + 1) % steps]
+            t = step - i
+            r = core_scale * kit.lerp(a[0], b[0], t)
+            r += (math.hypot(vertex.x, vertex.z) - radius_model) * instance["scale"]
+            y = core_scale * kit.lerp(a[1], b[1], t) + vertex.y * instance["scale"] + instance["offset"]
+            return origin + Vector((r * math.cos(angle), y, r * math.sin(angle)))
+        return origin, mount
 
     # ---------------------------------------------------------- resolve
     def resolve_limbs(self, sp):
         for l in self.recipe["limbs"]:
-            s = sp.surface(l["u"], l["theta"])
+            s = self.body_surface(sp, l["u"], l["theta"])
             scale = l["scale"]
             rotation = Euler([math.radians(a) for a in l["rot"]], "ZXY").to_matrix()
             radii = [radius * scale for radius in l["radii"]]
@@ -87,7 +189,20 @@ class Builder:
             for sg in l["segments"]:
                 joints.append(joints[-1] + (rotation @ Vector(sg)) * scale)
             part = catalog.get(l["tip"]) if l["tip"] else None
+            family = catalog.get(l.get("family"))
+            if part and part.orient == "palm_in" and not family:
+                # The wrist blends into the forearm's terminal loft. Keep a
+                # bulky authored forearm from forming a cuff around the palm.
+                wrist_radius = .035 * l["tip_params"]["size"] * scale
+                radii[-1] = min(radii[-1], wrist_radius)
             role, sole = "appendage", Vector((0, -radii[-1], 0))
+            if family and family.cap == "foot":
+                role = "leg"
+                sole = part_sole(family, l["params"], rotation) * scale - (joints[-1] - hip)
+            elif family and family.cap in ("hand", "grasp"):
+                role = "arm"
+            elif family and family.cap == "flap":
+                role = "wing"
             if part is not None:
                 if part.cap == "foot":
                     role, sole = "leg", part_sole(part, l["tip_params"]) * scale
@@ -100,11 +215,13 @@ class Builder:
             # reflected twin so the creature stays symmetric (a sideways leg on the
             # midline would otherwise be a single lopsided limb). Authored geometry is kept.
             bends = any(abs(j.x - hip.x) > 1e-4 for j in joints[1:])
-            lateral = abs(abs(l["theta"]) - 90.0) > 1e-4 or bends
+            lateral = abs(abs(l["theta"]) - 90.0) > 1e-4 or (bends and not family)
             base = {"uid": l["uid"], "name": l["uid"], "u": l["u"], "v": s["v"], "joints": joints, "radii": radii,
                     "tip": l["tip"], "tip_params": l["tip_params"], "role": role, "has_foot": role == "leg",
                     "scale": scale, "sole_local": sole, "length": length, "mirrored": False,
                     "side": 1.0 if lateral else 0.0}
+            if family:
+                base.update(family=family.id, params=l["params"], rot=l["rot"])
             self.limbs.append(base)
             if lateral:          # off the midline -> reflected twin (automatic)
                 m = dict(base)
@@ -118,15 +235,15 @@ class Builder:
             l["sole"] = l["joints"][-1] + l["sole_local"]
 
     def ground_level(self, sp):
-        lowest = sp.bottom_y()
+        lowest = self.body_bottom(sp)
         foot_low = min([l["sole"].y for l in self.limbs if l["has_foot"]] or [float("inf")])
         for l in self.limbs:
-            if l["role"] not in ("arm", "tail"):
+            if l["role"] not in ("arm", "tail", "wing"):
                 lowest = min(lowest, l["sole"].y)
         ground = foot_low if foot_low < float("inf") else lowest
         ground = self.recipe.get("ground_y", ground)
         for l in self.limbs:
-            if l["role"] in ("arm", "tail"):
+            if l["role"] in ("arm", "tail", "wing"):
                 continue
             gap = l["sole"].y - ground
             if l["has_foot"]:
@@ -188,6 +305,11 @@ class Builder:
 
     # -------------------------------------------------------- geometry
     def body_prim(self):
+        if self.core:
+            verts, faces = self.core_geometry
+            origin, scale = self.core_origin(self.spine), self.core["scale"]
+            self.skin_prims.append(([origin + v * scale for v in verts], faces))
+            return
         S = self.spine.samples
         segs = 40
         verts, faces = [], []
@@ -217,6 +339,9 @@ class Builder:
         self.skin_prims.append((verts, faces))
 
     def limb_prim(self, l):
+        if l.get("family"):
+            self.research_limb_prim(l)
+            return
         J, rad = l["joints"], l["radii"]
         d0 = (J[1] - J[0]).normalized()
         pts, rr = [J[0] - d0 * rad[0] * 0.7], [rad[0] * 0.85]
@@ -229,6 +354,46 @@ class Builder:
         pc = kit.Piece()
         pc.loft(pts, rr, sides=24, density=4)
         self.skin_prims.append(pc.cage())
+
+    def research_limb_prim(self, limb):
+        part = catalog.get(limb["family"])
+        rotation = Euler([math.radians(a) for a in limb["rot"]], "ZXY").to_matrix()
+        basis = rotation @ Matrix.Diagonal((limb["scale"],) * 3)
+        if limb["mirrored"]:
+            basis = MIRROR.to_3x3() @ basis
+        matrix = xform(basis, limb["joints"][0])
+        params = limb["params"]
+        if part.id == "pincer_limb" and limb["mirrored"] and params["asymmetry"]:
+            params = {**params, "_mirrored": True}
+        ctx, regions = finish.part_regions(part, params, assembly=True)
+        flip = limb["mirrored"]
+        joints, bones = limb["joints"], limb["bones"]
+        jaws = []
+        hinged = {}
+        for bone in part.bones:
+            pivot = matrix @ ctx.pivots[bone["name"]]
+            k = min(range(len(joints)), key=lambda i: (joints[i] - pivot).length_squared)
+            index = self.add_bone(limb["name"] + "_" + bone["name"], bones[k], pivot, pivot + basis @ Vector((0, .05, 0)))
+            hinged[bone["name"]] = index
+            jaws.append({"bone": index, "axis": list(bone["axis"]), "angle": bone["angle"]})
+        for name, piece in regions.items():
+            for slot, verts, faces in piece:
+                verts = [matrix @ v for v in verts]
+                if not verts:
+                    continue
+                faces = [tuple(reversed(f)) for f in faces] if flip else faces
+                if slot == "skin":
+                    self.skin_prims.append((verts, faces))
+                    continue
+                bind = hinged.get(name)
+                if bind is None:
+                    if part.id == "tail_segmented" and slot == "accent":
+                        bind = shell_weights(verts, faces, joints, bones)
+                    else:
+                        bind = limb_weights(verts, joints, bones)
+                self.details.append((slot, verts, faces, bind))
+        limb["jaws"] = jaws
+        limb["tip_frame"] = [list(row) for row in basis.normalized()]
 
     def limb_surface(self, l, u, theta, offset):
         J, rad = l["joints"], l["radii"]
@@ -250,9 +415,10 @@ class Builder:
         r = rad[k] + (rad[k + 1] - rad[k]) * t
         return {"p": a.lerp(b, t) + n * (r + offset), "n": n, "t": d, "up": e90, "bone": l["bones"][k]}
 
-    def place(self, part, params, M, parent_bone, name, mirrored, uid, u):
+    def place(self, part, params, M, parent_bone, name, mirrored, uid, u, mount=None):
         """Instance one part copy: skin regions -> fused skin, others -> details, bones -> rig."""
-        ctx, regions = finish.part_regions(part, params, skip_slots=("skin",))
+        ctx, regions = finish.part_regions(part, params, assembly=True)
+        world = mount if mount is not None else M.__matmul__
         pb = self.add_bone("P_" + name, parent_bone, M.translation, M @ Vector((0, 0.06, 0)))
         bone_of = {"self": pb}
         jaws = []
@@ -262,19 +428,16 @@ class Builder:
             bone_of[b["name"]] = jb
             jaws.append({"bone": jb, "axis": list(b["axis"]), "angle": b["angle"]})
         flip = M.to_3x3().determinant() < 0
-        for pn, pc in ctx.pieces.items():
-            # skin-slot cages fuse into the body surface
-            sv, sf = pc.cage("skin") if "skin" in pc.slots() else ([], [])
-            if sv:
-                verts = [M @ v for v in sv]
-                faces = [tuple(reversed(f)) for f in sf] if flip else sf
-                self.skin_prims.append((verts, faces))
-                if pn != "self":
-                    self.warnings.append("%s: skin on a hinged piece is fused rigidly" % part.id)
-            for slot, rv, rf in regions.get(pn, []):
-                verts = [M @ v for v in rv]
+        for pn, piece in regions.items():
+            for slot, rv, rf in piece:
+                verts = [world(v) for v in rv]
                 faces = [tuple(reversed(f)) for f in rf] if flip else rf
-                self.details.append((slot, verts, faces, bone_of.get(pn, pb)))
+                if slot == "skin":
+                    self.skin_prims.append((verts, faces))
+                    if pn != "self":
+                        self.warnings.append("%s: skin on a hinged piece is fused rigidly" % part.id)
+                else:
+                    self.details.append((slot, verts, faces, bone_of.get(pn, pb)))
         F = M.to_3x3().normalized()
         self.parts_rig.append({"uid": uid, "part": part.id, "category": part.category, "cap": part.cap, "bone": pb,
                                "parent": parent_bone, "frame": [list(r) for r in F], "mirrored": mirrored, "jaws": jaws, "u": u})
@@ -283,24 +446,56 @@ class Builder:
     def place_parts(self):
         sp = self.spine
         limb_of = {(l["uid"], l["mirrored"]): l for l in self.limbs}
+        muzzles = {p["uid"] for p in self.recipe["parts"] if p["part"] == "muzzle"}
+        nose_mounts = {}
+        mounted_noses = []
+
+        def muzzle_mount(instance, matrix, bone, mirrored):
+            from .parts.research_feeding import muzzle_nose_scale, muzzle_nose_socket
+
+            params = instance["params"]
+            anchor, size = muzzle_nose_socket(params), muzzle_nose_scale(params)
+            nose_mounts.setdefault(instance["uid"], []).append((matrix, anchor, size, bone, mirrored, instance["u"]))
+            self.parts_rig[-1]["nose_socket"] = list(matrix @ anchor)
+            self.parts_rig[-1]["nose_snap_radius"] = .095 * instance["scale"] * instance["params"]["size"]
+
         for p in self.recipe["parts"]:
             part = catalog.get(p["part"])
+            if part.attach == "core":
+                continue
+            if part.id == "nose_pad" and p["on"] in muzzles:
+                mounted_noses.append(p)
+                continue
+            if self.core and self.core["part"] == "bell_radial" and part.id == "tentacle_fringe" and p["on"] == "body":
+                origin, mount = self.fringe_mount(p)
+                matrix = xform(Matrix.Identity(3), origin)
+                self.place(part, p["params"], matrix, self.spine_bones[self.hub], p["uid"], False, p["uid"], p["u"], mount)
+                continue
             on_limb = p["on"] != "body"
             if on_limb:
                 l = limb_of[(p["on"], False)]
                 s = self.limb_surface(l, p["u"], p["theta"], p["offset"])
                 parent = s["bone"]
             else:
-                s = sp.surface(p["u"], p["theta"], p["offset"])
+                s = self.body_surface(sp, p["u"], p["theta"], p["offset"])
                 parent = self.spine_bone_at(s["v"])
-            if part.orient == "face":
+            if part.orient == "native":
+                basis = Matrix.Identity(3)
+            elif part.orient == "forward":
+                vertical = UP - s["n"] * UP.dot(s["n"])
+                if vertical.length < 0.15:
+                    vertical = -s["t"] if s["n"].y > 0 else s["t"]
+                basis = frame(vertical, s["n"])
+            elif part.orient == "face":
                 zh = UP - s["n"] * UP.dot(s["n"])
                 basis = frame(s["n"], UP if zh.length > 0.25 else s["t"])
             else:
                 basis = frame(s["n"], s["t"])
             rot = Euler([math.radians(a) for a in p["rot"]], "ZXY").to_matrix()
             M = xform(basis @ rot @ Matrix.Diagonal((p["scale"],) * 3), s["p"])
-            self.place(part, p["params"], M, parent, p["uid"], False, p["uid"], p["u"])
+            bone, _ = self.place(part, p["params"], M, parent, p["uid"], False, p["uid"], p["u"])
+            if part.id == "muzzle":
+                muzzle_mount(p, M, bone, False)
             twin = (not on_limb and abs(abs(p["theta"]) - 90.0) > 1e-3) or (on_limb and (l["side"] != 0.0 or abs(s["p"].x) > 1e-4))
             if twin:
                 if on_limb:
@@ -308,31 +503,46 @@ class Builder:
                     mparent = self.limb_surface(ml, p["u"], p["theta"], p["offset"])["bone"]
                 else:
                     mparent = self.spine_bone_at(sp.surface(p["u"], 180.0 - p["theta"])["v"])
-                self.place(part, p["params"], MIRROR @ M, mparent, p["uid"] + "_m", True, p["uid"], p["u"])
+                mirrored_matrix = MIRROR @ M
+                bone, _ = self.place(part, p["params"], mirrored_matrix, mparent, p["uid"] + "_m", True, p["uid"], p["u"])
+                if part.id == "muzzle":
+                    muzzle_mount(p, mirrored_matrix, bone, True)
+
+        for nose in mounted_noses:
+            part = catalog.get("nose_pad")
+            rot = Euler([math.radians(a) for a in nose["rot"]], "ZXY").to_matrix()
+            for matrix, anchor, size, bone, mirrored, u in nose_mounts[nose["on"]]:
+                basis = rot @ Matrix.Diagonal((nose["scale"] * size,) * 3)
+                mount = matrix @ xform(basis, anchor + BACK * nose["offset"])
+                name = nose["uid"] + ("_m" if mirrored else "")
+                self.place(part, nose["params"], mount, bone, name, mirrored, nose["uid"], u)
 
     def place_tips(self):
         for l in self.limbs:
             if not l["tip"]:
-                l["jaws"] = []
-                l["tip_frame"] = [list(r) for r in Matrix.Identity(3)]
+                l.setdefault("jaws", [])
+                l.setdefault("tip_frame", [list(r) for r in Matrix.Identity(3)])
                 continue
             part = catalog.get(l["tip"])
             J = l["joints"]
             end = J[-1]
-            if part.cap == "foot":
+            if part.cap == "foot" or part.orient == "native":
                 M = xform(Matrix.Identity(3), end)
                 if l["mirrored"]:
                     M = xform(Matrix.Diagonal((-1, 1, 1)), end)
             else:
                 d = (J[-1] - J[-2]).normalized()
+                # Authored tips use the +X-side limb. Reflect its whole frame
+                # so the other hand also faces its thigh and keeps chirality.
+                palm = -RIGHT + BACK * .35 if part.orient == "palm_in" and l["side"] else BACK
                 if l["mirrored"]:
                     od = Vector((-d.x, d.y, d.z))
-                    M = MIRROR @ xform(frame(od, BACK), Vector((-end.x, end.y, end.z)))
+                    M = MIRROR @ xform(frame(od, palm), Vector((-end.x, end.y, end.z)))
                 else:
-                    M = xform(frame(d, BACK), end)
+                    M = xform(frame(d, palm), end)
             M = M @ Matrix.Scale(l["scale"], 4)
             end_bone = l["bones"][-1]
-            ctx, regions = finish.part_regions(part, l["tip_params"], skip_slots=("skin",))
+            ctx, regions = finish.part_regions(part, l["tip_params"], assembly=True)
             flip = M.to_3x3().determinant() < 0
             jaws, bone_of = [], {"self": end_bone}
             for b in part.bones:
@@ -340,13 +550,15 @@ class Builder:
                 jb = self.add_bone("%s_%s" % (l["name"], b["name"]), end_bone, piv, piv + M.to_3x3() @ Vector((0, 0.05, 0)))
                 bone_of[b["name"]] = jb
                 jaws.append({"bone": jb, "axis": list(b["axis"]), "angle": b["angle"]})
-            for pn, pc in ctx.pieces.items():
-                if "skin" in pc.slots():
-                    sv, sf = pc.cage("skin")
-                    self.skin_prims.append(([M @ v for v in sv], [tuple(reversed(f)) for f in sf] if flip else sf))
-                for slot, rv, rf in regions.get(pn, []):
-                    self.details.append((slot, [M @ v for v in rv], [tuple(reversed(f)) for f in rf] if flip else rf, bone_of.get(pn, end_bone)))
-            l["jaws"] = jaws
+            for pn, piece in regions.items():
+                for slot, rv, rf in piece:
+                    verts = [M @ v for v in rv]
+                    faces = [tuple(reversed(f)) for f in rf] if flip else rf
+                    if slot == "skin":
+                        self.skin_prims.append((verts, faces))
+                    else:
+                        self.details.append((slot, verts, faces, bone_of.get(pn, end_bone)))
+            l.setdefault("jaws", []).extend(jaws)
             l["tip_frame"] = [list(r) for r in M.to_3x3().normalized()]
 
     # ------------------------------------------------------------ build
@@ -361,8 +573,9 @@ class Builder:
             l["joints"] = [j + shift for j in l["joints"]]
             l["sole"] = l["sole"] + shift
         self.spine = Spine(rc["spine"], shift)
-        if any(l["role"] == "leg" for l in self.limbs) and self.spine.bottom_y() < -0.02:
-            self.warnings.append("body dips %.2f below the ground; lengthen the legs or raise the spine" % -self.spine.bottom_y())
+        bottom = self.body_bottom(self.spine)
+        if any(l["role"] == "leg" for l in self.limbs) and bottom < -0.02:
+            self.warnings.append("body dips %.2f below the ground; lengthen the legs or raise the spine" % -bottom)
         self.make_bones()
         self.body_prim()
         for l in self.limbs:
@@ -382,9 +595,26 @@ class Builder:
             height = max(v.y for v in verts) - min(v.y for v in verts)
             length = max(v.z for v in verts) - min(v.z for v in verts)
             voxel = min(max(max(height, length) / 260.0, 0.004), 0.025)
+            budget = 26000
+            hand_sizes = [l["scale"] * l["tip_params"]["size"] for l in self.limbs if l["tip"] == "hand_basic"]
+            if hand_sizes:
+                # Preserve the gaps and rounded pads of the fingers during
+                # body fusion, even when a tall torso sets the base resolution.
+                voxel = min(voxel, max(.0038, .0032 * min(hand_sizes)))
+                budget = 44000
+            detail_voxels = [.0028 * l["scale"] * l["tip_params"]["size"] for l in self.limbs
+                             if l["tip"] in ("paw_padded", "foot_grasping")]
+            detail_voxels += [.0034 * p["scale"] * p["params"]["size"] for p in self.recipe["parts"]
+                              if p["part"] == "muzzle"]
+            if detail_voxels:
+                # Preserve the toe clefts and muzzle crease at ordinary
+                # scales while bounding the voxel count on large creatures.
+                width = max(v.x for v in verts) - min(v.x for v in verts)
+                voxel = min(voxel, max(.0026, min(detail_voxels), max(width, height, length) / 700))
+                budget = max(budget, 48000)
             finish.remesh(ob, voxel)
             finish.smooth(ob, 0.55, 5)
-            finish.decimate(ob, 26000)
+            finish.decimate(ob, budget)
         ob.data.shade_smooth()
         return ob
 
@@ -417,7 +647,7 @@ class Builder:
         tris = sum(len(p.vertices) - 2 for p in skin.data.polygons) + (sum(len(p.vertices) - 2 for p in parts_ob.data.polygons) if parts_ob else 0)
         report = {"name": name, "library_version": catalog.LIBRARY_VERSION, "warnings": self.warnings, "triangles": tris,
                   "bones": len(self.names), "legs": len(legs), "arms": sum(1 for l in self.limbs if l["role"] == "arm"),
-                  "parts": len(self.parts_rig), "clearance": round(self.spine.bottom_y(), 3),
+                  "parts": len(self.parts_rig) + int(self.core is not None), "clearance": round(self.body_bottom(self.spine), 3),
                   "height": round(max(v.z for v in sv), 3), "length": round(max(v.y for v in sv) - min(v.y for v in sv), 3)}
         arm["polyforge_recipe"] = json.dumps(rc)
         arm["polyforge_rig"] = json.dumps(rig)
@@ -431,7 +661,7 @@ class Builder:
         for slot, rv, rf, bone in self.details:
             o = len(verts)
             verts += rv
-            vbone += [bone] * len(rv)
+            vbone += bone if isinstance(bone, list) else [((bone, 1.0),)] * len(rv)
             faces += [tuple(i + o for i in f) for f in rf]
             fslot += [slot] * len(rf)
         ob = finish.new_object(name + "_parts", verts, faces, col)
@@ -452,11 +682,13 @@ class Builder:
             flat += (c + [1.0]) * poly.loop_total
         attr.data.foreach_set("color", flat)
         groups = {}
-        for vi, b in enumerate(vbone):
-            groups.setdefault(b, []).append(vi)
-        for b, idx in groups.items():
-            vg = ob.vertex_groups.new(name=self.names[b])
-            vg.add(idx, 1.0, "REPLACE")
+        for vi, weights in enumerate(vbone):
+            for bone, weight in weights:
+                groups.setdefault(bone, {}).setdefault(weight, []).append(vi)
+        for bone, weights in groups.items():
+            vg = ob.vertex_groups.new(name=self.names[bone])
+            for weight, indices in weights.items():
+                vg.add(indices, weight, "REPLACE")
         return ob
 
     def material(self, slot):

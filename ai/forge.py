@@ -1,4 +1,4 @@
-"""Image -> PolyForge creature.
+"""Image -> Globberator creature.
 
     python3 ai/forge.py reference.png --out runs/myfox [--iterations 4] [--tolerance 0.8]
     python3 ai/forge.py reference.png --out runs/x --init examples/bull.json --no-llm   (numeric fit only)

@@ -1,4 +1,4 @@
-"""PolyForge command line (runs inside Blender or with the `bpy` Python module).
+"""Globberator command line (runs inside Blender or with the `bpy` Python module).
 
     python3 pf.py <command> [args]          # pip install bpy numpy scipy
     blender -b -P pf.py -- <command> [args]
@@ -349,54 +349,72 @@ def cmd_gallery(a):
 
 
 def cmd_thumbs(a):
+    from .parts.research import PREVIEW_ANGLES
+
     os.makedirs(a.out, exist_ok=True)
-    for p in catalog.PARTS:
-        if a.part and p.id != a.part:
-            continue
-        reset()
-        res = build(ops.showcase_recipe(p.id), "final")
-        pose_at(res, None)
-        cam = render.setup("workbench", a.size)
-        rig = res["rig"]
-        if p.attach == "tip":
-            centre = Vector(rig["limbs"][0]["joints"][-1])
-        else:
-            centre = Vector(rig["rest"][next(pr["bone"] for pr in rig["parts"] if not pr["mirrored"])])
-        lo_p, hi_p = render.bounds([res["parts"]]) if res["parts"] is not None else (None, None)
-        c = kit.to_blender(centre)
-        r = 0.22 if p.category not in ("wing", "detail", "tail") else 0.4
-        lo, hi = c - Vector((r, r, r)), c + Vector((r, r, r))
-        if lo_p is not None and (hi_p - lo_p).length > 0.05 and p.category not in ("foot", "hand"):
-            lo, hi = Vector(map(min, lo, lo_p)), Vector(map(max, hi, hi_p))
-        yaw = 35.0 if p.category in ("eye", "mouth", "nose") else (150.0 if p.category == "tail" else 60.0)
-        render.frame(cam, lo, hi, yaw, 18.0, 1.0)
-        render.floor(True)
+    reset()
+    cam = render.setup("workbench", a.size)
+    for p in library_selection(a.part):
+        models = library_objects(p)
+        render.clay_camera(cam, models, *PREVIEW_ANGLES.get(p.id, (38, 18)))
         render.render(os.path.join(a.out, p.id + ".png"))
+        for model in models:
+            finish.remove(model)
+        finish.clear_cache()
     print(json.dumps({"thumbs": a.out}))
+
+
+def library_selection(part_id):
+    if not part_id:
+        return catalog.PARTS
+    part = catalog.get(part_id)
+    if part is None:
+        raise ValueError("unknown part " + part_id)
+    return [part]
+
+
+def library_objects(part):
+    _, regions = finish.part_regions(part, part.defaults())
+    clay = bpy.data.materials.get("Globberator Clay")
+    if clay is None:
+        clay = bpy.data.materials.new("Globberator Clay")
+        clay.diffuse_color = (*builder.hex_rgb("#c4c5c6"), 1.0)
+        clay.roughness = 0.85
+    objects = []
+    for piece, slots in regions.items():
+        verts, faces = [], []
+        for _, region_verts, region_faces in slots:
+            offset = len(verts)
+            verts.extend(region_verts)
+            faces.extend(tuple(i + offset for i in face) for face in region_faces)
+        if faces:
+            name = part.id if piece == "self" else f"{part.id}__{piece}"
+            ob = finish.new_object(name, verts, faces)
+            ob.data.materials.append(clay)
+            ob.data.shade_smooth()
+            objects.append(ob)
+    if not objects:
+        raise ValueError("empty part mesh: " + part.id)
+    return objects
 
 
 def cmd_library(a):
     """Every part at default params as its own GLB (for engines that assemble parts themselves)."""
     os.makedirs(a.out, exist_ok=True)
-    for p in catalog.PARTS:
-        reset()
-        ctx, regions = finish.part_regions(p, p.defaults())
-        objs_ = []
-        for pn, regs in regions.items():
-            verts, faces = [], []
-            for slot, rv, rf in regs:
-                o = len(verts)
-                verts += rv
-                faces += [tuple(i + o for i in f) for f in rf]
-            if verts:
-                ob = finish.new_object(p.id if pn == "self" else "%s__%s" % (p.id, pn), verts, faces)
-                ob.data.shade_smooth()
-                objs_.append(ob)
-        for o in bpy.context.view_layer.objects:
-            o.select_set(o in objs_)
+    parts = library_selection(a.part)
+    reset()
+    for p in parts:
+        objs_ = library_objects(p)
+        bpy.context.view_layer.update()
+        for ob in objs_:
+            ob.select_set(True)
         bpy.ops.export_scene.gltf(filepath=os.path.join(a.out, p.id + ".glb"), export_format="GLB", use_selection=True)
-        json.dump(catalog.describe_part(p), open(os.path.join(a.out, p.id + ".json"), "w"), indent=2)
-    print(json.dumps({"library": a.out, "parts": len(catalog.PARTS)}))
+        with open(os.path.join(a.out, p.id + ".json"), "w") as file:
+            json.dump(catalog.describe_part(p), file, indent=2)
+        for ob in objs_:
+            finish.remove(ob)
+        finish.clear_cache()
+    print(json.dumps({"library": a.out, "parts": len(parts)}))
 
 
 def cmd_test(a):
@@ -440,7 +458,7 @@ def main(argv=None):
     s.add_argument("--size", type=int, default=320); s.add_argument("--cols", type=int, default=0); s.add_argument("--view", default="threequarter")
     s.add_argument("--engine", default="workbench"); s.add_argument("--pose"); s.add_argument("--preview", action="store_true")
     s = sub.add_parser("thumbs"); s.add_argument("--out", default=os.path.join(ROOT, "library", "thumbs")); s.add_argument("--size", type=int, default=200); s.add_argument("--part")
-    s = sub.add_parser("library"); s.add_argument("--out", required=True)
+    s = sub.add_parser("library"); s.add_argument("--out", required=True); s.add_argument("--part")
     s = sub.add_parser("test"); s.add_argument("--fast", action="store_true")
     a = ap.parse_args(argv)
     code = globals()["cmd_" + a.cmd](a)

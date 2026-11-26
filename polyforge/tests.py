@@ -1,4 +1,4 @@
-"""PolyForge test suite:  python3 pf.py test [--fast]"""
+"""Globberator test suite:  python3 pf.py test [--fast]"""
 import hashlib
 import json
 import math
@@ -52,13 +52,15 @@ def test_parts(t, fast):
                 prm[k] = v
                 var = p.build(prm)
                 same_topo = all(var.pieces[n].signature() == base.pieces[n].signature() for n in base.pieces)
-                t.check(same_topo, "%s %s=%.2f keeps cage topology" % (p.id, k, v))
+                if k not in p.topology_changes:
+                    t.check(same_topo, "%s %s=%.2f keeps cage topology" % (p.id, k, v))
                 moved = max(((a - b).length for n in base.pieces for a, b in zip(base.pieces[n].cage()[0] + base.pieces[n].cage(None, True)[0],
                                                                                 var.pieces[n].cage()[0] + var.pieces[n].cage(None, True)[0])), default=0)
-                t.check(moved > 1e-4, "%s param %s=%.2f changes the shape" % (p.id, k, v))
+                t.check(moved > 1e-4 or (k in p.topology_changes and not same_topo),
+                        "%s param %s=%.2f changes the shape" % (p.id, k, v))
         if not fast:
             reset()
-            ctx, regions = finish.part_regions(p, p.defaults(), skip_slots=())
+            ctx, regions = finish.part_regions(p, p.defaults())
             tris = sum(len(f) for regs in regions.values() for _, _, f in regs)
             t.check(tris > 0, "%s finishes into a sculpted mesh" % p.id)
 
@@ -135,6 +137,52 @@ def test_ops(t):
     t.check(not r2["limbs"] and len(r2["parts"]) == 1, "remove_limb removes its parts")
     _, errs = ops.apply_all(r, [{"op": "bogus"}, {"op": "remove_part", "uid": "zzz"}])
     t.check(len(errs) == 2, "bad ops are reported")
+
+
+def test_research_library(t):
+    from .shapes import extract, normalize_shape
+
+    t.check(len(catalog.RESEARCH) == 54 and catalog.get("eye_slit_pupil") is None,
+            "camera-eye variants share one research family")
+    t.check(catalog.get("eye_round") not in catalog.PARTS, "old eye IDs load outside the active palette")
+    shape, warnings = normalize_shape({"family": "leg_arthropod", "params": {"segments": 5}})
+    r, errors = ops.apply_all(R.default_recipe(), [
+        {"op": "attach_shape", "shape": shape, "uid": "leg", "u": .55, "theta": -54},
+        {"op": "add_part", "part": "suckers", "on": "leg"},
+    ])
+    normalized, changes = R.normalize(r)
+    limb = normalized["limbs"][0]
+    t.check(not (warnings or errors or changes) and extract(limb) == shape and len(limb["segments"]) > 5,
+            "detailed limb shape round-trips its authored chain and hosts parts")
+    _, errors = ops.apply_all(R.default_recipe(), [{"op": "add_part", "part": "suckers"}])
+    t.check(bool(errors), "sucker rows require a limb host")
+    r, errors = ops.apply_all(R.default_recipe(), [
+        {"op": "add_part", "part": "bell_radial", "uid": "first"},
+        {"op": "add_part", "part": "bell_radial", "uid": "second", "scale": 1.25},
+    ])
+    reset()
+    result = builder.build(r, "preview")
+    t.check(not errors and len(result["recipe"]["parts"]) == 1 and abs(result["report"]["clearance"]) < 1e-5,
+            "selecting a second bell replaces the core and grounds the emitted canopy")
+    r, errors = ops.apply_all(R.default_recipe(), [
+        {"op": "add_part", "part": "nose_pad", "uid": "pad", "on": "snout"},
+        {"op": "add_part", "part": "muzzle", "uid": "snout", "scale": 1.4},
+    ])
+    reset()
+    result = builder.build(r, "preview")
+    muzzle, nose = result["rig"]["parts"]
+    t.check(not errors and not result["report"]["warnings"] and nose["parent"] == muzzle["bone"],
+            "a nose pad follows a muzzle even when recipe order is reversed")
+    moved, _ = ops.apply_all(r, [{"op": "set_part", "uid": "snout", "scale": 1.8}])
+    result2 = builder.build(moved, "preview")
+    m2, n2 = result2["rig"]["parts"]
+    rest = result["rig"]["rest"]
+    moved_rest = result2["rig"]["rest"]
+    reach = (Vector(rest[nose["bone"]]) - Vector(rest[muzzle["bone"]])).length
+    moved_reach = (Vector(moved_rest[n2["bone"]]) - Vector(moved_rest[m2["bone"]])).length
+    t.check(abs(moved_reach / reach - 1.8 / 1.4) < 1e-5, "nose seat scales with its host")
+    removed, _ = ops.apply_all(r, [{"op": "remove_part", "uid": "snout"}])
+    t.check(not removed["parts"], "removing a muzzle also removes its mounted pad")
 
 
 def test_isolated_edits(t):
@@ -380,6 +428,7 @@ def run(fast=False):
     test_recipes(t)
     test_placement(t)
     test_ops(t)
+    test_research_library(t)
     test_isolated_edits(t)
     test_review_fixes(t)
     test_parts(t, fast)

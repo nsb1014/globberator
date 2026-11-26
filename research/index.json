@@ -21,11 +21,11 @@
         "aesthetics": 1
       },
       "part_types_by_category": {
-        "locomotion": 5,
         "feeding": 2,
         "manipulation": 0,
-        "sensory": 3,
-        "aesthetics": 1
+        "locomotion": 5,
+        "aesthetics": 1,
+        "sensory": 3
       },
       "library_gaps": [
         "folded membranous hind wing under elytra",
@@ -57,11 +57,11 @@
         "aesthetics": 0
       },
       "part_types_by_category": {
-        "locomotion": 6,
         "feeding": 2,
         "manipulation": 0,
-        "sensory": 4,
-        "aesthetics": 0
+        "locomotion": 6,
+        "aesthetics": 0,
+        "sensory": 4
       },
       "library_gaps": [
         "Digitigrade leg segments (shoulder, elbow, carpus; hip, stifle, hock)",
@@ -94,11 +94,11 @@
         "aesthetics": 2
       },
       "part_types_by_category": {
-        "locomotion": 1,
         "feeding": 1,
         "manipulation": 1,
-        "sensory": 3,
-        "aesthetics": 2
+        "locomotion": 1,
+        "aesthetics": 2,
+        "sensory": 3
       },
       "library_gaps": [
         "Tucked ventral abdomen with brood (female) or narrow T-shaped (male) form",
@@ -131,11 +131,11 @@
         "aesthetics": 0
       },
       "part_types_by_category": {
-        "locomotion": 4,
         "feeding": 1,
         "manipulation": 1,
-        "sensory": 4,
-        "aesthetics": 1
+        "locomotion": 4,
+        "aesthetics": 1,
+        "sensory": 4
       },
       "library_gaps": [
         "Tail (slim, flexible, long)",
@@ -166,11 +166,11 @@
         "aesthetics": 0
       },
       "part_types_by_category": {
-        "locomotion": 2,
         "feeding": 2,
         "manipulation": 1,
-        "sensory": 3,
-        "aesthetics": 0
+        "locomotion": 2,
+        "aesthetics": 0,
+        "sensory": 3
       },
       "library_gaps": [
         "Hind leg (long jumping limb)",
@@ -202,11 +202,11 @@
         "aesthetics": 1
       },
       "part_types_by_category": {
-        "locomotion": 1,
         "feeding": 4,
         "manipulation": 0,
-        "sensory": 1,
-        "aesthetics": 1
+        "locomotion": 1,
+        "aesthetics": 1,
+        "sensory": 1
       },
       "library_gaps": [
         "Radial (4-fold and 8-fold) symmetry",
@@ -241,11 +241,11 @@
         "aesthetics": 3
       },
       "part_types_by_category": {
-        "locomotion": 3,
         "feeding": 2,
         "manipulation": 0,
-        "sensory": 3,
-        "aesthetics": 3
+        "locomotion": 3,
+        "aesthetics": 3,
+        "sensory": 3
       },
       "library_gaps": [
         "Long tapering tail (locomotion + balance + autotomy)",
@@ -279,11 +279,11 @@
         "aesthetics": 0
       },
       "part_types_by_category": {
-        "locomotion": 2,
         "feeding": 1,
         "manipulation": 4,
-        "sensory": 1,
-        "aesthetics": 0
+        "locomotion": 2,
+        "aesthetics": 0,
+        "sensory": 1
       },
       "library_gaps": [
         "Suckers (two rows per arm, with chemosensory tips)",
@@ -317,11 +317,11 @@
         "aesthetics": 1
       },
       "part_types_by_category": {
-        "locomotion": 2,
         "feeding": 1,
         "manipulation": 2,
-        "sensory": 3,
-        "aesthetics": 1
+        "locomotion": 2,
+        "aesthetics": 1,
+        "sensory": 3
       },
       "library_gaps": [
         "Forelimb (shoulder, elbow, wrist, knuckle-walking)",
@@ -354,11 +354,11 @@
         "aesthetics": 0
       },
       "part_types_by_category": {
-        "locomotion": 3,
         "feeding": 1,
         "manipulation": 1,
-        "sensory": 2,
-        "aesthetics": 0
+        "locomotion": 3,
+        "aesthetics": 0,
+        "sensory": 2
       },
       "library_gaps": [
         "Hooked raptor beak (tomial tooth, hook)",
@@ -390,11 +390,11 @@
         "aesthetics": 0
       },
       "part_types_by_category": {
-        "locomotion": 2,
         "feeding": 1,
         "manipulation": 2,
-        "sensory": 3,
-        "aesthetics": 0
+        "locomotion": 2,
+        "aesthetics": 0,
+        "sensory": 3
       },
       "library_gaps": [
         "Pectines (comb-shaped sensory organs on the mesosoma underside)",
@@ -426,11 +426,11 @@
         "aesthetics": 0
       },
       "part_types_by_category": {
-        "locomotion": 6,
         "feeding": 3,
         "manipulation": 1,
-        "sensory": 4,
-        "aesthetics": 0
+        "locomotion": 6,
+        "aesthetics": 0,
+        "sensory": 4
       },
       "library_gaps": [
         "Ampullae of Lorenzini (electroreceptive pores)",
@@ -466,11 +466,11 @@
         "aesthetics": 0
       },
       "part_types_by_category": {
-        "locomotion": 1,
         "feeding": 2,
         "manipulation": 0,
-        "sensory": 2,
-        "aesthetics": 0
+        "locomotion": 1,
+        "aesthetics": 0,
+        "sensory": 2
       },
       "library_gaps": [
         "Setae (paired ventrolateral bristle bundles, ~4 per side per segment)",

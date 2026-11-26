@@ -1,6 +1,6 @@
 {
   "format": "part_library_spec",
-  "version": 2,
+  "version": 3,
   "derived_from": "research/species/*.json (13 species)",
   "frame": {
     "normalized_box": "x and z in [-0.5, 0.5], y in [0, 1]; +Y up, +Z forward; ground at y = 0",
@@ -41,7 +41,6 @@
     ],
     "sensory": [
       "eye_camera",
-      "eye_slit_pupil",
       "eye_compound",
       "eye_simple",
       "eye_stalked",
@@ -585,7 +584,7 @@
         },
         {
           "name": "wrist",
-          "type": "hinge",
+          "type": "fixed",
           "pivot_axes": [
             "x"
           ],
@@ -2362,26 +2361,26 @@
       "kind": "surface",
       "symmetry": "pair",
       "attach_to": "body",
-      "description": "Camera eye with a round pupil; set forward (ape, hawk) or to the side (frog, shark, octopus).",
+      "description": "Camera eye with a round or vertical slit pupil; set forward (ape, hawk, cat) or to the side (frog, shark, octopus).",
       "params": {
         "measured": {
           "length": {
             "min": 0.008,
             "max": 0.101,
-            "default": 0.022,
+            "default": 0.023,
             "observed": {
               "min": 0.012,
-              "median": 0.022,
+              "median": 0.023,
               "max": 0.078
             }
           },
           "root_radius": {
             "min": 0.004,
             "max": 0.051,
-            "default": 0.011,
+            "default": 0.012,
             "observed": {
               "min": 0.006,
-              "median": 0.011,
+              "median": 0.012,
               "max": 0.039
             }
           }
@@ -2404,6 +2403,12 @@
             "max": 1,
             "default": 0,
             "meaning": "bony ring around the eye (birds)"
+          },
+          "slit": {
+            "min": 0.1,
+            "max": 1.0,
+            "default": 1.0,
+            "meaning": "pupil width, 1 = round"
           }
         }
       },
@@ -2415,14 +2420,14 @@
         },
         "root_radius": {
           "min": 0.006,
-          "median": 0.009,
+          "median": 0.01,
           "max": 0.013
         }
       },
       "attach_pos_normalized": [
-        0.143,
-        0.723,
-        0.352
+        0.154,
+        0.736,
+        0.366
       ],
       "joints": [
         {
@@ -2437,20 +2442,20 @@
             -20,
             20
           ],
-          "observed_in": 6
+          "observed_in": 8
         }
       ],
       "penetration": {
-        "default_fraction_of_root_radius": 0.465,
+        "default_fraction_of_root_radius": 0.5,
         "fraction_of_root_radius": {
           "min": 0.33,
-          "median": 0.465,
-          "max": 0.67
+          "median": 0.5,
+          "max": 1.0
         },
         "depth_m": {
           "min": 0.003,
           "median": 0.005,
-          "max": 0.005
+          "max": 0.01
         },
         "overlap_regions": [
           "Dorsal cranium around the orbit. The eye is seated into the skull so it does not float.",
@@ -2458,6 +2463,8 @@
         ]
       },
       "species": [
+        "canine",
+        "feline",
         "frog",
         "lizard",
         "octopus",
@@ -2471,108 +2478,7 @@
         "primate.eye_L",
         "raptor.eye_L",
         "shark.eye_L",
-        "lizard.eye_L"
-      ]
-    },
-    {
-      "id": "eye_slit_pupil",
-      "category": "sensory",
-      "kind": "surface",
-      "symmetry": "pair",
-      "attach_to": "body",
-      "description": "Forward-facing eye with a vertical slit pupil (cats, foxes).",
-      "params": {
-        "measured": {
-          "length": {
-            "min": 0.014,
-            "max": 0.034,
-            "default": 0.023,
-            "observed": {
-              "min": 0.02,
-              "median": 0.023,
-              "max": 0.026
-            }
-          },
-          "root_radius": {
-            "min": 0.008,
-            "max": 0.017,
-            "default": 0.012,
-            "observed": {
-              "min": 0.011,
-              "median": 0.012,
-              "max": 0.013
-            }
-          }
-        },
-        "shape": {
-          "slit": {
-            "min": 0.1,
-            "max": 1.0,
-            "default": 0.3,
-            "meaning": "pupil width, 1 = round"
-          },
-          "facing_deg": {
-            "min": 0,
-            "max": 45,
-            "default": 15,
-            "meaning": "0 = forward"
-          }
-        }
-      },
-      "size_m": {
-        "length": {
-          "min": 0.02,
-          "median": 0.021,
-          "max": 0.022
-        },
-        "root_radius": {
-          "min": 0.01,
-          "median": 0.011,
-          "max": 0.012
-        }
-      },
-      "attach_pos_normalized": [
-        0.185,
-        0.775,
-        0.41
-      ],
-      "joints": [
-        {
-          "name": "eye socket (orbit)",
-          "type": "ball",
-          "pivot_axes": [
-            "x",
-            "y"
-          ],
-          "range_deg": [
-            -20,
-            20
-          ],
-          "observed_in": 2
-        }
-      ],
-      "penetration": {
-        "default_fraction_of_root_radius": 0.75,
-        "fraction_of_root_radius": {
-          "min": 0.5,
-          "median": 0.75,
-          "max": 1.0
-        },
-        "depth_m": {
-          "min": 0.006,
-          "median": 0.008,
-          "max": 0.01
-        },
-        "overlap_regions": [
-          "Orbit in the head mass, set into the forward-facing face of the head",
-          "Orbit (eye socket) of the frontal and maxillary bones"
-        ]
-      },
-      "species": [
-        "canine",
-        "feline"
-      ],
-      "sources": [
+        "lizard.eye_L",
         "feline.eye_L",
         "canine.eyes_L"
       ]
@@ -3985,7 +3891,7 @@
       "joints": [
         {
           "name": "skull fixed (cere / upper mandible)",
-          "type": "hinge",
+          "type": "fixed",
           "pivot_axes": [
             "x"
           ],
@@ -4229,7 +4135,7 @@
       "joints": [
         {
           "name": "palp base",
-          "type": "hinge",
+          "type": "ball",
           "pivot_axes": [
             "x",
             "y",
@@ -4445,7 +4351,7 @@
       "joints": [
         {
           "name": "arm_root_at_manubrium",
-          "type": "fixed",
+          "type": "hydrostatic",
           "pivot_axes": [
             "x",
             "y",

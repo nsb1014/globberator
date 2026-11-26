@@ -43,6 +43,8 @@ SNAP_THETA = 14.0
 
 
 def symmetry(part):
+    if part.symmetry is not None:
+        return "center" if part.symmetry in ("centre", "radial") else part.symmetry
     return SYMMETRY_BY_PART.get(part.id, SYMMETRY_BY_CATEGORY.get(part.category, "any"))
 
 

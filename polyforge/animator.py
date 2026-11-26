@@ -470,6 +470,13 @@ class Animator:
                     wag = math.sin(phase) * (0.11 + 0.09 * moving)
                     self._set(bone, self._carry(bone, euler(0.035 * math.cos(phase), wag, 0)))
                 continue
+            if st["l"]["role"] == "wing":
+                flap = (0.12 * self.osc(1.0, 0.2) * idle_w
+                        + 0.22 * math.sin(TAU * self.gait_clock) * moving
+                        + self.track("flap") * 0.65 * math.sin(self.time * 9.0))
+                for k, bone in enumerate(st["bones"]):
+                    self._set(bone, self._carry(bone, rot(BACKV, st["side"] * flap / (1 + 2 * k))))
+                continue
             L = st["length"]
             sway = Vector((self.osc(1.0, ai), 0.5 * self.osc(2.0, ai * 2.0 + 1.5), self.osc(1.0, ai + 0.7))) * 0.08 * L
             sway += Vector((0, 0.06 * L * self.bob_vel * 30.0, -0.15 * L * moving))

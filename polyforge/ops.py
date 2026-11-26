@@ -14,10 +14,10 @@ SPEC = {
     "insert_vertebra": {"index": "int (insert before; -1 = append at head)", "y?": "float", "z?": "float", "w?": "float", "h?": "float"},
     "remove_vertebra": {"index": "int"},
     "scale_body": {"w?": "float factor", "h?": "float factor", "length?": "float factor"},
-    "add_limb": {"uid?": "string", "u": "float", "theta": "deg", "segments": "[[x,y,z],...]", "radii?": "[...]", "tip?": "part id", "tip_params?": "{}", "snap?": "bool (snap to the nearest named socket)"},
+    "add_limb": {"uid?": "string", "u": "float", "theta": "deg", "segments?": "[[x,y,z],...]", "radii?": "[...]", "family?": "research limb id, supplies the joint chain", "params?": "{}", "tip?": "part id", "tip_params?": "{}", "snap?": "bool (snap to the nearest named socket)"},
     "set_limb": {"uid": "string", "keep_ground?": "bool (keep the frozen floor; default re-grounds)", "...": "any limb field to replace (tip_params merge)"},
     "remove_limb": {"uid": "string"},
-    "add_part": {"uid?": "string", "part": "part id", "on?": "body | limb uid", "u?": "float", "theta?": "deg", "offset?": "float", "rot?": "[x,y,z] deg", "scale?": "float", "params?": "{}", "snap?": "bool (snap to the nearest named socket)"},
+    "add_part": {"uid?": "string", "part": "part id", "on?": "body | limb uid | muzzle uid for nose_pad", "u?": "float", "theta?": "deg", "offset?": "float", "rot?": "[x,y,z] deg", "scale?": "float", "params?": "{}", "snap?": "bool (snap to the nearest named socket)"},
     "set_part": {"uid": "string", "...": "any part field to replace (params merge)"},
     "remove_part": {"uid": "string"},
     "set_paint": {"base?": "#hex", "accent?": "#hex", "detail?": "#hex", "pattern?": "none|stripes|spots|patches|gradient", "pattern_scale?": "float", "belly?": "bool"},
@@ -70,10 +70,11 @@ def apply(r, op):
     if name == "attach_shape":
         from .shapes import extract
         shape = op.get("shape")
-        if not isinstance(shape, dict) or not ("segments" in shape or "part" in shape):
+        if not isinstance(shape, dict) or not ({"segments", "family", "part"} & shape.keys()):
             return "attach_shape requires a part or limb shape"
         fields = {k: op[k] for k in ("uid", "u", "theta", "on", "offset", "rot", "scale") if k in op}
-        if "segments" in shape and fields.get("on", "body") != "body":
+        is_limb = "segments" in shape or "family" in shape
+        if is_limb and fields.get("on", "body") != "body":
             return "limbs attach to the body surface"
         part = catalog.get(shape.get("part", ""))
         if part and part.attach == "tip":
@@ -82,7 +83,7 @@ def apply(r, op):
                 return "tip shapes require a host limb uid in on"
             return apply(r, {"op": "set_limb", "uid": target, "tip": part.id,
                              "tip_params": shape.get("params", {})})
-        return apply(r, {**extract(shape), **fields, "op": "add_limb" if "segments" in shape else "add_part"})
+        return apply(r, {**extract(shape), **fields, "op": "add_limb" if is_limb else "add_part"})
     if name == "reground":
         r.pop("ground_y", None)
         return ""
@@ -158,6 +159,12 @@ def apply(r, op):
             v["z"] = v["z"] * float(op.get("length", 1.0))
     elif name == "add_limb":
         l = {k: v for k, v in op.items() if k != "op"}
+        if l.get("family"):
+            family = catalog.get(str(l["family"]))
+            if family is None or family.preset is None:
+                return "unknown limb family %s" % l["family"]
+            for key in ("u", "theta"):
+                l.setdefault(key, family.hint[key])
         if "uid" not in l or _find(r["limbs"], str(l["uid"])) >= 0:
             l["uid"] = _new_uid(r, "limb")
         _snap_limb(l, op)
@@ -166,13 +173,15 @@ def apply(r, op):
         i = _find(r["limbs"], str(op.get("uid", "")))
         if i < 0:
             return "no limb %s" % op.get("uid", "")
+        if "tip" in op and op["tip"] != r["limbs"][i].get("tip"):
+            r["limbs"][i]["tip_params"] = {}
         if "u" in op or op.get("snap") or "on" in op:
             r["limbs"][i].pop("bind", None)
         for k, v in op.items():
             if k in ("op", "uid"):
                 continue
-            if k == "tip_params" and isinstance(v, dict):
-                r["limbs"][i].setdefault("tip_params", {}).update(v)
+            if k in ("tip_params", "params") and isinstance(v, dict):
+                r["limbs"][i].setdefault(k, {}).update(v)
             else:
                 r["limbs"][i][k] = v
         _snap_limb(r["limbs"][i], op)
@@ -181,11 +190,22 @@ def apply(r, op):
         if i < 0:
             return "no limb %s" % op.get("uid", "")
         uid = r["limbs"].pop(i)["uid"]
-        r["parts"] = [p for p in r["parts"] if p.get("on", "body") != uid]
+        removed = {p["uid"] for p in r["parts"] if p.get("on") == uid and "uid" in p}
+        r["parts"] = [p for p in r["parts"] if p.get("on") not in removed | {uid}]
     elif name == "add_part":
         part = catalog.get(str(op.get("part", "")))
         if part is None:
             return "unknown part %s" % op.get("part", "")
+        if part.attach == "limb":
+            if op.get("on", "body") != "body":
+                return "limbs attach to the body surface"
+            fields = {k: v for k, v in op.items() if k not in ("part", "on", "op")}
+            return apply(r, {**fields, "op": "add_limb", "family": part.id})
+        if part.host == "limb" and _find(r["limbs"], op.get("on", "body")) < 0:
+            return "%s requires a host limb" % part.id
+        if part.attach == "core":
+            r["parts"] = [p for p in r["parts"] if getattr(catalog.get(p.get("part")), "attach", None) != "core"]
+            r.pop("ground_y", None)
         p = {"part": part.id, "u": part.hint["u"], "theta": part.hint["theta"]}
         p.update({k: v for k, v in op.items() if k != "op"})
         if "uid" not in p or _find(r["parts"], str(p["uid"])) >= 0:
@@ -196,6 +216,9 @@ def apply(r, op):
         i = _find(r["parts"], str(op.get("uid", "")))
         if i < 0:
             return "no part %s" % op.get("uid", "")
+        definition = catalog.get(r["parts"][i].get("part"))
+        if definition and definition.attach == "core" and {"offset", "scale", "params"} & op.keys():
+            r.pop("ground_y", None)
         if "u" in op or op.get("snap") or "on" in op:
             r["parts"][i].pop("bind", None)
         for k, v in op.items():
@@ -214,7 +237,12 @@ def apply(r, op):
         i = _find(r["parts"], str(op.get("uid", "")))
         if i < 0:
             return "no part %s" % op.get("uid", "")
-        r["parts"].pop(i)
+        removed = r["parts"].pop(i)
+        if removed.get("part") == "muzzle":
+            r["parts"] = [p for p in r["parts"] if p.get("on") != removed["uid"]]
+        part = catalog.get(removed.get("part"))
+        if part and part.attach == "core":
+            r.pop("ground_y", None)
     elif name == "set_paint":
         pa = r.setdefault("paint", R.default_paint())
         pa.update({k: v for k, v in op.items() if k != "op"})
@@ -244,11 +272,15 @@ def showcase_recipe(part_id):
     part = catalog.get(part_id)
     if part is None:
         return r
-    if part.attach == "tip":
+    if part.preset:
+        r["limbs"] = [{"uid": "l", "family": part_id, **part.hint}]
+    elif part.attach == "tip" or part.host == "limb":
         arm = part.cap != "foot"
         r["limbs"] = [{"uid": "l", "u": 0.62 if arm else 0.45, "theta": 0.0 if arm else -60.0,
                        "segments": [[0.25, 0.0, 0.1], [0.15, -0.05, 0.25]] if arm else [[0.12, -0.25, 0.05], [0.0, -0.25, 0.05]],
-                       "radii": [0.09, 0.07, 0.05], "tip": part_id}]
+                       "radii": [0.09, 0.07, 0.05], "tip": part_id if part.attach == "tip" else ""}]
+        if part.host == "limb":
+            r["parts"] = [{"uid": "p", "part": part_id, "on": "l", "u": .54, "theta": -80}]
     else:
         r["parts"] = [{"uid": "p", "part": part_id, "u": part.hint["u"], "theta": part.hint["theta"]}]
     return r

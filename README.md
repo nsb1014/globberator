@@ -1,10 +1,12 @@
-# PolyForge
+# Globberator
 
 A Spore-style creature builder that runs inside Blender. You assemble creatures from a library of sculpted parts on a bendable spine. The body, limbs and every skin part fuse into one sculpted surface. The creature rigs itself, animates procedurally, and exports to glTF/GLB, FBX, USD or OBJ, so any engine can use it. An AI loop builds a creature from a reference image within the library's style.
 
 ![Examples](preview/gallery.png)
 
 ![Part library](preview/parts.png)
+
+The [hummingbird example](examples/hummingbird/README.md) includes the build scripts, color preview, and clay review.
 
 ## Install
 
@@ -13,10 +15,10 @@ A Spore-style creature builder that runs inside Blender. You assemble creatures 
 ```sh
 <blender python> -m pip install scipy          # once
 blender -b -P tools/install.py                  # installs the add-on + app template
-blender --app-template PolyForge                # opens Blender as PolyForge
+blender --app-template Globberator                # opens Blender as Globberator
 ```
 
-The editor lives in the 3D viewport sidebar, under the **PolyForge** tab.
+The editor lives in the 3D viewport sidebar, under the **Globberator** tab.
 
 **Headless (CLI, tests, AI loop).** Uses Blender as a Python module:
 
@@ -25,12 +27,12 @@ pip install bpy numpy scipy pillow
 python3 pf.py --help
 ```
 
-Any command also runs through a regular Blender: `blender -b -P pf.py -- <command>`.
+Any command also runs through a regular Blender: `blender -b -P pf.py -- <command>`. Existing recipes and Blender files use the same data format.
 
 ## Using the editor
 
 1. **Creature panel:** start a new creature or open an example. **Preview** rebuilds fast. **Sculpt** fuses the skin into one remeshed surface, which is what exports use. Spine edits keep the floor fixed so the legs don't jump. Leg edits re-find the floor automatically, and **Reground** re-finds it on demand.
-2. **Parts panel.** Pick a shape and click anywhere on the body. A lateral drop creates a reflected twin. A drop within 12 degrees of the midline creates one centered instance. Tails are flexible joint chains and can be placed in the center.
+2. **Parts panel.** Pick a shape and click a host surface. Research limbs place an articulated joint chain with its sculpt. Limb tips attach at the host limb's end, and sucker rows attach to a limb surface. Select the radial bell to change the body plan. Paired families place reflected twins. Families with flexible symmetry place one centered instance when dropped within 12 degrees of the midline.
 3. **Selection panel.** Use **Isolate shape** to inspect one part or limb and edit its controls. Limbs have editable joint offsets and radii. Switch back to the creature to change instance scale, rotation, or placement. **Move to surface** picks a new location for the selected instance and its twin.
 4. **Spine and paint.** Edit body rings or paint the assembled creature. A saved body attachment records two ring IDs and its fractional position between them. A distant edit to the spine preserves that binding. Widening its own strip carries the part outward.
 5. **Animate & export panel:** bake idle, walk, run, roar, wave and hop, play them, and export GLB, FBX, USDZ or OBJ.
@@ -88,13 +90,27 @@ python3 pf.py attach examples/bull.json out/fore-review/shape.json --uid extra_l
 
 Version 1 recipes migrate on load with their original placement. Version 2 saves the ring binding and a derived `u` for the slider. To slide an existing instance, use `set_limb` or `set_part` with a new `u`. To refit the creation floor after a limb edit, apply `{"op":"reground"}`.
 
-Use `horn_sweep` for an unbranched horn and `ear_leaf` for round, pointed, long, or drooping ears. The bull and minotaur use both families. Existing recipes can still load the older specialized shapes. A branched antler and an articulated pincer retain their own construction.
+Use `horn_sweep` for unbranched horns and `ear_pinna` for adjustable ear profiles. Existing bull and minotaur recipes continue to load their original horn and ear IDs. Branched antlers and articulated pincers have dedicated models.
 
-The image loop defaults to Claude Haiku and accepts a model override through `POLYFORGE_MODEL`. It starts with a compact family index. For an identified feature, it requests that family's controls and critiques isolated views before the assembly fit. `--part-rounds` sets the local revision budget. The held-out benchmark writes first-pass validity, edit turns, renders and token usage. Review the rendered views against the input image to record artistic acceptance.
+## Research part library
+
+The 13 species files contain 119 recorded structures. The library groups 105 usable source records into 54 model families. Round and slit pupils share the camera-eye family. Paired structures use a single authored model, and repeated anatomy such as shark median fins uses shape controls. The same octopus arm record supplies two independent models, a tapered limb and its sucker rows. The 14 exclusions include internal structures, texture features, and regions handled by the existing spine body.
+
+The [research specification](research/part_library.json) records the sources, measured dimensions, and shape controls. Each research family has a [clay reference](library/references) named by part ID. The palette thumbnails render the procedural models. The complementary group retains 16 earlier shapes for gaps such as cloven hooves, horns, bat wings, turtle shells, and trunks. Older recipes still resolve their original part IDs.
+
+The sculpts use the recipe frame with +Y up, +Z forward, and the local origin at the mount. A paired model is authored on the +X side. The clay views show a neutral pose with stylized volume for surfaces hidden from the research camera.
+
+The muzzle, nose pad, camera-eye lids, padded paw, grasping foot, jaw base and feathered wing base use authored subdivision cages. The jaw retains its procedural tooth rows and hinge. The wing retains folding and feather controls. In the editor, drop a nose pad on the tip of a muzzle to seat it in the muzzle's frame. Recipes can specify the same host with `"on": "<muzzle uid>"`.
+
+To inspect an individual model, pass a small JSON shape such as `{"part": "eye_camera", "params": {"slit": 0.3}}` to `pf.py part`. To export its default standalone GLB, use `pf.py library --part eye_camera --out out/parts`. Research limbs also accept an editable family payload such as `{"family": "leg_jumping", "params": {"fold": 0.8}}`.
+
+The image loop defaults to Claude Haiku and accepts a model override through `GLOBBERATOR_MODEL`. It starts with a compact family index. For an identified feature, it requests that family's controls and critiques isolated views before the assembly fit. `--part-rounds` sets the local revision budget. The held-out benchmark writes first-pass validity, edit turns, renders and token usage. Review the rendered views against the input image to record artistic acceptance.
 
 ## Review assembly before animation
 
 Shape the torso with the spine. Each leg owns its joint chain and foot, and each tail owns its flexible chain and attached ornaments. The leg solver poses the torso first, selects standing clearance from leg reach and stride, then solves the limbs. The legless gait retains spine undulation. Walk previews use a stationary camera with world travel.
+
+For agent-built assets, the modeling agent calls a fresh subagent to inspect the reference and renders independently. The [agent review instructions](AGENTS.md) cover what to share, which views to render, and how to verify fixes.
 
 In Blender, use **Render assembly review views** in **Animate & export**. Inspect the front, side, three-quarter and head views against the reference or intended anatomy, then accept the assembly. Check the eye relative to the jaw and horn roots, wing roots relative to the shoulders, foot placement and tail attachment wherever applicable. Recipe edits invalidate the previous acceptance.
 
@@ -120,9 +136,10 @@ The build report supplies stance timing and travel for the in-place clip. The Bl
 | Path | What it is |
 | --- | --- |
 | `polyforge/` | The Blender add-on: kit, parts, recipe, placement, builder, animator, baker, export, render, UI, CLI, tests |
-| `app_template/` | Starts Blender as PolyForge |
+| `app_template/` | Starts Blender as Globberator |
 | `tools/install.py` | Installs the add-on and app template into a Blender install |
 | `pf.py` | Command-line entry point |
 | `ai/` | Image-to-recipe loop (Claude + numeric fitting), scoring, benchmark |
 | `examples/` | Example recipes |
 | `library/thumbs/` | Part thumbnails used by the editor palette |
+| `library/references/` | Generated clay reference images for the research models |

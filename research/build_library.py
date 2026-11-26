@@ -115,14 +115,12 @@ LIB = [
          shape={"dome": [0.2, 1.5, 0.45, "height relative to the radius"], "lobes": [4, 16, 8, "rim lobes"], "translucent": [0, 1, 1, "gelatinous see-through tissue"]}),
     # ---------------- sensory ----------------
     dict(id="eye_camera", category="sensory", kind="surface", symmetry="pair",
-         desc="Camera eye with a round pupil; set forward (ape, hawk) or to the side (frog, shark, octopus).",
-         sources=["frog.eye_L", "octopus.eye_L", "primate.eye_L", "raptor.eye_L", "shark.eye_L", "lizard.eye_L"],
+         desc="Camera eye with a round or vertical slit pupil; set forward (ape, hawk, cat) or to the side (frog, shark, octopus).",
+         sources=["frog.eye_L", "octopus.eye_L", "primate.eye_L", "raptor.eye_L", "shark.eye_L", "lizard.eye_L",
+                  "feline.eye_L", "canine.eyes_L"],
          shape={"facing_deg": [0, 90, 45, "0 = forward, 90 = sideways"], "bulge": [0.0, 1.0, 0.3, "how far it protrudes (frog high)"],
-                "sclerotic_ring": [0, 1, 0, "bony ring around the eye (birds)"]}),
-    dict(id="eye_slit_pupil", category="sensory", kind="surface", symmetry="pair",
-         desc="Forward-facing eye with a vertical slit pupil (cats, foxes).",
-         sources=["feline.eye_L", "canine.eyes_L"],
-         shape={"slit": [0.1, 1.0, 0.3, "pupil width, 1 = round"], "facing_deg": [0, 45, 15, "0 = forward"]}),
+                "sclerotic_ring": [0, 1, 0, "bony ring around the eye (birds)"],
+                "slit": [0.1, 1.0, 1.0, "pupil width, 1 = round"]}),
     dict(id="eye_compound", category="sensory", kind="surface", symmetry="pair",
          desc="Faceted compound eye bulging from the side of the head.",
          sources=["beetle.eye_L"],
@@ -326,7 +324,7 @@ def joint_chain(srcs):
         js = [p["joints"][i] for _, p, _ in srcs if len(p.get("joints") or []) > i]
         types = [j.get("type") for j in js]
         rngs = [j["range_deg"] for j in js if isinstance(j.get("range_deg"), list) and len(j["range_deg"]) == 2]
-        chain.append({"name": js[0].get("name"), "type": max(set(types), key=types.count),
+        chain.append({"name": js[0].get("name"), "type": max(types, key=types.count),
                       "pivot_axes": sorted({a for j in js for a in (j.get("pivot_axes") or [])}),
                       "range_deg": [min(r[0] for r in rngs), max(r[1] for r in rngs)] if rngs else None,
                       "observed_in": len(js)})
@@ -381,7 +379,7 @@ def main():
         raise SystemExit("research parts with no library entry or exclusion: %s" % ", ".join(unmapped))
     by_cat = {c: [x["id"] for x in entries if x["category"] == c] for c in CATEGORIES}
     lib = {
-        "format": "part_library_spec", "version": 2,
+        "format": "part_library_spec", "version": 3,
         "derived_from": "research/species/*.json (13 species)",
         "frame": {"normalized_box": "x and z in [-0.5, 0.5], y in [0, 1]; +Y up, +Z forward; ground at y = 0",
                   "attach_pos_normalized": "mean over the source parts; pairs are recorded once, on the +X side",

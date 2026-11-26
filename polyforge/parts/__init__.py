@@ -40,7 +40,8 @@ class Ctx:
 
 class Part:
     def __init__(self, id, category, desc, tags, params, build, attach="surface", orient="surface", cap="",
-                 mirror=False, hint=None, bones=None):
+                 mirror=False, hint=None, bones=None, preset=None, host=None, symmetry=None, discrete=(),
+                 topology_changes=()):
         self.id = id
         self.category = category
         self.desc = desc
@@ -53,6 +54,11 @@ class Part:
         self.mirror = mirror
         self.hint = hint or {"u": 0.5, "theta": 90.0}
         self.bones = bones or []    # [{"name", "pivot": (x,y,z), "axis": (x,y,z), "angle": deg}]
+        self.preset = preset
+        self.host = host
+        self.symmetry = symmetry
+        self.discrete = frozenset(discrete)
+        self.topology_changes = self.discrete.union(topology_changes)
 
     def defaults(self):
         return {k: v[2] for k, v in self.params.items()}

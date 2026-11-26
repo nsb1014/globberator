@@ -1,4 +1,4 @@
-"""PolyForge command line entry point.
+"""Globberator command line entry point.
 
     python3 pf.py <command> ...            (pip install bpy numpy scipy pillow)
     blender -b -P pf.py -- <command> ...   (a regular Blender install)

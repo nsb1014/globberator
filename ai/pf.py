@@ -1,4 +1,4 @@
-"""Thin wrapper around the PolyForge Blender CLI (pf.py).
+"""Thin wrapper around the Globberator Blender CLI (pf.py).
 
 Uses `python3 pf.py` (Blender as the bpy module) by default. Set PF_BLENDER to a
 Blender executable to run through a regular Blender install instead.

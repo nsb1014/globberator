@@ -103,7 +103,6 @@
         "fraction_of_root_radius": 0.67,
         "overlap_region": "Pelvic/ilium girdle at the posterior-lateral trunk, around the hip socket. Deep enough to seat the femoral head inside the core."
       },
-      "library_hint": null,
       "notes": "The key jumping structure. Hind legs are long: about 1.5-2x body length extended and folded to the trunk at rest. Femur, tibiofibula and tarsus are the main segments, with the knee flexing about 90-120 degrees for jumping. Joint pivots and ranges are estimates from general frog hind-limb kinematics, not measurements. Sources: general anuran morphology references; no specific source was retrieved for joint ranges."
     },
     {
@@ -156,7 +155,6 @@
         "fraction_of_root_radius": 0.5,
         "overlap_region": "Distal end of the tarsal segment of hind_leg_L. The foot is a terminal extension, so it only needs to seat into the tarsus."
       },
-      "library_hint": "foot_webbed",
       "notes": "Long, broad, five-toed foot with interdigital webbing used for push-off and swimming. Terminal part of the hind-limb chain."
     },
     {
@@ -229,7 +227,6 @@
         "fraction_of_root_radius": 0.5,
         "overlap_region": "Pectoral girdle (scapulocoracoid) at the anterior-lateral trunk, under the shoulder skin."
       },
-      "library_hint": "hand_basic",
       "notes": "Short, slender forelimbs with four unwebbed digits. Used to prop up the body, absorb landing shock and, in males, for amplexus (clasping the female, with nuptial pads on the first digit). Classed as manipulation because the main function is grasping. Lengths and joint ranges are approximate."
     },
     {
@@ -266,7 +263,6 @@
         "fraction_of_root_radius": 0.43,
         "overlap_region": "Dorsal cranium around the orbit. The eye is seated into the skull so it does not float."
       },
-      "library_hint": "eye_round",
       "notes": "Dorsolateral, bulging eyes give near-360 degree vision above the water surface while the body is submerged. In the photo the eye sits near the top of the head, about half-way along the head from the snout, and the far eye bulges above the top profile of the head. Eye size is approximate (the photo suggests roughly 0.012 m across)."
     },
     {
@@ -303,7 +299,6 @@
         "fraction_of_root_radius": 0.4,
         "overlap_region": "Lateral head surface directly behind the eye, over the otic capsule."
       },
-      "library_hint": null,
       "notes": "Flat, round membrane behind and slightly below each eye, touching the eye's rear edge. In the photo the disc is about 1.4-1.5 times the eye diameter, which fits a male bullfrog. Size is approximate."
     },
     {
@@ -342,7 +337,6 @@
         "fraction_of_root_radius": 0.05,
         "overlap_region": "Anterior face of the skull. Nearly flush, so the mouth is a surface opening and not a protruding part."
       },
-      "library_hint": "mouth_jaws",
       "notes": "Very wide gape: the mouth line runs from the snout tip back to under the tympanum, close to the length of the head. Part is a surface feature with a small geometric footprint."
     },
     {
@@ -381,8 +375,7 @@
         "fraction_of_root_radius": 0.75,
         "overlap_region": "Floor of the mouth at the anterior hyoid, inside the head core. Attached at the front, not the tip, so it flips out ballistically."
       },
-      "library_hint": null,
-      "notes": "Long, sticky tongue attached to the front of the lower jaw and flipped forward to catch prey. Extension is hydrostatic/ballistic and fast. Not covered by the library."
+      "notes": "Long, sticky tongue attached to the front of the lower jaw and flipped forward to catch prey. Extension is hydrostatic/ballistic and fast."
     },
     {
       "id": "vocal_sac",
@@ -418,7 +411,6 @@
         "fraction_of_root_radius": 0.4,
         "overlap_region": "Ventral throat wall of the head-trunk core."
       },
-      "library_hint": null,
       "notes": "Male bullfrog throat sac, which inflates to amplify the call. In the photo the yellow throat is the visible gular area below the jaw line. It is communicative, so the category is debatable. It is placed under sensory as an acoustic interface, but it could equally be aesthetics (display). Size is approximate."
     }
   ],
@@ -439,24 +431,6 @@
       "Tympanum and vocal sac are sound-related and should be handled together if the model includes voice."
     ]
   },
-  "library_gaps": [
-    {
-      "feature": "Hind leg (long jumping limb)",
-      "why": "No library part models a long segmented jumping leg. foot_webbed covers only the terminal foot, so the leg chain is a gap."
-    },
-    {
-      "feature": "Tympanum (external eardrum disc)",
-      "why": "No library part for a flat, circular membrane set behind the eye. ear_leaf is a flap and does not fit."
-    },
-    {
-      "feature": "Projectile tongue",
-      "why": "No library part for a long, sticky, ballistically extended tongue attached at the hyoid."
-    },
-    {
-      "feature": "Vocal sac (throat resonator)",
-      "why": "No library part for an inflatable throat membrane. The closest is bulge, which is cosmetic and does not match the functional role."
-    }
-  ],
   "sources": [
     "https://commons.wikimedia.org/wiki/File:Lithobates_catesbeianus_PP.jpg (file page and extmetadata verified via Commons API; image downloaded locally and viewed)",
     "https://commons.wikimedia.org/wiki/Category:Lithobates_catesbeianus (category listing, via search)",

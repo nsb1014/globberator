@@ -1,17 +1,20 @@
 {
-  "format": "polyforge.part_library_spec",
-  "version": 1,
+  "format": "part_library_spec",
+  "version": 2,
   "derived_from": "research/species/*.json (13 species)",
   "frame": {
     "normalized_box": "x and z in [-0.5, 0.5], y in [0, 1]; +Y up, +Z forward; ground at y = 0",
-    "attach_pos_normalized": "mean over the source parts, with x mirrored to the +X side",
-    "penetration": "how far the part's root sinks into the core mesh, from the research overlap estimates"
+    "attach_pos_normalized": "mean over the source parts; pairs are recorded once, on the +X side",
+    "symmetry": "pair = one entry, mirrored to -X when built; centre = on the midline; radial = repeated around the vertical axis",
+    "params.measured": "length and root_radius are fractions of the body length; min/max are the observed span widened by 30%",
+    "params.shape": "variations the research describes; curated, not measured",
+    "penetration": "how far the root sinks into the core mesh, as a fraction of the root radius"
   },
   "kinds": {
     "limb": "joint chain grown from the body",
     "tip": "sits on a limb's end joint",
     "surface": "placed on the body or a limb surface",
-    "core": "body plan the spine itself must produce"
+    "core": "body plan the body itself must form"
   },
   "categories": {
     "locomotion": [
@@ -21,27 +24,27 @@
       "leg_sprawling",
       "leg_jumping",
       "leg_bird",
-      "foot_paw",
-      "foot_webbed",
+      "paw_padded",
+      "foot_webbed_long",
       "foot_grasping",
-      "wing_feather",
+      "wing_feathered",
       "elytron",
       "wing_membrane_insect",
       "fin_paired",
       "fin_median",
       "tail_fin_heterocercal",
-      "tail_fan",
+      "tail_feather_fan",
       "tail_flexible",
       "siphon",
       "web_interbrachial",
       "bell_radial"
     ],
     "sensory": [
-      "eye_round",
-      "eye_slit",
+      "eye_camera",
+      "eye_slit_pupil",
       "eye_compound",
       "eye_simple",
-      "eye_stalk",
+      "eye_stalked",
       "antenna_segmented",
       "ear_pinna",
       "tympanum",
@@ -77,70 +80,7 @@
       "crest_dorsal",
       "dewlap",
       "vocal_sac",
-      "brow_ridge"
-    ]
-  },
-  "status": {
-    "covered": [
-      "leg_arthropod",
-      "leg_digitigrade",
-      "leg_plantigrade",
-      "leg_sprawling",
-      "leg_jumping",
-      "leg_bird",
-      "foot_paw",
-      "foot_webbed",
-      "wing_feather",
-      "fin_median",
-      "tail_fan",
-      "tail_flexible",
-      "eye_round",
-      "eye_slit",
-      "eye_compound",
-      "eye_simple",
-      "eye_stalk",
-      "ear_pinna",
-      "nose_pad",
-      "jaws_toothed",
-      "muzzle",
-      "mouth_wide",
-      "beak_hooked",
-      "pincer_limb",
-      "arm_grasping",
-      "talons",
-      "carapace",
-      "crest_dorsal",
-      "vocal_sac",
-      "brow_ridge"
-    ],
-    "partial": [
-      "antenna_segmented",
-      "mandibles",
-      "arm_hydrostatic",
-      "claws",
-      "tail_segmented",
-      "stinger"
-    ],
-    "new": [
-      "foot_grasping",
-      "elytron",
-      "wing_membrane_insect",
-      "fin_paired",
-      "tail_fin_heterocercal",
-      "siphon",
-      "web_interbrachial",
-      "bell_radial",
-      "tympanum",
-      "nostril_slit",
-      "whiskers",
-      "pectines",
-      "mouth_palps",
-      "tongue",
-      "oral_arms",
-      "tentacle_fringe",
-      "gill_slits",
-      "suckers",
-      "dewlap"
+      "supraorbital_ridge"
     ]
   },
   "parts": [
@@ -150,44 +90,71 @@
       "kind": "limb",
       "symmetry": "pair",
       "attach_to": "body",
-      "description": "Thin jointed walking leg with a coxa ball joint and hinge knees; sprawls out, then down.",
+      "description": "Thin jointed walking leg: ball joint at the coxa, hinged segments; leaves the body sideways, then turns down.",
       "params": {
-        "segments": {
-          "min": 3,
-          "max": 5,
-          "default": 4
+        "measured": {
+          "length": {
+            "min": 0.237,
+            "max": 0.52,
+            "default": 0.364,
+            "observed": {
+              "min": 0.338,
+              "median": 0.364,
+              "max": 0.4
+            }
+          },
+          "root_radius": {
+            "min": 0.014,
+            "max": 0.044,
+            "default": 0.024,
+            "observed": {
+              "min": 0.02,
+              "median": 0.024,
+              "max": 0.034
+            }
+          },
+          "count": {
+            "min": 2,
+            "max": 5,
+            "default": 4,
+            "observed": {
+              "min": 4,
+              "median": 4.0,
+              "max": 4
+            }
+          }
         },
-        "length": {
-          "min": 0.6,
-          "max": 1.6,
-          "default": 1.0
-        },
-        "thickness": {
-          "min": 0.4,
-          "max": 1.5,
-          "default": 0.8
-        },
-        "sprawl_deg": {
-          "min": 20,
-          "max": 80,
-          "default": 55
+        "shape": {
+          "segments": {
+            "min": 3,
+            "max": 5,
+            "default": 4,
+            "meaning": "jointed segments after the coxa"
+          },
+          "sprawl_deg": {
+            "min": 20,
+            "max": 80,
+            "default": 55,
+            "meaning": "angle out from the body before turning down"
+          },
+          "tibia_teeth": {
+            "min": 0,
+            "max": 1,
+            "default": 0,
+            "meaning": "toothed outer edge for digging (beetles)"
+          }
         }
       },
-      "size": {
-        "length_vs_body_length": {
-          "min": 0.338,
-          "median": 0.364,
-          "max": 0.4
-        },
-        "root_radius_m": {
-          "min": 0.001,
-          "median": 0.001,
-          "max": 0.003
-        },
-        "length_m": {
+      "size_m": {
+        "length": {
           "min": 0.019,
           "median": 0.022,
           "max": 0.04
+        },
+        "root_radius": {
+          "min": 0.001,
+          "median": 0.001,
+          "max": 0.003
         }
       },
       "attach_pos_normalized": [
@@ -249,6 +216,7 @@
         }
       ],
       "penetration": {
+        "default_fraction_of_root_radius": 0.85,
         "fraction_of_root_radius": {
           "min": 0.82,
           "median": 0.85,
@@ -275,9 +243,7 @@
         "beetle.hindleg_L",
         "crab.walking_leg_L",
         "scorpion.walking_legs_L"
-      ],
-      "polyforge_equivalent": "limb (3-4 segments) + foot_spike",
-      "status": "covered"
+      ]
     },
     {
       "id": "leg_digitigrade",
@@ -285,39 +251,55 @@
       "kind": "limb",
       "symmetry": "pair",
       "attach_to": "body",
-      "description": "Mammal leg standing on its toes: shoulder/hip ball, elbow/knee hinge, raised wrist/hock hinge.",
+      "description": "Mammal leg standing on its toes: shoulder/hip ball, elbow/knee hinge, raised wrist/hock.",
       "params": {
-        "length": {
-          "min": 0.6,
-          "max": 1.6,
-          "default": 1.0
+        "measured": {
+          "length": {
+            "min": 0.197,
+            "max": 0.394,
+            "default": 0.295,
+            "observed": {
+              "min": 0.282,
+              "median": 0.295,
+              "max": 0.303
+            }
+          },
+          "root_radius": {
+            "min": 0.018,
+            "max": 0.051,
+            "default": 0.03,
+            "observed": {
+              "min": 0.026,
+              "median": 0.03,
+              "max": 0.039
+            }
+          }
         },
-        "thickness": {
-          "min": 0.5,
-          "max": 1.8,
-          "default": 1.0
-        },
-        "hock_lift": {
-          "min": 0.0,
-          "max": 1.0,
-          "default": 0.6
+        "shape": {
+          "hock_lift": {
+            "min": 0.0,
+            "max": 1.0,
+            "default": 0.6,
+            "meaning": "how high the wrist/hock sits off the ground"
+          },
+          "dewclaw": {
+            "min": 0,
+            "max": 1,
+            "default": 0,
+            "meaning": "raised inner digit on the foreleg"
+          }
         }
       },
-      "size": {
-        "length_vs_body_length": {
-          "min": 0.282,
-          "median": 0.295,
-          "max": 0.303
-        },
-        "root_radius_m": {
-          "min": 0.02,
-          "median": 0.03,
-          "max": 0.035
-        },
-        "length_m": {
+      "size_m": {
+        "length": {
           "min": 0.22,
           "median": 0.27,
           "max": 0.33
+        },
+        "root_radius": {
+          "min": 0.02,
+          "median": 0.03,
+          "max": 0.035
         }
       },
       "attach_pos_normalized": [
@@ -366,6 +348,7 @@
         }
       ],
       "penetration": {
+        "default_fraction_of_root_radius": 0.77,
         "fraction_of_root_radius": {
           "min": 0.67,
           "median": 0.77,
@@ -390,9 +373,7 @@
         "canine.legs_hind_L",
         "feline.forelimb_L",
         "feline.hindlimb_L"
-      ],
-      "polyforge_equivalent": "limb (3 segments, reversed hock on hind legs) + foot_paw",
-      "status": "covered"
+      ]
     },
     {
       "id": "leg_plantigrade",
@@ -400,34 +381,49 @@
       "kind": "limb",
       "symmetry": "pair",
       "attach_to": "body",
-      "description": "Upright ape leg ending flat on the sole.",
+      "description": "Ape leg (hip ball, knee hinge, ankle) that stands on the whole sole.",
       "params": {
-        "length": {
-          "min": 0.6,
-          "max": 1.6,
-          "default": 1.0
+        "measured": {
+          "length": {
+            "min": 0.373,
+            "max": 0.693,
+            "default": 0.533,
+            "observed": {
+              "min": 0.533,
+              "median": 0.533,
+              "max": 0.533
+            }
+          },
+          "root_radius": {
+            "min": 0.055,
+            "max": 0.101,
+            "default": 0.078,
+            "observed": {
+              "min": 0.078,
+              "median": 0.078,
+              "max": 0.078
+            }
+          }
         },
-        "thickness": {
-          "min": 0.5,
-          "max": 1.8,
-          "default": 1.0
+        "shape": {
+          "knee_bend_deg": {
+            "min": 0,
+            "max": 60,
+            "default": 20,
+            "meaning": "resting knee flexion"
+          }
         }
       },
-      "size": {
-        "length_vs_body_length": {
-          "min": 0.533,
-          "median": 0.533,
-          "max": 0.533
-        },
-        "root_radius_m": {
-          "min": 0.07,
-          "median": 0.07,
-          "max": 0.07
-        },
-        "length_m": {
+      "size_m": {
+        "length": {
           "min": 0.48,
           "median": 0.48,
           "max": 0.48
+        },
+        "root_radius": {
+          "min": 0.07,
+          "median": 0.07,
+          "max": 0.07
         }
       },
       "attach_pos_normalized": [
@@ -476,6 +472,7 @@
         }
       ],
       "penetration": {
+        "default_fraction_of_root_radius": 0.57,
         "fraction_of_root_radius": {
           "min": 0.57,
           "median": 0.57,
@@ -495,9 +492,7 @@
       ],
       "sources": [
         "primate.leg_L"
-      ],
-      "polyforge_equivalent": "limb (2-3 segments)",
-      "status": "covered"
+      ]
     },
     {
       "id": "leg_sprawling",
@@ -505,39 +500,55 @@
       "kind": "limb",
       "symmetry": "pair",
       "attach_to": "body",
-      "description": "Reptile leg that leaves the body sideways and bends down at the elbow/knee.",
+      "description": "Reptile leg: upper segment nearly horizontal, elbow/knee out to the side, five clawed digits.",
       "params": {
-        "length": {
-          "min": 0.6,
-          "max": 1.6,
-          "default": 1.0
+        "measured": {
+          "length": {
+            "min": 0.1,
+            "max": 0.233,
+            "default": 0.161,
+            "observed": {
+              "min": 0.143,
+              "median": 0.161,
+              "max": 0.179
+            }
+          },
+          "root_radius": {
+            "min": 0.006,
+            "max": 0.017,
+            "default": 0.011,
+            "observed": {
+              "min": 0.009,
+              "median": 0.011,
+              "max": 0.013
+            }
+          }
         },
-        "thickness": {
-          "min": 0.5,
-          "max": 1.8,
-          "default": 1.0
-        },
-        "sprawl_deg": {
-          "min": 30,
-          "max": 90,
-          "default": 70
+        "shape": {
+          "sprawl_deg": {
+            "min": 30,
+            "max": 90,
+            "default": 70,
+            "meaning": "upper segment angle out from vertical"
+          },
+          "digits": {
+            "min": 3,
+            "max": 5,
+            "default": 5,
+            "meaning": "clawed digits"
+          }
         }
       },
-      "size": {
-        "length_vs_body_length": {
-          "min": 0.143,
-          "median": 0.161,
-          "max": 0.179
-        },
-        "root_radius_m": {
-          "min": 0.012,
-          "median": 0.015,
-          "max": 0.018
-        },
-        "length_m": {
+      "size_m": {
+        "length": {
           "min": 0.2,
           "median": 0.225,
           "max": 0.25
+        },
+        "root_radius": {
+          "min": 0.012,
+          "median": 0.015,
+          "max": 0.018
         }
       },
       "attach_pos_normalized": [
@@ -574,7 +585,7 @@
         },
         {
           "name": "wrist",
-          "type": "fixed",
+          "type": "hinge",
           "pivot_axes": [
             "x"
           ],
@@ -586,6 +597,7 @@
         }
       ],
       "penetration": {
+        "default_fraction_of_root_radius": 1.53,
         "fraction_of_root_radius": {
           "min": 1.39,
           "median": 1.53,
@@ -607,9 +619,7 @@
       "sources": [
         "lizard.leg_fore_L",
         "lizard.leg_hind_L"
-      ],
-      "polyforge_equivalent": "limb (2-3 segments) + foot_claw",
-      "status": "covered"
+      ]
     },
     {
       "id": "leg_jumping",
@@ -617,39 +627,49 @@
       "kind": "limb",
       "symmetry": "pair",
       "attach_to": "body",
-      "description": "Long folded hind leg (thigh, shank, long ankle) that rests in a Z and extends to jump.",
+      "description": "Long hind leg folded in a Z at rest (thigh, shank, elongated ankle) that extends to jump.",
       "params": {
-        "length": {
-          "min": 0.6,
-          "max": 1.8,
-          "default": 1.0
+        "measured": {
+          "length": {
+            "min": 0.595,
+            "max": 1.105,
+            "default": 0.85,
+            "observed": {
+              "min": 0.85,
+              "median": 0.85,
+              "max": 0.85
+            }
+          },
+          "root_radius": {
+            "min": 0.042,
+            "max": 0.078,
+            "default": 0.06,
+            "observed": {
+              "min": 0.06,
+              "median": 0.06,
+              "max": 0.06
+            }
+          }
         },
-        "thickness": {
-          "min": 0.5,
-          "max": 1.8,
-          "default": 1.0
-        },
-        "fold": {
-          "min": 0.0,
-          "max": 1.0,
-          "default": 0.8
+        "shape": {
+          "fold": {
+            "min": 0.0,
+            "max": 1.0,
+            "default": 0.8,
+            "meaning": "0 = extended, 1 = fully folded at rest"
+          }
         }
       },
-      "size": {
-        "length_vs_body_length": {
-          "min": 0.85,
-          "median": 0.85,
-          "max": 0.85
-        },
-        "root_radius_m": {
-          "min": 0.012,
-          "median": 0.012,
-          "max": 0.012
-        },
-        "length_m": {
+      "size_m": {
+        "length": {
           "min": 0.17,
           "median": 0.17,
           "max": 0.17
+        },
+        "root_radius": {
+          "min": 0.012,
+          "median": 0.012,
+          "max": 0.012
         }
       },
       "attach_pos_normalized": [
@@ -698,6 +718,7 @@
         }
       ],
       "penetration": {
+        "default_fraction_of_root_radius": 0.67,
         "fraction_of_root_radius": {
           "min": 0.67,
           "median": 0.67,
@@ -717,9 +738,7 @@
       ],
       "sources": [
         "frog.hind_leg_L"
-      ],
-      "polyforge_equivalent": "limb (3 segments, folded) + foot_webbed",
-      "status": "covered"
+      ]
     },
     {
       "id": "leg_bird",
@@ -727,39 +746,55 @@
       "kind": "limb",
       "symmetry": "pair",
       "attach_to": "body",
-      "description": "Bird leg: short feathered thigh, long bare tarsus, reversed ankle.",
+      "description": "Bird leg: feathered thigh hidden in the body, bare scaled tarsus, reversed ankle.",
       "params": {
-        "length": {
-          "min": 0.6,
-          "max": 1.6,
-          "default": 1.0
+        "measured": {
+          "length": {
+            "min": 0.262,
+            "max": 0.488,
+            "default": 0.375,
+            "observed": {
+              "min": 0.375,
+              "median": 0.375,
+              "max": 0.375
+            }
+          },
+          "root_radius": {
+            "min": 0.076,
+            "max": 0.142,
+            "default": 0.109,
+            "observed": {
+              "min": 0.109,
+              "median": 0.109,
+              "max": 0.109
+            }
+          }
         },
-        "thickness": {
-          "min": 0.5,
-          "max": 1.8,
-          "default": 1.0
-        },
-        "feathered": {
-          "min": 0.0,
-          "max": 1.0,
-          "default": 0.7
+        "shape": {
+          "feathered": {
+            "min": 0.0,
+            "max": 1.0,
+            "default": 0.7,
+            "meaning": "how far down the leg the feathers reach"
+          },
+          "scutes": {
+            "min": 0,
+            "max": 1,
+            "default": 1,
+            "meaning": "scaled tarsus"
+          }
         }
       },
-      "size": {
-        "length_vs_body_length": {
-          "min": 0.375,
-          "median": 0.375,
-          "max": 0.375
-        },
-        "root_radius_m": {
-          "min": 0.035,
-          "median": 0.035,
-          "max": 0.035
-        },
-        "length_m": {
+      "size_m": {
+        "length": {
           "min": 0.12,
           "median": 0.12,
           "max": 0.12
+        },
+        "root_radius": {
+          "min": 0.035,
+          "median": 0.035,
+          "max": 0.035
         }
       },
       "attach_pos_normalized": [
@@ -808,6 +843,7 @@
         }
       ],
       "penetration": {
+        "default_fraction_of_root_radius": 0.86,
         "fraction_of_root_radius": {
           "min": 0.86,
           "median": 0.86,
@@ -827,49 +863,63 @@
       ],
       "sources": [
         "raptor.leg_L"
-      ],
-      "polyforge_equivalent": "limb (3 segments) + foot_claw",
-      "status": "covered"
+      ]
     },
     {
-      "id": "foot_paw",
+      "id": "paw_padded",
       "category": "locomotion",
       "kind": "tip",
       "symmetry": "pair",
       "attach_to": "limb_end",
-      "description": "Padded paw with toe pads; claws optional.",
+      "description": "Paw with a central pad and four digital pads.",
       "params": {
-        "size": {
-          "min": 0.4,
-          "max": 3.0,
-          "default": 1.0
+        "measured": {
+          "length": {
+            "min": 0.027,
+            "max": 0.072,
+            "default": 0.05,
+            "observed": {
+              "min": 0.039,
+              "median": 0.05,
+              "max": 0.055
+            }
+          },
+          "root_radius": {
+            "min": 0.013,
+            "max": 0.026,
+            "default": 0.018,
+            "observed": {
+              "min": 0.018,
+              "median": 0.018,
+              "max": 0.02
+            }
+          }
         },
-        "toes": {
-          "min": 0.0,
-          "max": 1.5,
-          "default": 1.0
-        },
-        "claws": {
-          "min": 0.0,
-          "max": 1.5,
-          "default": 0.5
+        "shape": {
+          "toe_pads": {
+            "min": 3,
+            "max": 5,
+            "default": 4,
+            "meaning": "digital pads"
+          },
+          "spread": {
+            "min": 0.0,
+            "max": 1.0,
+            "default": 0.4,
+            "meaning": "toe splay"
+          }
         }
       },
-      "size": {
-        "length_vs_body_length": {
-          "min": 0.039,
-          "median": 0.05,
-          "max": 0.055
-        },
-        "root_radius_m": {
-          "min": 0.015,
-          "median": 0.02,
-          "max": 0.02
-        },
-        "length_m": {
+      "size_m": {
+        "length": {
           "min": 0.03,
           "median": 0.055,
           "max": 0.06
+        },
+        "root_radius": {
+          "min": 0.015,
+          "median": 0.02,
+          "max": 0.02
         }
       },
       "attach_pos_normalized": [
@@ -892,6 +942,7 @@
         }
       ],
       "penetration": {
+        "default_fraction_of_root_radius": 0.0,
         "fraction_of_root_radius": {
           "min": 0.0,
           "median": 0.0,
@@ -915,49 +966,63 @@
         "canine.paws_fore_L",
         "canine.paws_hind_L",
         "feline.paw_pads_L"
-      ],
-      "polyforge_equivalent": "foot_paw",
-      "status": "covered"
+      ]
     },
     {
-      "id": "foot_webbed",
+      "id": "foot_webbed_long",
       "category": "locomotion",
       "kind": "tip",
       "symmetry": "pair",
       "attach_to": "limb_end",
-      "description": "Long-toed foot with webbing between the toes.",
+      "description": "Long-toed hind foot with webbing between the toes.",
       "params": {
-        "size": {
-          "min": 0.4,
-          "max": 3.0,
-          "default": 1.0
+        "measured": {
+          "length": {
+            "min": 0.175,
+            "max": 0.325,
+            "default": 0.25,
+            "observed": {
+              "min": 0.25,
+              "median": 0.25,
+              "max": 0.25
+            }
+          },
+          "root_radius": {
+            "min": 0.028,
+            "max": 0.052,
+            "default": 0.04,
+            "observed": {
+              "min": 0.04,
+              "median": 0.04,
+              "max": 0.04
+            }
+          }
         },
-        "length": {
-          "min": 0.5,
-          "max": 2.0,
-          "default": 1.0
-        },
-        "web": {
-          "min": 0.0,
-          "max": 1.0,
-          "default": 0.8
+        "shape": {
+          "toes": {
+            "min": 4,
+            "max": 5,
+            "default": 5,
+            "meaning": "toes"
+          },
+          "web": {
+            "min": 0.0,
+            "max": 1.0,
+            "default": 0.8,
+            "meaning": "how far the web reaches toward the toe tips"
+          }
         }
       },
-      "size": {
-        "length_vs_body_length": {
-          "min": 0.25,
-          "median": 0.25,
-          "max": 0.25
-        },
-        "root_radius_m": {
-          "min": 0.008,
-          "median": 0.008,
-          "max": 0.008
-        },
-        "length_m": {
+      "size_m": {
+        "length": {
           "min": 0.05,
           "median": 0.05,
           "max": 0.05
+        },
+        "root_radius": {
+          "min": 0.008,
+          "median": 0.008,
+          "max": 0.008
         }
       },
       "attach_pos_normalized": [
@@ -990,6 +1055,7 @@
         }
       ],
       "penetration": {
+        "default_fraction_of_root_radius": 0.5,
         "fraction_of_root_radius": {
           "min": 0.5,
           "median": 0.5,
@@ -1009,9 +1075,7 @@
       ],
       "sources": [
         "frog.hind_foot_webbed_L"
-      ],
-      "polyforge_equivalent": "foot_webbed",
-      "status": "covered"
+      ]
     },
     {
       "id": "foot_grasping",
@@ -1019,39 +1083,55 @@
       "kind": "tip",
       "symmetry": "pair",
       "attach_to": "limb_end",
-      "description": "Ape foot with an opposable big toe; walks flat, can grip.",
+      "description": "Plantigrade ape foot with an opposable big toe.",
       "params": {
-        "size": {
-          "min": 0.4,
-          "max": 3.0,
-          "default": 1.0
+        "measured": {
+          "length": {
+            "min": 0.155,
+            "max": 0.289,
+            "default": 0.222,
+            "observed": {
+              "min": 0.222,
+              "median": 0.222,
+              "max": 0.222
+            }
+          },
+          "root_radius": {
+            "min": 0.023,
+            "max": 0.043,
+            "default": 0.033,
+            "observed": {
+              "min": 0.033,
+              "median": 0.033,
+              "max": 0.033
+            }
+          }
         },
-        "toe_spread": {
-          "min": 0.0,
-          "max": 1.0,
-          "default": 0.5
-        },
-        "curl": {
-          "min": 0.0,
-          "max": 1.0,
-          "default": 0.3
+        "shape": {
+          "hallux_angle_deg": {
+            "min": 10,
+            "max": 60,
+            "default": 35,
+            "meaning": "big-toe angle away from the other toes"
+          },
+          "curl": {
+            "min": 0.0,
+            "max": 1.0,
+            "default": 0.3,
+            "meaning": "toe flexion"
+          }
         }
       },
-      "size": {
-        "length_vs_body_length": {
-          "min": 0.222,
-          "median": 0.222,
-          "max": 0.222
-        },
-        "root_radius_m": {
-          "min": 0.03,
-          "median": 0.03,
-          "max": 0.03
-        },
-        "length_m": {
+      "size_m": {
+        "length": {
           "min": 0.2,
           "median": 0.2,
           "max": 0.2
+        },
+        "root_radius": {
+          "min": 0.03,
+          "median": 0.03,
+          "max": 0.03
         }
       },
       "attach_pos_normalized": [
@@ -1086,6 +1166,7 @@
         }
       ],
       "penetration": {
+        "default_fraction_of_root_radius": 0.4,
         "fraction_of_root_radius": {
           "min": 0.4,
           "median": 0.4,
@@ -1105,54 +1186,69 @@
       ],
       "sources": [
         "primate.foot_L"
-      ],
-      "polyforge_equivalent": null,
-      "status": "new"
+      ]
     },
     {
-      "id": "wing_feather",
+      "id": "wing_feathered",
       "category": "locomotion",
-      "kind": "surface",
+      "kind": "limb",
       "symmetry": "pair",
       "attach_to": "body",
-      "description": "Broad feathered wing with slotted primaries.",
+      "description": "Bird wing on a shoulder-elbow-wrist chain, with separate slotted primaries; folds along the body.",
       "params": {
-        "span": {
-          "min": 0.4,
-          "max": 4.0,
-          "default": 1.0
+        "measured": {
+          "length": {
+            "min": 0.875,
+            "max": 1.625,
+            "default": 1.25,
+            "observed": {
+              "min": 1.25,
+              "median": 1.25,
+              "max": 1.25
+            }
+          },
+          "root_radius": {
+            "min": 0.109,
+            "max": 0.203,
+            "default": 0.156,
+            "observed": {
+              "min": 0.156,
+              "median": 0.156,
+              "max": 0.156
+            }
+          }
         },
-        "chord": {
-          "min": 0.4,
-          "max": 2.5,
-          "default": 1.0
-        },
-        "slots": {
-          "min": 0.0,
-          "max": 1.0,
-          "default": 0.6
-        },
-        "fold": {
-          "min": 0.0,
-          "max": 1.0,
-          "default": 1.0
+        "shape": {
+          "primaries": {
+            "min": 6,
+            "max": 11,
+            "default": 10,
+            "meaning": "primary flight feathers"
+          },
+          "slots": {
+            "min": 0.0,
+            "max": 1.0,
+            "default": 0.6,
+            "meaning": "gap between primary tips"
+          },
+          "fold": {
+            "min": 0.0,
+            "max": 1.0,
+            "default": 1.0,
+            "meaning": "0 = spread, 1 = folded"
+          }
         }
       },
-      "size": {
-        "length_vs_body_length": {
-          "min": 1.25,
-          "median": 1.25,
-          "max": 1.25
-        },
-        "root_radius_m": {
-          "min": 0.05,
-          "median": 0.05,
-          "max": 0.05
-        },
-        "length_m": {
+      "size_m": {
+        "length": {
           "min": 0.4,
           "median": 0.4,
           "max": 0.4
+        },
+        "root_radius": {
+          "min": 0.05,
+          "median": 0.05,
+          "max": 0.05
         }
       },
       "attach_pos_normalized": [
@@ -1201,6 +1297,7 @@
         }
       ],
       "penetration": {
+        "default_fraction_of_root_radius": 0.6,
         "fraction_of_root_radius": {
           "min": 0.6,
           "median": 0.6,
@@ -1220,9 +1317,7 @@
       ],
       "sources": [
         "raptor.wing_L"
-      ],
-      "polyforge_equivalent": "wing_feather",
-      "status": "covered"
+      ]
     },
     {
       "id": "elytron",
@@ -1230,39 +1325,55 @@
       "kind": "surface",
       "symmetry": "pair",
       "attach_to": "body",
-      "description": "Hard domed wing case covering the abdomen; hinges up and out before flight.",
+      "description": "Hard domed wing case over the abdomen, meeting its twin on the midline; hinges up and out for flight.",
       "params": {
-        "length": {
-          "min": 0.4,
-          "max": 2.0,
-          "default": 1.0
+        "measured": {
+          "length": {
+            "min": 0.255,
+            "max": 0.473,
+            "default": 0.364,
+            "observed": {
+              "min": 0.364,
+              "median": 0.364,
+              "max": 0.364
+            }
+          },
+          "root_radius": {
+            "min": 0.101,
+            "max": 0.189,
+            "default": 0.145,
+            "observed": {
+              "min": 0.145,
+              "median": 0.145,
+              "max": 0.145
+            }
+          }
         },
-        "dome": {
-          "min": 0.2,
-          "max": 1.5,
-          "default": 0.8
-        },
-        "open_deg": {
-          "min": 0,
-          "max": 60,
-          "default": 0
+        "shape": {
+          "dome": {
+            "min": 0.2,
+            "max": 1.5,
+            "default": 0.8,
+            "meaning": "height of the dome"
+          },
+          "open_deg": {
+            "min": 0,
+            "max": 60,
+            "default": 0,
+            "meaning": "raised for flight"
+          }
         }
       },
-      "size": {
-        "length_vs_body_length": {
-          "min": 0.364,
-          "median": 0.364,
-          "max": 0.364
-        },
-        "root_radius_m": {
-          "min": 0.008,
-          "median": 0.008,
-          "max": 0.008
-        },
-        "length_m": {
+      "size_m": {
+        "length": {
           "min": 0.02,
           "median": 0.02,
           "max": 0.02
+        },
+        "root_radius": {
+          "min": 0.008,
+          "median": 0.008,
+          "max": 0.008
         }
       },
       "attach_pos_normalized": [
@@ -1285,6 +1396,7 @@
         }
       ],
       "penetration": {
+        "default_fraction_of_root_radius": 0.12,
         "fraction_of_root_radius": {
           "min": 0.12,
           "median": 0.12,
@@ -1304,9 +1416,7 @@
       ],
       "sources": [
         "beetle.elytron_L"
-      ],
-      "polyforge_equivalent": null,
-      "status": "new"
+      ]
     },
     {
       "id": "wing_membrane_insect",
@@ -1314,39 +1424,55 @@
       "kind": "surface",
       "symmetry": "pair",
       "attach_to": "body",
-      "description": "Thin veined flight wing that folds under the elytron.",
+      "description": "Thin veined flight wing folded under the elytron at rest.",
       "params": {
-        "span": {
-          "min": 0.4,
-          "max": 3.0,
-          "default": 1.0
+        "measured": {
+          "length": {
+            "min": 0.382,
+            "max": 0.709,
+            "default": 0.545,
+            "observed": {
+              "min": 0.545,
+              "median": 0.545,
+              "max": 0.545
+            }
+          },
+          "root_radius": {
+            "min": 0.038,
+            "max": 0.072,
+            "default": 0.055,
+            "observed": {
+              "min": 0.055,
+              "median": 0.055,
+              "max": 0.055
+            }
+          }
         },
-        "chord": {
-          "min": 0.4,
-          "max": 2.0,
-          "default": 1.0
-        },
-        "fold": {
-          "min": 0.0,
-          "max": 1.0,
-          "default": 1.0
+        "shape": {
+          "fold": {
+            "min": 0.0,
+            "max": 1.0,
+            "default": 1.0,
+            "meaning": "0 = spread, 1 = folded under the elytron"
+          },
+          "veins": {
+            "min": 0,
+            "max": 8,
+            "default": 4,
+            "meaning": "visible veins"
+          }
         }
       },
-      "size": {
-        "length_vs_body_length": {
-          "min": 0.545,
-          "median": 0.545,
-          "max": 0.545
-        },
-        "root_radius_m": {
-          "min": 0.003,
-          "median": 0.003,
-          "max": 0.003
-        },
-        "length_m": {
+      "size_m": {
+        "length": {
           "min": 0.03,
           "median": 0.03,
           "max": 0.03
+        },
+        "root_radius": {
+          "min": 0.003,
+          "median": 0.003,
+          "max": 0.003
         }
       },
       "attach_pos_normalized": [
@@ -1371,6 +1497,7 @@
         }
       ],
       "penetration": {
+        "default_fraction_of_root_radius": 0.67,
         "fraction_of_root_radius": {
           "min": 0.67,
           "median": 0.67,
@@ -1390,9 +1517,7 @@
       ],
       "sources": [
         "beetle.hindwing_L"
-      ],
-      "polyforge_equivalent": null,
-      "status": "new"
+      ]
     },
     {
       "id": "fin_paired",
@@ -1400,44 +1525,55 @@
       "kind": "surface",
       "symmetry": "pair",
       "attach_to": "body",
-      "description": "Swept lateral fin on the lower flank (pectoral, pelvic).",
+      "description": "Swept fin on the lower flank (pectoral, pelvic); wing-like for lift and steering.",
       "params": {
-        "span": {
-          "min": 0.3,
-          "max": 3.0,
-          "default": 1.0
+        "measured": {
+          "length": {
+            "min": 0.052,
+            "max": 0.17,
+            "default": 0.103,
+            "observed": {
+              "min": 0.075,
+              "median": 0.103,
+              "max": 0.131
+            }
+          },
+          "root_radius": {
+            "min": 0.008,
+            "max": 0.029,
+            "default": 0.017,
+            "observed": {
+              "min": 0.012,
+              "median": 0.017,
+              "max": 0.022
+            }
+          }
         },
-        "chord": {
-          "min": 0.3,
-          "max": 2.5,
-          "default": 1.0
-        },
-        "sweep": {
-          "min": -1.0,
-          "max": 1.0,
-          "default": 0.5
-        },
-        "droop_deg": {
-          "min": 0,
-          "max": 45,
-          "default": 20
+        "shape": {
+          "sweep": {
+            "min": -1.0,
+            "max": 1.0,
+            "default": 0.5,
+            "meaning": "trailing-edge sweep"
+          },
+          "droop_deg": {
+            "min": 0,
+            "max": 45,
+            "default": 20,
+            "meaning": "angle below horizontal"
+          }
         }
       },
-      "size": {
-        "length_vs_body_length": {
-          "min": 0.075,
-          "median": 0.103,
-          "max": 0.131
-        },
-        "root_radius_m": {
-          "min": 0.02,
-          "median": 0.028,
-          "max": 0.035
-        },
-        "length_m": {
+      "size_m": {
+        "length": {
           "min": 0.12,
           "median": 0.165,
           "max": 0.21
+        },
+        "root_radius": {
+          "min": 0.02,
+          "median": 0.028,
+          "max": 0.035
         }
       },
       "attach_pos_normalized": [
@@ -1462,6 +1598,7 @@
         }
       ],
       "penetration": {
+        "default_fraction_of_root_radius": 0.585,
         "fraction_of_root_radius": {
           "min": 0.57,
           "median": 0.585,
@@ -1483,9 +1620,7 @@
       "sources": [
         "shark.pectoral_fin_L",
         "shark.pelvic_fin_L"
-      ],
-      "polyforge_equivalent": null,
-      "status": "new"
+      ]
     },
     {
       "id": "fin_median",
@@ -1493,39 +1628,55 @@
       "kind": "surface",
       "symmetry": "centre",
       "attach_to": "body",
-      "description": "Upright fin on the midline (dorsal, anal).",
+      "description": "Upright fin on the midline: tall first dorsal, small second dorsal, ventral anal fin.",
       "params": {
-        "height": {
-          "min": 0.3,
-          "max": 3.0,
-          "default": 1.0
+        "measured": {
+          "length": {
+            "min": 0.022,
+            "max": 0.098,
+            "default": 0.037,
+            "observed": {
+              "min": 0.031,
+              "median": 0.037,
+              "max": 0.075
+            }
+          },
+          "root_radius": {
+            "min": 0.005,
+            "max": 0.021,
+            "default": 0.007,
+            "observed": {
+              "min": 0.007,
+              "median": 0.007,
+              "max": 0.016
+            }
+          }
         },
-        "length": {
-          "min": 0.3,
-          "max": 3.0,
-          "default": 1.0
-        },
-        "sweep": {
-          "min": -1.0,
-          "max": 1.0,
-          "default": 0.6
+        "shape": {
+          "sweep": {
+            "min": -1.0,
+            "max": 1.0,
+            "default": 0.6,
+            "meaning": "back-sweep of the tip"
+          },
+          "ventral": {
+            "min": 0,
+            "max": 1,
+            "default": 0,
+            "meaning": "hangs below the body (anal fin)"
+          }
         }
       },
-      "size": {
-        "length_vs_body_length": {
-          "min": 0.031,
-          "median": 0.037,
-          "max": 0.075
-        },
-        "root_radius_m": {
-          "min": 0.012,
-          "median": 0.012,
-          "max": 0.025
-        },
-        "length_m": {
+      "size_m": {
+        "length": {
           "min": 0.05,
           "median": 0.06,
           "max": 0.12
+        },
+        "root_radius": {
+          "min": 0.012,
+          "median": 0.012,
+          "max": 0.025
         }
       },
       "attach_pos_normalized": [
@@ -1546,6 +1697,7 @@
         }
       ],
       "penetration": {
+        "default_fraction_of_root_radius": 0.5,
         "fraction_of_root_radius": {
           "min": 0.5,
           "median": 0.5,
@@ -1568,9 +1720,7 @@
         "shark.dorsal_fin_1",
         "shark.dorsal_fin_2",
         "shark.anal_fin"
-      ],
-      "polyforge_equivalent": "fin_dorsal",
-      "status": "covered"
+      ]
     },
     {
       "id": "tail_fin_heterocercal",
@@ -1578,39 +1728,55 @@
       "kind": "tip",
       "symmetry": "centre",
       "attach_to": "limb_end",
-      "description": "Crescent tail fin with a longer upper lobe, on the end of the tail.",
+      "description": "Crescent tail fin with a longer upper lobe that carries the spine.",
       "params": {
-        "size": {
-          "min": 0.3,
-          "max": 3.0,
-          "default": 1.0
+        "measured": {
+          "length": {
+            "min": 0.14,
+            "max": 0.26,
+            "default": 0.2,
+            "observed": {
+              "min": 0.2,
+              "median": 0.2,
+              "max": 0.2
+            }
+          },
+          "root_radius": {
+            "min": 0.017,
+            "max": 0.033,
+            "default": 0.025,
+            "observed": {
+              "min": 0.025,
+              "median": 0.025,
+              "max": 0.025
+            }
+          }
         },
-        "upper_lobe": {
-          "min": 0.5,
-          "max": 2.0,
-          "default": 1.4
-        },
-        "fork": {
-          "min": 0.0,
-          "max": 1.0,
-          "default": 0.6
+        "shape": {
+          "upper_lobe": {
+            "min": 1.0,
+            "max": 2.5,
+            "default": 1.6,
+            "meaning": "upper lobe length relative to the lower"
+          },
+          "fork": {
+            "min": 0.0,
+            "max": 1.0,
+            "default": 0.6,
+            "meaning": "depth of the notch"
+          }
         }
       },
-      "size": {
-        "length_vs_body_length": {
-          "min": 0.2,
-          "median": 0.2,
-          "max": 0.2
-        },
-        "root_radius_m": {
-          "min": 0.04,
-          "median": 0.04,
-          "max": 0.04
-        },
-        "length_m": {
+      "size_m": {
+        "length": {
           "min": 0.32,
           "median": 0.32,
           "max": 0.32
+        },
+        "root_radius": {
+          "min": 0.04,
+          "median": 0.04,
+          "max": 0.04
         }
       },
       "attach_pos_normalized": [
@@ -1633,6 +1799,7 @@
         }
       ],
       "penetration": {
+        "default_fraction_of_root_radius": 0.75,
         "fraction_of_root_radius": {
           "min": 0.75,
           "median": 0.75,
@@ -1652,49 +1819,63 @@
       ],
       "sources": [
         "shark.caudal_fin"
-      ],
-      "polyforge_equivalent": null,
-      "status": "new"
+      ]
     },
     {
-      "id": "tail_fan",
+      "id": "tail_feather_fan",
       "category": "locomotion",
       "kind": "surface",
       "symmetry": "centre",
       "attach_to": "body",
-      "description": "Fan of tail feathers used for steering.",
+      "description": "Fan of tail feathers that spreads for steering and braking.",
       "params": {
-        "size": {
-          "min": 0.3,
-          "max": 3.0,
-          "default": 1.0
+        "measured": {
+          "length": {
+            "min": 0.438,
+            "max": 0.812,
+            "default": 0.625,
+            "observed": {
+              "min": 0.625,
+              "median": 0.625,
+              "max": 0.625
+            }
+          },
+          "root_radius": {
+            "min": 0.066,
+            "max": 0.122,
+            "default": 0.094,
+            "observed": {
+              "min": 0.094,
+              "median": 0.094,
+              "max": 0.094
+            }
+          }
         },
-        "spread": {
-          "min": 0.3,
-          "max": 1.5,
-          "default": 0.8
-        },
-        "lift": {
-          "min": -1.0,
-          "max": 1.0,
-          "default": 0.3
+        "shape": {
+          "feathers": {
+            "min": 8,
+            "max": 14,
+            "default": 12,
+            "meaning": "tail feathers"
+          },
+          "spread_deg": {
+            "min": 10,
+            "max": 120,
+            "default": 40,
+            "meaning": "fan opening"
+          }
         }
       },
-      "size": {
-        "length_vs_body_length": {
-          "min": 0.625,
-          "median": 0.625,
-          "max": 0.625
-        },
-        "root_radius_m": {
-          "min": 0.03,
-          "median": 0.03,
-          "max": 0.03
-        },
-        "length_m": {
+      "size_m": {
+        "length": {
           "min": 0.2,
           "median": 0.2,
           "max": 0.2
+        },
+        "root_radius": {
+          "min": 0.03,
+          "median": 0.03,
+          "max": 0.03
         }
       },
       "attach_pos_normalized": [
@@ -1718,6 +1899,7 @@
         }
       ],
       "penetration": {
+        "default_fraction_of_root_radius": 0.67,
         "fraction_of_root_radius": {
           "min": 0.67,
           "median": 0.67,
@@ -1736,10 +1918,8 @@
         "raptor"
       ],
       "sources": [
-        "raptor.tail_fan"
-      ],
-      "polyforge_equivalent": "tail_fan",
-      "status": "covered"
+        "raptor.tail_feathers"
+      ]
     },
     {
       "id": "tail_flexible",
@@ -1747,44 +1927,61 @@
       "kind": "limb",
       "symmetry": "centre",
       "attach_to": "body",
-      "description": "Tapering flexible tail of many vertebrae (balance, steering).",
+      "description": "Tapering tail of many vertebrae used for balance and steering; bushy in foxes, slim in cats, long and compressed in iguanas.",
       "params": {
-        "length": {
-          "min": 0.3,
-          "max": 2.5,
-          "default": 1.0
+        "measured": {
+          "length": {
+            "min": 0.255,
+            "max": 0.789,
+            "default": 0.395,
+            "observed": {
+              "min": 0.364,
+              "median": 0.395,
+              "max": 0.607
+            }
+          },
+          "root_radius": {
+            "min": 0.014,
+            "max": 0.047,
+            "default": 0.021,
+            "observed": {
+              "min": 0.02,
+              "median": 0.021,
+              "max": 0.036
+            }
+          }
         },
-        "thickness": {
-          "min": 0.4,
-          "max": 2.0,
-          "default": 1.0
-        },
-        "taper": {
-          "min": 0.1,
-          "max": 1.0,
-          "default": 0.6
-        },
-        "brush": {
-          "min": 0.0,
-          "max": 1.5,
-          "default": 0.0
+        "shape": {
+          "taper": {
+            "min": 0.1,
+            "max": 1.0,
+            "default": 0.6,
+            "meaning": "tip radius relative to the root"
+          },
+          "brush": {
+            "min": 0.0,
+            "max": 1.0,
+            "default": 0.0,
+            "meaning": "fur volume (fox brush)"
+          },
+          "compress": {
+            "min": 0.0,
+            "max": 1.0,
+            "default": 0.0,
+            "meaning": "side-to-side flattening (iguana)"
+          }
         }
       },
-      "size": {
-        "length_vs_body_length": {
-          "min": 0.364,
-          "median": 0.395,
-          "max": 0.607
-        },
-        "root_radius_m": {
-          "min": 0.015,
-          "median": 0.03,
-          "max": 0.04
-        },
-        "length_m": {
+      "size_m": {
+        "length": {
           "min": 0.3,
           "median": 0.4,
           "max": 0.85
+        },
+        "root_radius": {
+          "min": 0.015,
+          "median": 0.03,
+          "max": 0.04
         }
       },
       "attach_pos_normalized": [
@@ -1833,6 +2030,7 @@
         }
       ],
       "penetration": {
+        "default_fraction_of_root_radius": 0.75,
         "fraction_of_root_radius": {
           "min": 0.67,
           "median": 0.75,
@@ -1857,9 +2055,7 @@
         "canine.tail",
         "feline.tail",
         "lizard.tail"
-      ],
-      "polyforge_equivalent": "limb motion=tail (+ tail_tuft for a brush)",
-      "status": "covered"
+      ]
     },
     {
       "id": "siphon",
@@ -1867,39 +2063,49 @@
       "kind": "surface",
       "symmetry": "centre",
       "attach_to": "body",
-      "description": "Short muscular jet funnel beside the head; aims water for jet propulsion.",
+      "description": "Short muscular funnel beside the head that aims a water jet.",
       "params": {
-        "length": {
-          "min": 0.4,
-          "max": 2.5,
-          "default": 1.0
+        "measured": {
+          "length": {
+            "min": 0.029,
+            "max": 0.055,
+            "default": 0.042,
+            "observed": {
+              "min": 0.042,
+              "median": 0.042,
+              "max": 0.042
+            }
+          },
+          "root_radius": {
+            "min": 0.008,
+            "max": 0.014,
+            "default": 0.011,
+            "observed": {
+              "min": 0.011,
+              "median": 0.011,
+              "max": 0.011
+            }
+          }
         },
-        "radius": {
-          "min": 0.4,
-          "max": 2.0,
-          "default": 1.0
-        },
-        "aim_deg": {
-          "min": 0,
-          "max": 90,
-          "default": 30
+        "shape": {
+          "aim_deg": {
+            "min": 0,
+            "max": 90,
+            "default": 30,
+            "meaning": "jet direction"
+          }
         }
       },
-      "size": {
-        "length_vs_body_length": {
-          "min": 0.042,
-          "median": 0.042,
-          "max": 0.042
-        },
-        "root_radius_m": {
-          "min": 0.008,
-          "median": 0.008,
-          "max": 0.008
-        },
-        "length_m": {
+      "size_m": {
+        "length": {
           "min": 0.03,
           "median": 0.03,
           "max": 0.03
+        },
+        "root_radius": {
+          "min": 0.008,
+          "median": 0.008,
+          "max": 0.008
         }
       },
       "attach_pos_normalized": [
@@ -1924,6 +2130,7 @@
         }
       ],
       "penetration": {
+        "default_fraction_of_root_radius": 1.0,
         "fraction_of_root_radius": {
           "min": 1.0,
           "median": 1.0,
@@ -1943,9 +2150,7 @@
       ],
       "sources": [
         "octopus.funnel"
-      ],
-      "polyforge_equivalent": null,
-      "status": "new"
+      ]
     },
     {
       "id": "web_interbrachial",
@@ -1955,32 +2160,53 @@
       "attach_to": "body",
       "description": "Skin web spanning the bases of the arms; spreads like an umbrella.",
       "params": {
-        "depth": {
-          "min": 0.1,
-          "max": 1.0,
-          "default": 0.3
+        "measured": {
+          "length": {
+            "min": 0.039,
+            "max": 0.073,
+            "default": 0.056,
+            "observed": {
+              "min": 0.056,
+              "median": 0.056,
+              "max": 0.056
+            }
+          },
+          "root_radius": {
+            "min": 0.002,
+            "max": 0.004,
+            "default": 0.003,
+            "observed": {
+              "min": 0.003,
+              "median": 0.003,
+              "max": 0.003
+            }
+          }
         },
-        "scallop": {
-          "min": 0.0,
-          "max": 1.0,
-          "default": 0.5
+        "shape": {
+          "depth": {
+            "min": 0.1,
+            "max": 1.0,
+            "default": 0.3,
+            "meaning": "how far along the arms the web reaches"
+          },
+          "scallop": {
+            "min": 0.0,
+            "max": 1.0,
+            "default": 0.5,
+            "meaning": "edge curvature between arms"
+          }
         }
       },
-      "size": {
-        "length_vs_body_length": {
-          "min": 0.056,
-          "median": 0.056,
-          "max": 0.056
-        },
-        "root_radius_m": {
-          "min": 0.002,
-          "median": 0.002,
-          "max": 0.002
-        },
-        "length_m": {
+      "size_m": {
+        "length": {
           "min": 0.04,
           "median": 0.04,
           "max": 0.04
+        },
+        "root_radius": {
+          "min": 0.002,
+          "median": 0.002,
+          "max": 0.002
         }
       },
       "attach_pos_normalized": [
@@ -2001,6 +2227,7 @@
         }
       ],
       "penetration": {
+        "default_fraction_of_root_radius": 1.0,
         "fraction_of_root_radius": {
           "min": 1.0,
           "median": 1.0,
@@ -2020,54 +2247,69 @@
       ],
       "sources": [
         "octopus.web"
-      ],
-      "polyforge_equivalent": null,
-      "status": "new"
+      ]
     },
     {
       "id": "bell_radial",
       "category": "locomotion",
       "kind": "core",
       "symmetry": "radial",
-      "attach_to": "spine",
-      "description": "Radially symmetric swimming bell (dome with a scalloped rim) that pulses to swim.",
+      "attach_to": "body_plan",
+      "description": "Radially symmetric swimming bell (shallow dome, scalloped rim) that pulses to swim.",
       "params": {
-        "diameter": {
-          "min": 0.4,
-          "max": 3.0,
-          "default": 1.0
+        "measured": {
+          "length": {
+            "min": 2.198,
+            "max": 4.082,
+            "default": 3.14,
+            "observed": {
+              "min": 3.14,
+              "median": 3.14,
+              "max": 3.14
+            }
+          },
+          "root_radius": {
+            "min": 0.35,
+            "max": 0.65,
+            "default": 0.5,
+            "observed": {
+              "min": 0.5,
+              "median": 0.5,
+              "max": 0.5
+            }
+          }
         },
-        "dome": {
-          "min": 0.2,
-          "max": 1.5,
-          "default": 0.45
-        },
-        "lobes": {
-          "min": 4,
-          "max": 16,
-          "default": 8
-        },
-        "rim_thickness": {
-          "min": 0.2,
-          "max": 1.5,
-          "default": 0.5
+        "shape": {
+          "dome": {
+            "min": 0.2,
+            "max": 1.5,
+            "default": 0.45,
+            "meaning": "height relative to the radius"
+          },
+          "lobes": {
+            "min": 4,
+            "max": 16,
+            "default": 8,
+            "meaning": "rim lobes"
+          },
+          "translucent": {
+            "min": 0,
+            "max": 1,
+            "default": 1,
+            "meaning": "gelatinous see-through tissue"
+          }
         }
       },
-      "size": {
-        "length_vs_body_length": {
-          "min": 3.14,
-          "median": 3.14,
-          "max": 3.14
-        },
-        "root_radius_m": {
-          "min": 0.125,
-          "median": 0.125,
-          "max": 0.125
-        },
-        "length_m": {
+      "size_m": {
+        "length": {
           "min": 0.785,
           "median": 0.785,
           "max": 0.785
+        },
+        "root_radius": {
+          "min": 0.125,
+          "median": 0.125,
+          "max": 0.125
         }
       },
       "attach_pos_normalized": [
@@ -2092,6 +2334,7 @@
         }
       ],
       "penetration": {
+        "default_fraction_of_root_radius": 0.04,
         "fraction_of_root_radius": {
           "min": 0.04,
           "median": 0.04,
@@ -2111,54 +2354,69 @@
       ],
       "sources": [
         "jellyfish.coronal_muscle_bell"
-      ],
-      "polyforge_equivalent": null,
-      "status": "new"
+      ]
     },
     {
-      "id": "eye_round",
+      "id": "eye_camera",
       "category": "sensory",
       "kind": "surface",
       "symmetry": "pair",
       "attach_to": "body",
-      "description": "Camera eye with a round pupil under lids.",
+      "description": "Camera eye with a round pupil; set forward (ape, hawk) or to the side (frog, shark, octopus).",
       "params": {
-        "size": {
-          "min": 0.4,
-          "max": 3.0,
-          "default": 1.0
+        "measured": {
+          "length": {
+            "min": 0.008,
+            "max": 0.101,
+            "default": 0.022,
+            "observed": {
+              "min": 0.012,
+              "median": 0.022,
+              "max": 0.078
+            }
+          },
+          "root_radius": {
+            "min": 0.004,
+            "max": 0.051,
+            "default": 0.011,
+            "observed": {
+              "min": 0.006,
+              "median": 0.011,
+              "max": 0.039
+            }
+          }
         },
-        "pupil": {
-          "min": 0.3,
-          "max": 0.9,
-          "default": 0.55
-        },
-        "lid": {
-          "min": 0.0,
-          "max": 1.0,
-          "default": 0.3
-        },
-        "bulge": {
-          "min": 0.0,
-          "max": 1.0,
-          "default": 0.3
+        "shape": {
+          "facing_deg": {
+            "min": 0,
+            "max": 90,
+            "default": 45,
+            "meaning": "0 = forward, 90 = sideways"
+          },
+          "bulge": {
+            "min": 0.0,
+            "max": 1.0,
+            "default": 0.3,
+            "meaning": "how far it protrudes (frog high)"
+          },
+          "sclerotic_ring": {
+            "min": 0,
+            "max": 1,
+            "default": 0,
+            "meaning": "bony ring around the eye (birds)"
+          }
         }
       },
-      "size": {
-        "length_vs_body_length": {
-          "min": 0.012,
-          "median": 0.022,
-          "max": 0.078
-        },
-        "root_radius_m": {
-          "min": 0.006,
-          "median": 0.009,
-          "max": 0.013
-        },
-        "length_m": {
+      "size_m": {
+        "length": {
           "min": 0.012,
           "median": 0.02,
           "max": 0.025
+        },
+        "root_radius": {
+          "min": 0.006,
+          "median": 0.009,
+          "max": 0.013
         }
       },
       "attach_pos_normalized": [
@@ -2183,6 +2441,7 @@
         }
       ],
       "penetration": {
+        "default_fraction_of_root_radius": 0.465,
         "fraction_of_root_radius": {
           "min": 0.33,
           "median": 0.465,
@@ -2213,49 +2472,63 @@
         "raptor.eye_L",
         "shark.eye_L",
         "lizard.eye_L"
-      ],
-      "polyforge_equivalent": "eye_round",
-      "status": "covered"
+      ]
     },
     {
-      "id": "eye_slit",
+      "id": "eye_slit_pupil",
       "category": "sensory",
       "kind": "surface",
       "symmetry": "pair",
       "attach_to": "body",
-      "description": "Eye with a vertical slit pupil (cats, foxes).",
+      "description": "Forward-facing eye with a vertical slit pupil (cats, foxes).",
       "params": {
-        "size": {
-          "min": 0.4,
-          "max": 3.0,
-          "default": 1.0
+        "measured": {
+          "length": {
+            "min": 0.014,
+            "max": 0.034,
+            "default": 0.023,
+            "observed": {
+              "min": 0.02,
+              "median": 0.023,
+              "max": 0.026
+            }
+          },
+          "root_radius": {
+            "min": 0.008,
+            "max": 0.017,
+            "default": 0.012,
+            "observed": {
+              "min": 0.011,
+              "median": 0.012,
+              "max": 0.013
+            }
+          }
         },
-        "slit": {
-          "min": 0.1,
-          "max": 0.6,
-          "default": 0.25
-        },
-        "lid": {
-          "min": 0.0,
-          "max": 1.0,
-          "default": 0.4
+        "shape": {
+          "slit": {
+            "min": 0.1,
+            "max": 1.0,
+            "default": 0.3,
+            "meaning": "pupil width, 1 = round"
+          },
+          "facing_deg": {
+            "min": 0,
+            "max": 45,
+            "default": 15,
+            "meaning": "0 = forward"
+          }
         }
       },
-      "size": {
-        "length_vs_body_length": {
-          "min": 0.02,
-          "median": 0.023,
-          "max": 0.026
-        },
-        "root_radius_m": {
-          "min": 0.01,
-          "median": 0.011,
-          "max": 0.012
-        },
-        "length_m": {
+      "size_m": {
+        "length": {
           "min": 0.02,
           "median": 0.021,
           "max": 0.022
+        },
+        "root_radius": {
+          "min": 0.01,
+          "median": 0.011,
+          "max": 0.012
         }
       },
       "attach_pos_normalized": [
@@ -2279,6 +2552,7 @@
         }
       ],
       "penetration": {
+        "default_fraction_of_root_radius": 0.75,
         "fraction_of_root_radius": {
           "min": 0.5,
           "median": 0.75,
@@ -2301,9 +2575,7 @@
       "sources": [
         "feline.eye_L",
         "canine.eyes_L"
-      ],
-      "polyforge_equivalent": "eye_slit",
-      "status": "covered"
+      ]
     },
     {
       "id": "eye_compound",
@@ -2311,31 +2583,46 @@
       "kind": "surface",
       "symmetry": "pair",
       "attach_to": "body",
-      "description": "Bulging faceted compound eye on the head side.",
+      "description": "Faceted compound eye bulging from the side of the head.",
       "params": {
-        "size": {
-          "min": 0.4,
-          "max": 3.0,
-          "default": 1.0
+        "measured": {
+          "length": {
+            "min": 0.038,
+            "max": 0.072,
+            "default": 0.055,
+            "observed": {
+              "min": 0.055,
+              "median": 0.055,
+              "max": 0.055
+            }
+          },
+          "root_radius": {
+            "min": 0.038,
+            "max": 0.072,
+            "default": 0.055,
+            "observed": {
+              "min": 0.055,
+              "median": 0.055,
+              "max": 0.055
+            }
+          }
         },
-        "bulge": {
-          "min": 0.4,
-          "max": 1.2,
-          "default": 0.8
+        "shape": {
+          "bulge": {
+            "min": 0.2,
+            "max": 1.0,
+            "default": 0.5,
+            "meaning": "protrusion"
+          }
         }
       },
-      "size": {
-        "length_vs_body_length": {
-          "min": 0.055,
-          "median": 0.055,
-          "max": 0.055
-        },
-        "root_radius_m": {
+      "size_m": {
+        "length": {
           "min": 0.003,
           "median": 0.003,
           "max": 0.003
         },
-        "length_m": {
+        "root_radius": {
           "min": 0.003,
           "median": 0.003,
           "max": 0.003
@@ -2359,6 +2646,7 @@
         }
       ],
       "penetration": {
+        "default_fraction_of_root_radius": 0.5,
         "fraction_of_root_radius": {
           "min": 0.5,
           "median": 0.5,
@@ -2378,9 +2666,7 @@
       ],
       "sources": [
         "beetle.eye_L"
-      ],
-      "polyforge_equivalent": "eye_bug",
-      "status": "covered"
+      ]
     },
     {
       "id": "eye_simple",
@@ -2388,34 +2674,59 @@
       "kind": "surface",
       "symmetry": "any",
       "attach_to": "body",
-      "description": "Small bead eye or light-sensing spot (ocelli, rhopalia, parietal eye).",
+      "description": "Small bead eye or light-sensing spot: scorpion median and lateral eyes, jellyfish rhopalia, lizard parietal eye.",
       "params": {
-        "size": {
-          "min": 0.2,
-          "max": 2.0,
-          "default": 1.0
+        "measured": {
+          "length": {
+            "min": 0.001,
+            "max": 0.026,
+            "default": 0.008,
+            "observed": {
+              "min": 0.002,
+              "median": 0.008,
+              "max": 0.02
+            }
+          },
+          "root_radius": {
+            "min": 0.001,
+            "max": 0.016,
+            "default": 0.006,
+            "observed": {
+              "min": 0.001,
+              "median": 0.006,
+              "max": 0.012
+            }
+          },
+          "count": {
+            "min": 5,
+            "max": 10,
+            "default": 8,
+            "observed": {
+              "min": 8,
+              "median": 8.0,
+              "max": 8
+            }
+          }
         },
-        "count": {
-          "min": 1,
-          "max": 8,
-          "default": 2
+        "shape": {
+          "cluster": {
+            "min": 1,
+            "max": 5,
+            "default": 2,
+            "meaning": "eyes per group"
+          }
         }
       },
-      "size": {
-        "length_vs_body_length": {
-          "min": 0.002,
-          "median": 0.008,
-          "max": 0.02
-        },
-        "root_radius_m": {
-          "min": 0.0,
-          "median": 0.001,
-          "max": 0.003
-        },
-        "length_m": {
+      "size_m": {
+        "length": {
           "min": 0.001,
           "median": 0.002,
           "max": 0.005
+        },
+        "root_radius": {
+          "min": 0.0,
+          "median": 0.001,
+          "max": 0.003
         }
       },
       "attach_pos_normalized": [
@@ -2440,6 +2751,7 @@
         }
       ],
       "penetration": {
+        "default_fraction_of_root_radius": 0.585,
         "fraction_of_root_radius": {
           "min": 0.5,
           "median": 0.585,
@@ -2465,49 +2777,63 @@
         "scorpion.eyes_lateral",
         "jellyfish.rhopalia",
         "lizard.parietal_eye"
-      ],
-      "polyforge_equivalent": "eye_bead",
-      "status": "covered"
+      ]
     },
     {
-      "id": "eye_stalk",
+      "id": "eye_stalked",
       "category": "sensory",
       "kind": "surface",
       "symmetry": "pair",
       "attach_to": "body",
-      "description": "Eye on a movable stalk that folds into a socket.",
+      "description": "Eye on a movable stalk that folds down into a socket.",
       "params": {
-        "size": {
-          "min": 0.4,
-          "max": 3.0,
-          "default": 1.0
+        "measured": {
+          "length": {
+            "min": 0.042,
+            "max": 0.078,
+            "default": 0.06,
+            "observed": {
+              "min": 0.06,
+              "median": 0.06,
+              "max": 0.06
+            }
+          },
+          "root_radius": {
+            "min": 0.01,
+            "max": 0.019,
+            "default": 0.015,
+            "observed": {
+              "min": 0.015,
+              "median": 0.015,
+              "max": 0.015
+            }
+          }
         },
-        "height": {
-          "min": 0.1,
-          "max": 0.8,
-          "default": 0.3
-        },
-        "lean": {
-          "min": -0.6,
-          "max": 0.6,
-          "default": 0.2
+        "shape": {
+          "stalk": {
+            "min": 0.2,
+            "max": 1.0,
+            "default": 0.5,
+            "meaning": "stalk length relative to the eye"
+          },
+          "retract": {
+            "min": 0.0,
+            "max": 1.0,
+            "default": 0.0,
+            "meaning": "folded into the socket"
+          }
         }
       },
-      "size": {
-        "length_vs_body_length": {
-          "min": 0.06,
-          "median": 0.06,
-          "max": 0.06
-        },
-        "root_radius_m": {
-          "min": 0.002,
-          "median": 0.002,
-          "max": 0.002
-        },
-        "length_m": {
+      "size_m": {
+        "length": {
           "min": 0.006,
           "median": 0.006,
           "max": 0.006
+        },
+        "root_radius": {
+          "min": 0.002,
+          "median": 0.002,
+          "max": 0.002
         }
       },
       "attach_pos_normalized": [
@@ -2532,6 +2858,7 @@
         }
       ],
       "penetration": {
+        "default_fraction_of_root_radius": 2.0,
         "fraction_of_root_radius": {
           "min": 2.0,
           "median": 2.0,
@@ -2551,9 +2878,7 @@
       ],
       "sources": [
         "crab.eye_stalk_L"
-      ],
-      "polyforge_equivalent": "eye_stalk",
-      "status": "covered"
+      ]
     },
     {
       "id": "antenna_segmented",
@@ -2561,44 +2886,61 @@
       "kind": "surface",
       "symmetry": "pair",
       "attach_to": "body",
-      "description": "Jointed feeler; elbowed or with a lamellate club (beetles), or a long whip (crabs).",
+      "description": "Jointed feeler: elbowed with a lamellate club (beetle) or a long whip (crab).",
       "params": {
-        "length": {
-          "min": 0.3,
-          "max": 3.0,
-          "default": 1.0
+        "measured": {
+          "length": {
+            "min": 0.028,
+            "max": 0.237,
+            "default": 0.12,
+            "observed": {
+              "min": 0.04,
+              "median": 0.12,
+              "max": 0.182
+            }
+          },
+          "root_radius": {
+            "min": 0.005,
+            "max": 0.01,
+            "default": 0.008,
+            "observed": {
+              "min": 0.007,
+              "median": 0.008,
+              "max": 0.008
+            }
+          }
         },
-        "elbow": {
-          "min": 0.0,
-          "max": 1.0,
-          "default": 0.5
-        },
-        "club": {
-          "min": 0.0,
-          "max": 2.0,
-          "default": 0.6
-        },
-        "curve": {
-          "min": -1.0,
-          "max": 1.0,
-          "default": -0.3
+        "shape": {
+          "segments": {
+            "min": 3,
+            "max": 12,
+            "default": 10,
+            "meaning": "segments"
+          },
+          "elbow_deg": {
+            "min": 0,
+            "max": 120,
+            "default": 0,
+            "meaning": "bend after the first segment (geniculate)"
+          },
+          "club": {
+            "min": 0.0,
+            "max": 1.0,
+            "default": 0.0,
+            "meaning": "fan-shaped club at the tip"
+          }
         }
       },
-      "size": {
-        "length_vs_body_length": {
-          "min": 0.04,
-          "median": 0.12,
-          "max": 0.182
-        },
-        "root_radius_m": {
-          "min": 0.0,
-          "median": 0.001,
-          "max": 0.001
-        },
-        "length_m": {
+      "size_m": {
+        "length": {
           "min": 0.004,
           "median": 0.01,
           "max": 0.012
+        },
+        "root_radius": {
+          "min": 0.0,
+          "median": 0.001,
+          "max": 0.001
         }
       },
       "attach_pos_normalized": [
@@ -2637,6 +2979,7 @@
         }
       ],
       "penetration": {
+        "default_fraction_of_root_radius": 2.5,
         "fraction_of_root_radius": {
           "min": 0.75,
           "median": 2.5,
@@ -2660,9 +3003,7 @@
         "beetle.antenna_L",
         "crab.antennule_L",
         "crab.antenna_L"
-      ],
-      "polyforge_equivalent": "antenna (no elbow or club)",
-      "status": "partial"
+      ]
     },
     {
       "id": "ear_pinna",
@@ -2670,44 +3011,61 @@
       "kind": "surface",
       "symmetry": "pair",
       "attach_to": "body",
-      "description": "External ear flap: pointed (fox, cat) or round (ape).",
+      "description": "External ear flap: tall pointed cone (fox, cat) or flat rounded ear close to the head (ape).",
       "params": {
-        "size": {
-          "min": 0.4,
-          "max": 3.0,
-          "default": 1.0
+        "measured": {
+          "length": {
+            "min": 0.038,
+            "max": 0.087,
+            "default": 0.059,
+            "observed": {
+              "min": 0.055,
+              "median": 0.059,
+              "max": 0.067
+            }
+          },
+          "root_radius": {
+            "min": 0.01,
+            "max": 0.029,
+            "default": 0.016,
+            "observed": {
+              "min": 0.014,
+              "median": 0.016,
+              "max": 0.022
+            }
+          }
         },
-        "point": {
-          "min": 0.0,
-          "max": 1.0,
-          "default": 0.7
-        },
-        "cup": {
-          "min": 0.0,
-          "max": 1.0,
-          "default": 0.6
-        },
-        "droop": {
-          "min": 0.0,
-          "max": 1.0,
-          "default": 0.0
+        "shape": {
+          "point": {
+            "min": 0.0,
+            "max": 1.0,
+            "default": 0.7,
+            "meaning": "0 = round, 1 = pointed"
+          },
+          "cup": {
+            "min": 0.0,
+            "max": 1.0,
+            "default": 0.6,
+            "meaning": "depth of the opening"
+          },
+          "flat": {
+            "min": 0.0,
+            "max": 1.0,
+            "default": 0.0,
+            "meaning": "lies against the head (ape)"
+          }
         }
       },
-      "size": {
-        "length_vs_body_length": {
-          "min": 0.055,
-          "median": 0.059,
-          "max": 0.067
-        },
-        "root_radius_m": {
-          "min": 0.012,
-          "median": 0.015,
-          "max": 0.02
-        },
-        "length_m": {
+      "size_m": {
+        "length": {
           "min": 0.045,
           "median": 0.06,
           "max": 0.06
+        },
+        "root_radius": {
+          "min": 0.012,
+          "median": 0.015,
+          "max": 0.02
         }
       },
       "attach_pos_normalized": [
@@ -2732,6 +3090,7 @@
         }
       ],
       "penetration": {
+        "default_fraction_of_root_radius": 0.67,
         "fraction_of_root_radius": {
           "min": 0.2,
           "median": 0.67,
@@ -2756,9 +3115,7 @@
         "canine.ears_L",
         "feline.ear_L",
         "primate.ear_L"
-      ],
-      "polyforge_equivalent": "ear_leaf",
-      "status": "covered"
+      ]
     },
     {
       "id": "tympanum",
@@ -2766,39 +3123,55 @@
       "kind": "surface",
       "symmetry": "pair",
       "attach_to": "body",
-      "description": "Flush round eardrum disc with a raised rim behind the eye (frogs, lizards).",
+      "description": "Flush round eardrum behind the eye with a slight rim (frogs, iguanas).",
       "params": {
-        "size": {
-          "min": 0.3,
-          "max": 3.0,
-          "default": 1.0
+        "measured": {
+          "length": {
+            "min": 0.003,
+            "max": 0.13,
+            "default": 0.052,
+            "observed": {
+              "min": 0.004,
+              "median": 0.052,
+              "max": 0.1
+            }
+          },
+          "root_radius": {
+            "min": 0.002,
+            "max": 0.065,
+            "default": 0.026,
+            "observed": {
+              "min": 0.003,
+              "median": 0.026,
+              "max": 0.05
+            }
+          }
         },
-        "rim": {
-          "min": 0.0,
-          "max": 1.0,
-          "default": 0.4
-        },
-        "recess": {
-          "min": 0.0,
-          "max": 1.0,
-          "default": 0.2
+        "shape": {
+          "rim": {
+            "min": 0.0,
+            "max": 1.0,
+            "default": 0.4,
+            "meaning": "raised ring"
+          },
+          "recess": {
+            "min": 0.0,
+            "max": 1.0,
+            "default": 0.2,
+            "meaning": "sunk below the skin"
+          }
         }
       },
-      "size": {
-        "length_vs_body_length": {
-          "min": 0.004,
-          "median": 0.052,
-          "max": 0.1
-        },
-        "root_radius_m": {
-          "min": 0.004,
-          "median": 0.007,
-          "max": 0.01
-        },
-        "length_m": {
+      "size_m": {
+        "length": {
           "min": 0.005,
           "median": 0.013,
           "max": 0.02
+        },
+        "root_radius": {
+          "min": 0.004,
+          "median": 0.007,
+          "max": 0.01
         }
       },
       "attach_pos_normalized": [
@@ -2819,6 +3192,7 @@
         }
       ],
       "penetration": {
+        "default_fraction_of_root_radius": 0.45,
         "fraction_of_root_radius": {
           "min": 0.4,
           "median": 0.45,
@@ -2841,9 +3215,7 @@
       "sources": [
         "frog.tympanum_L",
         "lizard.ear_opening_L"
-      ],
-      "polyforge_equivalent": null,
-      "status": "new"
+      ]
     },
     {
       "id": "nose_pad",
@@ -2851,34 +3223,49 @@
       "kind": "surface",
       "symmetry": "centre",
       "attach_to": "body",
-      "description": "Moist nose pad (rhinarium) or ape nose with nostrils.",
+      "description": "Moist nose pad with comma-shaped nostrils (fox, cat) or a flat ape nose.",
       "params": {
-        "size": {
-          "min": 0.4,
-          "max": 3.0,
-          "default": 1.0
+        "measured": {
+          "length": {
+            "min": 0.006,
+            "max": 0.029,
+            "default": 0.013,
+            "observed": {
+              "min": 0.009,
+              "median": 0.013,
+              "max": 0.022
+            }
+          },
+          "root_radius": {
+            "min": 0.008,
+            "max": 0.017,
+            "default": 0.013,
+            "observed": {
+              "min": 0.011,
+              "median": 0.013,
+              "max": 0.013
+            }
+          }
         },
-        "nostrils": {
-          "min": 0.0,
-          "max": 1.5,
-          "default": 1.0
+        "shape": {
+          "projection": {
+            "min": 0.0,
+            "max": 1.0,
+            "default": 0.5,
+            "meaning": "how far it stands out"
+          }
         }
       },
-      "size": {
-        "length_vs_body_length": {
-          "min": 0.009,
-          "median": 0.013,
-          "max": 0.022
-        },
-        "root_radius_m": {
-          "min": 0.01,
-          "median": 0.012,
-          "max": 0.012
-        },
-        "length_m": {
+      "size_m": {
+        "length": {
           "min": 0.01,
           "median": 0.01,
           "max": 0.02
+        },
+        "root_radius": {
+          "min": 0.01,
+          "median": 0.012,
+          "max": 0.012
         }
       },
       "attach_pos_normalized": [
@@ -2899,6 +3286,7 @@
         }
       ],
       "penetration": {
+        "default_fraction_of_root_radius": 0.5,
         "fraction_of_root_radius": {
           "min": 0.33,
           "median": 0.5,
@@ -2923,9 +3311,7 @@
         "canine.nose",
         "feline.nose",
         "primate.nose"
-      ],
-      "polyforge_equivalent": "nose_button",
-      "status": "covered"
+      ]
     },
     {
       "id": "nostril_slit",
@@ -2933,34 +3319,49 @@
       "kind": "surface",
       "symmetry": "pair",
       "attach_to": "body",
-      "description": "Small slit nostril on the underside of the snout (fish).",
+      "description": "Flush slit nostril with a skin flap under the snout (sharks).",
       "params": {
-        "size": {
-          "min": 0.3,
-          "max": 2.0,
-          "default": 1.0
+        "measured": {
+          "length": {
+            "min": 0.008,
+            "max": 0.016,
+            "default": 0.012,
+            "observed": {
+              "min": 0.012,
+              "median": 0.012,
+              "max": 0.012
+            }
+          },
+          "root_radius": {
+            "min": 0.004,
+            "max": 0.008,
+            "default": 0.006,
+            "observed": {
+              "min": 0.006,
+              "median": 0.006,
+              "max": 0.006
+            }
+          }
         },
-        "flap": {
-          "min": 0.0,
-          "max": 1.0,
-          "default": 0.5
+        "shape": {
+          "flap": {
+            "min": 0.0,
+            "max": 1.0,
+            "default": 0.5,
+            "meaning": "flap over the opening"
+          }
         }
       },
-      "size": {
-        "length_vs_body_length": {
-          "min": 0.012,
-          "median": 0.012,
-          "max": 0.012
-        },
-        "root_radius_m": {
-          "min": 0.01,
-          "median": 0.01,
-          "max": 0.01
-        },
-        "length_m": {
+      "size_m": {
+        "length": {
           "min": 0.02,
           "median": 0.02,
           "max": 0.02
+        },
+        "root_radius": {
+          "min": 0.01,
+          "median": 0.01,
+          "max": 0.01
         }
       },
       "attach_pos_normalized": [
@@ -2981,6 +3382,7 @@
         }
       ],
       "penetration": {
+        "default_fraction_of_root_radius": 0.4,
         "fraction_of_root_radius": {
           "min": 0.4,
           "median": 0.4,
@@ -3000,9 +3402,7 @@
       ],
       "sources": [
         "shark.nostril_L"
-      ],
-      "polyforge_equivalent": null,
-      "status": "new"
+      ]
     },
     {
       "id": "whiskers",
@@ -3010,44 +3410,61 @@
       "kind": "surface",
       "symmetry": "pair",
       "attach_to": "body",
-      "description": "Fan of long vibrissae from a whisker pad on the muzzle.",
+      "description": "Fan of long stiff vibrissae from a whisker pad beside the nose.",
       "params": {
-        "length": {
-          "min": 0.3,
-          "max": 3.0,
-          "default": 1.0
+        "measured": {
+          "length": {
+            "min": 0.045,
+            "max": 0.086,
+            "default": 0.065,
+            "observed": {
+              "min": 0.064,
+              "median": 0.065,
+              "max": 0.066
+            }
+          },
+          "root_radius": {
+            "min": 0.001,
+            "max": 0.004,
+            "default": 0.002,
+            "observed": {
+              "min": 0.002,
+              "median": 0.002,
+              "max": 0.003
+            }
+          }
         },
-        "count": {
-          "min": 3,
-          "max": 12,
-          "default": 6
-        },
-        "spread_deg": {
-          "min": 10,
-          "max": 60,
-          "default": 35
-        },
-        "droop": {
-          "min": -1.0,
-          "max": 1.0,
-          "default": 0.2
+        "shape": {
+          "count": {
+            "min": 3,
+            "max": 12,
+            "default": 6,
+            "meaning": "whiskers per side"
+          },
+          "spread_deg": {
+            "min": 10,
+            "max": 60,
+            "default": 35,
+            "meaning": "fan angle"
+          },
+          "droop": {
+            "min": -1.0,
+            "max": 1.0,
+            "default": 0.2,
+            "meaning": "curve down at the tips"
+          }
         }
       },
-      "size": {
-        "length_vs_body_length": {
-          "min": 0.064,
-          "median": 0.065,
-          "max": 0.066
-        },
-        "root_radius_m": {
-          "min": 0.002,
-          "median": 0.002,
-          "max": 0.002
-        },
-        "length_m": {
+      "size_m": {
+        "length": {
           "min": 0.05,
           "median": 0.06,
           "max": 0.07
+        },
+        "root_radius": {
+          "min": 0.002,
+          "median": 0.002,
+          "max": 0.002
         }
       },
       "attach_pos_normalized": [
@@ -3072,6 +3489,7 @@
         }
       ],
       "penetration": {
+        "default_fraction_of_root_radius": 1.25,
         "fraction_of_root_radius": {
           "min": 1.0,
           "median": 1.25,
@@ -3094,9 +3512,7 @@
       "sources": [
         "canine.vibrissae_L",
         "feline.whiskers_L"
-      ],
-      "polyforge_equivalent": null,
-      "status": "new"
+      ]
     },
     {
       "id": "pectines",
@@ -3104,39 +3520,55 @@
       "kind": "surface",
       "symmetry": "pair",
       "attach_to": "body",
-      "description": "Comb-shaped ground-sensing organs under the body.",
+      "description": "Comb-shaped ground-sensing organ under the body, teeth pointing back.",
       "params": {
-        "length": {
-          "min": 0.4,
-          "max": 2.5,
-          "default": 1.0
+        "measured": {
+          "length": {
+            "min": 0.032,
+            "max": 0.06,
+            "default": 0.046,
+            "observed": {
+              "min": 0.046,
+              "median": 0.046,
+              "max": 0.046
+            }
+          },
+          "root_radius": {
+            "min": 0.006,
+            "max": 0.012,
+            "default": 0.009,
+            "observed": {
+              "min": 0.009,
+              "median": 0.009,
+              "max": 0.009
+            }
+          }
         },
-        "teeth": {
-          "min": 6,
-          "max": 30,
-          "default": 16
-        },
-        "splay_deg": {
-          "min": 0,
-          "max": 45,
-          "default": 20
+        "shape": {
+          "teeth": {
+            "min": 6,
+            "max": 30,
+            "default": 16,
+            "meaning": "comb teeth"
+          },
+          "splay_deg": {
+            "min": 0,
+            "max": 45,
+            "default": 20,
+            "meaning": "angle out from the midline"
+          }
         }
       },
-      "size": {
-        "length_vs_body_length": {
-          "min": 0.046,
-          "median": 0.046,
-          "max": 0.046
-        },
-        "root_radius_m": {
-          "min": 0.001,
-          "median": 0.001,
-          "max": 0.001
-        },
-        "length_m": {
+      "size_m": {
+        "length": {
           "min": 0.003,
           "median": 0.003,
           "max": 0.003
+        },
+        "root_radius": {
+          "min": 0.001,
+          "median": 0.001,
+          "max": 0.001
         }
       },
       "attach_pos_normalized": [
@@ -3157,6 +3589,7 @@
         }
       ],
       "penetration": {
+        "default_fraction_of_root_radius": 1.3,
         "fraction_of_root_radius": {
           "min": 1.3,
           "median": 1.3,
@@ -3176,9 +3609,7 @@
       ],
       "sources": [
         "scorpion.pectines_L"
-      ],
-      "polyforge_equivalent": null,
-      "status": "new"
+      ]
     },
     {
       "id": "jaws_toothed",
@@ -3186,44 +3617,61 @@
       "kind": "surface",
       "symmetry": "centre",
       "attach_to": "body",
-      "description": "Upper jaw plus a hinged lower jaw with teeth.",
+      "description": "Upper jaw and hinged lower jaw with teeth: carnassials (fox, cat), serrated rows (shark, iguana), large canines (ape).",
       "params": {
-        "length": {
-          "min": 0.4,
-          "max": 2.5,
-          "default": 1.0
+        "measured": {
+          "length": {
+            "min": 0.031,
+            "max": 0.118,
+            "default": 0.051,
+            "observed": {
+              "min": 0.044,
+              "median": 0.051,
+              "max": 0.091
+            }
+          },
+          "root_radius": {
+            "min": 0.008,
+            "max": 0.043,
+            "default": 0.016,
+            "observed": {
+              "min": 0.011,
+              "median": 0.016,
+              "max": 0.033
+            }
+          }
         },
-        "width": {
-          "min": 0.5,
-          "max": 2.0,
-          "default": 1.0
-        },
-        "teeth": {
-          "min": 0.0,
-          "max": 1.5,
-          "default": 1.0
-        },
-        "gape_deg": {
-          "min": 0,
-          "max": 60,
-          "default": 35
+        "shape": {
+          "teeth": {
+            "min": 0.0,
+            "max": 1.0,
+            "default": 0.6,
+            "meaning": "tooth size"
+          },
+          "tooth_rows": {
+            "min": 1,
+            "max": 5,
+            "default": 1,
+            "meaning": "replacement rows visible (shark)"
+          },
+          "underslung": {
+            "min": 0,
+            "max": 1,
+            "default": 0,
+            "meaning": "mouth under the snout (shark)"
+          }
         }
       },
-      "size": {
-        "length_vs_body_length": {
-          "min": 0.044,
-          "median": 0.051,
-          "max": 0.091
-        },
-        "root_radius_m": {
-          "min": 0.012,
-          "median": 0.018,
-          "max": 0.03
-        },
-        "length_m": {
+      "size_m": {
+        "length": {
           "min": 0.04,
           "median": 0.07,
           "max": 0.1
+        },
+        "root_radius": {
+          "min": 0.012,
+          "median": 0.018,
+          "max": 0.03
         }
       },
       "attach_pos_normalized": [
@@ -3246,6 +3694,7 @@
         }
       ],
       "penetration": {
+        "default_fraction_of_root_radius": 0.585,
         "fraction_of_root_radius": {
           "min": 0.33,
           "median": 0.585,
@@ -3272,12 +3721,10 @@
         "canine.jaws",
         "feline.jaws",
         "lizard.jaws",
-        "primate.mouth_jaws",
+        "primate.jaws",
         "shark.upper_jaw",
         "shark.lower_jaw"
-      ],
-      "polyforge_equivalent": "mouth_jaws",
-      "status": "covered"
+      ]
     },
     {
       "id": "muzzle",
@@ -3285,39 +3732,49 @@
       "kind": "surface",
       "symmetry": "centre",
       "attach_to": "body",
-      "description": "Projecting mammal muzzle carrying the nose pad and jaws.",
+      "description": "Long tapering mammal muzzle carrying the nose pad and jaws.",
       "params": {
-        "length": {
-          "min": 0.3,
-          "max": 2.5,
-          "default": 1.0
+        "measured": {
+          "length": {
+            "min": 0.121,
+            "max": 0.225,
+            "default": 0.173,
+            "observed": {
+              "min": 0.173,
+              "median": 0.173,
+              "max": 0.173
+            }
+          },
+          "root_radius": {
+            "min": 0.022,
+            "max": 0.042,
+            "default": 0.032,
+            "observed": {
+              "min": 0.032,
+              "median": 0.032,
+              "max": 0.032
+            }
+          }
         },
-        "width": {
-          "min": 0.5,
-          "max": 2.2,
-          "default": 1.0
-        },
-        "taper": {
-          "min": 0.0,
-          "max": 1.0,
-          "default": 0.6
+        "shape": {
+          "taper": {
+            "min": 0.0,
+            "max": 1.0,
+            "default": 0.6,
+            "meaning": "narrowing toward the nose"
+          }
         }
       },
-      "size": {
-        "length_vs_body_length": {
-          "min": 0.173,
-          "median": 0.173,
-          "max": 0.173
-        },
-        "root_radius_m": {
-          "min": 0.035,
-          "median": 0.035,
-          "max": 0.035
-        },
-        "length_m": {
+      "size_m": {
+        "length": {
           "min": 0.19,
           "median": 0.19,
           "max": 0.19
+        },
+        "root_radius": {
+          "min": 0.035,
+          "median": 0.035,
+          "max": 0.035
         }
       },
       "attach_pos_normalized": [
@@ -3342,6 +3799,7 @@
         }
       ],
       "penetration": {
+        "default_fraction_of_root_radius": 0.86,
         "fraction_of_root_radius": {
           "min": 0.86,
           "median": 0.86,
@@ -3361,9 +3819,7 @@
       ],
       "sources": [
         "canine.head_muzzle"
-      ],
-      "polyforge_equivalent": "mouth_snout",
-      "status": "covered"
+      ]
     },
     {
       "id": "mouth_wide",
@@ -3371,39 +3827,49 @@
       "kind": "surface",
       "symmetry": "centre",
       "attach_to": "body",
-      "description": "Very wide lipless gape spanning the head (frogs).",
+      "description": "Very wide lipless gape spanning the head (frog).",
       "params": {
-        "width": {
-          "min": 0.4,
-          "max": 3.0,
-          "default": 1.0
+        "measured": {
+          "length": {
+            "min": 0.158,
+            "max": 0.293,
+            "default": 0.225,
+            "observed": {
+              "min": 0.225,
+              "median": 0.225,
+              "max": 0.225
+            }
+          },
+          "root_radius": {
+            "min": 0.07,
+            "max": 0.13,
+            "default": 0.1,
+            "observed": {
+              "min": 0.1,
+              "median": 0.1,
+              "max": 0.1
+            }
+          }
         },
-        "curve": {
-          "min": -1.0,
-          "max": 1.0,
-          "default": 0.2
-        },
-        "gape_deg": {
-          "min": 0,
-          "max": 45,
-          "default": 30
+        "shape": {
+          "curve": {
+            "min": -1.0,
+            "max": 1.0,
+            "default": 0.2,
+            "meaning": "upturn at the corners"
+          }
         }
       },
-      "size": {
-        "length_vs_body_length": {
-          "min": 0.225,
-          "median": 0.225,
-          "max": 0.225
-        },
-        "root_radius_m": {
-          "min": 0.02,
-          "median": 0.02,
-          "max": 0.02
-        },
-        "length_m": {
+      "size_m": {
+        "length": {
           "min": 0.045,
           "median": 0.045,
           "max": 0.045
+        },
+        "root_radius": {
+          "min": 0.02,
+          "median": 0.02,
+          "max": 0.02
         }
       },
       "attach_pos_normalized": [
@@ -3426,6 +3892,7 @@
         }
       ],
       "penetration": {
+        "default_fraction_of_root_radius": 0.05,
         "fraction_of_root_radius": {
           "min": 0.05,
           "median": 0.05,
@@ -3445,9 +3912,7 @@
       ],
       "sources": [
         "frog.mouth"
-      ],
-      "polyforge_equivalent": "mouth_smile",
-      "status": "covered"
+      ]
     },
     {
       "id": "beak_hooked",
@@ -3455,39 +3920,61 @@
       "kind": "surface",
       "symmetry": "centre",
       "attach_to": "body",
-      "description": "Hooked tearing beak (raptors) or parrot-like beak hidden among arms (octopus).",
+      "description": "Hooked tearing beak with a cere (hawk) or a parrot-like beak hidden among the arms (octopus).",
       "params": {
-        "length": {
-          "min": 0.3,
-          "max": 3.0,
-          "default": 1.0
+        "measured": {
+          "length": {
+            "min": 0.015,
+            "max": 0.122,
+            "default": 0.057,
+            "observed": {
+              "min": 0.021,
+              "median": 0.057,
+              "max": 0.094
+            }
+          },
+          "root_radius": {
+            "min": 0.004,
+            "max": 0.048,
+            "default": 0.022,
+            "observed": {
+              "min": 0.006,
+              "median": 0.022,
+              "max": 0.037
+            }
+          }
         },
-        "width": {
-          "min": 0.5,
-          "max": 2.0,
-          "default": 1.0
-        },
-        "hook": {
-          "min": 0.0,
-          "max": 1.0,
-          "default": 0.8
+        "shape": {
+          "hook": {
+            "min": 0.0,
+            "max": 1.0,
+            "default": 0.8,
+            "meaning": "downward hook of the tip"
+          },
+          "cere": {
+            "min": 0,
+            "max": 1,
+            "default": 1,
+            "meaning": "fleshy band at the base"
+          },
+          "tomial_tooth": {
+            "min": 0,
+            "max": 1,
+            "default": 1,
+            "meaning": "notch on the cutting edge"
+          }
         }
       },
-      "size": {
-        "length_vs_body_length": {
-          "min": 0.021,
-          "median": 0.057,
-          "max": 0.094
-        },
-        "root_radius_m": {
-          "min": 0.004,
-          "median": 0.008,
-          "max": 0.012
-        },
-        "length_m": {
+      "size_m": {
+        "length": {
           "min": 0.015,
           "median": 0.022,
           "max": 0.03
+        },
+        "root_radius": {
+          "min": 0.004,
+          "median": 0.008,
+          "max": 0.012
         }
       },
       "attach_pos_normalized": [
@@ -3498,7 +3985,7 @@
       "joints": [
         {
           "name": "skull fixed (cere / upper mandible)",
-          "type": "fixed",
+          "type": "hinge",
           "pivot_axes": [
             "x"
           ],
@@ -3522,6 +4009,7 @@
         }
       ],
       "penetration": {
+        "default_fraction_of_root_radius": 0.915,
         "fraction_of_root_radius": {
           "min": 0.83,
           "median": 0.915,
@@ -3544,9 +4032,7 @@
       "sources": [
         "raptor.beak",
         "octopus.beak"
-      ],
-      "polyforge_equivalent": "mouth_beak",
-      "status": "covered"
+      ]
     },
     {
       "id": "mandibles",
@@ -3554,44 +4040,61 @@
       "kind": "surface",
       "symmetry": "pair",
       "attach_to": "body",
-      "description": "Pincer-like jaws that close sideways; from small chelicerae to huge stag-beetle antlers.",
+      "description": "Jaws that close sideways: small pincer chelicerae (scorpion) to huge branched stag-beetle mandibles.",
       "params": {
-        "length": {
-          "min": 0.4,
-          "max": 4.0,
-          "default": 1.0
+        "measured": {
+          "length": {
+            "min": 0.043,
+            "max": 0.473,
+            "default": 0.213,
+            "observed": {
+              "min": 0.062,
+              "median": 0.213,
+              "max": 0.364
+            }
+          },
+          "root_radius": {
+            "min": 0.013,
+            "max": 0.072,
+            "default": 0.037,
+            "observed": {
+              "min": 0.018,
+              "median": 0.037,
+              "max": 0.055
+            }
+          }
         },
-        "curl": {
-          "min": 0.0,
-          "max": 1.5,
-          "default": 0.7
-        },
-        "tines": {
-          "min": 0,
-          "max": 3,
-          "default": 1
-        },
-        "spread": {
-          "min": 0.5,
-          "max": 2.0,
-          "default": 1.0
+        "shape": {
+          "curl": {
+            "min": 0.0,
+            "max": 1.5,
+            "default": 0.7,
+            "meaning": "inward curve"
+          },
+          "tines": {
+            "min": 0,
+            "max": 3,
+            "default": 1,
+            "meaning": "inner branches"
+          },
+          "chelate": {
+            "min": 0,
+            "max": 1,
+            "default": 0,
+            "meaning": "ends in a tiny pincer (chelicera)"
+          }
         }
       },
-      "size": {
-        "length_vs_body_length": {
-          "min": 0.062,
-          "median": 0.213,
-          "max": 0.364
-        },
-        "root_radius_m": {
-          "min": 0.001,
-          "median": 0.002,
-          "max": 0.003
-        },
-        "length_m": {
+      "size_m": {
+        "length": {
           "min": 0.004,
           "median": 0.012,
           "max": 0.02
+        },
+        "root_radius": {
+          "min": 0.001,
+          "median": 0.002,
+          "max": 0.003
         }
       },
       "attach_pos_normalized": [
@@ -3626,6 +4129,7 @@
         }
       ],
       "penetration": {
+        "default_fraction_of_root_radius": 0.915,
         "fraction_of_root_radius": {
           "min": 0.83,
           "median": 0.915,
@@ -3648,9 +4152,7 @@
       "sources": [
         "beetle.mandible_L",
         "scorpion.chelicera_L"
-      ],
-      "polyforge_equivalent": "mouth_mandibles (range too short for stag beetles)",
-      "status": "partial"
+      ]
     },
     {
       "id": "mouth_palps",
@@ -3658,34 +4160,65 @@
       "kind": "surface",
       "symmetry": "pair",
       "attach_to": "body",
-      "description": "Short jointed mouth feelers / mouth plates that handle food.",
+      "description": "Short jointed mouth feelers or plates that handle food (beetle palps, crab maxillipeds).",
       "params": {
-        "length": {
-          "min": 0.3,
-          "max": 2.0,
-          "default": 1.0
+        "measured": {
+          "length": {
+            "min": 0.025,
+            "max": 0.13,
+            "default": 0.068,
+            "observed": {
+              "min": 0.036,
+              "median": 0.068,
+              "max": 0.1
+            }
+          },
+          "root_radius": {
+            "min": 0.008,
+            "max": 0.065,
+            "default": 0.03,
+            "observed": {
+              "min": 0.011,
+              "median": 0.03,
+              "max": 0.05
+            }
+          },
+          "count": {
+            "min": 2,
+            "max": 4,
+            "default": 3,
+            "observed": {
+              "min": 3,
+              "median": 3.0,
+              "max": 3
+            }
+          }
         },
-        "segments": {
-          "min": 2,
-          "max": 4,
-          "default": 3
+        "shape": {
+          "segments": {
+            "min": 2,
+            "max": 4,
+            "default": 3,
+            "meaning": "segments"
+          },
+          "plate": {
+            "min": 0.0,
+            "max": 1.0,
+            "default": 0.0,
+            "meaning": "flat lid-like plate (crab)"
+          }
         }
       },
-      "size": {
-        "length_vs_body_length": {
-          "min": 0.036,
-          "median": 0.068,
-          "max": 0.1
-        },
-        "root_radius_m": {
-          "min": 0.001,
-          "median": 0.003,
-          "max": 0.005
-        },
-        "length_m": {
+      "size_m": {
+        "length": {
           "min": 0.002,
           "median": 0.006,
           "max": 0.01
+        },
+        "root_radius": {
+          "min": 0.001,
+          "median": 0.003,
+          "max": 0.005
         }
       },
       "attach_pos_normalized": [
@@ -3696,7 +4229,7 @@
       "joints": [
         {
           "name": "palp base",
-          "type": "ball",
+          "type": "hinge",
           "pivot_axes": [
             "x",
             "y",
@@ -3710,6 +4243,7 @@
         }
       ],
       "penetration": {
+        "default_fraction_of_root_radius": 0.935,
         "fraction_of_root_radius": {
           "min": 0.67,
           "median": 0.935,
@@ -3732,9 +4266,7 @@
       "sources": [
         "beetle.palp_L",
         "crab.maxilliped_3"
-      ],
-      "polyforge_equivalent": null,
-      "status": "new"
+      ]
     },
     {
       "id": "tongue",
@@ -3742,44 +4274,61 @@
       "kind": "surface",
       "symmetry": "centre",
       "attach_to": "body",
-      "description": "Projectile sticky tongue (frog) or flicking tongue (lizard), kept inside the mouth at rest.",
+      "description": "Projectile sticky tongue fixed at the front of the jaw (frog) or forked flicking tongue (iguana); inside the mouth at rest.",
       "params": {
-        "length": {
-          "min": 0.3,
-          "max": 3.0,
-          "default": 1.0
+        "measured": {
+          "length": {
+            "min": 0.025,
+            "max": 0.195,
+            "default": 0.093,
+            "observed": {
+              "min": 0.036,
+              "median": 0.093,
+              "max": 0.15
+            }
+          },
+          "root_radius": {
+            "min": 0.002,
+            "max": 0.026,
+            "default": 0.011,
+            "observed": {
+              "min": 0.003,
+              "median": 0.011,
+              "max": 0.02
+            }
+          }
         },
-        "fork": {
-          "min": 0.0,
-          "max": 1.0,
-          "default": 0.0
-        },
-        "tip_pad": {
-          "min": 0.0,
-          "max": 1.0,
-          "default": 0.5
-        },
-        "extend": {
-          "min": 0.0,
-          "max": 1.0,
-          "default": 0.0
+        "shape": {
+          "fork": {
+            "min": 0.0,
+            "max": 1.0,
+            "default": 0.0,
+            "meaning": "split tip"
+          },
+          "tip_pad": {
+            "min": 0.0,
+            "max": 1.0,
+            "default": 0.5,
+            "meaning": "sticky pad"
+          },
+          "extend": {
+            "min": 0.0,
+            "max": 1.0,
+            "default": 0.0,
+            "meaning": "0 = at rest, 1 = fully out"
+          }
         }
       },
-      "size": {
-        "length_vs_body_length": {
-          "min": 0.036,
-          "median": 0.093,
-          "max": 0.15
-        },
-        "root_radius_m": {
-          "min": 0.004,
-          "median": 0.004,
-          "max": 0.004
-        },
-        "length_m": {
+      "size_m": {
+        "length": {
           "min": 0.03,
           "median": 0.04,
           "max": 0.05
+        },
+        "root_radius": {
+          "min": 0.004,
+          "median": 0.004,
+          "max": 0.004
         }
       },
       "attach_pos_normalized": [
@@ -3802,6 +4351,7 @@
         }
       ],
       "penetration": {
+        "default_fraction_of_root_radius": 1.625,
         "fraction_of_root_radius": {
           "min": 0.75,
           "median": 1.625,
@@ -3824,9 +4374,7 @@
       "sources": [
         "frog.tongue",
         "lizard.tongue"
-      ],
-      "polyforge_equivalent": null,
-      "status": "new"
+      ]
     },
     {
       "id": "oral_arms",
@@ -3834,39 +4382,59 @@
       "kind": "surface",
       "symmetry": "radial",
       "attach_to": "body",
-      "description": "Frilled arms hanging from the central mouth under a bell.",
+      "description": "Frilled arms hanging from a four-lobed central mouth under a bell.",
       "params": {
-        "count": {
-          "min": 2,
-          "max": 8,
-          "default": 4
+        "measured": {
+          "length": {
+            "min": 0.056,
+            "max": 0.208,
+            "default": 0.12,
+            "observed": {
+              "min": 0.08,
+              "median": 0.12,
+              "max": 0.16
+            }
+          },
+          "root_radius": {
+            "min": 0.017,
+            "max": 0.062,
+            "default": 0.036,
+            "observed": {
+              "min": 0.024,
+              "median": 0.036,
+              "max": 0.048
+            }
+          },
+          "count": {
+            "min": 2,
+            "max": 5,
+            "default": 4,
+            "observed": {
+              "min": 4,
+              "median": 4.0,
+              "max": 4
+            }
+          }
         },
-        "length": {
-          "min": 0.3,
-          "max": 3.0,
-          "default": 1.0
-        },
-        "frill": {
-          "min": 0.0,
-          "max": 1.0,
-          "default": 0.6
+        "shape": {
+          "frill": {
+            "min": 0.0,
+            "max": 1.0,
+            "default": 0.6,
+            "meaning": "ruffled edges"
+          }
         }
       },
-      "size": {
-        "length_vs_body_length": {
-          "min": 0.08,
-          "median": 0.12,
-          "max": 0.16
-        },
-        "root_radius_m": {
-          "min": 0.006,
-          "median": 0.009,
-          "max": 0.012
-        },
-        "length_m": {
+      "size_m": {
+        "length": {
           "min": 0.02,
           "median": 0.03,
           "max": 0.04
+        },
+        "root_radius": {
+          "min": 0.006,
+          "median": 0.009,
+          "max": 0.012
         }
       },
       "attach_pos_normalized": [
@@ -3905,6 +4473,7 @@
         }
       ],
       "penetration": {
+        "default_fraction_of_root_radius": 1.67,
         "fraction_of_root_radius": {
           "min": 1.67,
           "median": 1.67,
@@ -3926,9 +4495,7 @@
       "sources": [
         "jellyfish.oral_arms",
         "jellyfish.manubrium_mouth"
-      ],
-      "polyforge_equivalent": null,
-      "status": "new"
+      ]
     },
     {
       "id": "tentacle_fringe",
@@ -3938,37 +4505,57 @@
       "attach_to": "body",
       "description": "Ring of many fine tentacles around a bell margin.",
       "params": {
-        "count": {
-          "min": 8,
-          "max": 128,
-          "default": 64
+        "measured": {
+          "length": {
+            "min": 0.084,
+            "max": 0.156,
+            "default": 0.12,
+            "observed": {
+              "min": 0.12,
+              "median": 0.12,
+              "max": 0.12
+            }
+          },
+          "root_radius": {
+            "min": 0.002,
+            "max": 0.004,
+            "default": 0.003,
+            "observed": {
+              "min": 0.003,
+              "median": 0.003,
+              "max": 0.003
+            }
+          },
+          "count": {
+            "min": 56,
+            "max": 104,
+            "default": 80,
+            "observed": {
+              "min": 80,
+              "median": 80.0,
+              "max": 80
+            }
+          }
         },
-        "length": {
-          "min": 0.1,
-          "max": 3.0,
-          "default": 0.5
-        },
-        "sway": {
-          "min": 0.0,
-          "max": 1.0,
-          "default": 0.5
+        "shape": {
+          "sway": {
+            "min": 0.0,
+            "max": 1.0,
+            "default": 0.5,
+            "meaning": "drift amplitude"
+          }
         }
       },
-      "size": {
-        "length_vs_body_length": {
-          "min": 0.12,
-          "median": 0.12,
-          "max": 0.12
-        },
-        "root_radius_m": {
-          "min": 0.001,
-          "median": 0.001,
-          "max": 0.001
-        },
-        "length_m": {
+      "size_m": {
+        "length": {
           "min": 0.03,
           "median": 0.03,
           "max": 0.03
+        },
+        "root_radius": {
+          "min": 0.001,
+          "median": 0.001,
+          "max": 0.001
         }
       },
       "attach_pos_normalized": [
@@ -4007,6 +4594,7 @@
         }
       ],
       "penetration": {
+        "default_fraction_of_root_radius": 2.5,
         "fraction_of_root_radius": {
           "min": 2.5,
           "median": 2.5,
@@ -4026,9 +4614,7 @@
       ],
       "sources": [
         "jellyfish.marginal_tentacles"
-      ],
-      "polyforge_equivalent": null,
-      "status": "new"
+      ]
     },
     {
       "id": "gill_slits",
@@ -4036,39 +4622,59 @@
       "kind": "surface",
       "symmetry": "pair",
       "attach_to": "body",
-      "description": "Row of vertical slits behind the head (water leaving the mouth).",
+      "description": "Row of vertical slits behind the head where water leaves the mouth.",
       "params": {
-        "count": {
-          "min": 3,
-          "max": 7,
-          "default": 5
+        "measured": {
+          "length": {
+            "min": 0.026,
+            "max": 0.048,
+            "default": 0.037,
+            "observed": {
+              "min": 0.037,
+              "median": 0.037,
+              "max": 0.037
+            }
+          },
+          "root_radius": {
+            "min": 0.004,
+            "max": 0.008,
+            "default": 0.006,
+            "observed": {
+              "min": 0.006,
+              "median": 0.006,
+              "max": 0.006
+            }
+          },
+          "count": {
+            "min": 3,
+            "max": 6,
+            "default": 5,
+            "observed": {
+              "min": 5,
+              "median": 5.0,
+              "max": 5
+            }
+          }
         },
-        "height": {
-          "min": 0.3,
-          "max": 2.0,
-          "default": 1.0
-        },
-        "spacing": {
-          "min": 0.5,
-          "max": 2.0,
-          "default": 1.0
+        "shape": {
+          "spacing": {
+            "min": 0.5,
+            "max": 2.0,
+            "default": 1.0,
+            "meaning": "gap between slits relative to slit width"
+          }
         }
       },
-      "size": {
-        "length_vs_body_length": {
-          "min": 0.037,
-          "median": 0.037,
-          "max": 0.037
-        },
-        "root_radius_m": {
-          "min": 0.01,
-          "median": 0.01,
-          "max": 0.01
-        },
-        "length_m": {
+      "size_m": {
+        "length": {
           "min": 0.06,
           "median": 0.06,
           "max": 0.06
+        },
+        "root_radius": {
+          "min": 0.01,
+          "median": 0.01,
+          "max": 0.01
         }
       },
       "attach_pos_normalized": [
@@ -4089,6 +4695,7 @@
         }
       ],
       "penetration": {
+        "default_fraction_of_root_radius": 0.5,
         "fraction_of_root_radius": {
           "min": 0.5,
           "median": 0.5,
@@ -4108,9 +4715,7 @@
       ],
       "sources": [
         "shark.gill_slits_L"
-      ],
-      "polyforge_equivalent": null,
-      "status": "new"
+      ]
     },
     {
       "id": "pincer_limb",
@@ -4118,39 +4723,55 @@
       "kind": "limb",
       "symmetry": "pair",
       "attach_to": "body",
-      "description": "Jointed arm ending in a chela (fixed finger + hinged finger).",
+      "description": "Jointed arm ending in a chela: a fixed finger and a hinged finger.",
       "params": {
-        "length": {
-          "min": 0.5,
-          "max": 2.0,
-          "default": 1.0
+        "measured": {
+          "length": {
+            "min": 0.216,
+            "max": 0.455,
+            "default": 0.329,
+            "observed": {
+              "min": 0.308,
+              "median": 0.329,
+              "max": 0.35
+            }
+          },
+          "root_radius": {
+            "min": 0.028,
+            "max": 0.07,
+            "default": 0.047,
+            "observed": {
+              "min": 0.04,
+              "median": 0.047,
+              "max": 0.054
+            }
+          }
         },
-        "claw_bulk": {
-          "min": 0.5,
-          "max": 2.5,
-          "default": 1.2
-        },
-        "asymmetry": {
-          "min": 0.0,
-          "max": 1.0,
-          "default": 0.0
+        "shape": {
+          "claw_bulk": {
+            "min": 0.5,
+            "max": 2.5,
+            "default": 1.2,
+            "meaning": "chela thickness"
+          },
+          "asymmetry": {
+            "min": 0.0,
+            "max": 1.0,
+            "default": 0.0,
+            "meaning": "one chela larger than the other"
+          }
         }
       },
-      "size": {
-        "length_vs_body_length": {
-          "min": 0.308,
-          "median": 0.329,
-          "max": 0.35
-        },
-        "root_radius_m": {
-          "min": 0.004,
-          "median": 0.004,
-          "max": 0.004
-        },
-        "length_m": {
+      "size_m": {
+        "length": {
           "min": 0.02,
           "median": 0.028,
           "max": 0.035
+        },
+        "root_radius": {
+          "min": 0.004,
+          "median": 0.004,
+          "max": 0.004
         }
       },
       "attach_pos_normalized": [
@@ -4199,6 +4820,7 @@
         }
       ],
       "penetration": {
+        "default_fraction_of_root_radius": 1.4,
         "fraction_of_root_radius": {
           "min": 1.3,
           "median": 1.4,
@@ -4221,9 +4843,7 @@
       "sources": [
         "crab.cheliped_L",
         "scorpion.pedipalp_L"
-      ],
-      "polyforge_equivalent": "limb (3 segments) + hand_pincer",
-      "status": "covered"
+      ]
     },
     {
       "id": "arm_grasping",
@@ -4231,39 +4851,55 @@
       "kind": "limb",
       "symmetry": "pair",
       "attach_to": "body",
-      "description": "Shoulder ball + elbow + wrist arm ending in a hand (ape arm; frog forelimb).",
+      "description": "Shoulder-elbow-wrist arm ending in a hand (ape arm, frog forelimb).",
       "params": {
-        "length": {
-          "min": 0.4,
-          "max": 2.0,
-          "default": 1.0
+        "measured": {
+          "length": {
+            "min": 0.14,
+            "max": 0.867,
+            "default": 0.2,
+            "observed": {
+              "min": 0.2,
+              "median": 0.2,
+              "max": 0.667
+            }
+          },
+          "root_radius": {
+            "min": 0.014,
+            "max": 0.065,
+            "default": 0.028,
+            "observed": {
+              "min": 0.02,
+              "median": 0.028,
+              "max": 0.05
+            }
+          }
         },
-        "thickness": {
-          "min": 0.5,
-          "max": 1.8,
-          "default": 1.0
-        },
-        "knuckle_walk": {
-          "min": 0.0,
-          "max": 1.0,
-          "default": 0.0
+        "shape": {
+          "fingers": {
+            "min": 4,
+            "max": 5,
+            "default": 5,
+            "meaning": "digits"
+          },
+          "knuckle_walk": {
+            "min": 0.0,
+            "max": 1.0,
+            "default": 0.0,
+            "meaning": "weight on the backs of the flexed fingers"
+          }
         }
       },
-      "size": {
-        "length_vs_body_length": {
-          "min": 0.2,
-          "median": 0.2,
-          "max": 0.667
-        },
-        "root_radius_m": {
-          "min": 0.004,
-          "median": 0.025,
-          "max": 0.045
-        },
-        "length_m": {
+      "size_m": {
+        "length": {
           "min": 0.04,
           "median": 0.18,
           "max": 0.6
+        },
+        "root_radius": {
+          "min": 0.004,
+          "median": 0.025,
+          "max": 0.045
         }
       },
       "attach_pos_normalized": [
@@ -4312,6 +4948,7 @@
         }
       ],
       "penetration": {
+        "default_fraction_of_root_radius": 0.5,
         "fraction_of_root_radius": {
           "min": 0.48,
           "median": 0.5,
@@ -4335,9 +4972,7 @@
         "primate.arm_L",
         "primate.hand_L",
         "frog.fore_leg_L"
-      ],
-      "polyforge_equivalent": "limb (3 segments) + hand_basic",
-      "status": "covered"
+      ]
     },
     {
       "id": "arm_hydrostatic",
@@ -4345,44 +4980,55 @@
       "kind": "limb",
       "symmetry": "pair",
       "attach_to": "body",
-      "description": "Boneless arm that bends anywhere along its length; tapers to a fine tip.",
+      "description": "Boneless arm that bends anywhere along its length and tapers to a fine tip.",
       "params": {
-        "length": {
-          "min": 0.3,
-          "max": 3.0,
-          "default": 1.0
+        "measured": {
+          "length": {
+            "min": 0.34,
+            "max": 0.632,
+            "default": 0.486,
+            "observed": {
+              "min": 0.486,
+              "median": 0.486,
+              "max": 0.486
+            }
+          },
+          "root_radius": {
+            "min": 0.01,
+            "max": 0.018,
+            "default": 0.014,
+            "observed": {
+              "min": 0.014,
+              "median": 0.014,
+              "max": 0.014
+            }
+          }
         },
-        "thickness": {
-          "min": 0.3,
-          "max": 2.0,
-          "default": 1.0
-        },
-        "curl": {
-          "min": 0.0,
-          "max": 1.5,
-          "default": 0.8
-        },
-        "suckers": {
-          "min": 0.0,
-          "max": 1.0,
-          "default": 1.0
+        "shape": {
+          "curl": {
+            "min": 0.0,
+            "max": 1.5,
+            "default": 0.8,
+            "meaning": "tip coil"
+          },
+          "taper": {
+            "min": 0.05,
+            "max": 0.5,
+            "default": 0.15,
+            "meaning": "tip radius relative to the root"
+          }
         }
       },
-      "size": {
-        "length_vs_body_length": {
-          "min": 0.486,
-          "median": 0.486,
-          "max": 0.486
-        },
-        "root_radius_m": {
-          "min": 0.01,
-          "median": 0.01,
-          "max": 0.01
-        },
-        "length_m": {
+      "size_m": {
+        "length": {
           "min": 0.35,
           "median": 0.35,
           "max": 0.35
+        },
+        "root_radius": {
+          "min": 0.01,
+          "median": 0.01,
+          "max": 0.01
         }
       },
       "attach_pos_normalized": [
@@ -4435,6 +5081,7 @@
         }
       ],
       "penetration": {
+        "default_fraction_of_root_radius": 1.2,
         "fraction_of_root_radius": {
           "min": 1.2,
           "median": 1.2,
@@ -4458,9 +5105,7 @@
         "octopus.arm_L2",
         "octopus.arm_L3",
         "octopus.arm_L4"
-      ],
-      "polyforge_equivalent": "limb motion=tail + hand_tentacle (bends only at segment joints)",
-      "status": "partial"
+      ]
     },
     {
       "id": "suckers",
@@ -4470,37 +5115,53 @@
       "attach_to": "limb",
       "description": "Two rows of cupped suction discs along the underside of an arm, shrinking toward the tip.",
       "params": {
-        "count": {
-          "min": 4,
-          "max": 40,
-          "default": 16
+        "measured": {
+          "length": {
+            "min": 0.34,
+            "max": 0.632,
+            "default": 0.486,
+            "observed": {
+              "min": 0.486,
+              "median": 0.486,
+              "max": 0.486
+            }
+          },
+          "root_radius": {
+            "min": 0.01,
+            "max": 0.018,
+            "default": 0.014,
+            "observed": {
+              "min": 0.014,
+              "median": 0.014,
+              "max": 0.014
+            }
+          }
         },
-        "size": {
-          "min": 0.3,
-          "max": 2.0,
-          "default": 1.0
-        },
-        "rows": {
-          "min": 1,
-          "max": 2,
-          "default": 2
+        "shape": {
+          "per_arm": {
+            "min": 20,
+            "max": 280,
+            "default": 120,
+            "meaning": "suckers per arm"
+          },
+          "rows": {
+            "min": 1,
+            "max": 2,
+            "default": 2,
+            "meaning": "rows"
+          }
         }
       },
-      "size": {
-        "length_vs_body_length": {
-          "min": 0.486,
-          "median": 0.486,
-          "max": 0.486
-        },
-        "root_radius_m": {
-          "min": 0.01,
-          "median": 0.01,
-          "max": 0.01
-        },
-        "length_m": {
+      "size_m": {
+        "length": {
           "min": 0.35,
           "median": 0.35,
           "max": 0.35
+        },
+        "root_radius": {
+          "min": 0.01,
+          "median": 0.01,
+          "max": 0.01
         }
       },
       "attach_pos_normalized": [
@@ -4553,6 +5214,7 @@
         }
       ],
       "penetration": {
+        "default_fraction_of_root_radius": 1.2,
         "fraction_of_root_radius": {
           "min": 1.2,
           "median": 1.2,
@@ -4572,9 +5234,7 @@
       ],
       "sources": [
         "octopus.arm_L1"
-      ],
-      "polyforge_equivalent": null,
-      "status": "new"
+      ]
     },
     {
       "id": "talons",
@@ -4582,39 +5242,55 @@
       "kind": "tip",
       "symmetry": "pair",
       "attach_to": "limb_end",
-      "description": "Grasping foot with long curved talons (three forward, one back).",
+      "description": "Grasping foot with four long curved talons (three forward, one back, the back one largest).",
       "params": {
-        "size": {
-          "min": 0.4,
-          "max": 3.0,
-          "default": 1.0
+        "measured": {
+          "length": {
+            "min": 0.076,
+            "max": 0.142,
+            "default": 0.109,
+            "observed": {
+              "min": 0.109,
+              "median": 0.109,
+              "max": 0.109
+            }
+          },
+          "root_radius": {
+            "min": 0.026,
+            "max": 0.048,
+            "default": 0.037,
+            "observed": {
+              "min": 0.037,
+              "median": 0.037,
+              "max": 0.037
+            }
+          }
         },
-        "talons": {
-          "min": 0.0,
-          "max": 2.0,
-          "default": 1.4
-        },
-        "grip": {
-          "min": 0.0,
-          "max": 1.0,
-          "default": 0.0
+        "shape": {
+          "curve": {
+            "min": 0.0,
+            "max": 1.0,
+            "default": 0.8,
+            "meaning": "talon curvature"
+          },
+          "grip": {
+            "min": 0.0,
+            "max": 1.0,
+            "default": 0.0,
+            "meaning": "0 = open, 1 = closed"
+          }
         }
       },
-      "size": {
-        "length_vs_body_length": {
-          "min": 0.109,
-          "median": 0.109,
-          "max": 0.109
-        },
-        "root_radius_m": {
-          "min": 0.012,
-          "median": 0.012,
-          "max": 0.012
-        },
-        "length_m": {
+      "size_m": {
+        "length": {
           "min": 0.035,
           "median": 0.035,
           "max": 0.035
+        },
+        "root_radius": {
+          "min": 0.012,
+          "median": 0.012,
+          "max": 0.012
         }
       },
       "attach_pos_normalized": [
@@ -4637,6 +5313,7 @@
         }
       ],
       "penetration": {
+        "default_fraction_of_root_radius": 0.67,
         "fraction_of_root_radius": {
           "min": 0.67,
           "median": 0.67,
@@ -4656,9 +5333,7 @@
       ],
       "sources": [
         "raptor.talon_L"
-      ],
-      "polyforge_equivalent": "foot_claw",
-      "status": "covered"
+      ]
     },
     {
       "id": "claws",
@@ -4668,37 +5343,63 @@
       "attach_to": "limb_end",
       "description": "Curved toe claws: sheathed and extendable in cats, fixed and blunt in dogs.",
       "params": {
-        "length": {
-          "min": 0.2,
-          "max": 2.0,
-          "default": 1.0
+        "measured": {
+          "length": {
+            "min": 0.011,
+            "max": 0.023,
+            "default": 0.017,
+            "observed": {
+              "min": 0.016,
+              "median": 0.017,
+              "max": 0.018
+            }
+          },
+          "root_radius": {
+            "min": 0.002,
+            "max": 0.005,
+            "default": 0.003,
+            "observed": {
+              "min": 0.003,
+              "median": 0.003,
+              "max": 0.004
+            }
+          },
+          "count": {
+            "min": 3,
+            "max": 12,
+            "default": 7,
+            "observed": {
+              "min": 5,
+              "median": 7.0,
+              "max": 9
+            }
+          }
         },
-        "curve": {
-          "min": 0.0,
-          "max": 1.0,
-          "default": 0.6
-        },
-        "extend": {
-          "min": 0.0,
-          "max": 1.0,
-          "default": 0.0
+        "shape": {
+          "curve": {
+            "min": 0.0,
+            "max": 1.0,
+            "default": 0.6,
+            "meaning": "claw curvature"
+          },
+          "extend": {
+            "min": 0.0,
+            "max": 1.0,
+            "default": 0.0,
+            "meaning": "0 = sheathed, 1 = out"
+          }
         }
       },
-      "size": {
-        "length_vs_body_length": {
-          "min": 0.016,
-          "median": 0.017,
-          "max": 0.018
-        },
-        "root_radius_m": {
-          "min": 0.002,
-          "median": 0.003,
-          "max": 0.004
-        },
-        "length_m": {
+      "size_m": {
+        "length": {
           "min": 0.012,
           "median": 0.016,
           "max": 0.02
+        },
+        "root_radius": {
+          "min": 0.002,
+          "median": 0.003,
+          "max": 0.004
         }
       },
       "attach_pos_normalized": [
@@ -4709,7 +5410,7 @@
       "joints": [
         {
           "name": "phalangeal joint (claw retraction)",
-          "type": "fixed",
+          "type": "hinge",
           "pivot_axes": [
             "x"
           ],
@@ -4721,6 +5422,7 @@
         }
       ],
       "penetration": {
+        "default_fraction_of_root_radius": 0.5,
         "fraction_of_root_radius": {
           "min": 0.0,
           "median": 0.5,
@@ -4744,8 +5446,6 @@
         "feline.claws_L",
         "canine.claws_L"
       ],
-      "polyforge_equivalent": "foot_paw (claws not separate)",
-      "status": "partial",
       "category_notes": [
         "locomotion -> manipulation (grouped with the cat claws; used for gripping and digging)"
       ]
@@ -4756,44 +5456,55 @@
       "kind": "limb",
       "symmetry": "centre",
       "attach_to": "body",
-      "description": "Chain of five hinged ring segments that arches up over the back to aim a stinger.",
+      "description": "Chain of hinged ring segments that arches up over the back to aim a stinger.",
       "params": {
-        "segments": {
-          "min": 3,
-          "max": 8,
-          "default": 5
+        "measured": {
+          "length": {
+            "min": 0.377,
+            "max": 0.699,
+            "default": 0.538,
+            "observed": {
+              "min": 0.538,
+              "median": 0.538,
+              "max": 0.538
+            }
+          },
+          "root_radius": {
+            "min": 0.048,
+            "max": 0.09,
+            "default": 0.069,
+            "observed": {
+              "min": 0.069,
+              "median": 0.069,
+              "max": 0.069
+            }
+          }
         },
-        "length": {
-          "min": 0.4,
-          "max": 2.0,
-          "default": 1.0
-        },
-        "arch": {
-          "min": 0.0,
-          "max": 1.0,
-          "default": 0.8
-        },
-        "taper": {
-          "min": 0.0,
-          "max": 1.0,
-          "default": 0.3
+        "shape": {
+          "segments": {
+            "min": 3,
+            "max": 8,
+            "default": 5,
+            "meaning": "ring segments"
+          },
+          "arch": {
+            "min": 0.0,
+            "max": 1.0,
+            "default": 0.8,
+            "meaning": "curl over the back"
+          }
         }
       },
-      "size": {
-        "length_vs_body_length": {
-          "min": 0.538,
-          "median": 0.538,
-          "max": 0.538
-        },
-        "root_radius_m": {
-          "min": 0.004,
-          "median": 0.004,
-          "max": 0.004
-        },
-        "length_m": {
+      "size_m": {
+        "length": {
           "min": 0.035,
           "median": 0.035,
           "max": 0.035
+        },
+        "root_radius": {
+          "min": 0.004,
+          "median": 0.004,
+          "max": 0.004
         }
       },
       "attach_pos_normalized": [
@@ -4864,6 +5575,7 @@
         }
       ],
       "penetration": {
+        "default_fraction_of_root_radius": 1.3,
         "fraction_of_root_radius": {
           "min": 1.3,
           "median": 1.3,
@@ -4883,9 +5595,7 @@
       ],
       "sources": [
         "scorpion.metasoma"
-      ],
-      "polyforge_equivalent": "limb motion=tail (no ring segments)",
-      "status": "partial"
+      ]
     },
     {
       "id": "stinger",
@@ -4893,39 +5603,55 @@
       "kind": "tip",
       "symmetry": "centre",
       "attach_to": "limb_end",
-      "description": "Bulbous venom vesicle ending in a curved barb, on the tail tip.",
+      "description": "Bulbous venom vesicle ending in a curved sharp barb, on the tail tip.",
       "params": {
-        "size": {
-          "min": 0.4,
-          "max": 3.0,
-          "default": 1.0
+        "measured": {
+          "length": {
+            "min": 0.064,
+            "max": 0.12,
+            "default": 0.092,
+            "observed": {
+              "min": 0.092,
+              "median": 0.092,
+              "max": 0.092
+            }
+          },
+          "root_radius": {
+            "min": 0.016,
+            "max": 0.03,
+            "default": 0.023,
+            "observed": {
+              "min": 0.023,
+              "median": 0.023,
+              "max": 0.023
+            }
+          }
         },
-        "bulb": {
-          "min": 0.3,
-          "max": 2.0,
-          "default": 1.0
-        },
-        "hook": {
-          "min": 0.0,
-          "max": 1.0,
-          "default": 0.7
+        "shape": {
+          "bulb": {
+            "min": 0.3,
+            "max": 2.0,
+            "default": 1.0,
+            "meaning": "vesicle swelling"
+          },
+          "hook": {
+            "min": 0.0,
+            "max": 1.0,
+            "default": 0.7,
+            "meaning": "barb curvature"
+          }
         }
       },
-      "size": {
-        "length_vs_body_length": {
-          "min": 0.092,
-          "median": 0.092,
-          "max": 0.092
-        },
-        "root_radius_m": {
-          "min": 0.002,
-          "median": 0.002,
-          "max": 0.002
-        },
-        "length_m": {
+      "size_m": {
+        "length": {
           "min": 0.006,
           "median": 0.006,
           "max": 0.006
+        },
+        "root_radius": {
+          "min": 0.002,
+          "median": 0.002,
+          "max": 0.002
         }
       },
       "attach_pos_normalized": [
@@ -4948,6 +5674,7 @@
         }
       ],
       "penetration": {
+        "default_fraction_of_root_radius": 1.0,
         "fraction_of_root_radius": {
           "min": 1.0,
           "median": 1.0,
@@ -4967,9 +5694,7 @@
       ],
       "sources": [
         "scorpion.telson_stinger"
-      ],
-      "polyforge_equivalent": "spike (no bulb)",
-      "status": "partial"
+      ]
     },
     {
       "id": "carapace",
@@ -4977,44 +5702,55 @@
       "kind": "surface",
       "symmetry": "centre",
       "attach_to": "body",
-      "description": "Hard dorsal shield over the body: broad crab carapace or beetle pronotum.",
+      "description": "Hard dorsal shield: broad toothed crab carapace or beetle pronotum.",
       "params": {
-        "width": {
-          "min": 0.4,
-          "max": 3.0,
-          "default": 1.0
+        "measured": {
+          "length": {
+            "min": 0.115,
+            "max": 0.585,
+            "default": 0.307,
+            "observed": {
+              "min": 0.164,
+              "median": 0.307,
+              "max": 0.45
+            }
+          },
+          "root_radius": {
+            "min": 0.127,
+            "max": 0.39,
+            "default": 0.241,
+            "observed": {
+              "min": 0.182,
+              "median": 0.241,
+              "max": 0.3
+            }
+          }
         },
-        "length": {
-          "min": 0.4,
-          "max": 3.0,
-          "default": 1.0
-        },
-        "height": {
-          "min": 0.2,
-          "max": 2.0,
-          "default": 0.6
-        },
-        "rim_teeth": {
-          "min": 0,
-          "max": 9,
-          "default": 5
+        "shape": {
+          "rim_teeth": {
+            "min": 0,
+            "max": 9,
+            "default": 5,
+            "meaning": "teeth along the front edge"
+          },
+          "dome": {
+            "min": 0.1,
+            "max": 1.0,
+            "default": 0.4,
+            "meaning": "height relative to width"
+          }
         }
       },
-      "size": {
-        "length_vs_body_length": {
-          "min": 0.164,
-          "median": 0.307,
-          "max": 0.45
-        },
-        "root_radius_m": {
-          "min": 0.01,
-          "median": 0.02,
-          "max": 0.03
-        },
-        "length_m": {
+      "size_m": {
+        "length": {
           "min": 0.009,
           "median": 0.027,
           "max": 0.045
+        },
+        "root_radius": {
+          "min": 0.01,
+          "median": 0.02,
+          "max": 0.03
         }
       },
       "attach_pos_normalized": [
@@ -5035,6 +5771,7 @@
         }
       ],
       "penetration": {
+        "default_fraction_of_root_radius": 0.2,
         "fraction_of_root_radius": {
           "min": 0,
           "median": 0.2,
@@ -5057,11 +5794,6 @@
       "sources": [
         "crab.carapace",
         "beetle.pronotum"
-      ],
-      "polyforge_equivalent": "shell",
-      "status": "covered",
-      "category_notes": [
-        "kept aesthetics, but it is also the core armour the spine must shape"
       ]
     },
     {
@@ -5070,39 +5802,55 @@
       "kind": "surface",
       "symmetry": "centre",
       "attach_to": "body",
-      "description": "Row of tall spines along the neck and back.",
+      "description": "Row of tall pointed scales from the nape along the back, largest over the neck.",
       "params": {
-        "height": {
-          "min": 0.3,
-          "max": 3.0,
-          "default": 1.0
+        "measured": {
+          "length": {
+            "min": 0.325,
+            "max": 0.603,
+            "default": 0.464,
+            "observed": {
+              "min": 0.464,
+              "median": 0.464,
+              "max": 0.464
+            }
+          },
+          "root_radius": {
+            "min": 0.003,
+            "max": 0.005,
+            "default": 0.004,
+            "observed": {
+              "min": 0.004,
+              "median": 0.004,
+              "max": 0.004
+            }
+          }
         },
-        "length": {
-          "min": 0.3,
-          "max": 3.0,
-          "default": 1.0
-        },
-        "spines": {
-          "min": 4,
-          "max": 30,
-          "default": 12
+        "shape": {
+          "spines": {
+            "min": 4,
+            "max": 60,
+            "default": 30,
+            "meaning": "spines"
+          },
+          "falloff": {
+            "min": 0.0,
+            "max": 1.0,
+            "default": 0.7,
+            "meaning": "shrink toward the tail"
+          }
         }
       },
-      "size": {
-        "length_vs_body_length": {
-          "min": 0.464,
-          "median": 0.464,
-          "max": 0.464
-        },
-        "root_radius_m": {
-          "min": 0.006,
-          "median": 0.006,
-          "max": 0.006
-        },
-        "length_m": {
+      "size_m": {
+        "length": {
           "min": 0.65,
           "median": 0.65,
           "max": 0.65
+        },
+        "root_radius": {
+          "min": 0.006,
+          "median": 0.006,
+          "max": 0.006
         }
       },
       "attach_pos_normalized": [
@@ -5123,6 +5871,7 @@
         }
       ],
       "penetration": {
+        "default_fraction_of_root_radius": 0.5,
         "fraction_of_root_radius": {
           "min": 0.5,
           "median": 0.5,
@@ -5142,9 +5891,7 @@
       ],
       "sources": [
         "lizard.dorsal_crest"
-      ],
-      "polyforge_equivalent": "crest",
-      "status": "covered"
+      ]
     },
     {
       "id": "dewlap",
@@ -5152,39 +5899,55 @@
       "kind": "surface",
       "symmetry": "centre",
       "attach_to": "body",
-      "description": "Hanging throat fan that can be extended for display.",
+      "description": "Hanging throat fold that extends for display.",
       "params": {
-        "size": {
-          "min": 0.3,
-          "max": 3.0,
-          "default": 1.0
+        "measured": {
+          "length": {
+            "min": 0.03,
+            "max": 0.056,
+            "default": 0.043,
+            "observed": {
+              "min": 0.043,
+              "median": 0.043,
+              "max": 0.043
+            }
+          },
+          "root_radius": {
+            "min": 0.005,
+            "max": 0.009,
+            "default": 0.007,
+            "observed": {
+              "min": 0.007,
+              "median": 0.007,
+              "max": 0.007
+            }
+          }
         },
-        "depth": {
-          "min": 0.2,
-          "max": 2.0,
-          "default": 1.0
-        },
-        "extend_deg": {
-          "min": 0,
-          "max": 60,
-          "default": 0
+        "shape": {
+          "depth": {
+            "min": 0.2,
+            "max": 2.0,
+            "default": 1.0,
+            "meaning": "hang below the jaw"
+          },
+          "extend_deg": {
+            "min": 0,
+            "max": 60,
+            "default": 0,
+            "meaning": "display extension"
+          }
         }
       },
-      "size": {
-        "length_vs_body_length": {
-          "min": 0.043,
-          "median": 0.043,
-          "max": 0.043
-        },
-        "root_radius_m": {
-          "min": 0.01,
-          "median": 0.01,
-          "max": 0.01
-        },
-        "length_m": {
+      "size_m": {
+        "length": {
           "min": 0.06,
           "median": 0.06,
           "max": 0.06
+        },
+        "root_radius": {
+          "min": 0.01,
+          "median": 0.01,
+          "max": 0.01
         }
       },
       "attach_pos_normalized": [
@@ -5207,6 +5970,7 @@
         }
       ],
       "penetration": {
+        "default_fraction_of_root_radius": 0.5,
         "fraction_of_root_radius": {
           "min": 0.5,
           "median": 0.5,
@@ -5226,9 +5990,7 @@
       ],
       "sources": [
         "lizard.dewlap"
-      ],
-      "polyforge_equivalent": null,
-      "status": "new"
+      ]
     },
     {
       "id": "vocal_sac",
@@ -5236,34 +5998,49 @@
       "kind": "surface",
       "symmetry": "centre",
       "attach_to": "body",
-      "description": "Inflatable throat sac used for calling (display/communication).",
+      "description": "Throat sac that inflates when calling.",
       "params": {
-        "size": {
-          "min": 0.3,
-          "max": 3.0,
-          "default": 1.0
+        "measured": {
+          "length": {
+            "min": 0.105,
+            "max": 0.195,
+            "default": 0.15,
+            "observed": {
+              "min": 0.15,
+              "median": 0.15,
+              "max": 0.15
+            }
+          },
+          "root_radius": {
+            "min": 0.035,
+            "max": 0.065,
+            "default": 0.05,
+            "observed": {
+              "min": 0.05,
+              "median": 0.05,
+              "max": 0.05
+            }
+          }
         },
-        "inflate": {
-          "min": 0.0,
-          "max": 1.0,
-          "default": 0.0
+        "shape": {
+          "inflate": {
+            "min": 0.0,
+            "max": 1.0,
+            "default": 0.0,
+            "meaning": "0 = flat, 1 = full"
+          }
         }
       },
-      "size": {
-        "length_vs_body_length": {
-          "min": 0.15,
-          "median": 0.15,
-          "max": 0.15
-        },
-        "root_radius_m": {
-          "min": 0.01,
-          "median": 0.01,
-          "max": 0.01
-        },
-        "length_m": {
+      "size_m": {
+        "length": {
           "min": 0.03,
           "median": 0.03,
           "max": 0.03
+        },
+        "root_radius": {
+          "min": 0.01,
+          "median": 0.01,
+          "max": 0.01
         }
       },
       "attach_pos_normalized": [
@@ -5284,6 +6061,7 @@
         }
       ],
       "penetration": {
+        "default_fraction_of_root_radius": 0.4,
         "fraction_of_root_radius": {
           "min": 0.4,
           "median": 0.4,
@@ -5304,51 +6082,65 @@
       "sources": [
         "frog.vocal_sac"
       ],
-      "polyforge_equivalent": "bulge",
-      "status": "covered",
       "category_notes": [
         "sensory -> aesthetics (calling display; produces sound, does not sense it)"
       ]
     },
     {
-      "id": "brow_ridge",
+      "id": "supraorbital_ridge",
       "category": "aesthetics",
       "kind": "surface",
       "symmetry": "centre",
       "attach_to": "body",
-      "description": "Bony ridge over the eyes (ape brow, raptor supraorbital shelf).",
+      "description": "Bony ridge over the eyes: heavy ape brow torus, hawk supraorbital shelf.",
       "params": {
-        "size": {
-          "min": 0.4,
-          "max": 3.0,
-          "default": 1.0
+        "measured": {
+          "length": {
+            "min": 0.066,
+            "max": 0.13,
+            "default": 0.097,
+            "observed": {
+              "min": 0.094,
+              "median": 0.097,
+              "max": 0.1
+            }
+          },
+          "root_radius": {
+            "min": 0.012,
+            "max": 0.04,
+            "default": 0.024,
+            "observed": {
+              "min": 0.017,
+              "median": 0.024,
+              "max": 0.031
+            }
+          }
         },
-        "depth": {
-          "min": 0.4,
-          "max": 2.0,
-          "default": 1.0
-        },
-        "frown": {
-          "min": -1.0,
-          "max": 1.0,
-          "default": 0.4
+        "shape": {
+          "overhang": {
+            "min": 0.0,
+            "max": 1.0,
+            "default": 0.5,
+            "meaning": "how far it shades the eye"
+          },
+          "split": {
+            "min": 0,
+            "max": 1,
+            "default": 0,
+            "meaning": "one shelf per eye instead of a single bar"
+          }
         }
       },
-      "size": {
-        "length_vs_body_length": {
-          "min": 0.094,
-          "median": 0.097,
-          "max": 0.1
-        },
-        "root_radius_m": {
-          "min": 0.01,
-          "median": 0.013,
-          "max": 0.015
-        },
-        "length_m": {
+      "size_m": {
+        "length": {
           "min": 0.03,
           "median": 0.06,
           "max": 0.09
+        },
+        "root_radius": {
+          "min": 0.01,
+          "median": 0.013,
+          "max": 0.015
         }
       },
       "attach_pos_normalized": [
@@ -5369,6 +6161,7 @@
         }
       ],
       "penetration": {
+        "default_fraction_of_root_radius": 0.335,
         "fraction_of_root_radius": {
           "min": 0.27,
           "median": 0.335,
@@ -5389,11 +6182,9 @@
         "raptor"
       ],
       "sources": [
-        "primate.brow_ridge",
-        "raptor.brow_ridge_L"
+        "primate.supraorbital_torus",
+        "raptor.supraorbital_shelf_L"
       ],
-      "polyforge_equivalent": "brow_ridge",
-      "status": "covered",
       "category_notes": [
         "sensory -> aesthetics (bony shelf; shades the eye but is not a sense organ)"
       ]
@@ -5402,39 +6193,39 @@
   "excluded": [
     {
       "source": "beetle.head",
-      "reason": "core segment; shaped by the spine's front vertebrae"
+      "reason": "core segment; part of the body shape"
     },
     {
       "source": "crab.abdomen",
-      "reason": "tucked flat under the body; not visible from normal angles"
+      "reason": "folded flat under the body; not visible from normal angles"
     },
     {
       "source": "feline.fur_coat",
-      "reason": "surface finish; paint pattern, not geometry"
+      "reason": "surface finish; texture, not geometry"
     },
     {
       "source": "jellyfish.gonads",
-      "reason": "visible through the bell as four rings; paint pattern"
+      "reason": "visible through the bell as four rings; texture"
     },
     {
       "source": "jellyfish.radial_canals",
-      "reason": "internal; paint pattern at most"
+      "reason": "internal; texture at most"
     },
     {
       "source": "lizard.body_scales",
-      "reason": "surface finish; paint pattern or normal map"
+      "reason": "surface finish; texture or normal map"
     },
     {
       "source": "shark.ampullae_of_lorenzini_L",
-      "reason": "pores; paint/normal detail"
+      "reason": "pores; texture detail"
     },
     {
       "source": "shark.claspers_L",
-      "reason": "male-only reproductive organ; not a manipulation part in the taxonomy's sense"
+      "reason": "male-only reproductive organ; outside the five categories"
     },
     {
       "source": "shark.lateral_line_L",
-      "reason": "line of pores; paint detail"
+      "reason": "line of pores; texture detail"
     },
     {
       "source": "worm.anus_pygidium",
@@ -5450,11 +6241,11 @@
     },
     {
       "source": "worm.prostomium",
-      "reason": "body tip; shaped by the spine's front vertebra"
+      "reason": "body tip; part of the body shape"
     },
     {
       "source": "worm.setae_L",
-      "reason": "bristles under 1 mm; normal-map detail"
+      "reason": "bristles under 1 mm; texture detail"
     }
   ]
 }

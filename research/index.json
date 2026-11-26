@@ -21,17 +21,14 @@
         "aesthetics": 1
       },
       "part_types_by_category": {
-        "sensory": 3,
-        "aesthetics": 1,
+        "feeding": 2,
         "locomotion": 5,
         "manipulation": 0,
-        "feeding": 2
+        "aesthetics": 1,
+        "sensory": 3
       },
-      "library_gaps": [
-        "folded membranous hind wing under elytra",
-        "geniculate (elbowed) segmented antenna with short club",
-        "toothed tibia (digging/grip)",
-        "paired elytra opening along a midline hinge"
+      "other_features": [
+        "Toothed tibia"
       ],
       "confidence": 0.6,
       "problems": []
@@ -57,18 +54,14 @@
         "aesthetics": 0
       },
       "part_types_by_category": {
-        "sensory": 4,
-        "aesthetics": 0,
+        "feeding": 2,
         "locomotion": 6,
         "manipulation": 0,
-        "feeding": 2
+        "aesthetics": 0,
+        "sensory": 4
       },
-      "library_gaps": [
-        "Digitigrade leg segments (shoulder, elbow, carpus; hip, stifle, hock)",
-        "Non-retractable claws as a standalone digit structure",
-        "Bushy brush tail with a taper and terminal tip",
-        "Vibrissae (whisker pads)",
-        "Digitigrade paw pads and digit set"
+      "other_features": [
+        "Dewclaw"
       ],
       "confidence": 0.6,
       "problems": []
@@ -94,19 +87,13 @@
         "aesthetics": 2
       },
       "part_types_by_category": {
-        "sensory": 3,
-        "aesthetics": 2,
+        "feeding": 1,
         "locomotion": 1,
         "manipulation": 1,
-        "feeding": 1
+        "aesthetics": 2,
+        "sensory": 3
       },
-      "library_gaps": [
-        "Tucked ventral abdomen with brood (female) or narrow T-shaped (male) form",
-        "Carapace as a protective dorsal shell",
-        "Retractable stalked compound eyes that sink into orbits",
-        "Mouthpart set (three pairs of maxillipeds forming a ventral lid)",
-        "Lateral-walking leg set (four pairs splayed laterally)"
-      ],
+      "other_features": [],
       "confidence": 0.6,
       "problems": []
     },
@@ -131,16 +118,14 @@
         "aesthetics": 0
       },
       "part_types_by_category": {
-        "sensory": 4,
-        "aesthetics": 1,
+        "feeding": 1,
         "locomotion": 4,
         "manipulation": 1,
-        "feeding": 1
+        "aesthetics": 1,
+        "sensory": 4
       },
-      "library_gaps": [
-        "Tail (slim, flexible, long)",
-        "Whiskers (vibrissae)",
-        "Head (rounded skull with forward eyes, mounted on a short neck)"
+      "other_features": [
+        "Rounded skull"
       ],
       "confidence": 0.6,
       "problems": []
@@ -166,18 +151,13 @@
         "aesthetics": 0
       },
       "part_types_by_category": {
-        "sensory": 3,
-        "aesthetics": 0,
+        "feeding": 2,
         "locomotion": 2,
         "manipulation": 1,
-        "feeding": 2
+        "aesthetics": 0,
+        "sensory": 3
       },
-      "library_gaps": [
-        "Hind leg (long jumping limb)",
-        "Tympanum (external eardrum disc)",
-        "Projectile tongue",
-        "Vocal sac (throat resonator)"
-      ],
+      "other_features": [],
       "confidence": 0.55,
       "problems": []
     },
@@ -202,20 +182,14 @@
         "aesthetics": 1
       },
       "part_types_by_category": {
-        "sensory": 1,
-        "aesthetics": 1,
+        "feeding": 4,
         "locomotion": 1,
         "manipulation": 0,
-        "feeding": 4
+        "aesthetics": 1,
+        "sensory": 1
       },
-      "library_gaps": [
-        "Radial (4-fold and 8-fold) symmetry",
-        "Translucent gelatinous bell as the core",
-        "Annular coronal muscle ring",
-        "Many small marginal tentacles (about 80 to 100)",
-        "Reproductive gonads",
-        "Rhopalia (sense club with statocysts)",
-        "Manubrium mouth on a radial body"
+      "other_features": [
+        "Translucent bell tissue"
       ],
       "confidence": 0.55,
       "problems": []
@@ -241,20 +215,13 @@
         "aesthetics": 3
       },
       "part_types_by_category": {
-        "sensory": 3,
-        "aesthetics": 3,
+        "feeding": 2,
         "locomotion": 3,
         "manipulation": 0,
-        "feeding": 2
+        "aesthetics": 3,
+        "sensory": 3
       },
-      "library_gaps": [
-        "Long tapering tail (locomotion + balance + autotomy)",
-        "Dewlap (ventral throat fan)",
-        "Tympanic ear opening (flush, not protruding)",
-        "Parietal (third) eye",
-        "Forked chemosensory tongue",
-        "Keeled body scales"
-      ],
+      "other_features": [],
       "confidence": 0.55,
       "problems": []
     },
@@ -279,19 +246,16 @@
         "aesthetics": 0
       },
       "part_types_by_category": {
-        "sensory": 1,
-        "aesthetics": 0,
+        "feeding": 1,
         "locomotion": 2,
         "manipulation": 4,
-        "feeding": 1
+        "aesthetics": 0,
+        "sensory": 1
       },
-      "library_gaps": [
-        "Suckers (two rows per arm, with chemosensory tips)",
-        "Hydrostatic arm (muscular hydrostat, no rigid joints)",
-        "Funnel / siphon (steerable jet nozzle)",
-        "Chromatophore skin / dermal papillae",
-        "Radula and beak mechanics",
-        "Mantle (large soft visceral sac)"
+      "other_features": [
+        "Mantle",
+        "Chromatophores and papillae",
+        "Radula"
       ],
       "confidence": 0.55,
       "problems": []
@@ -317,18 +281,14 @@
         "aesthetics": 1
       },
       "part_types_by_category": {
-        "sensory": 3,
-        "aesthetics": 1,
+        "feeding": 1,
         "locomotion": 2,
         "manipulation": 2,
-        "feeding": 1
+        "aesthetics": 1,
+        "sensory": 3
       },
-      "library_gaps": [
-        "Forelimb (shoulder, elbow, wrist, knuckle-walking)",
-        "Hindlimb (hip, knee, ankle)",
-        "Opposable hallux (grasping foot)",
-        "Knuckle-walking hand posture",
-        "Flat, close-set rounded ear"
+      "other_features": [
+        "Knuckle-walking posture"
       ],
       "confidence": 0.6,
       "problems": []
@@ -354,18 +314,13 @@
         "aesthetics": 0
       },
       "part_types_by_category": {
-        "sensory": 2,
-        "aesthetics": 0,
+        "feeding": 1,
         "locomotion": 3,
         "manipulation": 1,
-        "feeding": 1
+        "aesthetics": 0,
+        "sensory": 2
       },
-      "library_gaps": [
-        "Hooked raptor beak (tomial tooth, hook)",
-        "Bird leg with scaled tarsus and digitigrade ankle",
-        "Folded wing pose with separate flight feathers",
-        "Multi-digit talon set (four talons per foot, hallux)"
-      ],
+      "other_features": [],
       "confidence": 0.7,
       "problems": []
     },
@@ -390,18 +345,13 @@
         "aesthetics": 0
       },
       "part_types_by_category": {
-        "sensory": 3,
-        "aesthetics": 0,
+        "feeding": 1,
         "locomotion": 2,
         "manipulation": 2,
-        "feeding": 1
+        "aesthetics": 0,
+        "sensory": 3
       },
-      "library_gaps": [
-        "Pectines (comb-shaped sensory organs on the mesosoma underside)",
-        "Segmented metasoma tail (five hinged segments ending in a telson)",
-        "Eight articulated walking legs as a set",
-        "Curved venomous telson/aculeus"
-      ],
+      "other_features": [],
       "confidence": 0.65,
       "problems": []
     },
@@ -426,21 +376,15 @@
         "aesthetics": 0
       },
       "part_types_by_category": {
-        "sensory": 4,
-        "aesthetics": 0,
+        "feeding": 3,
         "locomotion": 6,
         "manipulation": 1,
-        "feeding": 3
+        "aesthetics": 0,
+        "sensory": 4
       },
-      "library_gaps": [
-        "Ampullae of Lorenzini (electroreceptive pores)",
-        "Lateral line canal",
-        "Nostrils (ventral nasal capsules)",
-        "Gill slits (five per side)",
-        "Teeth (multi-row, replaced in series)",
-        "Dermal denticles (placoid scales)",
-        "Heterocercal caudal fin (asymmetric upper lobe)",
-        "Male pelvic claspers"
+      "other_features": [
+        "Teeth",
+        "Dermal denticles"
       ],
       "confidence": 0.55,
       "problems": []
@@ -466,19 +410,15 @@
         "aesthetics": 0
       },
       "part_types_by_category": {
-        "sensory": 2,
-        "aesthetics": 0,
+        "feeding": 2,
         "locomotion": 1,
         "manipulation": 0,
-        "feeding": 2
+        "aesthetics": 0,
+        "sensory": 2
       },
-      "library_gaps": [
-        "Setae (paired ventrolateral bristle bundles, ~4 per side per segment)",
-        "Prostomium (fleshy head lobe overhanging the mouth)",
-        "Distributed epidermal photoreceptor cells (no eye structure)",
-        "Clitellum (reproductive glandular band, cocoon secretion)",
-        "Hydrostatic segmented body with peristaltic bending",
-        "Terminal anus (pygidium) as egestion opening"
+      "other_features": [
+        "Clitellum",
+        "Hydrostatic segmented body"
       ],
       "confidence": 0.6,
       "problems": []

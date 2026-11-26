@@ -104,7 +104,6 @@
         "fraction_of_root_radius": 0.67,
         "overlap_region": "Shoulder girdle, the scapula and the lateral thoracic wall. The root sits under the upper trunk mesh at the shoulder joint."
       },
-      "library_hint": null,
       "notes": "Shoulder to wrist length is about 0.6 m, an estimate from Napier and Napier. In the photo the near forelimb is nearly vertical and forward of the shoulder, with the elbow only mildly bent, and it carries the body's weight in the walking stride. Chimpanzee forelimbs are longer than the hindlimbs. The arm is classed as manipulation per the taxonomy, with a note that its primary role here is locomotion."
     },
     {
@@ -159,8 +158,7 @@
         "fraction_of_root_radius": 0.48,
         "overlap_region": "Distal forearm, the wrist. Knuckle-walking digits are flexed and rest on the dorsal middle phalanges, so the mesh contact is at the knuckle region."
       },
-      "library_hint": "hand_basic",
-      "notes": "Hand length is about 0.18 m (Napier and Napier). In the photo the hand is planted flat on the grass with the digits flexed under the wrist, the knuckle-walking contact. Thumb is opposable but short relative to the fingers. Hand_basic is the closest library fit, but it has no knuckle-walking pose."
+      "notes": "Hand length is about 0.18 m (Napier and Napier). In the photo the hand is planted flat on the grass with the digits flexed under the wrist, the knuckle-walking contact. Thumb is opposable but short relative to the fingers."
     },
     {
       "id": "leg_L",
@@ -232,7 +230,6 @@
         "fraction_of_root_radius": 0.57,
         "overlap_region": "Pelvis, the acetabular region and the lower trunk mesh. The hip ball socket sits in the lateral pelvis."
       },
-      "library_hint": null,
       "notes": "Hip to ankle is about 0.48 m, measured from the photo's proportions and consistent with Napier and Napier. The hip sits about 0.6 m above the ground, which is lower than the shoulder. In the photo the hip and knee are flexed moderately, and the hind foot is planted under the body. The leg is classed as locomotion per the taxonomy. The foot is a separate part."
     },
     {
@@ -287,8 +284,7 @@
         "fraction_of_root_radius": 0.4,
         "overlap_region": "Distal shank and the ankle, where it meets the leg mesh."
       },
-      "library_hint": "foot_paw",
-      "notes": "Foot length is about 0.2 m (Napier and Napier). The photo shows the hind foot flat on the ground, the plantigrade stance. The chimpanzee foot is plantigrade and the big toe (hallux) is opposable, so the foot can grasp branches. Foot_paw is the closest library fit but it has no opposable toe."
+      "notes": "Foot length is about 0.2 m (Napier and Napier). The photo shows the hind foot flat on the ground, the plantigrade stance. The chimpanzee foot is plantigrade and the big toe (hallux) is opposable, so the foot can grasp branches. The big toe is opposable."
     },
     {
       "id": "eye_L",
@@ -324,7 +320,6 @@
         "fraction_of_root_radius": 0.33,
         "overlap_region": "Orbital socket at the front of the skull."
       },
-      "library_hint": "eye_round",
       "notes": "Forward-facing eyes give stereoscopic depth vision. The photo shows the eyes set in a dark, close-set face, about 0.07 m apart. The eye is fixed in the orbit, so the only movement is by head turn. Eye diameter is about 0.024 m (approximate)."
     },
     {
@@ -361,8 +356,7 @@
         "fraction_of_root_radius": 0.2,
         "overlap_region": "Lateral skull above the temporal bone."
       },
-      "library_hint": null,
-      "notes": "In the photo the ear is flat, rounded and close to the side of the head, with little pinna projection. Its visible extent is about 0.06 m (photo estimate, up from 0.045 m). The ear is not a flared or leaf shape, so none of the library ears fits well."
+      "notes": "In the photo the ear is flat, rounded and close to the side of the head, with little pinna projection. Its visible extent is about 0.06 m (photo estimate, up from 0.045 m). The ear is not flared or leaf-shaped."
     },
     {
       "id": "nose",
@@ -398,11 +392,10 @@
         "fraction_of_root_radius": 0.33,
         "overlap_region": "Front of the maxilla and nasal bones."
       },
-      "library_hint": "nose_button",
       "notes": "Broad, flat nose with forward-facing nostrils, centred on the muzzle below the brow. The photo shows a dark, flat nose tip with a pale lower face. Olfaction supports the sensory category. Nose_button is an approximate fit."
     },
     {
-      "id": "mouth_jaws",
+      "id": "jaws",
       "name": "Mouth and jaws (large canines, incisors and molars)",
       "category": "feeding",
       "symmetry": "centre",
@@ -437,11 +430,10 @@
         "fraction_of_root_radius": 0.33,
         "overlap_region": "Mandibular ramus and the front of the skull, at the jaw joint."
       },
-      "library_hint": "mouth_jaws",
       "notes": "Feeding apparatus for fruit, leaves and insects, with large canines. The photo shows a closed, protruding muzzle with the mouth about 0.1 m below the eyes. The jaw joint is under the ear. The canines are not a prey-capture structure, so this part is a general feeding category. Jaw opening range is an approximate value."
     },
     {
-      "id": "brow_ridge",
+      "id": "supraorbital_torus",
       "name": "Supraorbital brow ridge",
       "category": "aesthetics",
       "symmetry": "centre",
@@ -474,8 +466,7 @@
         "fraction_of_root_radius": 0.27,
         "overlap_region": "Frontal bone above the orbits."
       },
-      "library_hint": "brow_ridge",
-      "notes": "Bony supraorbital torus across both orbits, about 0.09 m wide. The photo shows a heavy brow overhanging the eyes. It is largely structural and partly functional (it reinforces the face), so aesthetics is a loose fit. Brow_ridge is the library match."
+      "notes": "Bony supraorbital torus across both orbits, about 0.09 m wide. The photo shows a heavy brow overhanging the eyes. It is largely structural and partly functional (it reinforces the face), so aesthetics is a loose fit."
     }
   ],
   "category_summary": {
@@ -494,33 +485,17 @@
       "Penetration depths are estimates from typical joint and bone radii; the overlap regions are the core features that would need to match."
     ]
   },
-  "library_gaps": [
-    {
-      "feature": "Forelimb (shoulder, elbow, wrist, knuckle-walking)",
-      "why": "No library part for a jointed limb. The library has hands and feet but no limb segment with a hinge elbow."
-    },
-    {
-      "feature": "Hindlimb (hip, knee, ankle)",
-      "why": "No library limb part for a multi-joint leg."
-    },
-    {
-      "feature": "Opposable hallux (grasping foot)",
-      "why": "Foot_paw is plantigrade with no opposable big toe, so grasping is missing."
-    },
-    {
-      "feature": "Knuckle-walking hand posture",
-      "why": "Hand_basic has no flexed-digit, knuckle-bearing pose."
-    },
-    {
-      "feature": "Flat, close-set rounded ear",
-      "why": "Library ears are leaf or flared shapes. No flat rounded ear exists."
-    }
-  ],
   "sources": [
     "Wikimedia Commons, File:Pan_troglodytes_(male).jpg, photo by Hans Hillewaert, licence CC BY-SA 3.0. https://commons.wikimedia.org/wiki/File:Pan_troglodytes_(male).jpg (Posture, view and relative proportions. Viewed locally.)",
     "Napier JR and Napier PH (1985) The Natural History of the Primates. MIT Press. (Limb and hand and foot proportions.)",
     "Nowak RM (1999) Walker's Mammals of the World, 6th ed. Johns Hopkins University Press. (Pan troglodytes body mass and size.)",
     "Hunt KD (1991) Mechanical implications of chimpanzee positional behavior. American Journal of Physical Anthropology 86: 521-536. (Knuckle-walking mechanics; cited from memory, not re-verified in this session.)"
   ],
-  "confidence": 0.6
+  "confidence": 0.6,
+  "other_features": [
+    {
+      "feature": "Knuckle-walking posture",
+      "description": "Forelimbs bear weight on the backs of the flexed middle finger bones."
+    }
+  ]
 }

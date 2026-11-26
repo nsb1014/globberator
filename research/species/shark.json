@@ -72,8 +72,7 @@
         "fraction_of_root_radius": 0.57,
         "overlap_region": "anterior-lateral trunk core behind the gill region, at the pectoral girdle"
       },
-      "library_hint": "fin_dorsal",
-      "notes": "Large, broad-based, wing-like, mainly for lift and steering. Photo shows the fin low on the flank behind the gill region, with a tip reaching about 0.13 of total length. Hint is a loose match: fin_dorsal is the closest fin shape in the library."
+      "notes": "Large, broad-based, wing-like, mainly for lift and steering. Photo shows the fin low on the flank behind the gill region, with a tip reaching about 0.13 of total length."
     },
     {
       "id": "pelvic_fin_L",
@@ -113,7 +112,6 @@
         "fraction_of_root_radius": 0.6,
         "overlap_region": "ventral-lateral trunk core, pelvic girdle region"
       },
-      "library_hint": "fin_dorsal",
       "notes": "Smaller ventral fin, used for stability and pitch control. Photo places the pelvic root at about 0.55 of total length from the snout, as the first pass estimated. Hint is a loose match only."
     },
     {
@@ -150,7 +148,6 @@
         "fraction_of_root_radius": 0.6,
         "overlap_region": "dorsal midline of the trunk core, above the pectoral region"
       },
-      "library_hint": "fin_dorsal",
       "notes": "Large, with a black tip in blacktip reef sharks (confirmed in the photo). Provides stability and roll control. Its tip reaches y=1.0 in the normalized frame, so it sets the top of the bounding box. Root is over the pectoral region, slightly forward of centre."
     },
     {
@@ -187,7 +184,6 @@
         "fraction_of_root_radius": 0.5,
         "overlap_region": "dorsal caudal-trunk core, posterior to the first dorsal"
       },
-      "library_hint": "fin_dorsal",
       "notes": "Small, placed over the anal fin on the posterior trunk (confirmed in the photo), and it helps with stability."
     },
     {
@@ -224,8 +220,7 @@
         "fraction_of_root_radius": 0.5,
         "overlap_region": "ventral caudal-trunk core, posterior to the pelvic fins"
       },
-      "library_hint": "fin_dorsal",
-      "notes": "Ventral counterpart of the second dorsal fin, sitting slightly anterior to the caudal peduncle. The hint is a shape match only, since fin_dorsal is not ventral by design."
+      "notes": "Ventral counterpart of the second dorsal fin, sitting slightly anterior to the caudal peduncle."
     },
     {
       "id": "caudal_fin",
@@ -263,7 +258,6 @@
         "fraction_of_root_radius": 0.75,
         "overlap_region": "caudal peduncle end of the core"
       },
-      "library_hint": "tail_fan",
       "notes": "Heterocercal, meaning the upper lobe is larger than the lower (confirmed in the photo), so the tail produces lift and thrust together. The upper lobe is the main thrust surface, and both lobes have black tips. Main drive for swimming, and flexed laterally about the peduncle."
     },
     {
@@ -304,8 +298,7 @@
         "fraction_of_root_radius": 0.5,
         "overlap_region": "dorsolateral head core, orbit"
       },
-      "library_hint": "eye_round",
-      "notes": "Dorsolateral placement on the head with a nictitating membrane. Small and mostly stationary. The hint is a rough match."
+      "notes": "Dorsolateral placement on the head with a nictitating membrane. Small and mostly stationary."
     },
     {
       "id": "nostril_L",
@@ -341,8 +334,7 @@
         "fraction_of_root_radius": 0.4,
         "overlap_region": "ventral snout core, nasal capsule"
       },
-      "library_hint": null,
-      "notes": "Ventral nostril, a non-protruding inhalant opening for olfaction. No library equivalent. Symmetric pair on the ventral snout."
+      "notes": "Ventral nostril, a non-protruding inhalant opening for olfaction. Symmetric pair on the ventral snout."
     },
     {
       "id": "ampullae_of_lorenzini_L",
@@ -378,8 +370,7 @@
         "fraction_of_root_radius": 0.5,
         "overlap_region": "ventral head surface, subdermal canal network"
       },
-      "library_hint": null,
-      "notes": "Electroreceptive jelly-filled canals opening through pores on the ventral snout and head. Flush with the skin, so it needs only a shallow surface overlap. No library equivalent."
+      "notes": "Electroreceptive jelly-filled canals opening through pores on the ventral snout and head. Flush with the skin, so it needs only a shallow surface overlap."
     },
     {
       "id": "lateral_line_L",
@@ -415,8 +406,7 @@
         "fraction_of_root_radius": 0.67,
         "overlap_region": "lateral trunk surface along the full body length"
       },
-      "library_hint": null,
-      "notes": "Mechanosensory canal along each flank, running from head to tail. Sensitive to water movement. Flush with the skin, so it is a surface detail. No library equivalent."
+      "notes": "Mechanosensory canal along each flank, running from head to tail. Sensitive to water movement. Flush with the skin, so it is a surface detail."
     },
     {
       "id": "upper_jaw",
@@ -452,7 +442,6 @@
         "fraction_of_root_radius": 0.5,
         "overlap_region": "anterior head core, neurocranium"
       },
-      "library_hint": "mouth_jaws",
       "notes": "Upper jaw carries the upper tooth rows and is largely fixed to the skull. Sharks have no true jaw protrusion here, unlike bony fishes. Hint is a rough match."
     },
     {
@@ -491,7 +480,6 @@
         "fraction_of_root_radius": 0.5,
         "overlap_region": "ventral-anterior head core, mandibular articulation"
       },
-      "library_hint": "mouth_jaws",
       "notes": "Opens by rotating down about the mandibular articulation. Carries the lower tooth rows, which are replaced continuously in series."
     },
     {
@@ -528,7 +516,6 @@
         "fraction_of_root_radius": 0.5,
         "overlap_region": "lateral branchial region of the head and trunk core"
       },
-      "library_hint": null,
       "notes": "Five slits per side for respiratory water outflow. In the photo the slit row spans about 0.05-0.06 m, so length_m is revised. Not used for prey capture, so the feeding category is the closest fit in this taxonomy. Count is per side."
     },
     {
@@ -567,7 +554,6 @@
         "fraction_of_root_radius": 0.5,
         "overlap_region": "ventral pelvic girdle core"
       },
-      "library_hint": "hand_claw",
       "notes": "Male-only reproductive grasping organ, a modified inner edge of the pelvic fin. It grasps during mating and is the only manipulation structure. Hint is a poor match, so this is a low-confidence category assignment. Females lack it."
     }
   ],
@@ -584,49 +570,25 @@
     "other": [
       "Dorsal fin tip sets y=1.0 in the normalized frame; y=0 is the ventral keel of the body, not the ground.",
       "Black-tipped fin margins are colouration only, not a separate structure, so they are not parts.",
-      "Dermal denticles (placoid scales) are a surface texture, not a mesh part, so they are omitted and listed under library_gaps.",
-      "Teeth are dental rows inside the jaws, not a separate mesh; they are listed under library_gaps.",
+      "Dermal denticles (placoid scales) are a surface texture, not a mesh part, so they are listed under other_features.",
+      "Teeth are dental rows inside the jaws, not a separate mesh; they are listed under other_features.",
       "Normalized positions assume x is scaled by 0.35 m, y by 0.45 m and z by 1.6 m."
     ]
   },
-  "library_gaps": [
-    {
-      "feature": "Ampullae of Lorenzini (electroreceptive pores)",
-      "why": "Flush-to-skin pore fields with no library equivalent; needs a small surface decal or flat disc."
-    },
-    {
-      "feature": "Lateral line canal",
-      "why": "Long, thin sensory canal along the flank. No library equivalent for a flush line."
-    },
-    {
-      "feature": "Nostrils (ventral nasal capsules)",
-      "why": "Ventral, non-protruding inhalant openings. The library has nose_button, but it is a protruding feature."
-    },
-    {
-      "feature": "Gill slits (five per side)",
-      "why": "Repeated slits with a respiratory function. No library equivalent, and the taxonomy has no respiration category."
-    },
-    {
-      "feature": "Teeth (multi-row, replaced in series)",
-      "why": "Dental rows inside the jaws, far too fine for a library part. Needs a texture or decal."
-    },
-    {
-      "feature": "Dermal denticles (placoid scales)",
-      "why": "Surface texture. Not a mesh part, and the library has no scale-texture category."
-    },
-    {
-      "feature": "Heterocercal caudal fin (asymmetric upper lobe)",
-      "why": "tail_fan is symmetric, so an asymmetric shark tail needs a custom shape."
-    },
-    {
-      "feature": "Male pelvic claspers",
-      "why": "Reproductive grasping organs. hand_claw is a poor match, and the library has no reproductive or clasping part."
-    }
-  ],
   "sources": [
     "Compagno, L.J.V. (1984). FAO Species Catalogue Vol. 4, Sharks of the World, Part 2. FAO, Rome. (Carcharhinus melanopterus species account; size.) Cited from memory, not verified online.",
     "FishBase, Carcharhinus melanopterus (blacktip reef shark) species page, https://www.fishbase.se/summary/Carcharhinus-melanopterus.html. Cited from memory, not verified online.",
     "Wikimedia Commons, File:Blacktip_reef_shark._(Tsumaguro).jpg, https://commons.wikimedia.org/wiki/File:Blacktip_reef_shark._(Tsumaguro).jpg. Verified via the Commons API: author Kakidai, licence CC BY-SA 3.0. Image viewed (downscaled copy of the original upload file)."
   ],
-  "confidence": 0.55
+  "confidence": 0.55,
+  "other_features": [
+    {
+      "feature": "Teeth",
+      "description": "Several rows of serrated teeth in each jaw, replaced continuously."
+    },
+    {
+      "feature": "Dermal denticles",
+      "description": "Tooth-like placoid scales cover the skin and give it a rough texture."
+    }
+  ]
 }

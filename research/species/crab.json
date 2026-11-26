@@ -67,7 +67,6 @@
         "fraction_of_root_radius": 0,
         "overlap_region": "Is the core itself; no penetration required."
       },
-      "library_hint": "shell",
       "notes": "Category is a forced fit. The carapace protects the body and is not clearly ornamental, so 'aesthetics' is used as the closest bucket. Carries the stalked eyes, antennae and antennules on its front margin. Carcinus has five frontal teeth on each side of the front, which are useful for identification."
     },
     {
@@ -140,7 +139,6 @@
         "fraction_of_root_radius": 1.5,
         "overlap_region": "Anterolateral margin of the carapace, the first pereiopod socket (coxa and ischium region), overlapping about 6 mm into the core."
       },
-      "library_hint": "hand_pincer",
       "notes": "Chelipeds are often unequal in size in adults (handedness not verified for this species). This is a left member; the right is a mirror, so the size asymmetry can be ignored for a symmetric model. Claw is small (about 3.5 cm, raised from 3 cm after the photo showed the claws projecting forward) and the dactyl and propodus pinch in the horizontal plane. Fingers have blunt tubercles."
     },
     {
@@ -213,7 +211,6 @@
         "fraction_of_root_radius": 1.6,
         "overlap_region": "Lateral margin and epimeral region of the carapace, where each leg's coxa sits. Legs P2 to P5 attach along the side at z normalized about +0.05, -0.08, -0.20, -0.30 with y about 0.25."
       },
-      "library_hint": "foot_claw",
       "notes": "Count is 4 per side (8 total). Legs P2 to P5 are slender and end in a pointed dactyl that grips substrate. Crabs walk sideways (lateral gait), with legs moving in alternating groups. P1 is the cheliped, so these are the walking legs only."
     },
     {
@@ -254,7 +251,6 @@
         "fraction_of_root_radius": 2.0,
         "overlap_region": "Anterior-lateral orbit of the carapace front margin, between the frontal teeth."
       },
-      "library_hint": "eye_stalk",
       "notes": "Stalk can retract into the orbit. Eyes are compound and sit at the tips of short stalks."
     },
     {
@@ -295,7 +291,6 @@
         "fraction_of_root_radius": 2.5,
         "overlap_region": "Frontal margin of the carapace, the antennule socket beneath the eye stalks."
       },
-      "library_hint": "antenna",
       "notes": "Short, two-branched chemosensory and balance organ. Tucked beneath the front of the carapace."
     },
     {
@@ -336,7 +331,6 @@
         "fraction_of_root_radius": 2.5,
         "overlap_region": "Frontal margin and orbit wall, beside the eye stalk."
       },
-      "library_hint": "antenna",
       "notes": "Longer antenna, about 1 cm, that sweeps forward to sense the environment."
     },
     {
@@ -375,8 +369,7 @@
         "fraction_of_root_radius": 1.2,
         "overlap_region": "Ventral sternum and buccal frame at the front of the thorax. Mouthparts sit on the underside and are hidden from above."
       },
-      "library_hint": "mouth_mandibles",
-      "notes": "Three pairs of maxillipeds form a lid over the mouth that holds and shreds food. Mouthparts are ventral and not visible from the dorsal view. Categorised as feeding. Library hint is a loose fit, since mandibles are not the same structure."
+      "notes": "Three pairs of maxillipeds form a lid over the mouth that holds and shreds food. Mouthparts are ventral and not visible from the dorsal view. Categorised as feeding."
     },
     {
       "id": "abdomen",
@@ -412,8 +405,7 @@
         "fraction_of_root_radius": 1.0,
         "overlap_region": "Ventral sternum of the thorax, the full-thickness abdominal socket beneath the carapace."
       },
-      "library_hint": null,
-      "notes": "Narrow, seven-segmented abdomen folded flat against the sternum. Narrow and T-shaped in males, broad and rounded in females (brood carrying). No functional category fits well, so 'aesthetics' is used as a placeholder for the non-locomotor, non-sensory body flap. See library_gaps."
+      "notes": "Narrow, seven-segmented abdomen folded flat against the sternum. Narrow and T-shaped in males, broad and rounded in females (brood carrying). No functional category fits well, so 'aesthetics' is used as a placeholder for the non-locomotor, non-sensory body flap."
     }
   ],
   "category_summary": {
@@ -434,28 +426,6 @@
       "Bounding box includes legs spread laterally and the chelipeds forward, so the width is larger than the carapace."
     ]
   },
-  "library_gaps": [
-    {
-      "feature": "Tucked ventral abdomen with brood (female) or narrow T-shaped (male) form",
-      "why": "No library part represents a folded ventral flap. The closest choice is a placeholder aesthetic part, and the category is not a true fit."
-    },
-    {
-      "feature": "Carapace as a protective dorsal shell",
-      "why": "The shell library part is ornamental-coded, but the carapace is a functional protective and attachment body. Closer to 'shell' than to any other part, but the category is a forced fit."
-    },
-    {
-      "feature": "Retractable stalked compound eyes that sink into orbits",
-      "why": "eye_stalk covers the stalk, but not retraction into a socket. Modelled as a ball joint with a range limit."
-    },
-    {
-      "feature": "Mouthpart set (three pairs of maxillipeds forming a ventral lid)",
-      "why": "mouth_mandibles is a loose fit. Nothing in the library represents a multi-pair ventral mouth frame."
-    },
-    {
-      "feature": "Lateral-walking leg set (four pairs splayed laterally)",
-      "why": "foot_claw covers a single claw foot. No library part represents a set of four splayed walking legs per side."
-    }
-  ],
   "sources": [
     "https://commons.wikimedia.org/wiki/File:Green_shore_crab_(Carcinus_maenas)_in_the_Baltic_Sea.jpg (Ansgar Gruber, CC BY-SA 4.0; image viewed locally from the Commons direct URL; author and licence from the Commons API)",
     "https://www.marlin.ac.uk/species/detail/1497 (MarLIN: Carcinus maenas, carapace width up to 8 cm; found via search, not fetched in full)",

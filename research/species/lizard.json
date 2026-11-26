@@ -102,8 +102,7 @@
         "fraction_of_root_radius": 1.67,
         "overlap_region": "shoulder girdle (scapula/coracoid) and trunk wall at z ~ +0.32, x ~ +0.05 to +0.08 m from midline"
       },
-      "library_hint": "foot_claw",
-      "notes": "Sprawling forelimb: upper arm and forearm lie nearly horizontal, elbow kept out to the side. Five-digit hand with long curved claws (used for grip on branches and for digging). Closest library fit is foot_claw, which is a foot not a hand; it is locomotion, not manipulation. Hand_claw would fit the claws but would misfile the category."
+      "notes": "Sprawling forelimb: upper arm and forearm lie nearly horizontal, elbow kept out to the side. Five-digit hand with long curved claws (used for grip on branches and for digging). it is locomotion, not manipulation. Hand_claw would fit the claws but would misfile the category."
     },
     {
       "id": "leg_hind_L",
@@ -175,8 +174,7 @@
         "fraction_of_root_radius": 1.39,
         "overlap_region": "pelvic girdle (ilium/ischium) and pelvic segment of core at z ~ +0.07, x ~ +0.05 to +0.08 m"
       },
-      "library_hint": "foot_claw",
-      "notes": "Hindlimb is larger and more muscular than the forelimb, with a sprawling stance. Five clawed toes. Used for propulsion (lateral-sequence walk) and for jumping in escape. Hint is foot_claw as the nearest fit."
+      "notes": "Hindlimb is larger and more muscular than the forelimb, with a sprawling stance. Five clawed toes. Used for propulsion (lateral-sequence walk) and for jumping in escape."
     },
     {
       "id": "tail",
@@ -248,8 +246,7 @@
         "fraction_of_root_radius": 1.33,
         "overlap_region": "pelvic segment of the core, z from +0.07 to +0.03; the caudal vertebrae run into the pelvis"
       },
-      "library_hint": null,
-      "notes": "Long, laterally compressed, tapering tail, about 55-60% of total length. Used for balance, lateral-undulation swimming and as a defensive whip. Caudal autotomy plane sits about 0.35 normalized-z from the base (near the middle of the tail); tail can break there and regenerate partially. No library part fits a long tapering tail: tail_tuft and tail_fan are too small or too different in shape, tail_club is the wrong shape (club, not taper). Left as null."
+      "notes": "Long, laterally compressed, tapering tail, about 55-60% of total length. Used for balance, lateral-undulation swimming and as a defensive whip. Caudal autotomy plane sits about 0.35 normalized-z from the base (near the middle of the tail); tail can break there and regenerate partially. Left as null."
     },
     {
       "id": "eye_L",
@@ -288,7 +285,6 @@
         "fraction_of_root_radius": 0.63,
         "overlap_region": "orbit of the skull, lateral side of the head segment"
       },
-      "library_hint": "eye_round",
       "notes": "Round eye with a movable upper and lower eyelid and a nictitating membrane, set well back on the side of the head. In the photo the eye is large relative to the head and sits above the mouth corner, with the head raised. Eyes sit in orbits and can be slightly moved within the socket."
     },
     {
@@ -325,8 +321,7 @@
         "fraction_of_root_radius": 0.5,
         "overlap_region": "skin flush with the side of the head; the middle ear sits behind it"
       },
-      "library_hint": null,
-      "notes": "Green iguanas have no external ear flap, only a flush tympanum, a round membrane behind the eye. It is a shallow surface feature, not a protruding ear; no library ear fits (ear_leaf is a protruding leaf-shape)."
+      "notes": "Green iguanas have no external ear flap, only a flush tympanum, a round membrane behind the eye. It is a shallow surface feature, not a protruding ear."
     },
     {
       "id": "parietal_eye",
@@ -362,8 +357,7 @@
         "fraction_of_root_radius": 1.5,
         "overlap_region": "parietal foramen through the skull roof to the pineal/parietal organ beneath"
       },
-      "library_hint": null,
-      "notes": "Photosensitive parietal organ on the top of the head, visible as a small pale spot through a foramen in the skull in many iguanids. It responds to light and helps regulate circadian rhythms. Not a true eye; too small to be a library eye part."
+      "notes": "Photosensitive parietal organ on the top of the head, visible as a small pale spot through a foramen in the skull in many iguanids. It responds to light and helps regulate circadian rhythms. Not a true eye."
     },
     {
       "id": "jaws",
@@ -401,8 +395,7 @@
         "fraction_of_root_radius": 1.33,
         "overlap_region": "quadrate-articular jaw joint at the back of the skull, z ~ +0.42"
       },
-      "library_hint": "mouth_jaws",
-      "notes": "Herbivorous adult green iguana: broad, serrated molariform teeth at the back of the jaw and sharp pleurodont teeth in front. Lower jaw hinge is a kinetic quadrate-type joint; the photo shows a wide open gape, so the range is widened to 45 degrees. mouth_jaws is the nearest fit (jaws, not a beak or snout)."
+      "notes": "Herbivorous adult green iguana: broad, serrated molariform teeth at the back of the jaw and sharp pleurodont teeth in front. Lower jaw hinge is a kinetic quadrate-type joint; the photo shows a wide open gape, so the range is widened to 45 degrees."
     },
     {
       "id": "tongue",
@@ -438,8 +431,7 @@
         "fraction_of_root_radius": 2.5,
         "overlap_region": "hyoid apparatus and floor of the mouth/throat"
       },
-      "library_hint": null,
-      "notes": "Forked, fleshy tongue; used mainly for chemosensation (Jacobson's organ) and manipulating food, rather than for prey capture. Visible as a pale fleshy structure under the open jaw in the photo. Hydrostatic, so no true joint. No library part fits; tongue could be filed under mouth_* but none matches."
+      "notes": "Forked, fleshy tongue; used mainly for chemosensation (Jacobson's organ) and manipulating food, rather than for prey capture. Visible as a pale fleshy structure under the open jaw in the photo. Hydrostatic, so no true joint. tongue could be filed under mouth_* but none matches."
     },
     {
       "id": "dorsal_crest",
@@ -475,8 +467,7 @@
         "fraction_of_root_radius": 0.5,
         "overlap_region": "dorsal skin of neck and back to the base of the tail, surface only"
       },
-      "library_hint": "crest",
-      "notes": "Row of enlarged, pointed dorsal scales running from the nape to the tail, largest over the neck and shoulders and decreasing toward the tail. The photo shows long, sharp spines at the nape and shoulder, longer than the eye diameter, so the root moves forward to the nape. Partly used for display and thermoregulation. Crest is the closest library fit."
+      "notes": "Row of enlarged, pointed dorsal scales running from the nape to the tail, largest over the neck and shoulders and decreasing toward the tail. The photo shows long, sharp spines at the nape and shoulder, longer than the eye diameter, so the root moves forward to the nape. Partly used for display and thermoregulation."
     },
     {
       "id": "dewlap",
@@ -514,8 +505,7 @@
         "fraction_of_root_radius": 0.5,
         "overlap_region": "throat skin over the hyoid, front of the neck segment"
       },
-      "library_hint": null,
-      "notes": "Ventral throat fold of skin, raised and extended during display. In the photo a large dark flap hangs below the jaw and along the throat, so the length is increased to 0.06 m. Not a frill in the library sense (frill is a neck collar); no good library match."
+      "notes": "Ventral throat fold of skin, raised and extended during display. In the photo a large dark flap hangs below the jaw and along the throat, so the length is increased to 0.06 m."
     },
     {
       "id": "body_scales",
@@ -551,8 +541,7 @@
         "fraction_of_root_radius": 0,
         "overlap_region": "surface skin layer only; no penetration"
       },
-      "library_hint": null,
-      "notes": "Overlapping, keeled scales over the whole body, limbs and tail. The photo also shows larger spiny tubercles on the neck and shoulder in clusters among the smaller scales. Surface texture rather than a separate structure. No library part fits."
+      "notes": "Overlapping, keeled scales over the whole body, limbs and tail. The photo also shows larger spiny tubercles on the neck and shoulder in clusters among the smaller scales. Surface texture rather than a separate structure."
     }
   ],
   "category_summary": {
@@ -571,32 +560,6 @@
       "Head, neck, crest, jaw and dewlap positions were checked against one close photo; limbs, tail and trunk are still anatomy estimates."
     ]
   },
-  "library_gaps": [
-    {
-      "feature": "Long tapering tail (locomotion + balance + autotomy)",
-      "why": "tail_club, tail_tuft and tail_fan are the wrong shape; none is a long tapering limb-like tail."
-    },
-    {
-      "feature": "Dewlap (ventral throat fan)",
-      "why": "frill is a neck collar and does not match a throat fan; no throat-display part."
-    },
-    {
-      "feature": "Tympanic ear opening (flush, not protruding)",
-      "why": "ear_leaf is a protruding leaf-shaped ear; a flush tympanum has no library part."
-    },
-    {
-      "feature": "Parietal (third) eye",
-      "why": "eye_* parts are for eyes in sockets, not a small photosensitive organ in a skull foramen."
-    },
-    {
-      "feature": "Forked chemosensory tongue",
-      "why": "mouth_* parts are for the mouth/beak/jaw, not for a protruding forked sensory tongue."
-    },
-    {
-      "feature": "Keeled body scales",
-      "why": "no part is a surface-texture scale covering; plate and spike are too large."
-    }
-  ],
   "sources": [
     "Wikipedia, 'Green iguana' (Iguana iguana) article: size, mass and diet statements. Recalled from memory; NOT verified online (Wikipedia/Wikimedia hosts blocked by session network policy).",
     "Pianka, E.R. & Vitt, L.J. (2003). Lizards: Windows to the Evolution of Diversity. University of California Press. General squamate anatomy (sprawling gait, tail autotomy, parietal eye, tympanum). Recalled from memory; not verified.",

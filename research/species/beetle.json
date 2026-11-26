@@ -70,7 +70,6 @@
         "fraction_of_root_radius": 0.67,
         "overlap_region": "anterior tip of pronotum collar, z 0.18-0.24 normalized"
       },
-      "library_hint": null,
       "notes": "Head capsule carries mandibles, palps, antennae and eyes. Modelled as a block; hinge lets it tilt a little."
     },
     {
@@ -107,7 +106,6 @@
         "fraction_of_root_radius": 0.4,
         "overlap_region": "dorsal core under the pronotum, z 0.08-0.16"
       },
-      "library_hint": "plate",
       "notes": "Broad, slightly convex, granulated (matte) shield over the prothorax in the photo, darker than the glossy elytra. Mostly ornamental/protective; hides the head-thorax join."
     },
     {
@@ -146,7 +144,6 @@
         "fraction_of_root_radius": 0.83,
         "overlap_region": "head front, x 0.00-0.12, z 0.36-0.44"
       },
-      "library_hint": "mouth_mandibles",
       "notes": "Male mandibles are very long, strongly curved and antler-like, with a sharp forward tooth near the tip and smaller inner teeth (seen in the photo). Functionally a manipulation/combat structure: used in male-male contests (pushing and levering) and for gripping mates and prey. Categorised as feeding because the mandible base is part of the mouthpart apparatus; sexual-display and combat function is primary, feeding secondary. Length roughly a third to a half of body length; the 0.02 m estimate comes from the oblique view."
     },
     {
@@ -187,7 +184,6 @@
         "fraction_of_root_radius": 0.67,
         "overlap_region": "mouthparts base, z 0.40-0.44"
       },
-      "library_hint": null,
       "notes": "Small sensory-feeding palps near the mouth, tasting food. Very small; penetration is shallow."
     },
     {
@@ -245,7 +241,6 @@
         "fraction_of_root_radius": 0.75,
         "overlap_region": "head side, x 0.08-0.14, y 0.56-0.62, z 0.34-0.40"
       },
-      "library_hint": "antenna",
       "notes": "Elbowed (geniculate) antenna: long scape, flexible flagellum ending in a fan-shaped (lamellate) club, visible in the photo. Chemo/mechanosensory."
     },
     {
@@ -282,7 +277,6 @@
         "fraction_of_root_radius": 0.5,
         "overlap_region": "head side, x 0.30-0.40, y 0.50-0.60"
       },
-      "library_hint": "eye_bug",
       "notes": "Large lateral compound eyes, kidney shaped, fixed in the head capsule. Larger in males. Little or no eye movement."
     },
     {
@@ -321,7 +315,6 @@
         "fraction_of_root_radius": 0.12,
         "overlap_region": "dorsal midline, scutellum, z -0.02 to 0.02, x 0 to 0.04"
       },
-      "library_hint": "shell",
       "notes": "Hardened forewings that cover the hind wings and abdomen; they open upward to free the hind wings for flight. Protective; locomotion only when flying. Category kept as locomotion because they are part of flight mechanics."
     },
     {
@@ -362,8 +355,7 @@
         "fraction_of_root_radius": 0.67,
         "overlap_region": "metathorax under elytra, x 0.00-0.06, z -0.14 to -0.06"
       },
-      "library_hint": null,
-      "notes": "Membranous flight wings folded under the elytra at rest. Gap: no library part for a folded beetle hind wing."
+      "notes": "Membranous flight wings folded under the elytra at rest."
     },
     {
       "id": "foreleg_L",
@@ -419,7 +411,6 @@
         "fraction_of_root_radius": 0.83,
         "overlap_region": "thoracic side, x 0.20-0.28, y 0.26-0.34, z 0.12-0.20"
       },
-      "library_hint": "foot_claw",
       "notes": "Tibia has toothed edge, used for digging and grasping. Males use foreleg mandibles to grip the female in mating. Locomotion is primary."
     },
     {
@@ -476,7 +467,6 @@
         "fraction_of_root_radius": 0.82,
         "overlap_region": "thoracic side, x 0.20-0.28, y 0.26-0.34, z -0.06 to 0.02"
       },
-      "library_hint": "foot_claw",
       "notes": "Walking leg with a 5-segment tarsus and paired claws."
     },
     {
@@ -533,7 +523,6 @@
         "fraction_of_root_radius": 0.85,
         "overlap_region": "metathoracic side, x 0.20-0.28, y 0.26-0.34, z -0.28 to -0.16"
       },
-      "library_hint": "foot_claw",
       "notes": "Longest leg pair. Walking and grip on bark."
     }
   ],
@@ -553,29 +542,17 @@
       "Legs are pinned to the thorax, so the tarsi must stay in contact with the ground at y=0."
     ]
   },
-  "library_gaps": [
-    {
-      "feature": "folded membranous hind wing under elytra",
-      "why": "library has wing_bat and wing_feather, neither a folded beetle hind wing"
-    },
-    {
-      "feature": "geniculate (elbowed) segmented antenna with short club",
-      "why": "library antenna is a generic single-piece shape"
-    },
-    {
-      "feature": "toothed tibia (digging/grip)",
-      "why": "no part with a serrated edge"
-    },
-    {
-      "feature": "paired elytra opening along a midline hinge",
-      "why": "shell is a fixed plate, not a hinged cover"
-    }
-  ],
   "sources": [
     "https://commons.wikimedia.org/wiki/File:Lucanus_cervus_male_Orchi_010.jpg (file page fetched: photographer Orchi, CC BY-SA 3.0 licence template, 2000x1500 original, self-photographed; Commons API metadata unavailable due to rate limiting)",
     "Image viewed locally: 1280px thumbnail https://thumb.wikimedia.org/wikipedia/commons/thumb/9/91/Lucanus_cervus_male_Orchi_010.jpg/1280px-Lucanus_cervus_male_Orchi_010.jpg (fetched via upload.wikimedia.org after rate limiting)",
     "Lucanus cervus, Wikipedia: adult size and male mandible description (general reference knowledge; not fetched in this session)",
     "Coleoptera anatomy (head, pronotum, elytra, hind wing, five-segment tarsus, geniculate antenna): general entomology reference, not fetched in this session"
   ],
-  "confidence": 0.6
+  "confidence": 0.6,
+  "other_features": [
+    {
+      "feature": "Toothed tibia",
+      "description": "Fore tibiae carry teeth along the outer edge for digging and grip."
+    }
+  ]
 }

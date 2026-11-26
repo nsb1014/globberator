@@ -108,7 +108,6 @@
         "fraction_of_root_radius": 1.2,
         "overlap_region": "oral crown / ventral head wall at arm base; arm base is embedded in the buccal-crown ring"
       },
-      "library_hint": "hand_tentacle",
       "notes": "Muscular hydrostat, no rigid joints: bending is produced by transverse, longitudinal and helical muscle layers, so the joint 'pos' values are bend zones, not pivots. Two rows of suckers on the oral surface (distal to the base) give grip. Arm length is approximate (about 1.5-2x mantle length in adult O. vulgaris); range 0-180 deg per zone, distal zone allows coiling (0-360)."
     },
     {
@@ -185,7 +184,6 @@
         "fraction_of_root_radius": 1.2,
         "overlap_region": "oral crown / ventral head wall at arm base; arm base is embedded in the buccal-crown ring"
       },
-      "library_hint": "hand_tentacle",
       "notes": "Muscular hydrostat, no rigid joints: bending is produced by transverse, longitudinal and helical muscle layers, so the joint 'pos' values are bend zones, not pivots. Two rows of suckers on the oral surface (distal to the base) give grip. Arm length is approximate (about 1.5-2x mantle length in adult O. vulgaris); range 0-180 deg per zone, distal zone allows coiling (0-360)."
     },
     {
@@ -262,7 +260,6 @@
         "fraction_of_root_radius": 1.2,
         "overlap_region": "oral crown / ventral head wall at arm base; arm base is embedded in the buccal-crown ring"
       },
-      "library_hint": "hand_tentacle",
       "notes": "Muscular hydrostat, no rigid joints: bending is produced by transverse, longitudinal and helical muscle layers, so the joint 'pos' values are bend zones, not pivots. Two rows of suckers on the oral surface (distal to the base) give grip. Arm length is approximate (about 1.5-2x mantle length in adult O. vulgaris); range 0-180 deg per zone, distal zone allows coiling (0-360)."
     },
     {
@@ -339,7 +336,6 @@
         "fraction_of_root_radius": 1.2,
         "overlap_region": "oral crown / ventral head wall at arm base; arm base is embedded in the buccal-crown ring"
       },
-      "library_hint": "hand_tentacle",
       "notes": "Muscular hydrostat, no rigid joints: bending is produced by transverse, longitudinal and helical muscle layers, so the joint 'pos' values are bend zones, not pivots. Two rows of suckers on the oral surface (distal to the base) give grip. Arm length is approximate (about 1.5-2x mantle length in adult O. vulgaris); range 0-180 deg per zone, distal zone allows coiling (0-360)."
     },
     {
@@ -376,7 +372,6 @@
         "fraction_of_root_radius": 0.67,
         "overlap_region": "lateral wall of the cranium / orbital cartilage"
       },
-      "library_hint": "eye_round",
       "notes": "Image-forming camera eye, about 1 cm diameter in adults; lidless, with a pupil. Octopus eyes are largely fixed in the orbit."
     },
     {
@@ -417,8 +412,7 @@
         "fraction_of_root_radius": 1.0,
         "overlap_region": "ventral mantle wall at the head-mantle junction"
       },
-      "library_hint": null,
-      "notes": "Jet propulsion: water is drawn into the mantle cavity and expelled through the funnel. Steerable by muscle, so it orients the jet. Not a limb, so no good library match. Placed at the ventral head-mantle junction at the front of the body (+Z), as in the photo."
+      "notes": "Jet propulsion: water is drawn into the mantle cavity and expelled through the funnel. Steerable by muscle, so it orients the jet. Placed at the ventral head-mantle junction at the front of the body (+Z), as in the photo."
     },
     {
       "id": "beak",
@@ -456,7 +450,6 @@
         "fraction_of_root_radius": 1.0,
         "overlap_region": "buccal mass at the centre of the arm crown, ventral"
       },
-      "library_hint": "mouth_beak",
       "notes": "Parrot-like beak, hidden in the centre of the arm crown on the ventral side. Opening range is approximate. Works with a radula (not modelled)."
     },
     {
@@ -493,7 +486,6 @@
         "fraction_of_root_radius": 1.0,
         "overlap_region": "bases of all eight arms and the ventral margin of the mantle"
       },
-      "library_hint": "foot_webbed",
       "notes": "Thin muscular membrane between arm bases. Used for swimming, for sheltering, and for the 'web-up' posture. Hint is by form only."
     }
   ],
@@ -514,32 +506,6 @@
       "Skin and ink sac are not modelled (ink is an internal defensive organ)."
     ]
   },
-  "library_gaps": [
-    {
-      "feature": "Suckers (two rows per arm, with chemosensory tips)",
-      "why": "No library part for suction cups or a sensory-tipped manipulator; hand_tentacle is the closest match for the arm but not for the sucker rows."
-    },
-    {
-      "feature": "Hydrostatic arm (muscular hydrostat, no rigid joints)",
-      "why": "The library has only rigid-joint hand/foot parts; no soft-bodied, multi-zone bending arm with coil behaviour."
-    },
-    {
-      "feature": "Funnel / siphon (steerable jet nozzle)",
-      "why": "No library tube or nozzle part."
-    },
-    {
-      "feature": "Chromatophore skin / dermal papillae",
-      "why": "Colour and texture camouflage in the skin is not a geometric part; no library entry for patterned or textured skin."
-    },
-    {
-      "feature": "Radula and beak mechanics",
-      "why": "Beak is covered by mouth_beak, but the internal radula has no library analogue."
-    },
-    {
-      "feature": "Mantle (large soft visceral sac)",
-      "why": "No library part for a large ellipsoidal soft body; the core would need a custom mesh."
-    }
-  ],
   "sources": [
     "Norman, M. (2000). Cephalopods: A World Guide. ConchBooks. (species size and anatomy; recalled, not re-checked)",
     "Hanlon, R.T. & Messenger, J.B. (2018). Cephalopod Behaviour, 2nd ed. Cambridge Univ. Press. (camouflage, web use, arm function)",
@@ -548,5 +514,19 @@
     "Wikipedia, 'Common octopus' (size, anatomy overview; recalled, not re-checked this session)",
     "Wikimedia Commons, File:Octopus_vulgaris2.jpg (metadata and CC BY-SA 3.0 licence verified via the Commons API, author Beckmannjan; image viewed from a local copy and used for the visual pass)"
   ],
-  "confidence": 0.55
+  "confidence": 0.55,
+  "other_features": [
+    {
+      "feature": "Mantle",
+      "description": "Large soft sac behind the head holding the viscera; it is most of the visible body."
+    },
+    {
+      "feature": "Chromatophores and papillae",
+      "description": "Skin changes colour and raises small papillae for camouflage."
+    },
+    {
+      "feature": "Radula",
+      "description": "Toothed rasping ribbon inside the beak; not visible."
+    }
+  ]
 }

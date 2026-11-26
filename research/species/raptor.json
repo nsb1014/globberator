@@ -103,7 +103,6 @@
         "fraction_of_root_radius": 0.6,
         "overlap_region": "shoulder girdle (scapula, coracoid, clavicle furcula) and the lateral thoracic wall beside the keel"
       },
-      "library_hint": "wing_feather",
       "notes": "Folded-wing pose when perched, lying along the flank with the carpal bend projecting forward. In the photo the shoulder-to-primary-tip projection is about 0.29 m because of foreshortening, so length_m is kept at the 0.40 m wing chord estimate. Full span ~1.14-1.32 m in flight. Humerus-radius-ulna plus long primary/secondary feathers. Shoulder is a ball joint, elbow and wrist are hinges with the wrist the flexing point for folding. Flight feathers should be a separate sub-mesh."
     },
     {
@@ -176,8 +175,7 @@
         "fraction_of_root_radius": 0.86,
         "overlap_region": "pelvis (ilium/ischium) and the rear underside of the abdomen core"
       },
-      "library_hint": null,
-      "notes": "In the photo the belly feathers cover the thigh, and only the bare yellow tarsus (about 0.05 m projected) and the toes show, gripping the stump top. Feathered thigh, then a bare scaled tarsus (digitigrade bird leg). The knee is hidden in the thigh feathers and is not modelled; the visible joint is the ankle (intertarsal). Length is hip to toe base, estimated at 0.12 m from anatomy. The tarsus is an unfeathered cylinder with scutes and is the main gap in the library."
+      "notes": "In the photo the belly feathers cover the thigh, and only the bare yellow tarsus (about 0.05 m projected) and the toes show, gripping the stump top. Feathered thigh, then a bare scaled tarsus (digitigrade bird leg). The knee is hidden in the thigh feathers and is not modelled; the visible joint is the ankle (intertarsal). Length is hip to toe base, estimated at 0.12 m from anatomy. The tarsus is an unfeathered cylinder covered in scutes."
     },
     {
       "id": "talon_L",
@@ -215,8 +213,7 @@
         "fraction_of_root_radius": 0.67,
         "overlap_region": "distal tarsus and toe bones at the foot end of leg_L"
       },
-      "library_hint": "foot_claw",
-      "notes": "Four digits (three forward, one hallux back); hallux talon is the largest. In the photo the front talons curve down over the stump edge and the hallux hangs back, all dark-tipped. Talons are curved, sharp keratin claws, used to grip and kill prey. Lengths are estimates (~3-4 cm). Good fit for foot_claw, but there are four or five per foot instead of one."
+      "notes": "Four digits (three forward, one hallux back); hallux talon is the largest. In the photo the front talons curve down over the stump edge and the hallux hangs back, all dark-tipped. Talons are curved, sharp keratin claws, used to grip and kill prey. Lengths are estimates (~3-4 cm). One talon per toe, four per foot."
     },
     {
       "id": "eye_L",
@@ -252,11 +249,10 @@
         "fraction_of_root_radius": 0.42,
         "overlap_region": "orbit of the skull, front and upper head"
       },
-      "library_hint": "eye_round",
-      "notes": "Large forward-facing eyes give binocular vision for hunting; the globe is fixed in the orbit, so the head moves instead of the eyes. In the photo the visible iris is amber-yellow. Diameter ~2.5 cm estimated. Eyes are set front-to-side with a bony sclerotic ring, so eye_round is close but not exact."
+      "notes": "Large forward-facing eyes give binocular vision for hunting; the globe is fixed in the orbit, so the head moves instead of the eyes. In the photo the visible iris is amber-yellow. Diameter ~2.5 cm estimated. Eyes are set front-to-side with a bony sclerotic ring."
     },
     {
-      "id": "brow_ridge_L",
+      "id": "supraorbital_shelf_L",
       "name": "Brow (supraorbital) ridge (left)",
       "category": "sensory",
       "symmetry": "pair",
@@ -289,7 +285,6 @@
         "fraction_of_root_radius": 0.4,
         "overlap_region": "upper rim of the orbit on the skull"
       },
-      "library_hint": "brow_ridge",
       "notes": "Bony supraorbital shelf above each eye, strongly developed in Buteo, shades the eye from sun and glare. In the photo it gives the fierce, hooded look above the eye. Treated as sensory support. Its visual effect is the brow shelf that is typical of hawks. Could also be aesthetics, but the function is eye protection."
     },
     {
@@ -342,11 +337,10 @@
         "fraction_of_root_radius": 0.83,
         "overlap_region": "front of the skull and upper head core, at the cere"
       },
-      "library_hint": "mouth_beak",
-      "notes": "Strongly hooked upper mandible with a tomial tooth, used to tear meat. In the photo the hooked tip is dark over a paler, yellowish cere and base. Projected culmen is ~2.5-3 cm, so length_m was lowered from 0.04 to 0.03 m. mouth_beak is generic and lacks the hook, so the hook is a library gap."
+      "notes": "Strongly hooked upper mandible with a tomial tooth, used to tear meat. In the photo the hooked tip is dark over a paler, yellowish cere and base. Projected culmen is ~2.5-3 cm, so length_m was lowered from 0.04 to 0.03 m."
     },
     {
-      "id": "tail_fan",
+      "id": "tail_feathers",
       "name": "Tail (fan of 12 rectrices)",
       "category": "locomotion",
       "symmetry": "centre",
@@ -382,7 +376,6 @@
         "fraction_of_root_radius": 0.67,
         "overlap_region": "rear end of the abdomen core and the pygostyle"
       },
-      "library_hint": "tail_fan",
       "notes": "Broad, rounded tail of 12 rectrices, fanned in flight for steering and braking and folded when perched. In the photo the tail hangs down and back at about 30 degrees from vertical, lower than the feet, and its tip is the lowest point of the bird. The upper tail visible here is pale brown with dark bars and is not clearly rusty, so the bird may be an immature; rusty red is the adult upper-tail colour in the references. Length ~0.2 m estimated. The tail is a mostly flat fan lying in the z-y plane."
     }
   ],
@@ -401,28 +394,9 @@
       "Wing span in flight is 1.14-1.32 m; the folded perched width is about 0.2 m (estimate), which is the bounding box width_x.",
       "The eyes are fixed in the skull, so the head turns instead.",
       "The brow ridge is a bony shelf over each eye.",
-      "Talons are on four digits per foot, with the hallux the largest.",
-      "The bird's hooked beak and tarsus are the main library gaps."
+      "Talons are on four digits per foot, with the hallux the largest."
     ]
   },
-  "library_gaps": [
-    {
-      "feature": "Hooked raptor beak (tomial tooth, hook)",
-      "why": "mouth_beak is a generic beak with no downward hook and no cere; mouth_jaws and mouth_mandibles are not bird-like."
-    },
-    {
-      "feature": "Bird leg with scaled tarsus and digitigrade ankle",
-      "why": "No library part for a bare scaled bird leg; foot_claw and foot_paw are stubby and not a long tarsus with a hinged ankle."
-    },
-    {
-      "feature": "Folded wing pose with separate flight feathers",
-      "why": "wing_feather is a single feathered appendage, not a joint-driven wing with shoulder/elbow/wrist and primaries that can fold."
-    },
-    {
-      "feature": "Multi-digit talon set (four talons per foot, hallux)",
-      "why": "foot_claw is one claw; a grasping set of four curved talons would need an array or a custom part."
-    }
-  ],
   "sources": [
     "Cornell Lab of Ornithology, All About Birds, Red-tailed Hawk (size, wingspan, weight): https://www.allaboutbirds.org/guide/Red-tailed_Hawk/id",
     "National Audubon Society, Bird Guide, Red-tailed Hawk (size, wingspan): https://www.audubon.org/field-guide/bird/red-tailed-hawk",

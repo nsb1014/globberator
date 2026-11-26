@@ -88,7 +88,7 @@ def main():
                       "image": img.get("file_page") or img.get("direct_url"), "license": img.get("license"),
                       "image_viewed": img.get("image_viewed"), "bounding_box_m": bb, "parts": len(data.get("parts") or []),
                       "category_summary": data.get("category_summary"), "part_types_by_category": counts,
-                      "library_gaps": [g.get("feature") for g in data.get("library_gaps") or []],
+                      "other_features": [g.get("feature") for g in data.get("other_features") or []],
                       "confidence": data.get("confidence"), "problems": problems})
         print("%-10s %s  parts=%-3d viewed=%-5s %s" % (sid, "ok  " if not problems else "WARN", len(data.get("parts") or []),
                                                      img.get("image_viewed"), "; ".join(problems[:3])))

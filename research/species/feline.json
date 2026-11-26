@@ -104,7 +104,6 @@
         "fraction_of_root_radius": 1.0,
         "overlap_region": "Lateral thoracic wall and scapular region of the core, roughly 0.02 m inboard of the core's +X surface at z 0.27-0.33"
       },
-      "library_hint": null,
       "notes": "Digitigrade: the carpus is raised about 0.06 m off the ground and only the digits contact the floor, so the lower leg behaves like a short lever. Shoulder has no bony clavicle; the scapula floats on muscle and is attached by a ball-like muscular joint. Joint ranges are approximate, from published cat gait kinematics and general mammal anatomy, not measured. In the photo the elbow sits at about belly height, so the elbow joint was lowered to 0.50 of box height (about 0.135 m)."
     },
     {
@@ -177,7 +176,6 @@
         "fraction_of_root_radius": 0.83,
         "overlap_region": "Pelvic girdle and lateral flank of the core, roughly 0.025 m inboard of the core's +X surface at z -0.08 to 0.02"
       },
-      "library_hint": null,
       "notes": "Digitigrade hindleg with the hock raised about 0.08 m off the ground. The hock is the high joint behind the knee, and the foot contacts ground only through the toes. The hip is a deep ball joint inside the pelvis, so the thigh is the thickest part of the leg. The stifle is largely hidden in the flank, and its range is approximate. The photo puts the rump top a little below the withers (hip near 0.21 m), so the hip was lowered from 0.90 to 0.78 of box height, and the stifle to 0.43 (about 0.12 m), near belly level."
     },
     {
@@ -214,7 +212,6 @@
         "fraction_of_root_radius": 0.27,
         "overlap_region": "Distal metapodials at the sole of the foot, not the core. Pads are a surface feature with a shallow seat."
       },
-      "library_hint": "foot_pad",
       "notes": "Count is 2 per side: one fore paw and one hind paw pad group. Each pad group has a central metacarpal/metatarsal pad and digital pads, and the cushions take impact and give grip. They are modelled as one surface per paw. Count 2 per side is an assumption based on the two paws on each side of the body."
     },
     {
@@ -253,7 +250,6 @@
         "fraction_of_root_radius": 1.0,
         "overlap_region": "Distal phalanx tip of each digit, not the core"
       },
-      "library_hint": "foot_claw",
       "notes": "Forefoot has 5 digits and the hindfoot has 4 (the dewclaw is on the forelimb). Claws retract by a ligament mechanism, so the claw is folded inside a sheath unless extended. The count shown is forefoot only; the hindfoot has 4 claws. Claw length is about 1 cm. Used for grasping prey and climbing."
     },
     {
@@ -294,8 +290,7 @@
         "fraction_of_root_radius": 0.67,
         "overlap_region": "Posterior-dorsal sacral end of the core, z -0.12 to -0.14"
       },
-      "library_hint": null,
-      "notes": "Balance tail used for steering while running and climbing. Mobile base, with most of the length free. Range is approximate. No library tail fits a slim, flexible tail; tail_tuft is fluffy and tail_club is blunt, so both were rejected. Tail base was lowered to 0.67 of box height (about 0.18 m) to match the rump top in the photo. In the photo the tail is about 0.6 of body length, close to the 0.30 m source value."
+      "notes": "Balance tail used for steering while running and climbing. Mobile base, with most of the length free. Range is approximate. Tail base was lowered to 0.67 of box height (about 0.18 m) to match the rump top in the photo. In the photo the tail is about 0.6 of body length, close to the 0.30 m source value."
     },
     {
       "id": "eye_L",
@@ -334,7 +329,6 @@
         "fraction_of_root_radius": 1.0,
         "overlap_region": "Orbit in the head mass, set into the forward-facing face of the head"
       },
-      "library_hint": "eye_slit",
       "notes": "Forward-facing with binocular overlap for depth. Pupil is a vertical slit in bright light and round in dim light. Eye is very large relative to the head. Visible on the front of the head."
     },
     {
@@ -375,8 +369,7 @@
         "fraction_of_root_radius": 0.67,
         "overlap_region": "Top corner of the head mass, cartilaginous base"
       },
-      "library_hint": "ear_leaf",
-      "notes": "Upright, mobile, triangular pinnae that can rotate independently for directional hearing. Closest library fit is ear_leaf, although the cat ear is a rigid cartilage cone rather than a leaf. The pinna base is mobile at the ball joint."
+      "notes": "Upright, mobile, triangular pinnae that can rotate independently for directional hearing. The pinna base is mobile at the ball joint."
     },
     {
       "id": "whiskers_L",
@@ -416,8 +409,7 @@
         "fraction_of_root_radius": 1.5,
         "overlap_region": "Follicle seated in the muzzle pad at the front of the head"
       },
-      "library_hint": null,
-      "notes": "Several rows of long, stiff vibrissae on each side of the muzzle, each seated in a follicle with a dense nerve supply. They sense touch and air movement. No library part for thin radiating whiskers. Count is per side, with several whiskers per row."
+      "notes": "Several rows of long, stiff vibrissae on each side of the muzzle, each seated in a follicle with a dense nerve supply. They sense touch and air movement. Count is per side, with several whiskers per row."
     },
     {
       "id": "nose",
@@ -453,7 +445,6 @@
         "fraction_of_root_radius": 0.5,
         "overlap_region": "Nasal bone and anterior tip of the skull, at the front of the head"
       },
-      "library_hint": "nose_button",
       "notes": "Moist, pigmented rhinarium at the front of the muzzle. It is part of the olfactory system, not a separate mechanical feature. Cat nose is a small pad, not a snout."
     },
     {
@@ -492,7 +483,6 @@
         "fraction_of_root_radius": 0.67,
         "overlap_region": "Mandibular condyle and jaw musculature in the head mass"
       },
-      "library_hint": "mouth_jaws",
       "notes": "Short skull with a strong hinge jaw. Long upper and lower canines for piercing and holding prey, and carnassial teeth for shearing meat, used in a vertical bite. Gape is limited, and the hinge is a simple up-down joint. Canines are the main prey-killing structure."
     },
     {
@@ -515,7 +505,6 @@
         "overlap_region": "Surface skin layer over the whole body, not a separate mesh",
         "notes": "Set to 0: a surface covering does not penetrate the core."
       },
-      "library_hint": null,
       "notes": "Patterning and coat length are surface detail, not a structure. Listed here only so the aesthetics category is documented. Not a mesh part and not counted in the summary. Penetration depth is 0 because a surface covering does not seat into the core."
     }
   ],
@@ -535,20 +524,6 @@
       "Size and proportions are for a typical adult domestic cat and do not match large felids such as tiger or leopard."
     ]
   },
-  "library_gaps": [
-    {
-      "feature": "Tail (slim, flexible, long)",
-      "why": "No library tail fits. tail_tuft is fluffy and tail_club is blunt."
-    },
-    {
-      "feature": "Whiskers (vibrissae)",
-      "why": "No library part for thin, radiating, stiff whiskers."
-    },
-    {
-      "feature": "Head (rounded skull with forward eyes, mounted on a short neck)",
-      "why": "No library head/cranium part. Only eyes, ears and jaws are represented."
-    }
-  ],
   "sources": [
     "https://en.wikipedia.org/wiki/Cat (adult size: head-body about 46 cm, shoulder height 23-25 cm, tail about 30 cm, weight 4-5 kg)",
     "https://felidaefund.org/learn/cats/domestic-cat (length 46-51 cm, shoulder height 20-25 cm, weight 2.3-9.0 kg)",
@@ -556,5 +531,11 @@
     "Anatomy (joint types, digitigrade stance, retractable claws, vibrissae, canines and carnassials, pupil shape): general knowledge, not verified against a specific reference in this session",
     "https://commons.wikimedia.org/wiki/File:Domestic_cat_in_Poland_1.jpg (image; CC BY-SA 4.0, MichalPL)"
   ],
-  "confidence": 0.6
+  "confidence": 0.6,
+  "other_features": [
+    {
+      "feature": "Rounded skull",
+      "description": "Short-faced rounded cranium with forward-facing eyes, on a short neck."
+    }
+  ]
 }

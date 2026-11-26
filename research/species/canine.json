@@ -104,7 +104,6 @@
         "fraction_of_root_radius": 0.67,
         "overlap_region": "Lateral thoracic wall and scapular muscle sling, dorsolateral to the thorax"
       },
-      "library_hint": null,
       "notes": "Digitigrade: the walking surface is the paw, and the carpus is raised. Joint ranges are approximate. The forelimb has no rigid clavicle, so the shoulder is a muscular ball-like attachment."
     },
     {
@@ -177,7 +176,6 @@
         "fraction_of_root_radius": 0.71,
         "overlap_region": "Dorsolateral pelvis at the hip socket, the acetabulum region of the pelvic girdle"
       },
-      "library_hint": null,
       "notes": "Digitigrade hindleg. The hock is a raised tarsal joint, so the stance is on the toes. The hindleg is slightly longer and thicker than the foreleg (thigh musculature)."
     },
     {
@@ -216,7 +214,6 @@
         "fraction_of_root_radius": 0.0,
         "overlap_region": "None. The paw is a distal segment attached to the carpus of the foreleg and does not touch the core."
       },
-      "library_hint": "foot_pad",
       "notes": "Five digits including the dewclaw, with a fleshy metacarpal and digital pads. Ground contact is through the pads."
     },
     {
@@ -255,7 +252,6 @@
         "fraction_of_root_radius": 0.0,
         "overlap_region": "None. The paw is a distal segment attached to the hock of the hindleg and does not touch the core."
       },
-      "library_hint": "foot_pad",
       "notes": "Four digits with a smaller plantar pad than the forepaw. Ground contact is through the pads."
     },
     {
@@ -292,7 +288,6 @@
         "fraction_of_root_radius": 0.0,
         "overlap_region": "None. Claws are keratin sheaths on the distal phalanges and do not touch the core."
       },
-      "library_hint": "foot_claw",
       "notes": "Count is 9 per side: 5 forefoot (four digits plus dewclaw) and 4 hindfoot. Claws are blunt and non-retractable, and they aid traction on the ground."
     },
     {
@@ -333,7 +328,6 @@
         "fraction_of_root_radius": 0.75,
         "overlap_region": "Posterior dorsal rump, the sacrum and caudal vertebrae at the back of the pelvis"
       },
-      "library_hint": "tail_tuft",
       "notes": "Functional roles: balance while running and turning, body heat and insulation, and signalling. The tail is bushy along its length and tapers to a tip, which is often white in red fox."
     },
     {
@@ -374,7 +368,6 @@
         "fraction_of_root_radius": 0.86,
         "overlap_region": "Anterior thorax and cervical junction at the front of the torso"
       },
-      "library_hint": "mouth_snout",
       "notes": "Long, narrow, wedge-shaped muzzle, with the skull as a feeding and sensory housing. The head is treated as a feeding structure because the jaws and canines are carried on it. The head is not a separate category in the taxonomy."
     },
     {
@@ -413,7 +406,6 @@
         "fraction_of_root_radius": 0.83,
         "overlap_region": "Cranial base at the zygomatic arch and temporal fossa of the skull"
       },
-      "library_hint": "mouth_jaws",
       "notes": "Upper and lower jaws with pointed canines about 0.02-0.025 m exposed. The jaw is a hinge with a mainly vertical gape. The lower jaw is about 0.1 m long. Dentition is carnassial-type, adapted for prey capture and omnivorous feeding."
     },
     {
@@ -450,7 +442,6 @@
         "fraction_of_root_radius": 0.5,
         "overlap_region": "Rostral tip of the muzzle over the nasal bones"
       },
-      "library_hint": "nose_button",
       "notes": "Moist rhinarium, important for olfaction. Olfaction is the principal sense for hunting small prey."
     },
     {
@@ -490,7 +481,6 @@
         "fraction_of_root_radius": 0.5,
         "overlap_region": "Orbit (eye socket) of the frontal and maxillary bones"
       },
-      "library_hint": "eye_slit",
       "notes": "Forward-facing eyes with a vertically elliptical pupil, amber iris. Binocular forward vision gives depth perception for hunting."
     },
     {
@@ -530,7 +520,6 @@
         "fraction_of_root_radius": 0.67,
         "overlap_region": "Temporal and parietal region of the cranium, rear top of the skull"
       },
-      "library_hint": "ear_leaf",
       "notes": "Large triangular upright ears used for directional hearing of prey under vegetation and snow. Ears rotate on auricular muscles."
     },
     {
@@ -567,8 +556,7 @@
         "fraction_of_root_radius": 1.0,
         "overlap_region": "Muzzle skin and follicle pad over the maxilla, beside the nose"
       },
-      "library_hint": null,
-      "notes": "Tactile whisker pads on the muzzle. Several vibrissae per side, modelled here as a single representative whisker. The library has no matching part."
+      "notes": "Tactile whisker pads on the muzzle. Several vibrissae per side, modelled here as a single representative whisker."
     }
   ],
   "category_summary": {
@@ -588,32 +576,16 @@
       "Joint positions are approximate, derived from a standing adult's proportions, not from a skeletal model."
     ]
   },
-  "library_gaps": [
-    {
-      "feature": "Digitigrade leg segments (shoulder, elbow, carpus; hip, stifle, hock)",
-      "why": "No library leg part exists. The library has foot parts only, not multi-joint limbs."
-    },
-    {
-      "feature": "Non-retractable claws as a standalone digit structure",
-      "why": "foot_claw is the nearest hint but is a foot part, not a free-standing claw set with per-digit placement."
-    },
-    {
-      "feature": "Bushy brush tail with a taper and terminal tip",
-      "why": "tail_tuft and tail_fan are close, but neither models a bushy taper with a tail-length-to-body ratio around 0.4 m."
-    },
-    {
-      "feature": "Vibrissae (whisker pads)",
-      "why": "No library part for multiple fine tactile whiskers on the muzzle."
-    },
-    {
-      "feature": "Digitigrade paw pads and digit set",
-      "why": "foot_pad is a single pad. It does not model metacarpal and digital pads with a dewclaw."
-    }
-  ],
   "sources": [
     "Wikimedia Commons, File:Vulpes_vulpes_standing.jpg, https://commons.wikimedia.org/wiki/File:Vulpes_vulpes_standing.jpg (photo by Jim Thiele, public domain, description 'Red Fox'); viewed locally and used for relative proportions only.",
     "Wilson, D.E. & Mittermeier, R.A. (eds) (2009). Handbook of the Mammals of the World, vol. 1: Carnivores. Lynx Edicions. (Vulpes vulpes account; cited from memory, not re-checked in this session.)",
     "Animal Diversity Web, Vulpes vulpes account, https://animaldiversity.org (listed in search results only; not fetched in this session.)"
   ],
-  "confidence": 0.6
+  "confidence": 0.6,
+  "other_features": [
+    {
+      "feature": "Dewclaw",
+      "description": "A raised first digit on the inside of each foreleg, clear of the ground."
+    }
+  ]
 }

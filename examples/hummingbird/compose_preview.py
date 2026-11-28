@@ -1,4 +1,4 @@
-"""Place the color render on a soft sky backdrop and assemble the clay review."""
+"""Place the clay render on a charcoal backdrop and assemble the clay review."""
 from pathlib import Path
 import math
 
@@ -8,16 +8,17 @@ ROOT = Path(__file__).resolve().parents[2]
 OUT = ROOT / "out" / "hummingbird"
 source=Image.open(OUT/"hummingbird-alpha.png").convert("RGBA")
 width,height=source.size
-sky=Image.new("RGB",(width,height))
-pix=sky.load()
+backdrop=Image.new("RGB",(width,height))
+pix=backdrop.load()
 for y in range(height):
     for x in range(width):
         central=max(0.,1-math.hypot((x-width*.55)/width,(y-height*.40)/height))
         t=y/height
-        pix[x,y]=(round(158+27*t+8*central),round(187+20*t+6*central),round(211+12*t+5*central))
-sky=sky.convert("RGBA")
-sky.alpha_composite(source)
-sky.convert("RGB").save(OUT/"hummingbird.png")
+        tone=round(31+17*t+14*central)
+        pix[x,y]=(tone,tone,tone)
+backdrop=backdrop.convert("RGBA")
+backdrop.alpha_composite(source)
+backdrop.convert("RGB").save(OUT/"hummingbird.png")
 views=OUT/"views"
 if len(list(views.glob("*.png")))==8:
     frames=list(sorted(views.glob("*.png")))

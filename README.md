@@ -6,7 +6,7 @@ A Spore-style creature builder that runs inside Blender. You assemble creatures 
 
 ![Part library](preview/parts.png)
 
-The [hummingbird example](examples/hummingbird/README.md) includes the build scripts, color preview, and clay review.
+The [example design studies](examples/references/README.md) document the fresh clay references and link each study to its recipe. The [hummingbird example](examples/hummingbird/README.md) includes the build scripts, clay preview, and visual review.
 
 ## Install
 
@@ -34,19 +34,19 @@ Any command also runs through a regular Blender: `blender -b -P pf.py -- <comman
 1. **Creature panel:** start a new creature or open an example. **Preview** rebuilds fast. **Sculpt** fuses the skin into one remeshed surface, which is what exports use. Spine edits keep the floor fixed so the legs don't jump. Leg edits re-find the floor automatically, and **Reground** re-finds it on demand.
 2. **Parts panel.** Pick a shape and click a host surface. Research limbs place an articulated joint chain with its sculpt. Limb tips attach at the host limb's end, and sucker rows attach to a limb surface. Select the radial bell to change the body plan. Paired families place reflected twins. Families with flexible symmetry place one centered instance when dropped within 12 degrees of the midline.
 3. **Selection panel.** Use **Isolate shape** to inspect one part or limb and edit its controls. Limbs have editable joint offsets and radii. Switch back to the creature to change instance scale, rotation, or placement. **Move to surface** picks a new location for the selected instance and its twin.
-4. **Spine and paint.** Edit body rings or paint the assembled creature. A saved body attachment records two ring IDs and its fractional position between them. A distant edit to the spine preserves that binding. Widening its own strip carries the part outward.
+4. **Spine.** Edit body rings. A saved body attachment records two ring IDs and its fractional position between them. A distant edit to the spine preserves that binding. Widening its own strip carries the part outward.
 5. **Animate & export panel:** bake idle, walk, run, roar, wave and hop, play them, and export GLB, FBX, USDZ or OBJ.
 
 Every edit goes through the recipe, so Blender's undo covers it.
 
 ## How it works
 
-- **Recipe:** a small JSON file holding the spine, limbs, parts, parameters and paint (`examples/*.json`). The editor and the AI change it through the same operations (`polyforge/ops.py`). `polyforge/recipe.py` clamps every value into the library's style ranges and enforces the placement rules.
-- **Parts** (`polyforge/parts/`) are modelled in code with the sculpt kit (`polyforge/kit.py`): smooth PCHIP lofts and dense ovals, boolean carving, then a voxel remesh, smoothing and decimation per paint region (`polyforge/finish.py`). Thin plates use subdivision instead. Parameters are exact, because each part is rebuilt from its parameters and cached.
+- **Recipe:** a small JSON file holding the spine, limbs, parts and shape controls (`examples/*.json`). The editor and the AI change it through the same operations (`polyforge/ops.py`). `polyforge/recipe.py` clamps every value into the library's style ranges and enforces the placement rules.
+- **Parts** (`polyforge/parts/`) are modelled in code with the sculpt kit (`polyforge/kit.py`): smooth PCHIP lofts and dense ovals, boolean carving, then a voxel remesh, smoothing and decimation per sculpt region (`polyforge/finish.py`). Thin plates use subdivision instead. Parameters are exact, because each part is rebuilt from its parameters and cached.
 - **Builder** (`polyforge/builder.py`):
   - Sweeps the spine body and smooth limbs, places the parts, and voxel-remeshes the body, limbs and all skin-slot regions into one surface. Detail parts (eyes, horns, hooves, teeth) stay as separate finished meshes.
   - Builds the armature (spine chain, limb chains, part and jaw bones) and computes skin weights that blend across joints and where limbs meet the body.
-  - Paints vertex colours (patterns, belly) and sets one material per paint slot.
+  - Uses one neutral clay material for the body and all parts. Legacy recipe paint fields are ignored on load.
 - **Animation** (`polyforge/animator.py`):
   - Footprint gait planning for 0 to 8 or more legs, with FABRIK leg IK and a standing clearance chosen once for each walk.
   - Spine, tail and neck motion, plus part behaviours: eyes look and blink, jaws open, ears flop, wings flap.
@@ -55,7 +55,7 @@ Every edit goes through the recipe, so Blender's undo covers it.
 
 ## Commands
 
-For a reference-driven build, follow the [agent workflow](AGENTS.md) from target selection through independent review. Examples and library images show tool usage and part shapes.
+For a reference-driven build, follow the [agent workflow](AGENTS.md) from target selection through independent review. Examples and library images show tool usage and part shapes. The workflow matches geometry and exports uniform clay assets for separate coloring in downstream tools.
 
 ### One-shot characters
 
@@ -67,9 +67,13 @@ PF_BLENDER=blender python3 ai/forge.py reference.png --one-shot --out out/charac
 
 The one-shot command makes one structured classification request through the existing hosted classifier. It uses the `anthropic` package, `ANTHROPIC_API_KEY`, and the model selected by `GLOBBERATOR_MODEL`. A pipeline that already classifies the image can pass `--brief brief.json` and skip inference. See the [classification schema](polyforge/character_brief.py).
 
+The original brief produces the humanoid preset. For the experimental general path, use `--one-shot --general` or supply a version 2 brief. It records the anatomical body plan, relative proportions, locomotion profile, and desired features by host, function, and silhouette. The compiler reports unresolved features and produces Blender actions, a .blend, and an animated GLB. Root travel is in the clip report.
+
 The compiler handles proportions, paired limbs, face, hair, footwear, and rigging. It writes a neutral-clay `character.glb` with skin weights and an accompanying `character.motion.json` with role bindings and reusable pose rules. The GLB contains no baked clips. The export also includes `recipe.json`, `preview.png`, the classification, and `report.json`. The one-shot preset supports upright humanoids.
 
 Changing the head fraction recomputes the body proportions and attachment positions. The recipe `scale` controls resize joint chains and attached hands or footwear together. The Blender builder regenerates and weights the mesh, and the runtime controller measures the resulting skeleton on bind.
+
+For a generic skin limb, `root_blend` controls how the root loft enters the body and how strongly the final sculpt smooths the join. Values range from 0 to 1. The minotaur uses it on shoulders and hips without changing joint positions as the value varies.
 
 ### Runtime motion in Godot
 
@@ -78,6 +82,8 @@ Export any creature recipe with `pf.py build RECIPE --runtime-motion --formats g
 Add [creature_motion.gd](godot/creature_motion.gd) below the imported `Skeleton3D` and call `configure()` with the parsed motion JSON. Call `drive("walk", forward_speed)` or `drive("run", forward_speed)` with the speed of the actor that owns movement. The skeleton modifier groups legs by length, holds stance targets in world space, and solves the current chains. Set `ground_at` to a callable that returns ground height at a world position for uneven terrain. Call `reach(limb_id, world_target)` for a grasper or `set_part_amount(part_id, amount)` for a hinged part. Uncontrolled chains receive spring motion.
 
 Blender handles mesh generation, assembly, and skin weighting at build time. Godot loads the finished asset and evaluates motion from its bindings. Call `configure()` again if you replace the imported asset with a rebuilt version. The editor's explicit baked export is still available for compatible playback tools.
+
+Arm swing follows the nearest same-side leg's step phase when a leg is available. The solver uses a rigid span for one segment, a single bend for two segments, and the authored bend directions to guide longer chains.
 
 Run the headless runtime checks on freshly generated fixtures.
 
@@ -116,7 +122,7 @@ python3 ai/benchmark.py --reference held-out.png --out runs/held-out
 
 ## Edit one shape
 
-A shape file holds local geometry. A surface part uses `part` and `params`. A limb uses `segments`, `radii`, `tip` and `tip_params`; set `motion` to `tail` for a flexible chain. Fit belongs to the instance. Recipes may define local templates under `shapes` and instantiate one by name, as in `examples/spider.json`. Normalization expands them to independently editable instances.
+A shape file holds local geometry. A surface part uses `part` and `params`. A limb uses `segments`, `radii`, `tip` and `tip_params`; set `motion` to `tail` for a flexible chain. Fit belongs to the instance. Recipes may define local templates under `shapes` and instantiate one by name. Normalization expands them to independently editable instances.
 
 ```sh
 python3 pf.py part examples/bull.json --uid fore --out out/fore
@@ -130,6 +136,8 @@ Version 1 recipes migrate on load with their original placement. Version 2 saves
 Use `horn_sweep` for unbranched horns and `ear_pinna` for adjustable ear profiles. Existing bull and minotaur recipes continue to load their original horn and ear IDs. Branched antlers and articulated pincers have dedicated models.
 
 ## Research part library
+
+The [coverage plan](research/coverage_plan.json) prioritizes gaps in the existing part library. Pick a useful reference animal for each gap, model the specific part, and test it on a local Blender attachment fixture. Run `python3 research/validate.py --check` to validate the research queue and evidence without modifying the index. Approximately 300 qualified families is a planning target. See the [research workflow](research/README.md) for the evidence and qualification process.
 
 The 13 species files contain 119 recorded structures. The library groups 105 usable source records into 54 model families. Round and slit pupils share the camera-eye family. Paired structures use a single authored model, and repeated anatomy such as shark median fins uses shape controls. The same octopus arm record supplies two independent models, a tapered limb and its sucker rows. The 14 exclusions include internal structures, texture features, and regions handled by the existing spine body.
 
@@ -148,6 +156,27 @@ To inspect an individual model, pass a small JSON shape such as `{"part": "eye_c
 The image loop defaults to Claude Haiku and accepts a model override through `GLOBBERATOR_MODEL`. It starts with a compact family index. For an identified feature, it requests that family's controls and critiques isolated views before the assembly fit. `--part-rounds` sets the local revision budget. The held-out benchmark writes first-pass validity, edit turns, renders and token usage. Review the rendered views against the input image to record artistic acceptance.
 
 ## Review assembly before animation
+
+### Blender metaball pilots
+
+Set `"construction": "metaball"` on a recipe to use the continuous soft-skin builder. It builds a closed surface over the spine and soft limb chains. Hooves, flukes, wing membranes, and other authored details retain their own geometry and mounts. The same pivots drive skin weights and Blender poses. Existing recipes retain their selected construction mode.
+
+Use a recipe's biological locomotion profile to request the appropriate motion. The new profiles include `axial_vertical`, `axial_lateral`, `paddling`, `flight`, and `crawl`. The baker derives the available clips from the rig. Swim, powered flight, and glide use Blender actions. The Blender exporter writes editable .blend files and animated GLBs. The Godot bindings path remains available for existing workflows.
+
+```sh
+blender -b -t 2 --python-exit-code 1 -P tools/tests/metaball_pilots.py -- out/metaball-pilots minotaur dolphin bat --renders
+blender -b --python-exit-code 1 -P tools/tests/blender_locomotion.py
+blender -b --python-exit-code 1 -P tools/tests/test_asset_validation.py
+python3 -m polyforge.asset_validation held-out.json --out out/fidelity.json
+```
+
+The first command bakes and reimports each pilot using both construction modes, then writes paired pose section measurements. `--renders` adds eight rest views and labeled pose samples. See the [water and air pilot references](examples/pilots/README.md) for their anatomical measurements. The fidelity report takes reference and rendered masks, independently marked landmarks, and a visual review record. Missing evidence stays pending. The proposed new default depends on passing the baseline, motion, and likeness gates.
+
+To aggregate a frozen, annotated reference set, run `python3 ai/benchmark.py --held-out index.json --out out/held-out`. The index maps case names to reference, candidate, and incumbent views and their review evidence. A case can declare `required_views`, a separate `validation_report`, and `accepted_families` keyed by feature ID. The aggregate reports rig validity, likeness, joint first-pass results, and top-five retrieval separately.
+
+Set `"mirror": false` on an attachment or limb to keep it on its authored side. An optional limb `bend_limits` list gives a degree range `[min, max]` or `null` for each internal joint, counted outward from the host. A zero-degree angle is straight. Blender preserves the limit when it has to shorten a reach or step target.
+
+New recipes and the one-shot character compiler use solid construction. To apply it to an existing recipe, set the top-level `"construction": "solid"`. The rounded torso follows the body pivot. Tapered limb segments overlap around the joint centers, and each segment or attached part follows a single bone. Keep the older construction for characters whose body itself needs to undulate along the spine, such as the serpent.
 
 Shape the torso with the spine. Each leg owns its joint chain and foot, and each tail owns its flexible chain and attached ornaments. The leg solver poses the torso first, selects standing clearance from leg reach and stride, then solves the limbs. The legless gait retains spine undulation. Walk previews use a stationary camera with world travel.
 

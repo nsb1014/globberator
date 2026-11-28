@@ -1,0 +1,138 @@
+{
+  "construction": "solid",
+  "name": "Spider",
+  "spine": [
+    {
+      "y": 0.75,
+      "z": -0.95,
+      "w": 0.32,
+      "h": 0.3
+    },
+    {
+      "y": 0.7,
+      "z": -0.55,
+      "w": 0.42,
+      "h": 0.36
+    },
+    {
+      "y": 0.62,
+      "z": -0.15,
+      "w": 0.16,
+      "h": 0.14
+    },
+    {
+      "y": 0.62,
+      "z": 0.12,
+      "w": 0.27,
+      "h": 0.2
+    },
+    {
+      "y": 0.6,
+      "z": 0.38,
+      "w": 0.2,
+      "h": 0.16
+    }
+  ],
+  "limbs": [
+    {
+      "uid": "a",
+      "shape": "walking_leg",
+      "u": 0.62,
+      "theta": -10,
+      "rot": [
+        0,
+        42,
+        0
+      ]
+    },
+    {
+      "uid": "b",
+      "shape": "walking_leg",
+      "u": 0.68,
+      "theta": -10,
+      "rot": [
+        0,
+        14,
+        0
+      ]
+    },
+    {
+      "uid": "c",
+      "shape": "walking_leg",
+      "u": 0.74,
+      "theta": -10,
+      "rot": [
+        0,
+        -14,
+        0
+      ]
+    },
+    {
+      "uid": "d",
+      "shape": "walking_leg",
+      "u": 0.8,
+      "theta": -10,
+      "rot": [
+        0,
+        -43,
+        0
+      ]
+    }
+  ],
+  "parts": [
+    {
+      "uid": "eyes",
+      "part": "eye_bead",
+      "u": 0.93,
+      "theta": 50,
+      "params": {
+        "size": 1.1
+      }
+    },
+    {
+      "uid": "eyes2",
+      "part": "eye_bead",
+      "u": 0.95,
+      "theta": 25,
+      "params": {
+        "size": 0.8
+      }
+    },
+    {
+      "uid": "fangs",
+      "part": "mouth_mandibles",
+      "u": 0.985,
+      "theta": -30,
+      "params": {
+        "length": 0.8,
+        "curl": 1.2
+      }
+    }
+  ],
+  "version": 2,
+  "shapes": {
+    "walking_leg": {
+      "segments": [
+        [
+          0.43,
+          0.35,
+          0
+        ],
+        [
+          0.28,
+          -0.62,
+          0
+        ]
+      ],
+      "radii": [
+        0.055,
+        0.04,
+        0.028
+      ],
+      "tip": "foot_spike",
+      "tip_params": {
+        "size": 0.7
+      }
+    }
+  }
+}

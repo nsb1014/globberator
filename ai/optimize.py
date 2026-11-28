@@ -104,7 +104,7 @@ class Fitter:
         for i, (r, cam) in enumerate(zip(recipes, cams)):
             path = os.path.join(self.work, "cand_%d.json" % i)
             json.dump(r, open(path, "w"))
-            jobs.append({"recipe": path, "out": os.path.join(self.work, "cand_%d" % i), "views": ["%g,%g" % cam], "mask": True, "color": False})
+            jobs.append({"recipe": path, "out": os.path.join(self.work, "cand_%d" % i), "views": ["%g,%g" % cam], "mask": True, "preview": False})
         res = pf.render_jobs(jobs, self.size)
         self.evals += len(jobs)
         scores = []

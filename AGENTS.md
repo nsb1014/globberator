@@ -4,6 +4,8 @@ For an automated neutral-clay humanoid with runtime motion bindings, use the [on
 
 Use this procedure for reference-driven builds. It uses local commands and a fresh vision subagent without a third-party model API. Run the commands from the checkout root. If shell Python lacks `bpy`, replace `python3 pf.py` with `blender -b --python-exit-code 1 -P pf.py --`.
 
+For library expansion, follow the [part gap workflow](research/README.md#expand-by-part-gap). Choose a missing function or shape before choosing its reference animal. Model the required part in isolation and use a reusable local attachment fixture for fit and motion. A complete creature is appropriate when the requested asset or test concerns the whole body.
+
 ## 0. Check the runtime
 
 - Prefer an installed Blender CLI. If neither Blender nor `bpy` is available, use an isolated Python environment with `bpy`, NumPy, SciPy, and Pillow. Check that `pf.py --help` runs in the chosen runtime. Import `bpy` before `mathutils` in shell Python scripts.
@@ -11,9 +13,10 @@ Use this procedure for reference-driven builds. It uses local commands and a fre
 
 ## 1. Establish the target
 
+- For a requested rebuild from scratch, archive the previous recipe and generated assets, then start with a blank recipe and a fresh design reference. Keep the archive outside the modeling and review inputs. Reuse the shared construction and animation methods.
 - Use the current user's target images and written intent. List the target images separately from any supplied failed outputs. Repository examples and previous renders demonstrate the tool. Library thumbnails and clay sheets show individual part shapes. Use either as design references only when the user designates them.
 - If the target is missing or inaccessible, report the specific gap. Keep uncertain details marked as inferred. Never substitute a repository image. Make the actual reference available to the reviewer when possible. If they cannot open it, keep reference fidelity pending.
-- Before building, record the view and pose, silhouette and proportion landmarks, recognisable features, and color regions. Define what a proportion measures. For a keychain figure, for example, measure body height from hair to soles, exclude hardware, and distinguish hair height from face height. Treat ranges from tilted photos as estimates. If defining features or colors need custom geometry or materials, choose that route before assembling a detailed library draft.
+- Before building, record the view and pose, silhouette and proportion landmarks, and recognisable sculpted features. Define what a proportion measures. For a keychain figure, for example, measure body height from hair to soles, exclude hardware, and distinguish hair height from face height. Treat ranges from tilted photos as estimates. If defining features need custom geometry, choose that route before assembling a detailed library draft. Build and review everything as neutral clay. Judge the reference by shape, pose, and articulation.
 
 ## 2. Find parts and build a first pass
 
@@ -24,16 +27,10 @@ Use this procedure for reference-driven builds. It uses local commands and a fre
 5. Place the shape with `python3 pf.py attach RECIPE SHAPE_JSON --u U --theta THETA --out NEXT_RECIPE`. Use `--on LIMB_UID` for a limb tip such as a hand. Verify the side and front renders because placement symmetry and part orientation can change the result.
 6. Check the assembled silhouette and main attachment locations before refining details. A part passing contact checks can still sit in the wrong anatomical region. Inspect normalize and build warnings for any removed parts or clamped dimensions.
 
-## 3. Build the target colors
-
-- For a colored target, list each region and its intended color before choosing the build method. Check the face, eyes, hair, clothing, hands, footwear, and markings individually where applicable. Use neutral clay for shape checks and render the complete assembled asset in color for final review. A monochrome final is appropriate when the user requests one.
-- Recipes support shared base, accent and detail colors, patterns, a belly region, and some fixed part slots. Belly paint follows the underside of the spine. It cannot assign colors by semantic region. If the recipe cannot separate important colors, switch to an editable Blender build script with named mesh/material regions, or finish those regions on the Blender assembly. Use surface-following geometry or painted textures for markings as appropriate.
-- Verify a face close-up and a full-body color render before sending for review. Check that the intended assignments survive export and reimport.
-
-## 4. Review independently and verify
+## 3. Review independently and verify
 
 1. Render the current assembly in a view matched to the target and in front, side, and additional angles that expose key attachments. Include labeled close-ups for defining features and alternate poses for articulation changes. For example, `python3 pf.py render out/asset/recipe.json --out out/asset/face --views front,side,threequarter --focus head` produces a facial review set.
 2. Start a fresh vision-capable subagent without inherited history. Share only the task intent and pose, the actual target images, and the current labeled renders. Keep failed drafts and your own diagnosis out of the first review. Ask the reviewer to inspect the images directly and report the part, view, visible evidence and severity for each finding. Have them identify obscured details. The reviewer leaves the files untouched.
-3. Verify each finding against the target and the rendered model before editing. If a reviewer calls the eyes black spheres but a target close-up shows pale sclera, colored irises and black pupils, follow the close-up. Record supported issues, disputed observations, and features that remain uncertain. Resolve material mismatches in shape, fit or color, then rerender the affected views and have a fresh reviewer check visible changes. Leave unresolved material issues pending and identify them in the delivery.
-4. For recipes, use `python3 pf.py review out/asset/recipe.json --out out/asset/review` to generate the review record. Run the same command with `--accept "inspection findings"` after the draft passes. Build with `python3 pf.py build out/asset/recipe.json --review out/asset/review/review.json --out out/asset/export --formats glb,blend`. For custom builds, use the asset's own build and render script. Reimport the export and verify silhouette, attachment, and color. If the reviewer, target, or a required view was unavailable, mark that check pending.
-5. A `build --no-anim` run before acceptance is a draft export. If Blender reports missing vertex colors or invalid mesh data, inspect the reimported mesh and material regions. A similar warning on an example can help locate the cause. Confirm the actual asset's geometry and colors before delivery.
+3. Verify each finding against the target and the rendered model before editing. If a reviewer calls the eyes spherical but a target close-up shows shallow, recessed eyes, follow the close-up. Record supported issues, disputed observations, and features that remain uncertain. Resolve significant mismatches in shape or fit, then rerender the affected views and have a fresh reviewer check visible changes. Leave unresolved material issues pending and identify them in the delivery.
+4. For recipes, use `python3 pf.py review out/asset/recipe.json --out out/asset/review` to generate the review record. Run the same command with `--accept "inspection findings"` after the draft passes. Build with `python3 pf.py build out/asset/recipe.json --review out/asset/review/review.json --out out/asset/export --formats glb,blend`. For custom builds, use the asset's own build and render script. Reimport the export and verify silhouette, attachment, and the uniform clay material. If the reviewer, target, or a required view was unavailable, mark that check pending.
+5. A `build --no-anim` run before acceptance is a draft export. If Blender reports invalid mesh data, inspect the reimported mesh and verify its geometry before delivery.

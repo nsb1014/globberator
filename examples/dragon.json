@@ -1,218 +1,492 @@
 {
+  "format": "polyforge.recipe",
+  "version": 2,
   "name": "Dragon",
+  "construction": "solid",
   "spine": [
     {
-      "y": 1.0,
-      "z": -1.1,
-      "w": 0.22,
-      "h": 0.22
+      "id": "tail-tip",
+      "y": 0.65,
+      "z": -3.36,
+      "w": 0.04,
+      "h": 0.04
     },
     {
-      "y": 1.1,
-      "z": -0.55,
-      "w": 0.4,
-      "h": 0.42
+      "id": "tail-hook",
+      "y": 0.39,
+      "z": -3.03,
+      "w": 0.08,
+      "h": 0.07
     },
     {
-      "y": 1.15,
-      "z": 0.05,
-      "w": 0.42,
-      "h": 0.45
+      "id": "tail-low",
+      "y": 0.4,
+      "z": -2.55,
+      "w": 0.13,
+      "h": 0.12
     },
     {
-      "y": 1.35,
-      "z": 0.55,
-      "w": 0.22,
-      "h": 0.22
-    },
-    {
-      "y": 1.7,
-      "z": 0.85,
-      "w": 0.15,
-      "h": 0.15
-    },
-    {
-      "y": 1.85,
-      "z": 1.2,
-      "w": 0.2,
+      "id": "tail-mid",
+      "y": 0.55,
+      "z": -2.08,
+      "w": 0.21,
       "h": 0.17
+    },
+    {
+      "id": "tail-base",
+      "y": 0.81,
+      "z": -1.57,
+      "w": 0.29,
+      "h": 0.25
+    },
+    {
+      "id": "rump",
+      "y": 1.04,
+      "z": -1.03,
+      "w": 0.42,
+      "h": 0.39
+    },
+    {
+      "id": "waist",
+      "y": 1.16,
+      "z": -0.51,
+      "w": 0.48,
+      "h": 0.51
+    },
+    {
+      "id": "ribcage",
+      "y": 1.27,
+      "z": -0.02,
+      "w": 0.56,
+      "h": 0.57
+    },
+    {
+      "id": "chest",
+      "y": 1.5,
+      "z": 0.36,
+      "w": 0.51,
+      "h": 0.5
+    },
+    {
+      "id": "throat-base",
+      "y": 1.88,
+      "z": 0.43,
+      "w": 0.36,
+      "h": 0.38
+    },
+    {
+      "id": "throat-mid",
+      "y": 2.22,
+      "z": 0.51,
+      "w": 0.28,
+      "h": 0.29
+    },
+    {
+      "id": "throat-upper",
+      "y": 2.53,
+      "z": 0.66,
+      "w": 0.235,
+      "h": 0.245
+    },
+    {
+      "id": "nape",
+      "y": 2.75,
+      "z": 0.83,
+      "w": 0.265,
+      "h": 0.255
+    },
+    {
+      "id": "skull",
+      "y": 2.86,
+      "z": 1.1,
+      "w": 0.295,
+      "h": 0.283
+    },
+    {
+      "id": "cheekbone",
+      "y": 2.87,
+      "z": 1.3,
+      "w": 0.282,
+      "h": 0.242
+    },
+    {
+      "id": "nose-bridge",
+      "y": 2.87,
+      "z": 1.48,
+      "w": 0.203,
+      "h": 0.164
     }
   ],
   "limbs": [
     {
-      "uid": "hind",
-      "u": 0.25,
-      "theta": -50,
+      "uid": "foreleg",
+      "u": 0.6504998,
+      "theta": -45,
       "segments": [
+        [
+          0.4076,
+          -0.5446,
+          -0.0934
+        ],
+        [
+          0.13,
+          -0.42,
+          0.1
+        ],
+        [
+          0.05,
+          -0.1558,
+          0.2
+        ]
+      ],
+      "radii": [
+        0.32,
+        0.22,
+        0.159,
+        0.125
+      ],
+      "tip": "paw_padded",
+      "tip_params": {
+        "size": 1.81,
+        "spread": 0.49,
+        "toe_pads": 3
+      }
+    },
+    {
+      "uid": "hindleg",
+      "u": 0.4139084,
+      "theta": -23,
+      "segments": [
+        [
+          0.4545,
+          -0.3952,
+          0.375
+        ],
         [
           0.12,
-          -0.33,
-          0.24
+          -0.28,
+          -0.36
         ],
         [
-          0.015,
-          -0.41,
-          -0.22
+          0.03,
+          -0.1251,
+          0.18
         ]
       ],
       "radii": [
-        0.2,
-        0.13,
-        0.08
-      ],
-      "tip": "foot_claw",
-      "tip_params": {
-        "size": 1.6
-      }
-    },
-    {
-      "uid": "fore",
-      "u": 0.53,
-      "theta": -55,
-      "segments": [
-        [
-          0.11,
-          -0.36,
-          -0.2
-        ],
-        [
-          0.02,
-          -0.43,
-          0.19
-        ]
-      ],
-      "radii": [
+        0.36,
+        0.23,
         0.16,
-        0.1,
-        0.07
+        0.11
       ],
-      "tip": "foot_claw",
+      "tip": "paw_padded",
       "tip_params": {
-        "size": 1.4
+        "size": 1.55,
+        "spread": 0.48,
+        "toe_pads": 3
       }
-    },
-    {
-      "uid": "tail",
-      "motion": "tail",
-      "u": 0.0,
-      "theta": 90,
-      "segments": [
-        [
-          0,
-          -0.07,
-          -0.35
-        ],
-        [
-          0,
-          -0.14,
-          -0.32
-        ],
-        [
-          0,
-          -0.13,
-          -0.3
-        ],
-        [
-          0,
-          -0.09,
-          -0.22
-        ]
-      ],
-      "radii": [
-        0.175,
-        0.136,
-        0.099,
-        0.062,
-        0.025
-      ]
     }
   ],
   "parts": [
     {
-      "uid": "wings",
+      "uid": "bat-wing",
       "part": "wing_bat",
-      "u": 0.5,
-      "theta": 48,
+      "u": 0.6504998,
+      "theta": 43,
+      "offset": -0.15,
+      "scale": 1,
+      "params": {
+        "span": 3.18,
+        "chord": 1.0,
+        "fold": 0.24,
+        "scallop": 0.97
+      },
       "rot": [
-        -24,
-        0,
-        0
-      ],
-      "params": {
-        "span": 1.35,
-        "chord": 1.1,
-        "fold": 0.65
-      },
-      "offset": -0.09
+        -33.6824,
+        -25.8035,
+        -25.6759
+      ]
     },
     {
-      "uid": "horns",
-      "part": "horn_spike",
-      "u": 0.908,
-      "theta": 65,
-      "params": {
-        "length": 1.3,
-        "curve": -0.8
-      }
-    },
-    {
-      "uid": "jaws",
-      "part": "mouth_jaws",
-      "u": 0.985,
+      "uid": "snout",
+      "part": "mouth_snout",
+      "u": 0.978,
       "theta": -90,
+      "offset": -0.1,
+      "scale": 1.6,
       "params": {
-        "length": 1.1,
-        "width": 1.0
-      }
+        "width": 1.28,
+        "length": 1.05,
+        "nostrils": 1.0
+      },
+      "rot": [
+        95.2857,
+        0.0,
+        0.0
+      ]
     },
     {
-      "uid": "eyes",
+      "uid": "reptilian-eye",
       "part": "eye_slit",
-      "u": 0.969,
-      "theta": 17,
+      "u": 0.9465416,
+      "theta": 31,
+      "offset": -0.051,
+      "scale": 1,
       "params": {
-        "size": 0.9
+        "size": 1.55,
+        "lid": 0.94,
+        "slit": 0.22
       },
-      "offset": -0.025
+      "rot": [
+        -29.8741,
+        -0.2499,
+        -2.9926
+      ]
     },
     {
-      "uid": "crest",
-      "part": "crest",
-      "u": 0.33,
-      "theta": 90,
+      "uid": "swept-horn",
+      "part": "horn_sweep",
+      "u": 0.9145453,
+      "theta": 46,
+      "offset": -0.08,
+      "scale": 1,
       "params": {
-        "height": 1.4,
-        "length": 2.5
+        "length": 0.7,
+        "width": 0.24,
+        "splay": 0.31,
+        "lift": 0.23,
+        "sweep": 0.27,
+        "taper": 0.71
+      },
+      "rot": [
+        -37.5845,
+        -55.4241,
+        49.9369
+      ]
+    },
+    {
+      "uid": "temple-spur",
+      "part": "horn_sweep",
+      "u": 0.8678687,
+      "theta": 19,
+      "offset": -0.07,
+      "scale": 1,
+      "params": {
+        "length": 0.4,
+        "width": 0.2,
+        "splay": 0.16,
+        "lift": 0.0,
+        "sweep": -0.35,
+        "taper": 0.85
+      },
+      "rot": [
+        -4.8693,
+        -43.2337,
+        46.4092
+      ]
+    },
+    {
+      "uid": "jaw-spur",
+      "part": "horn_sweep",
+      "u": 0.8678687,
+      "theta": -25,
+      "offset": -0.062,
+      "scale": 1,
+      "params": {
+        "length": 0.36,
+        "width": 0.17,
+        "splay": 0.16,
+        "lift": 0.0,
+        "sweep": -0.4,
+        "taper": 0.9
+      },
+      "rot": [
+        20.108,
+        -65.6148,
+        67.8288
+      ]
+    },
+    {
+      "uid": "tail-low-dorsal-scale",
+      "part": "spike",
+      "u": 0.1505408,
+      "theta": 90,
+      "offset": -0.024,
+      "scale": 1,
+      "params": {
+        "length": 0.38,
+        "thickness": 0.56,
+        "lean": -0.97
       }
     },
     {
-      "uid": "spike1",
+      "uid": "tail-mid-dorsal-scale",
       "part": "spike",
-      "u": 0.37,
+      "u": 0.2292575,
       "theta": 90,
+      "offset": -0.024,
+      "scale": 1,
       "params": {
-        "length": 1.2
-      },
-      "on": "tail"
+        "length": 0.61,
+        "thickness": 0.82,
+        "lean": -0.97
+      }
     },
     {
-      "uid": "spike2",
+      "uid": "tail-base-dorsal-scale",
       "part": "spike",
-      "u": 0.7,
+      "u": 0.3204165,
       "theta": 90,
+      "offset": -0.024,
+      "scale": 1,
       "params": {
-        "length": 0.9
-      },
-      "on": "tail"
+        "length": 0.84,
+        "thickness": 1.0,
+        "lean": -0.97
+      }
+    },
+    {
+      "uid": "rump-dorsal-scale",
+      "part": "spike",
+      "u": 0.4139084,
+      "theta": 90,
+      "offset": -0.024,
+      "scale": 1,
+      "params": {
+        "length": 1.01,
+        "thickness": 1.3,
+        "lean": -0.97
+      }
+    },
+    {
+      "uid": "waist-dorsal-scale",
+      "part": "spike",
+      "u": 0.4989152,
+      "theta": 90,
+      "offset": -0.024,
+      "scale": 1,
+      "params": {
+        "length": 1.23,
+        "thickness": 1.36,
+        "lean": -0.97
+      }
+    },
+    {
+      "uid": "ribcage-dorsal-scale",
+      "part": "spike",
+      "u": 0.5789658,
+      "theta": 90,
+      "offset": -0.024,
+      "scale": 1,
+      "params": {
+        "length": 1.34,
+        "thickness": 1.4,
+        "lean": -0.97
+      }
+    },
+    {
+      "uid": "chest-dorsal-scale",
+      "part": "spike",
+      "u": 0.6504998,
+      "theta": 90,
+      "offset": -0.024,
+      "scale": 1,
+      "params": {
+        "length": 1.32,
+        "thickness": 1.34,
+        "lean": -0.97
+      }
+    },
+    {
+      "uid": "throat-base-dorsal-scale",
+      "part": "spike",
+      "u": 0.712746,
+      "theta": 90,
+      "offset": -0.024,
+      "scale": 1,
+      "params": {
+        "length": 1.23,
+        "thickness": 1.2,
+        "lean": -0.97
+      }
+    },
+    {
+      "uid": "throat-mid-dorsal-scale",
+      "part": "spike",
+      "u": 0.7683999,
+      "theta": 90,
+      "offset": -0.024,
+      "scale": 1,
+      "params": {
+        "length": 1.09,
+        "thickness": 1.09,
+        "lean": -0.97
+      }
+    },
+    {
+      "uid": "throat-upper-dorsal-scale",
+      "part": "spike",
+      "u": 0.8233103,
+      "theta": 90,
+      "offset": -0.024,
+      "scale": 1,
+      "params": {
+        "length": 0.87,
+        "thickness": 0.85,
+        "lean": -0.97
+      }
+    },
+    {
+      "uid": "chest-scute",
+      "part": "carapace",
+      "u": 0.6504998,
+      "theta": -90,
+      "offset": -0.102,
+      "scale": 1.14,
+      "params": {
+        "dome": 0.2,
+        "rim_teeth": 0,
+        "size": 1.81
+      }
+    },
+    {
+      "uid": "lower-throat-scute",
+      "part": "carapace",
+      "u": 0.712746,
+      "theta": -90,
+      "offset": -0.077,
+      "scale": 0.98,
+      "params": {
+        "dome": 0.2,
+        "rim_teeth": 0,
+        "size": 1.47
+      }
+    },
+    {
+      "uid": "middle-throat-scute",
+      "part": "carapace",
+      "u": 0.7683999,
+      "theta": -90,
+      "offset": -0.06,
+      "scale": 0.8,
+      "params": {
+        "dome": 0.2,
+        "rim_teeth": 0,
+        "size": 1.28
+      }
+    },
+    {
+      "uid": "upper-throat-scute",
+      "part": "carapace",
+      "u": 0.8233103,
+      "theta": -90,
+      "offset": -0.048,
+      "scale": 0.72,
+      "params": {
+        "dome": 0.2,
+        "rim_teeth": 0,
+        "size": 1.08
+      }
     }
-  ],
-  "paint": {
-    "base": "#3f6e5a",
-    "accent": "#1f3d33",
-    "detail": "#d8c27a",
-    "pattern": "stripes",
-    "pattern_scale": 1.0,
-    "belly": true
-  },
-  "version": 2
+  ]
 }

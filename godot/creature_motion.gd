@@ -10,6 +10,7 @@ var _spine: Array[int] = []
 var _managed: Dictionary = {}
 var _hub := -1
 var _humanoid := false
+var _hoofed_biped := false
 var _gait := "walk"
 var _speed := 0.0
 var _elapsed := 0.0
@@ -72,10 +73,35 @@ func configure(bindings: Dictionary) -> bool:
 			"lengths": lengths, "length": length, "sole": sole, "neutral": tip.origin + sole,
 			"phase": 0.0, "foot": _ground(sk.to_global(tip.origin + sole)), "swing": false,
 			"lag": Vector3.ZERO, "velocity": Vector3.ZERO}
+		var supports: Array[int] = []
+		for name in binding.get("joint_support", []):
+			var bone := sk.find_bone(name)
+			var hinge := supports.size() + 1
+			if bone < 0 or hinge >= ids.size() - 1 or sk.get_bone_parent(bone) != ids[hinge]:
+				return false
+			supports.append(bone)
+			_managed[bone] = true
+		limb.joint_support = supports
+		var toe = binding.get("toe_per_length")
+		if _humanoid and binding.role == "leg" and lengths.size() == 3 and binding.get("hoofed", false) and toe is Array and toe.size() == 3:
+			limb.toe = _vec(toe) * length
+			limb.pitch = 0.0
+			limb.hock_angle = .44
 		_limbs.append(limb)
 		if binding.role == "leg":
 			legs.append(limb)
 	_group_legs(legs)
+	_hoofed_biped = legs.size() == 2 and legs.all(func(leg): return leg.has("toe"))
+	for limb in _limbs:
+		if limb.role == "arm" and not legs.is_empty():
+			var nearest := INF
+			for leg in legs:
+				var distance := absf(leg.position - limb.position)
+				if leg.side * limb.side < 0:
+					distance += 2
+				if distance < nearest:
+					nearest = distance
+					limb.gait_leg = leg
 	for binding in bindings.parts:
 		var bone := sk.find_bone(binding.joint)
 		if bone < 0:
@@ -158,23 +184,34 @@ func advance(delta: float) -> void:
 	for i in _managed:
 		sk.reset_bone_pose(i)
 	var torso_drop := 0.0
+	var pelvis_lift := 0.0
 	var leg_count := 0
+	var hoofed_walk := moving and _hoofed_biped and _gait == "walk"
 	for limb in _limbs:
 		if limb.role != "leg":
 			continue
 		leg_count += 1
 		_step_foot(sk, limb, rule, delta, moving)
-		var hip := sk.get_bone_global_pose(limb.ids[0]).origin
-		var ankle: Vector3 = sk.to_local(limb.foot) - limb.sole
+		if leg_count == 1 and hoofed_walk:
+			var phase := float(limb.phase) - float(rule.get("pelvis_dip_delay", 0.0))
+			var dip := float(rule.get("pelvis_dip", .026)) * (.5 + .5 * cos(2 * TAU * phase))
+			pelvis_lift = (.06 - dip) * float(limb.length)
+		var hip := sk.get_bone_global_pose(limb.ids[0]).origin + Vector3.UP * pelvis_lift
+		var ankle := _ankle_target(sk, limb)
 		var diff := hip - ankle
 		var reach_length: float = limb.length * .995
+		if hoofed_walk:
+			reach_length = .995 * (_hoof_upper_reach(limb.lengths) + float(limb.lengths[2]))
 		var available := sqrt(maxf(0, reach_length * reach_length - diff.x * diff.x - diff.z * diff.z))
-		torso_drop = maxf(torso_drop, clampf(diff.y - available, 0, limb.length * .35))
+		var required_drop := minf(diff.y - available, limb.length * .35)
+		var margin := .025 * float(limb.length) if hoofed_walk else 0.0
+		var blend := maxf(0, 1 - absf(torso_drop - required_drop) / margin) if margin > 0 else 0.0
+		torso_drop = maxf(torso_drop, required_drop) + .25 * margin * blend * blend
 	if leg_count > 0:
 		var rest := sk.get_bone_rest(_hub)
 		var parent := sk.get_bone_parent(_hub)
 		var up := Vector3.UP if parent < 0 else sk.get_bone_global_pose(parent).basis.inverse() * Vector3.UP
-		sk.set_bone_pose_position(_hub, rest.origin - up * torso_drop)
+		sk.set_bone_pose_position(_hub, rest.origin + up * (pelvis_lift - torso_drop))
 	elif moving:
 		for i in _spine.size():
 			var bone: int = _spine[i]
@@ -182,14 +219,22 @@ func advance(delta: float) -> void:
 				* Quaternion(Vector3.UP, sin(_elapsed * 5 - i * .6) * .08))
 	for limb in _limbs:
 		if limb.role == "leg":
-			_solve(sk, limb, sk.to_local(limb.foot) - limb.sole, true)
+			_solve(sk, limb, _ankle_target(sk, limb), true)
 		elif limb.role == "arm":
 			var tip: int = limb.ids.back()
 			var rest_target := sk.get_bone_global_pose(tip).origin
 			var phase := _elapsed / float(rule.period) + (.5 if limb.side < 0 else 0.0)
-			var swing := sin(TAU * phase) * float(rule.arm_sweep) if moving else 0.0
-			var clearance := .16 if moving and _humanoid else 0.0
-			var target := rest_target + Vector3(limb.side * clearance, 0, swing) * float(limb.length)
+			var sweep := sin(TAU * phase)
+			if limb.has("gait_leg"):
+				var leg: Dictionary = limb.gait_leg
+				var duty: float = rule.duty
+				var progress: float = leg.phase / duty if leg.phase < duty else 1 + (leg.phase - duty) / (1 - duty)
+				var side_sign := -1.0 if leg.side * limb.side < 0 else 1.0
+				sweep = -cos(PI * progress) * side_sign * signf(_speed)
+			var swing := sweep * float(rule.arm_sweep) if moving else 0.0
+			var clearance := float(rule.get("arm_clearance", .16)) if moving and _humanoid else 0.0
+			var flex := float(rule.get("arm_flex", .13)) * maxf(sweep, 0) if moving and _hoofed_biped else 0.0
+			var target := rest_target + Vector3(limb.side * clearance, flex, swing) * float(limb.length)
 			if _reach_targets.has(limb.id):
 				var reach_state: Dictionary = _reach_targets[limb.id]
 				var duration := maxf(.001, float(_rules.reach.get("transition_seconds", .20)))
@@ -212,6 +257,9 @@ func _step_foot(sk: Skeleton3D, limb: Dictionary, rule: Dictionary, delta: float
 	if not moving:
 		limb.foot = limb.foot.lerp(neutral, minf(1, 9 * delta))
 		limb.swing = false
+		if limb.has("toe"):
+			limb.pitch = move_toward(limb.pitch, 0.0, 4.0 * delta)
+			limb.hock_angle = move_toward(limb.hock_angle, .44, 4.0 * delta)
 		return
 	var duty: float = rule.duty
 	var group_length: float = limb.group_length
@@ -232,10 +280,33 @@ func _step_foot(sk: Skeleton3D, limb: Dictionary, rule: Dictionary, delta: float
 			landing = _ground(landing)
 		var lift_height := _sample(rule.lift, t) * float(limb.length) * sk.global_basis.y.length()
 		limb.foot = limb.lift.lerp(landing, smoothstep(0, 1, t)) + Vector3.UP * lift_height
+		if limb.has("toe"):
+			var tuck := sin(PI * t)
+			limb.hock_angle = .44 + .15 * (smoothstep(0, 1, tuck) if _gait == "walk" else tuck)
+			limb.pitch = .24 * (1 - smoothstep(0, .66, t)) + .36 * tuck * tuck * (1 - t) if _gait == "walk" else 0.0
 	elif limb.swing or phase < previous:
 		var plant := neutral + forward * _speed * (duty * .5 - phase) / frequency
 		limb.foot = _ground(plant) if ground_relative else plant
 		limb.swing = false
+	if phase < duty and limb.has("toe"):
+		limb.hock_angle = .44
+		limb.pitch = .24 * smoothstep(.86, 1, phase / duty) if _gait == "walk" else 0.0
+
+
+func _ankle_target(sk: Skeleton3D, limb: Dictionary) -> Vector3:
+	var sole: Vector3 = limb.sole
+	if limb.has("toe"):
+		# Keep the toe over its flat-pose position as the heel rises.
+		var toe: Vector3 = limb.toe
+		sole += Basis(Vector3.RIGHT, limb.pitch) * toe - toe
+	return sk.to_local(limb.foot) - sole
+
+
+func _hoof_upper_reach(lengths: Array) -> float:
+	var a: float = lengths[0]
+	var b: float = lengths[1]
+	var reserve := float(_rules[_gait].get("knee_reserve", 0.0))
+	return sqrt(a * a + b * b + 2 * a * b * cos(reserve)) if reserve > 0 else a + b - .00001
 
 
 func _solve(sk: Skeleton3D, limb: Dictionary, target: Vector3, grounded: bool) -> void:
@@ -252,18 +323,35 @@ func _solve(sk: Skeleton3D, limb: Dictionary, target: Vector3, grounded: bool) -
 	var axis := (target - root).normalized()
 	if axis.is_zero_approx():
 		axis = (positions.back() - root).normalized()
-	if lengths.size() == 2:
+	if lengths.size() == 1:
+		positions[1] = root + axis * float(lengths[0])
+	elif grounded and limb.has("toe"):
+		var forward := frame * Vector3.BACK
+		var hock_length: float = lengths[2]
+		var upper_max := _hoof_upper_reach(lengths)
+		var upper_min := absf(lengths[0] - lengths[1]) + .00001
+		var min_reach := maxf(hock_length - upper_max, upper_min - hock_length)
+		var distance := clampf(root.distance_to(target), maxf(.00001, min_reach), upper_max + hock_length)
+		# Bound the hock angle so the two upper segments can reach the hock.
+		var squares := distance * distance + hock_length * hock_length
+		var divisor := 2 * distance * hock_length
+		var min_angle := acos(clampf((squares - upper_min * upper_min) / divisor, -1, 1))
+		var max_angle := acos(clampf((squares - upper_max * upper_max) / divisor, -1, 1))
+		var angle := clampf(limb.hock_angle, min_angle, max_angle)
+		if _gait == "walk":
+			var blend := maxf(0.0, 1 - absf(float(limb.hock_angle) - max_angle) / .10)
+			angle = maxf(min_angle, angle - .025 * blend * blend)
+		var distal := axis * cos(angle) + _bend_pole(axis, forward) * sin(angle)
+		positions[3] = root + axis * distance
+		positions[2] = positions[3] - distal * hock_length
+		positions[1] = _two_bone_knee(root, root.direction_to(positions[2]), root.distance_to(positions[2]), lengths[0], lengths[1], forward)
+	elif lengths.size() == 2:
 		var length_a: float = lengths[0]
 		var length_b: float = lengths[1]
 		var reach_distance := clampf(root.distance_to(target), absf(length_a - length_b) + .00001, length_a + length_b - .00001)
-		var bend := Vector3.FORWARD * -1 if _humanoid and grounded else positions[1] - root
-		var pole := bend.slide(axis).normalized()
-		if pole.is_zero_approx():
-			pole = Vector3.RIGHT.slide(axis).normalized()
-		if pole.is_zero_approx():
-			pole = Vector3.UP.slide(axis).normalized()
-		var along := (length_a * length_a - length_b * length_b + reach_distance * reach_distance) / (2 * reach_distance)
-		positions[1] = root + axis * along + pole * sqrt(maxf(0, length_a * length_a - along * along))
+		var rest_axis := positions[-1] - root
+		var bend := (frame * Vector3.BACK) if _humanoid and grounded else (positions[1] - root).slide(rest_axis.normalized())
+		positions[1] = _two_bone_knee(root, axis, reach_distance, length_a, length_b, bend)
 		positions[2] = root + axis * reach_distance
 	elif root.distance_to(target) >= float(limb.length):
 		for i in lengths.size():
@@ -278,6 +366,22 @@ func _solve(sk: Skeleton3D, limb: Dictionary, target: Vector3, grounded: bool) -
 				positions[i + 1] = positions[i] + positions[i].direction_to(positions[i + 1]) * float(lengths[i])
 			if positions[-1].distance_squared_to(target) < .0000005:
 				break
+		# Restore inverted bends around each joint's neighbor-to-neighbor axis.
+		# Moving on this circle keeps both segment lengths and the tip target.
+		for i in range(1, positions.size() - 1):
+			var before: Vector3 = rests[i - 1].origin
+			var joint: Vector3 = rests[i].origin
+			var after: Vector3 = rests[i + 1].origin
+			var authored := (joint - before).slide(before.direction_to(after))
+			var chord := positions[i + 1] - positions[i - 1]
+			if chord.is_zero_approx() or authored.is_zero_approx():
+				continue
+			var tangent := chord.normalized()
+			var offset := positions[i] - positions[i - 1]
+			var radial := offset.slide(tangent)
+			var pole := (frame * authored).slide(tangent)
+			if radial.dot(pole) < 0:
+				positions[i] = positions[i - 1] + tangent * offset.dot(tangent) + pole.normalized() * radial.length()
 	for i in lengths.size():
 		var rest_a: Transform3D = rests[i]
 		var rest_b: Transform3D = rests[i + 1]
@@ -286,7 +390,30 @@ func _solve(sk: Skeleton3D, limb: Dictionary, target: Vector3, grounded: bool) -
 		_orient(sk, ids[i], Basis(Quaternion(from.normalized(), to)) * frame * rest_a.basis)
 	if grounded:
 		var tip_rest: Transform3D = rests.back()
-		_orient(sk, ids.back(), tip_rest.basis)
+		var pitch := Basis(Vector3.RIGHT, limb.pitch) if limb.has("toe") else Basis.IDENTITY
+		_orient(sk, ids.back(), pitch * tip_rest.basis)
+	var supports: Array = limb.get("joint_support", [])
+	for i in supports.size():
+		var proximal: Transform3D = rests[i]
+		var distal: Transform3D = rests[i + 1]
+		var incoming := sk.get_bone_global_pose(ids[i]).basis * proximal.basis.inverse()
+		var outgoing := sk.get_bone_global_pose(ids[i + 1]).basis * distal.basis.inverse()
+		var midway := incoming.get_rotation_quaternion().slerp(outgoing.get_rotation_quaternion(), .5)
+		_orient(sk, supports[i], Basis(midway) * sk.get_bone_global_rest(supports[i]).basis)
+
+
+static func _bend_pole(axis: Vector3, bend: Vector3) -> Vector3:
+	var pole := bend.slide(axis).normalized()
+	if pole.is_zero_approx():
+		pole = Vector3.RIGHT.slide(axis).normalized()
+	if pole.is_zero_approx():
+		pole = Vector3.UP.slide(axis).normalized()
+	return pole
+
+
+static func _two_bone_knee(root: Vector3, axis: Vector3, distance: float, a: float, b: float, bend: Vector3) -> Vector3:
+	var along := (a * a - b * b + distance * distance) / (2 * distance)
+	return root + axis * along + _bend_pole(axis, bend) * sqrt(maxf(0, a * a - along * along))
 
 
 func _secondary(sk: Skeleton3D, limb: Dictionary, delta: float) -> void:
@@ -348,6 +475,10 @@ static func _sample(keys: Array, t: float) -> float:
 			var a: Array = keys[i - 1]
 			var b: Array = keys[i]
 			var f := inverse_lerp(float(a[0]), float(b[0]), t)
+			if a.size() == 3 and b.size() == 3:
+				var width := float(b[0]) - float(a[0])
+				return (lerpf(float(a[1]), float(b[1]), smoothstep(0, 1, f))
+					+ width * f * (1 - f) * ((1 - f) * float(a[2]) - f * float(b[2])))
 			return lerpf(float(a[1]), float(b[1]), f)
 	return float(keys[-1][1])
 

@@ -5,7 +5,7 @@ from ..kit import Piece
 
 class Ctx:
     """Build context: several pieces (one per bone). `use(name)` switches piece,
-    `slot(name)` sets the paint slot; other calls forward to the current piece."""
+    `slot(name)` sets the sculpt region; other calls forward to the current piece."""
 
     def __init__(self, bones):
         self.pieces = {"self": Piece()}

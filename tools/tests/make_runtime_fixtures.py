@@ -13,7 +13,7 @@ from polyforge import builder, character, export, recipe, runtime_motion
 def main():
     out = Path(sys.argv[sys.argv.index("--") + 1]).resolve()
     examples = {name: recipe.load(ROOT / "examples" / (name + ".json"))
-                for name in ("serpent", "hopper", "bull", "spider")}
+                for name in ("serpent", "hopper", "bull", "spider", "minotaur")}
     examples["chibi"] = character.compile_recipe(
         {"body_plan": "humanoid", "style": "chibi", "head_fraction": .57,
          "face": "round", "eyes": "angled", "hair": "spiky", "feet": "boots"}

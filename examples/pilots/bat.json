@@ -1,0 +1,34 @@
+{
+  "format": "polyforge.recipe",
+  "version": 2,
+  "name": "Big Brown Bat",
+  "construction": "metaball",
+  "locomotion": "flight",
+  "ground_y": 0,
+  "spine": [
+    {"id": "rump", "y": 0.55, "z": -0.50, "w": 0.085, "h": 0.073},
+    {"id": "hips", "y": 0.58, "z": -0.39, "w": 0.177, "h": 0.126},
+    {"id": "abdomen", "y": 0.60, "z": -0.20, "w": 0.221, "h": 0.133},
+    {"id": "shoulder", "y": 0.62, "z": 0.025, "w": 0.203, "h": 0.148},
+    {"id": "neck", "y": 0.65, "z": 0.18, "w": 0.148, "h": 0.127},
+    {"id": "cranium", "y": 0.695, "z": 0.30, "w": 0.145, "h": 0.116},
+    {"id": "cheeks", "y": 0.69, "z": 0.409, "w": 0.137, "h": 0.110},
+    {"id": "snout", "y": 0.678, "z": 0.491, "w": 0.097, "h": 0.068}
+  ],
+  "limbs": [
+    {"uid": "wing", "family": "bat_flight_wing", "u": 0.53, "theta": 8,
+     "params": {"size": 1, "chord": 1, "thickness": 0.75}},
+    {"uid": "hind_leg", "u": 0.17, "theta": -21, "segments": [[0.083, -0.026, -0.092], [0.042, -0.006, -0.092]],
+     "radii": [0.049, 0.034, 0.023], "root_blend": 1, "tip": "bat_hindfoot"}
+  ],
+  "parts": [
+    {"uid": "ears", "part": "ear_pinna", "u": 0.798, "theta": 43, "offset": -0.021,
+     "rot": [-6, 24, -21], "scale": 0.65, "params": {"point": 0.12, "cup": 0.36}},
+    {"uid": "eyes", "part": "eye_camera", "u": 0.912, "theta": 28, "offset": -0.018,
+     "scale": 0.42, "params": {"facing_deg": 21, "bulge": 0.37, "slit": 1}},
+    {"uid": "nose", "part": "nose_pad", "u": 0.993, "theta": 90, "offset": -0.019,
+     "rot": [17, 0, 0], "scale": 0.55},
+    {"uid": "tail_membrane", "part": "bat_tail_membrane", "u": 0.095, "theta": -90, "offset": -0.024,
+     "params": {"size": 1.05}}
+  ]
+}

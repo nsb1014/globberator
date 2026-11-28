@@ -5,11 +5,11 @@ import bpy
 from mathutils import Matrix
 
 from . import catalog
-from .builder import Builder
+from .solid import SolidBuilder
 from .recipe import default_recipe, normalize
 
-LIMB_FIELDS = ("segments", "radii", "tip", "tip_params", "motion")
-FAMILY_FIELDS = ("family", "params", "tip", "tip_params")
+LIMB_FIELDS = ("segments", "radii", "tip", "tip_params", "motion", "bend_limits")
+FAMILY_FIELDS = ("family", "params", "tip", "tip_params", "bend_limits")
 PART_FIELDS = ("part", "params")
 
 
@@ -45,8 +45,9 @@ def isolated(shape, collection=None):
         part = catalog.get(shape["part"])
     else:
         raise ValueError("A shape needs limb segments or a known part ID")
-    b = Builder(r, "final")
+    b = SolidBuilder(r, "final")
     col = collection or bpy.context.scene.collection
+    objects = []
     if r["limbs"]:
         from .spine import Spine
         b.spine = Spine(b.recipe["spine"])
@@ -57,14 +58,15 @@ def isolated(shape, collection=None):
         limb["joints"] = [joint - origin for joint in limb["joints"]]
         b.make_bones()
         b.limb_prim(limb)
+        body = b.details_object(col, "Draft limb")
+        if body is not None:
+            objects.append(body)
+        b.details.clear()
         b.place_tips()
     else:
         params = catalog.normalize_params(part, shape.get("params", {}), part.id, b.warnings)
         b.place(part, params, Matrix.Identity(4), -1, part.id, False, part.id, 0)
-    result = []
-    if b.skin_prims:
-        result.append(b.fuse(col))
     detail = b.details_object(col, "Draft")
-    if detail:
-        result.append(detail)
-    return result, b.warnings
+    if detail is not None:
+        objects.append(detail)
+    return objects, b.warnings

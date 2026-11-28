@@ -1,4 +1,5 @@
 """Back, side and tail details plus wings. Surface frame unless noted."""
+from bisect import bisect_right
 import math
 from ..kit import V, UP, BACK, RIGHT, rot, curve_points, taper, lerp
 from . import Part
@@ -97,6 +98,9 @@ def antenna(g, p):
 
 
 def wing_bat(g, p):
+    if p.get("scallop", 0):
+        _wing_bat_scalloped(g, p)
+        return
     L, C, f = 0.9 * p["span"], p["chord"], p["fold"]
     tipd = rot(RIGHT, -f * 0.9) @ V(0, L, -0.1 * L)
     wrist = V(0, L * 0.45, 0.18 * L * C)
@@ -115,6 +119,91 @@ def wing_bat(g, p):
     g.loft([rim[0], lerp(rim[0], wrist, 0.5), wrist, lerp(wrist, tipd, 0.5), tipd], [0.045, 0.04, 0.035, 0.022, 0.008], sides=14, up=RIGHT)
     for k in (3, 5, 7):
         g.loft([wrist, lerp(wrist, rim[k], 0.5), rim[k]], [0.024, 0.016, 0.006], sides=12, up=RIGHT)
+
+
+def _wing_membrane(g, leading, trailing, thickness):
+    """Join closed membrane sections between two monotone, scalloped edges."""
+    def edge_at(edge, reaches, reach):
+        i = min(bisect_right(reaches, reach) - 1, len(edge) - 2)
+        blend = (reach - reaches[i]) / (reaches[i + 1] - reaches[i])
+        return lerp(edge[i], edge[i + 1], blend)
+
+    leading_reaches = [point.y for point in leading]
+    trailing_reaches = [point.y for point in trailing]
+    reaches = sorted(set(leading_reaches[1:-1] + trailing_reaches[1:-1]))
+    count = 16
+    vertices, faces = [], []
+    for reach in reaches:
+        top = edge_at(leading, leading_reaches, reach)
+        bottom = edge_at(trailing, trailing_reaches, reach)
+        depth = min(thickness, (top.z - bottom.z) * .14)
+        for i in range(count):
+            angle = math.tau * i / count
+            fraction = (1 - math.cos(angle)) * .5
+            point = lerp(bottom, top, fraction)
+            point.x += depth * math.sin(angle)
+            vertices.append(point)
+
+    for row in range(len(reaches) - 1):
+        a, b = row * count, (row + 1) * count
+        for i in range(count):
+            j = (i + 1) % count
+            faces.append((a + i, b + i, b + j, a + j))
+    root = len(vertices)
+    last = root - count
+    vertices.extend((leading[0], leading[-1]))
+    for i in range(count):
+        j = (i + 1) % count
+        faces.extend(((root, i, j), (root + 1, last + j, last + i)))
+    g._add(vertices, faces)
+
+
+def _wing_bat_scalloped(g, p):
+    """Raised wrist and three curved trailing bays in a displayed bat wing."""
+    length = 0.9 * p["span"]
+    chord = length * p["chord"]
+    scallop = p["scallop"]
+
+    def point(reach, rise):
+        sweep = -0.38 * p["fold"] * reach ** 2
+        return V(length * sweep, length * reach, chord * rise)
+
+    root = point(-0.038, -0.036)
+    wrist = point(0.35, 0.44)
+    tip = point(1.0, 0.16)
+    outer_digit = point(0.81, -0.086)
+    middle_digit = point(0.52, -0.185)
+    inner_digit = point(0.22, -0.12)
+    heel = point(0.01, -0.12)
+
+    def arc(start, first, second, end):
+        return [start * (1 - t) ** 3 + first * (3 * t * (1 - t) ** 2)
+                + second * (3 * t ** 2 * (1 - t)) + end * t ** 3
+                for t in (i / 14 for i in range(14))]
+
+    arm = arc(root, point(0.065, 0.081), point(0.284, 0.166), wrist)
+    leading = arc(wrist, point(0.51, 0.46), point(0.88, 0.33), tip)
+    bays = []
+    for start, end, depth in ((tip, outer_digit, .125),
+                              (outer_digit, middle_digit, .23),
+                              (middle_digit, inner_digit, .175)):
+        a = lerp(start, end, .27) + BACK * (chord * depth * scallop)
+        b = lerp(start, end, .70) + BACK * (chord * depth * scallop)
+        bays.extend(arc(start, a, b, end))
+
+    g.setup(slot_finish={"accent": "subsurf_low"}, voxel=.0045, smooth=.34)
+    g.slot("accent")
+    _wing_membrane(g, [*arm, *leading, tip], [root, heel, inner_digit, *reversed(bays)], length * .007)
+
+    g.slot("base")
+    thickness = max(.50, length / 2.6)
+    g.loft([root, arm[5], arm[10], wrist, leading[4], leading[8], leading[12], tip],
+           [thickness * r for r in (.125, .101, .083, .095, .071, .048, .022, .006)],
+           sides=22, up=RIGHT)
+    for digit, bow, radius in ((outer_digit, .085, .051), (middle_digit, .075, .053), (inner_digit, .039, .058)):
+        midpoint = lerp(wrist, digit, .53) + UP * (length * bow) + RIGHT * (thickness * .022)
+        g.loft([wrist, midpoint, digit],
+               [thickness * radius, thickness * radius * .57, thickness * .006], sides=16, up=RIGHT)
 
 
 def wing_feather(g, p):
@@ -229,8 +318,10 @@ PARTS = [
          {"size": (0.3, 3.0, 1.0), "tilt": (-1.0, 1.0, 0.4)}, frill, hint={"u": 0.82, "theta": 90.0}),
     Part("antenna", "detail", "Thin antenna with a bulb tip (insects, aliens).", ["insect", "alien", "cute"],
          {"length": (0.3, 3.0, 1.0), "curve": (-1.0, 1.0, -0.4), "bulb": (0.0, 2.0, 1.0)}, antenna, cap="sway", mirror=True, hint={"u": 0.93, "theta": 75.0}),
-    Part("wing_bat", "wing", "Membrane wing with finger struts (bats, dragons, demons).", ["bat", "dragon", "demon", "flying"],
-         {"span": (0.4, 4.0, 1.0), "chord": (0.4, 2.5, 1.0), "fold": (0.0, 1.0, 0.2)}, wing_bat, cap="flap", mirror=True, hint={"u": 0.62, "theta": 55.0}),
+    Part("wing_bat", "wing", "Membrane wing with finger struts and an optional raised, scalloped profile.", ["bat", "dragon", "demon", "flying"],
+         {"span": (0.4, 4.0, 1.0), "chord": (0.4, 2.5, 1.0), "fold": (0.0, 1.0, 0.2),
+          "scallop": (0.0, 1.0, 0.0)}, wing_bat, cap="flap", mirror=True,
+         topology_changes=("scallop",), hint={"u": 0.62, "theta": 55.0}),
     Part("wing_feather", "wing", "Feathered bird wing made of layered flight feathers.", ["bird", "angel", "griffin", "flying"],
          {"span": (0.4, 4.0, 1.0), "chord": (0.4, 2.5, 1.0)}, wing_feather, cap="flap", mirror=True, hint={"u": 0.62, "theta": 55.0}),
     Part("tail_club", "tail", "Bony knobbed club for the tail tip (ankylosaurus); place at the rear tip (u near 0).", ["dinosaur", "armored"],

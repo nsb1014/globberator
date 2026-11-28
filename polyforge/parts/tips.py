@@ -129,25 +129,26 @@ def hand_basic(g, p):
         g.loft([V(v) * s for v in stations], [(a * s, b * s) for a, b in radii],
                sides=sides, up=BACK, exponent=exponent)
 
-    loft([(0, -.055, -.003), (0, -.015, -.002), (-.002, .013, -.001),
-          (.002, .047, -.004), (.006, .074, -.004), (.003, .093, -.003), (.001, .104, 0)],
-         [(.040, .047), (.029, .039), (.025, .037), (.025, .048),
-          (.024, .055), (.019, .053), (.012, .041)], sides=32, exponent=.81)
-    # Volumes for the thumb web and the ulnar pad leave a shallow palm hollow.
-    g.oval(V(-.025, .045, .007) * s, V(.025, .038, .022) * s, rot(BACK, .28))
-    g.oval(V(.032, .050, .004) * s, V(.020, .037, .019) * s, rot(BACK, -.14))
+    # The loft radius order here is palm width, then palm thickness.
+    loft([(0, -.052, -.002), (0, -.015, -.002), (-.002, .013, -.001),
+          (.002, .047, -.004), (.002, .075, -.004), (0, .092, -.003), (0, .104, -.001)],
+         [(.035, .033), (.036, .028), (.041, .024), (.051, .025),
+          (.058, .024), (.054, .020), (.044, .012)], sides=32, exponent=.81)
+    # Keep the thumb web inside the palm profile and merge it into the thumb.
+    g.oval(V(-.039, .041, .008) * s, V(.022, .033, .018) * s, rot(BACK, .30))
     for x, y, span, radius, splay in (
         (-.043, .087, .090, .0140, -.010), (-.014, .095, .100, .0140, -.002),
         (.015, .093, .090, .0125, .006), (.043, .084, .072, .0105, .014),
     ):
         reach = span * length
         flex = (.20 + curl * .53) * reach
-        loft([(x, y, -.004), (x + splay * .28, y + reach * .29, -.004),
+        loft([(x * .86, y - .024, -.003), (x, y, -.004),
+              (x + splay * .28, y + reach * .29, -.004),
               (x + splay * .52, y + reach * .53, flex * .17),
               (x + splay * .75, y + reach * (.76 - .11 * curl), flex * .47),
               (x + splay, y + reach * (.97 - .32 * curl), flex * .92)],
              [(r * radius, w * radius) for r, w in
-              ((1.04, 1.08), (.92, .90), (.94, .83), (.76, .69), (.61, .57))])
+              ((1.02, 1.00), (1.04, 1.08), (.92, .90), (.94, .83), (.76, .69), (.61, .57))])
     loft([(-.027, .018, .010), (-.044, .033, .021), (-.058, .051, .029),
           (-.070, .064, .038), (-.077 + .007 * curl, .079, .053 + .012 * curl),
           (-.073 + .009 * curl, .083, .061 + .012 * curl)],

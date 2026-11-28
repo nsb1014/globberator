@@ -2,7 +2,7 @@
 
 Parts are modelled the way the original bull was: smooth anatomical volumes
 (PCHIP-interpolated lofts and dense ovals), boolean carving for recesses, then
-each paint region is voxel-remeshed into one clay surface, smoothed and
+each sculpt region is voxel-remeshed into one clay surface, smoothed and
 decimated. Thin parts (ears, fins, wings) are finished with subdivision
 surfaces instead, because a voxel remesh would perforate them.
 
@@ -65,7 +65,7 @@ class Piece:
         self.voxel = None        # None = derived from size
         self.detail = 1.0        # decimation budget multiplier
         self.smooth = 0.5
-        self.slot_finish = {}    # per paint region override, e.g. {"accent": "subsurf"}
+        self.slot_finish = {}    # per sculpt region override, e.g. {"accent": "subsurf"}
 
     def finish_for(self, slot):
         return self.slot_finish.get(slot, self.finish)

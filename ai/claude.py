@@ -1,9 +1,4 @@
-"""Claude calls for the image -> recipe workflow.
-
-Two calls, both with structured outputs so the reply is always parseable:
-  draft()    reference image + part catalog -> feature analysis + first recipe
-  critique() reference + renders of the current recipe -> per-feature scores + edit ops
-"""
+"""Structured Claude calls for one-shot classification and iterative fitting."""
 import base64
 import io
 import json
@@ -42,7 +37,7 @@ parts: {uid,part,u,theta,params,scale,rot:[degrees],on:"body" or limb uid}.
 u runs from rear tip (0) to nose (1); theta=0 at the side, +90 at the back/top, -90 at belly.
 Place once: midline single, side paired. Scale and rotation fit a local shape on the animal.
 The builder manages ring bindings. Never author bind or a mirror flag.
-paint: {base,accent,detail} hex colors, pattern none/stripes/spots/patches/gradient.
+The output is unpainted clay. Match silhouette, proportions, and sculpted features.
 Keep the torso on the spine. Author tails as separate motion:"tail" chains; put tail ornaments on that chain.
 Choose broad masses and silhouette before details. Use defaults when unsure."""
 
@@ -63,7 +58,7 @@ DRAFT_SCHEMA = {
         "view_pitch": {"type": "number", "description": "camera elevation in degrees (0 = level, positive = looking down)"},
         "features": {"type": "array", "items": {"type": "object", "properties": {
             "name": {"type": "string"}, "importance": {"type": "integer", "enum": [1, 2, 3]},
-            "part": {"type": "string", "description": "library part id used for it, 'body', 'limb', 'paint', or 'none' if the library cannot express it"},
+            "part": {"type": "string", "description": "library part id used for it, 'body', 'limb', or 'none' if the library cannot express it"},
             "note": {"type": "string"}}, "required": ["name", "importance", "part", "note"], "additionalProperties": False}},
         "recipe_json": {"type": "string", "description": "the complete recipe as a JSON object string"},
     },
@@ -104,17 +99,33 @@ def _call(system, content, schema, effort="high", max_tokens=8192):
     return json.loads(text), resp.usage
 
 
-def character_brief(image):
-    from polyforge.character_brief import SCHEMA
+def character_brief(image, *, general=False):
+    from polyforge.character_brief import LEGACY_SCHEMA, SCHEMA
+
+    content = [image_block(image, 768), {"type": "text", "text": "Return only the character classification."}]
+    if not general:
+        return _call(
+            "Classify the main figure for a neutral-clay game character. An upright human-shaped "
+            "figure has two arms and two legs, regardless of stylization. Mark other body plans unsupported. "
+            "Judge the figure itself, excluding keychain hardware, stands, handheld objects and background. "
+            "Estimate its proportions in a neutral standing pose. Infer occluded anatomy conservatively. "
+            "Ignore paint, patterns and facial markings.",
+            content, LEGACY_SCHEMA, max_tokens=384,
+        )
 
     return _call(
-        "Classify the main figure for a neutral-clay game character. An upright human-shaped "
-        "figure has two arms and two legs, regardless of stylization. Mark other body plans unsupported. "
-        "Judge the figure itself, excluding keychain hardware, stands, handheld objects and background. "
-        "Estimate its proportions in a neutral standing pose. Infer occluded anatomy conservatively. "
-        "Ignore paint, patterns and facial markings.",
-        [image_block(image, 768), {"type": "text", "text": "Return only the character classification."}],
-        SCHEMA, max_tokens=384,
+        "Classify the main figure for a neutral-clay, rigged creature made in Blender. "
+        "Describe its body plan, relative proportions and silhouette-defining anatomy, excluding hardware, "
+        "stands, handheld objects, color, paint and background. Use concise visible form names for features "
+        "and optional anatomical synonyms in query. Name one feature for each left/right pair at the +X side. "
+        "Use distinct features for different pairs of legs. Add one landmark u and theta per body surface "
+        "feature based on the reference. For an upright figure, core length runs from hips to crown. "
+        "For a horizontal figure, core length runs from rear to nose, including a continuous trunk or tail. "
+        "For feet, claws and suckers, refer to their limb feature ID. Classify dolphins, whales and other "
+        "vertical-tail-stroke swimmers as axial_vertical, fish with side-to-side tail strokes as axial_lateral, "
+        "and swimming with fins or feet as paddling. Use flight for wing-driven flight. Describe occluded "
+        "or ambiguous anatomy in uncertainties, and use unsupported when the subject has no usable body plan.",
+        content, SCHEMA, max_tokens=2400,
     )
 
 
@@ -124,7 +135,7 @@ def draft(ref_image, catalog):
         "Identify the subject and list its distinguishing features by importance (3 = defines the subject). "
         "Estimate the camera view. Then write a complete recipe that captures it with this library, choosing "
         "the best part for each feature and setting params/scales/positions to match proportions. "
-        "Ignore clothing, props and background."})
+        "Ignore painted markings, garment color, props and background."})
     return _call(_system(catalog), content, DRAFT_SCHEMA)
 
 
@@ -136,7 +147,7 @@ def critique(ref_image, renders, analysis, recipe, scores, warnings, catalog):
         "features": analysis["features"], "current_recipe": public_recipe(recipe), "available_edits": catalog["ops"], "scores": scores,
         "normalizer_warnings": warnings[:30]}, separators=(",", ":"))})
     content.append({"type": "text", "text":
-        "Score each feature against the reference (judge recognizability within the library style). "
+        "Score only sculpted shape, pose and placement against the reference. "
         "Then propose ops that most improve the weakest high-importance features; prefer part swaps and "
         "placement fixes over tiny numeric tweaks (proportions are also fitted numerically afterwards). "
         "List features the library cannot express as library_gaps."})
@@ -155,6 +166,6 @@ def refine_shape(reference, views, shape, controls):
               "shape_json": {"type": "string"}}, "required": ["accept", "shape_json"], "additionalProperties": False}
     content = [image_block(reference)] + [image_block(path, 384) for path in views]
     content.append({"type": "text", "text": json.dumps({"shape": shape, "controls": controls})})
-    return _call("Compare the selected part in the reference with the isolated front and side views. "
+    return _call("Compare the selected part’s form in the reference with the isolated clay front and side views. "
                  "Accept its silhouette or return the revised local shape JSON. Preserve the part or tip type. "
                  "Only edit params, segments, radii or tip_params; placement is handled separately.", content, schema)

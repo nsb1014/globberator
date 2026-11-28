@@ -14,13 +14,13 @@ SPEC = {
     "insert_vertebra": {"index": "int (insert before; -1 = append at head)", "y?": "float", "z?": "float", "w?": "float", "h?": "float"},
     "remove_vertebra": {"index": "int"},
     "scale_body": {"w?": "float factor", "h?": "float factor", "length?": "float factor"},
-    "add_limb": {"uid?": "string", "u": "float", "theta": "deg", "segments?": "[[x,y,z],...]", "radii?": "[...]", "family?": "research limb id, supplies the joint chain", "params?": "{}", "tip?": "part id", "tip_params?": "{}", "snap?": "bool (snap to the nearest named socket)"},
+    "add_limb": {"uid?": "string", "u": "float", "theta": "deg", "segments?": "[[x,y,z],...]", "radii?": "[...]", "family?": "research limb id, supplies the joint chain", "params?": "{}", "tip?": "part id", "tip_params?": "{}", "root_blend?": "0..1, blend a generic skin limb into its host", "glute_shape?": "0..1, rear upper-thigh fullness for paired humanoid legs", "ball_hip?": "bool, use a separate rotating ball for paired humanoid legs", "ball_hip_inset?": "0..0.75, fraction toward the body centerline", "snap?": "bool (snap to the nearest named socket)"},
     "set_limb": {"uid": "string", "keep_ground?": "bool (keep the frozen floor; default re-grounds)", "...": "any limb field to replace (tip_params merge)"},
     "remove_limb": {"uid": "string"},
     "add_part": {"uid?": "string", "part": "part id", "on?": "body | limb uid | muzzle uid for nose_pad", "u?": "float", "theta?": "deg", "offset?": "float", "rot?": "[x,y,z] deg", "scale?": "float", "params?": "{}", "snap?": "bool (snap to the nearest named socket)"},
     "set_part": {"uid": "string", "...": "any part field to replace (params merge)"},
     "remove_part": {"uid": "string"},
-    "set_paint": {"base?": "#hex", "accent?": "#hex", "detail?": "#hex", "pattern?": "none|stripes|spots|patches|gradient", "pattern_scale?": "float", "belly?": "bool"},
+
 }
 
 
@@ -243,9 +243,6 @@ def apply(r, op):
         part = catalog.get(removed.get("part"))
         if part and part.attach == "core":
             r.pop("ground_y", None)
-    elif name == "set_paint":
-        pa = r.setdefault("paint", R.default_paint())
-        pa.update({k: v for k, v in op.items() if k != "op"})
     else:
         return "unknown op '%s'" % name
     return ""
@@ -253,6 +250,7 @@ def apply(r, op):
 
 def apply_all(src, ops):
     r = R.normalize(src)[0] if src.get("shapes") or src.get("version", 1) == 1 else copy.deepcopy(src)
+    r.pop("paint", None)  # Version 2 recipes may carry obsolete styling data.
     errors = []
     for i, op in enumerate(ops):
         if not isinstance(op, dict):
@@ -268,7 +266,7 @@ def showcase_recipe(part_id):
     """Small neutral creature wearing one part (thumbnails, tests)."""
     r = R.default_recipe()
     r["name"] = part_id
-    r["paint"] = {"base": "#8a8f96", "accent": "#5f87b5", "detail": "#d8d2c4", "pattern": "none", "pattern_scale": 1.0, "belly": False}
+
     part = catalog.get(part_id)
     if part is None:
         return r

@@ -57,8 +57,8 @@ def apply_ops(recipe, ops):
 
 
 def render_jobs(jobs, size=256):
-    """jobs: [{"recipe": path, "out": dir, "views": [...], "mask": bool, "color": bool, "quality": "preview"|"final"}]
-    Images per view: colour .png (if color) then transparent _rgba.png (if mask)."""
+    """jobs: [{"recipe": path, "out": dir, "views": [...], "mask": bool, "preview": bool, "quality": "preview"|"final"}]
+    Images per view: clay .png (if preview) then transparent _rgba.png (if mask)."""
     with tempfile.TemporaryDirectory() as d:
         jf = os.path.join(d, "jobs.json")
         json.dump(jobs, open(jf, "w"))

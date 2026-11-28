@@ -17,6 +17,7 @@ Curated from the research descriptions: kind, symmetry, description and the
 "shape" controls (the variations the species notes describe). Nothing here
 builds geometry.
 """
+import argparse
 import glob
 import json
 import os
@@ -287,7 +288,8 @@ EXCLUDED = {
 def load_species():
     out = {}
     for path in sorted(glob.glob(os.path.join(HERE, "species", "*.json"))):
-        d = json.load(open(path))
+        with open(path, encoding="utf-8") as file:
+            d = json.load(file)
         L = d["physical_parsing"]["bounding_box_m"]["length_z"]
         for p in d["parts"]:
             out["%s.%s" % (d["species_id"], p["id"])] = (d, p, L)
@@ -331,7 +333,7 @@ def joint_chain(srcs):
     return chain
 
 
-def main():
+def make_spec():
     data = load_species()
     used, entries = set(), []
     for e in LIB:
@@ -392,12 +394,28 @@ def main():
         "categories": by_cat, "parts": entries,
         "excluded": [{"source": k, "reason": v} for k, v in sorted(EXCLUDED.items())],
     }
-    with open(os.path.join(HERE, "part_library.json"), "w") as f:
-        json.dump(lib, f, indent=2)
-        f.write("\n")
-    print("%d library parts from %d research parts (%d excluded)" % (len(entries), len(used), len(EXCLUDED)))
-    for c in CATEGORIES:
-        print("  %-12s %2d  %s" % (c, len(by_cat[c]), ", ".join(by_cat[c])))
+    return lib
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--check", action="store_true", help="check the generated spec without writing")
+    args = parser.parse_args()
+    spec = make_spec()
+    generated = json.dumps(spec, indent=2) + "\n"
+    path = os.path.join(HERE, "part_library.json")
+    if args.check:
+        with open(path, encoding="utf-8") as file:
+            if file.read() != generated:
+                parser.error("part_library.json is stale; run python3 research/build_library.py")
+    else:
+        with open(path, "w", encoding="utf-8") as file:
+            file.write(generated)
+    mapped = {source for part in spec["parts"] for source in part["sources"]}
+    print("%d library parts from %d research parts (%d excluded)"
+          % (len(spec["parts"]), len(mapped), len(spec["excluded"])))
+    for category, ids in spec["categories"].items():
+        print("  %-12s %2d  %s" % (category, len(ids), ", ".join(ids)))
 
 
 if __name__ == "__main__":

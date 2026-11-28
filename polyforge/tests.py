@@ -3,6 +3,7 @@ import hashlib
 import json
 import math
 import os
+import struct
 import tempfile
 import time
 
@@ -16,6 +17,7 @@ from .animator import Animator
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 EX = os.path.join(ROOT, "examples")
+ARCHIVED_EXAMPLES = os.path.join(EX, "archive", "pre-reference-rebuild")
 
 
 class T:
@@ -129,7 +131,7 @@ def test_ops(t):
         {"op": "add_limb", "uid": "leg", "u": 0.4, "theta": -60, "segments": [[0.1, -0.3, 0], [0, -0.3, 0]], "tip": "foot_paw"},
         {"op": "add_part", "part": "eye_round"}, {"op": "set_part", "uid": "eye1", "params": {"size": 1.5}},
         {"op": "insert_vertebra", "index": -1}, {"op": "set_vertebra", "index": 0, "w": 0.2}, {"op": "scale_body", "w": 1.1},
-        {"op": "set_paint", "pattern": "spots"}, {"op": "add_part", "part": "spike", "on": "leg", "u": 0.5, "theta": 0},
+        {"op": "add_part", "part": "spike", "on": "leg", "u": 0.5, "theta": 0},
         {"op": "set_limb", "uid": "leg", "tip_params": {"size": 1.3}}])
     t.check(not errs, "ops apply cleanly %s" % errs)
     t.check(len(r["spine"]) == 6 and r["parts"][0]["params"]["size"] == 1.5 and r["limbs"][0]["tip_params"]["size"] == 1.3, "ops edit the recipe")
@@ -145,6 +147,13 @@ def test_research_library(t):
     t.check(len(catalog.RESEARCH) == 54 and catalog.get("eye_slit_pupil") is None,
             "camera-eye variants share one research family")
     t.check(catalog.get("eye_round") not in catalog.PARTS, "old eye IDs load outside the active palette")
+    active_ids = {part.id for part in catalog.PARTS}
+    palette_ids = {identifier for ids in catalog.by_category().values() for identifier in ids}
+    for identifier, part in catalog.CANDIDATE_PARTS.items():
+        published = catalog.metadata(part)["qualification"] == "qualified"
+        t.check(catalog.get(identifier) is part and (identifier in active_ids) == published
+                and (identifier in palette_ids) == published and bool(catalog.search(identifier)) == published,
+                f"{identifier} has exact-ID access with publication-gated discovery")
     for query, expected in (("human hands", "hand_basic"), ("round pupil", "eye_camera"),
                             ("bird foot", "talons"), ("dorsal crest", "crest_dorsal")):
         t.check([part.id for part in catalog.search(query, limit=1)] == [expected],
@@ -204,7 +213,7 @@ def test_isolated_edits(t):
         return {l["name"]: [v - Vector((0, ground, 0)) for v in (l["joints"][0], l["sole"])]
                 for l in b.limbs if l["role"] == "leg"}
 
-    bull = R.load(os.path.join(EX, "bull.json"))
+    bull = R.load(os.path.join(ARCHIVED_EXAMPLES, "bull.json"))
     # Reproduce the original v1 tail edit through the normal operation entry point.
     legacy = leg_recipe(4)
     legacy["version"] = 1
@@ -323,25 +332,29 @@ def test_animation(t):
 
 def islands(ob):
     """Sizes of connected vertex islands, largest first."""
+    return [len(vertices) for vertices in vertex_islands(ob)]
+
+
+def vertex_islands(ob):
     bm = bmesh.new()
     bm.from_mesh(ob.data)
-    seen, sizes = set(), []
+    seen, components = set(), []
     for v in bm.verts:
         if v.index in seen:
             continue
-        size, stack = 0, [v]
+        component, stack = [], [v]
         seen.add(v.index)
         while stack:
             x = stack.pop()
-            size += 1
+            component.append(x.index)
             for e in x.link_edges:
                 o = e.other_vert(x)
                 if o.index not in seen:
                     seen.add(o.index)
                     stack.append(o)
-        sizes.append(size)
+        components.append(component)
     bm.free()
-    return sorted(sizes, reverse=True)
+    return sorted(components, key=len, reverse=True)
 
 
 def test_build_and_export(t):
@@ -354,10 +367,17 @@ def test_build_and_export(t):
     hb = hashlib.sha1(str([tuple(round(c, 5) for c in v.co) for v in b["skin"].data.vertices[:2000]]).encode()).hexdigest()
     t.check(ha == hb, "same recipe builds identical geometry")
     reset()
-    res = builder.build(R.load(os.path.join(EX, "bull.json")), "final")
+    source = R.load(os.path.join(EX, "bull.json"))
+    legacy = {**source, "paint": {"base": "#ff0000", "pattern": "stripes", "belly": True}}
+    t.check(R.normalize(legacy) == R.normalize(source), "legacy paint data is ignored on load")
+    res = builder.build(legacy, "final")
+    for obj in (res["skin"], res["parts"]):
+        t.check(list(obj.data.materials) == [finish.clay_material()] and not obj.data.color_attributes,
+                "%s uses one shared clay material without vertex colors" % obj.name)
     isl = islands(res["skin"])
-    t.check(isl[0] / sum(isl) > 0.95, "bull body, legs and skin parts fuse into one surface (islands %s)" % isl[:5])
-    t.check(len(res["skin"].vertex_groups) > 10, "skin is weighted to the skeleton")
+    t.check(len(isl) == 1, "bull has one connected torso shell")
+    t.check(len(res["skin"].vertex_groups) == 1 and len(res["parts"].vertex_groups) > 10,
+            "the bull torso and separately articulated parts are bound to the rig")
     contacts = []
     clips = baker.bake_all(res["armature"], contacts=contacts)
     t.check(len(clips) == 6, "six clips baked")
@@ -368,6 +388,15 @@ def test_build_and_export(t):
     import runpy
     from pathlib import Path
     fixture = Path(d, "bull.glb")
+    with fixture.open("rb") as f:
+        f.seek(12)
+        size, kind = struct.unpack("<I4s", f.read(8))
+        manifest = json.loads(f.read(size))
+    t.check(kind == b"JSON" and [m["name"] for m in manifest["materials"]] == [finish.CLAY_NAME]
+            and not manifest.get("textures"), "GLB carries only the shared clay surface")
+    t.check(not any(attr.startswith("COLOR_") for mesh in manifest["meshes"]
+                    for primitive in mesh["primitives"] for attr in primitive["attributes"]),
+            "GLB has no vertex color channels")
     rig = res["rig"]
     lengths = {rig["names"][l["bones"][-1]]: l["length"] for l in rig["limbs"] if l["role"] == "leg"}
     fixture.with_suffix(".report.json").write_text(json.dumps({"contact": {"frames": contacts, "legs": lengths}}))
@@ -428,7 +457,8 @@ def test_review_fixes(t):
     baker.bake_all(res["armature"])
     t.check(len(bpy.data.actions) == n_actions, "rebaking replaces the previous actions (%d -> %d)" % (n_actions, len(bpy.data.actions)))
     builder.build(R.load(os.path.join(EX, "hopper.json")), "preview")
-    t.check(not any(m.name.startswith("PF_skin.") for m in bpy.data.materials if m.users == 0), "rebuilds reuse the skin material")
+    t.check(sum(m.name.startswith(finish.CLAY_NAME) for m in bpy.data.materials) == 1,
+            "rebuilds reuse the clay material")
 
 
 def test_hoof_groove(t):
@@ -474,6 +504,44 @@ def test_character_compile(t):
             "full-size boots clear the midline on long-legged proportions")
 
 
+def test_creature_brief(t):
+    from .character import _compile_creature, compile_recipe
+
+    flukes = catalog.search(host="body", function="swimming", shape="horizontal fluke")
+    hinged = catalog.search("toothed jaws", host="body", function="feeding")
+    t.check([part.id for part in flukes] == ["flukes_cetacean"] and bool(hinged)
+            and catalog.metadata(hinged[0])["regions"]["teeth"] == "rigid",
+            "catalog searches by form, host and function and exposes hybrid clay regions")
+    t.check(len(catalog.search(host="body", limit=50)) == 5
+            and not catalog.search("wing_feathered", host="limb_end", function="fly"),
+            "search caps results at five and applies filters to exact IDs")
+    dolphin = {
+        "version": 2, "subject": "Dolphin", "body_plan": "swimmer", "locomotion": "axial_vertical",
+        "proportions": {"width": .34, "depth": .29, "head": .22, "taper": .22},
+        "features": [
+            {"id": "fluke", "host": "body", "function": "swim", "shape": "horizontal fluke"},
+            {"id": "flippers", "host": "body", "function": "swim", "shape": "pectoral flipper", "u": .70},
+            {"id": "unavailable", "host": "body", "function": "protect", "shape": "crystalline lattice"},
+        ],
+        "uncertainties": ["Ventral contour is hidden."],
+    }
+    swimmer, choices = _compile_creature(dolphin)
+    t.check(compile_recipe(dolphin) == swimmer and swimmer["construction"] == "metaball"
+            and swimmer["locomotion"] == "axial_vertical"
+            and [p["part"] for p in swimmer["parts"]] == ["flukes_cetacean", "fin_paired"]
+            and choices[-1].get("unresolved"),
+            "creature compiler resolves swimmer features and reports missing geometry")
+    bat = {**dolphin, "subject": "Bat", "body_plan": "winged", "locomotion": "flight", "features": [
+        {"id": "toes", "host": "limb_end", "host_feature": "hindlegs", "function": "support", "shape": "bat hind foot"},
+        {"id": "wings", "host": "body", "function": "fly", "shape": "bat wing membrane"},
+        {"id": "hindlegs", "host": "body", "function": "support", "shape": "leg_sprawling", "u": .24, "theta": -35},
+    ]}
+    flyer = compile_recipe(bat)
+    t.check(flyer["locomotion"] == "flight" and flyer["limbs"][0]["family"] == "bat_flight_wing"
+            and flyer["limbs"][1]["tip"] == "bat_hindfoot",
+            "flight brief resolves wing chains and orders tips after their hosts")
+
+
 def test_humanoid_gait(t):
     from .character import compile_recipe
 
@@ -502,22 +570,204 @@ def _check_humanoid_gait(t, label, rig):
         anim.play(clip)
         dt = anim.cycle_length() / 60
         worst_plant, least_forward, lateral = 0.0, float("inf"), 0.0
+        least_hock, toe_roll, landing_pitch = float("inf"), 0.0, 0.0
+        max_hoofed_knee = 0.0
+        swing_samples = []
         for frame in range(120):
             anim.step(dt)
             if frame < 60:
                 continue
             for leg in anim.legs:
-                hip, knee, ankle = (anim.G[bone].o for bone in leg["bones"])
-                axis = (ankle - hip).normalized()
+                hip, knee, next_joint, *end = (anim.G[bone].o for bone in leg["bones"])
+                axis = (next_joint - hip).normalized()
                 bend = knee - hip - axis * (knee - hip).dot(axis)
                 least_forward = min(least_forward, bend.z)
                 lateral = max(lateral, abs(bend.x))
                 if not leg["swinging"]:
                     worst_plant = max(worst_plant, (anim.posed_sole(leg) - leg["plant"]).length)
+                if end:
+                    ankle = end[0]
+                    max_hoofed_knee = max(max_hoofed_knee, (hip - knee).angle(next_joint - knee))
+                    axis = (ankle - knee).normalized()
+                    hock = next_joint - knee - axis * (next_joint - knee).dot(axis)
+                    least_hock = min(least_hock, -hock.z)
+                    pitch = (anim.G[leg["bones"][-1]].b @ Vector((0, 0, 1))).y
+                    if leg["swinging"]:
+                        if leg["swing_t"] < .5:
+                            toe_roll = max(toe_roll, -pitch)
+                        if leg["swing_t"] > .95:
+                            landing_pitch = max(landing_pitch, abs(pitch))
+            for arm in anim.arms:
+                phase = arm["gait_leg"]["phase"]
+                expected = -1 if phase < .07 or phase > .93 else 1 if abs(phase - anim.duty) < .07 else 0
+                if expected:
+                    offset = anim.G[arm["bones"][-1]].o - anim._rest_end(arm)
+                    swing_samples.append(offset.z * expected)
         t.check(anim.cycle_length() >= minimum_period, f"{label} {clip} has a readable cadence")
         t.check(least_forward > 0 and lateral < .04 * anim.leg_len,
                 f"{label} {clip} knees stay forward through the cycle")
         t.check(worst_plant < .004 * anim.leg_len, f"{label} {clip} keeps stance feet planted ({worst_plant:.5f})")
+        t.check(len(swing_samples) >= 10 and min(swing_samples) > 0,
+                f"{label} {clip} arms counter-swing with the stepping legs")
+        if anim.hoofed_biped:
+            t.check(least_hock > .02 * anim.leg_len, f"{label} {clip} hocks fold rearward ({least_hock:.4f})")
+            if clip == "walk":
+                t.check(max_hoofed_knee < math.radians(164),
+                        f"{label} keeps visible knee bend through hoofed walk reach")
+                t.check(1.85 <= anim.cycle_length() <= 2.15 and .65 <= anim.duty <= .73,
+                        f"{label} walk follows the reference cadence and stance fraction")
+                t.check(toe_roll > .18 and landing_pitch < .015,
+                        f"{label} rolls the hoof in early swing and flattens it before landing")
+
+
+def test_minotaur_joins(t):
+    import numpy as np
+    from mathutils.bvhtree import BVHTree
+    from . import kit
+    from .animator import write_pose
+
+    source = R.load(os.path.join(ARCHIVED_EXAMPLES, "minotaur.json"))
+    source.pop("construction", None)
+    reset()
+    fitted = builder.build(source, "final")
+    skin = fitted["skin"]
+    largest = vertex_islands(skin)[0]
+    weights = {weight.group for i in largest for weight in skin.data.vertices[i].groups if weight.weight >= .35}
+    rig = fitted["rig"]
+    balls = [limb for limb in rig["limbs"] if "ball_radius" in limb]
+    bones = [rig["spine"][rig["hub"]]] + [limb["bones"][0] for limb in rig["limbs"] if "ball_radius" not in limb]
+    t.check(all(skin.vertex_groups.find(rig["names"][bone]) in weights for bone in bones),
+            "fused minotaur arms and torso share one connected surface")
+    details = fitted["parts"]
+    t.check(len(balls) == 2, "minotaur has a rotating ball at each hip")
+    for limb in balls:
+        name = rig["names"][limb["bones"][0]]
+        group = details.vertex_groups.find(name)
+        center, knee = map(kit.to_blender, map(Vector, limb["joints"][:2]))
+        axis = (knee - center).normalized()
+        radius = limb["ball_radius"]
+        sphere = [v for v in details.data.vertices
+                  if any(w.group == group for w in v.groups)
+                  and -.72 < (v.co - center).dot(axis) / radius < .36]
+        t.check(skin.vertex_groups.find(name) < 0 and len(sphere) > 100
+                and all(len(v.groups) == 1 and v.groups[0].weight == 1
+                        and abs((v.co - center).length / radius - 1) < .035 for v in sphere),
+                f"{name} is spherical and rotates rigidly on the thigh bone")
+    t.check(skin.vertex_groups.get("Limb root smoothing") is None, "join smoothing leaves only rig weights")
+    _check_humanoid_gait(t, "minotaur", fitted["rig"])
+    part = catalog.get("hand_basic")
+    _, regions = finish.part_regions(part, part.defaults(), assembly=True)
+    palm = [v for _, vertices, _ in regions["self"] for v in vertices if .064 < v.y < .077]
+    width = max(v.x for v in palm) - min(v.x for v in palm)
+    thickness = max(v.z for v in palm) - min(v.z for v in palm)
+    t.check(width > 1.45 * thickness, "hand palm is broad across the knuckles and thin through its depth")
+
+    def positions(mesh):
+        coords = np.empty(3 * len(mesh.vertices), dtype=np.float32)
+        mesh.vertices.foreach_get("co", coords)
+        return coords.reshape(-1, 3)
+
+    indices = np.empty(2 * len(skin.data.edges), dtype=np.int32)
+    skin.data.edges.foreach_get("vertices", indices)
+    a, b = indices.reshape(-1, 2).T
+    rest = positions(skin.data)
+    lengths = np.linalg.norm(rest[a] - rest[b], axis=1)
+    # Tiny remeshing edges can have large ratios for negligible displacement.
+    valid = lengths >= .002
+    for gait in ("walk", "run"):
+        anim = Animator(rig)
+        anim.play(gait)
+        peak = 0.0
+        seated = True
+        for frame in range(20):
+            anim.step(anim.cycle_length() / 10)
+            if frame < 10:
+                continue
+            write_pose(fitted["armature"], anim)
+            depsgraph = bpy.context.evaluated_depsgraph_get()
+            depsgraph.update()
+            posed = positions(skin.evaluated_get(depsgraph).data)
+            surface = BVHTree.FromObject(skin, depsgraph)
+            for limb in balls:
+                center = kit.to_blender(anim.G[limb["bones"][0]].o)
+                direction = Vector((limb["side"], 0, 0))
+                _, normal, _, distance = surface.ray_cast(center, direction, limb["ball_radius"] * .92)
+                seated &= normal is not None and normal.dot(direction) > 0 and distance > .015
+            ratio = np.linalg.norm(posed[a[valid]] - posed[b[valid]], axis=1) / lengths[valid]
+            peak = max(peak, float(ratio.max()))
+        t.check(peak < 3.5, f"minotaur {gait} avoids extreme surface stretch ({peak:.2f}×)")
+        t.check(seated, f"minotaur {gait} keeps each rotating hip center inside the pelvis")
+
+    wave = Animator(rig)
+    wave.play("idle")
+    wave.advance_to(6.0)
+    wave.play("wave")
+    wave.advance_to(7.35)
+    hand = skin.vertex_groups.find(rig["names"][wave.arms[0]["bones"][-1]])
+    palm = [v.index for v in skin.data.vertices
+            if any(weight.group == hand and weight.weight >= .98 for weight in v.groups)]
+    write_pose(fitted["armature"], wave)
+    depsgraph = bpy.context.evaluated_depsgraph_get()
+    depsgraph.update()
+    posed = positions(skin.evaluated_get(depsgraph).data)
+    t.check(len(palm) > 20 and float((posed[palm, 2] - rest[palm, 2]).mean()) > .5,
+            "the hand mesh follows the wrist above the shoulder during the wave")
+    inset = {limb["uid"]: limb.get("ball_hip_inset", 0.0) for limb in source["limbs"]}
+    for limb in source["limbs"]:
+        limb.pop("root_blend", None)
+        limb.pop("ball_hip", None)
+    unfitted = builder.Builder(source, "preview")
+    unfitted.resolve_limbs(R.Spine(unfitted.recipe["spine"]))
+    shift = Vector((0, fitted["rig"]["shift_y"], 0))
+    for limb, old in zip(rig["limbs"], unfitted.limbs):
+        previous = old["joints"][0]
+        expected = previous.copy()
+        expected.x *= 1 - inset[limb["uid"]]
+        t.check((Vector(limb["joints"][0]) - expected - shift).length < 1e-5,
+                f"{limb['name']} seats its pivot by the authored inset")
+        t.check(all((Vector(joint) - previous - shift).length < 1e-5
+                    for joint, previous in zip(limb["joints"][1:], old["joints"][1:])),
+                f"{limb['name']} preserves downstream rest joint positions")
+
+
+def test_solid_assembly(t):
+    import numpy as np
+    from .animator import write_pose
+    from .solid import segment
+
+    verts, faces = segment(Vector((0, 0, 0)), Vector((.15, -.42, .04)), .14, .086)
+    mesh = bmesh.new()
+    nodes = [mesh.verts.new(point) for point in verts]
+    for face in faces:
+        mesh.faces.new([nodes[i] for i in face])
+    t.check(all(edge.is_manifold for edge in mesh.edges) and mesh.calc_volume(signed=True) > 0,
+            "solid limb segment is closed and outward-wound")
+    mesh.free()
+
+    for name in ("minotaur", "bull"):
+        reset()
+        result = builder.build(R.load(os.path.join(EX, name + ".json")), "preview")
+        meshes = (result["skin"], result["parts"])
+        t.check(all(len(v.groups) == 1 and abs(v.groups[0].weight - 1) < 1e-6
+                    for obj in meshes for v in obj.data.vertices),
+                f"{name} solid build assigns each vertex to one bone")
+        anim = Animator(result["rig"])
+        anim.play("walk")
+        edges = [np.asarray([tuple(edge.vertices) for edge in obj.data.edges]) for obj in meshes]
+        rest = [np.asarray([tuple(v.co) for v in obj.data.vertices]) for obj in meshes]
+        lengths = [np.linalg.norm(points[a[:, 0]] - points[a[:, 1]], axis=1)
+                   for points, a in zip(rest, edges)]
+        error = 0.0
+        for _ in range(12):
+            anim.step(anim.cycle_length() / 12)
+            write_pose(result["armature"], anim)
+            dg = bpy.context.evaluated_depsgraph_get()
+            dg.update()
+            for obj, a, base in zip(meshes, edges, lengths):
+                points = np.asarray([tuple(v.co) for v in obj.evaluated_get(dg).data.vertices])
+                measured = np.linalg.norm(points[a[:, 0]] - points[a[:, 1]], axis=1)
+                error = max(error, float(np.max(np.abs(measured - base))))
+        t.check(error < 1e-5, f"{name} solid body and limb edges keep their length through walk ({error:.6f})")
 
 
 def run(fast=False):
@@ -531,7 +781,10 @@ def run(fast=False):
     test_review_fixes(t)
     test_hoof_groove(t)
     test_character_compile(t)
+    test_creature_brief(t)
     test_humanoid_gait(t)
+    test_minotaur_joins(t)
+    test_solid_assembly(t)
     test_parts(t, fast)
     test_animation(t)
     test_build_and_export(t)

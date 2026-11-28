@@ -1,0 +1,3026 @@
+{
+  "version": 1,
+  "target_families": 300,
+  "part_gaps": [
+    {
+      "id": "hinged_gill_cover",
+      "workstream": "heads_feeding_sensory",
+      "function": "Respiration",
+      "compare_to": [
+        "gill_slits",
+        "paired_branchial_plumes"
+      ],
+      "gap": "A movable, overlapping gill cover with a free rear edge is missing. Slits and exposed gill plumes represent different structures.",
+      "reference_animal": "Bluegill (Lepomis macrochirus)",
+      "reference_url": "https://doi.org/10.1080/02705060.2017.1319429",
+      "model_scope": "One opercular flap and its attachment. Mirror the authored side.",
+      "local_fixture": "Reuse a cheek patch with a gill opening. Check rear-edge overlap and clearance at closed and open poses. Use the opercular pumping study to select poses: https://doi.org/10.1111/j.1095-8649.2007.01416.x"
+    },
+    {
+      "id": "burrowing_forefoot",
+      "workstream": "vertebrate_locomotion",
+      "function": "Digging",
+      "compare_to": [
+        "hand_basic",
+        "paw_padded",
+        "claws"
+      ],
+      "gap": "A broad, outward-facing digging hand with a widened medial edge is missing. Longer claws on an existing hand do not provide the same soil-contact silhouette.",
+      "reference_animal": "Eastern mole (Scalopus aquaticus)",
+      "reference_url": "https://doi.org/10.1242/jeb.182436",
+      "model_scope": "One forefoot with the broadened palm, medial support and digit row.",
+      "local_fixture": "Reuse a wrist mount and a planar substrate. Check orientation and free digit clearance in representative compacting and scratching poses."
+    },
+    {
+      "id": "lamellar_climbing_digit",
+      "workstream": "reptiles_and_amphibians",
+      "function": "Climbing adhesion",
+      "compare_to": [
+        "anuran_terminal_adhesive_pads",
+        "foot_grasping"
+      ],
+      "gap": "Repeated lamellae under the digit provide a longitudinal contact surface that can peel. The anuran draft provides a single enlarged terminal contact instead.",
+      "reference_animal": "Tokay gecko (Gekko gecko)",
+      "reference_url": "https://doi.org/10.1111/joa.70251",
+      "model_scope": "One digit with modeled pad boundaries and coarse lamellae, repeatable across a compatible foot.",
+      "local_fixture": "Reuse a digit base and a flat contact plane. Check substrate clearance and the release pose using the study's hyperextension references."
+    },
+    {
+      "id": "bill_edge_filter",
+      "workstream": "heads_feeding_sensory",
+      "function": "Filter feeding",
+      "compare_to": [
+        "beak_hooked",
+        "racked_baleen_plates"
+      ],
+      "gap": "Opposing comb-like lamellae integrated into the margins of a bill form a route between the jaw edges. Hanging racks of baleen and a hooked bill cover different forms.",
+      "reference_animal": "Chilean flamingo (Phoenicopterus chilensis)",
+      "reference_url": "https://academic.oup.com/condor/article/104/1/73/5563018",
+      "model_scope": "One paired upper and lower bill-edge assembly with visible coarse lamellae.",
+      "local_fixture": "Reuse a small jaw hinge and opposing bill edges. Check comb orientation and inter-row clearance through the intended opening."
+    },
+    {
+      "id": "ground_braced_tail",
+      "workstream": "vertebrate_locomotion",
+      "function": "Weight-bearing tail support",
+      "compare_to": [
+        "tail_flexible",
+        "leg_jumping"
+      ],
+      "gap": "A broad proximal tail can form a load path from a pelvic root to a long grounded segment while both hindfeet lift. A free tail chain has no stable support surface.",
+      "reference_animal": "Red kangaroo (Osphranter rufus)",
+      "reference_query": "Scale-bearing lateral frames of one adult kangaroo walking pentapedally, with the leading forefoot support, tail contact patch and airborne hindfeet visible together.",
+      "model_scope": "Tail root, proximal arc and ground-bearing ventral segment.",
+      "local_fixture": "Use a pelvic block, two forefoot supports and floor. Check continuous ventral contact in the support pose and clearance during recovery."
+    },
+    {
+      "id": "syndactyl_grooming_toes",
+      "workstream": "vertebrate_locomotion",
+      "function": "Grooming with a paired digit comb",
+      "compare_to": [
+        "foot_grasping",
+        "claws"
+      ],
+      "gap": "Two distinct claw tips sit on digits enclosed in a shared sleeve beside larger free toes. An array of independently rooted claws lacks the shared base and cleft between the tips.",
+      "reference_animal": "Red-necked wallaby (Notamacropus rufogriseus)",
+      "reference_query": "Medial and plantar macro views of a scale-bearing adult pes with digits II and III visible in extension and reaching fur.",
+      "model_scope": "Shared sheath of digits II and III, paired distal claws and adjacent foot attachment.",
+      "local_fixture": "Use a foot-side mount and a curved fur proxy. Check shared proximal motion, claw tip spacing and clearance of the free adjacent digit."
+    },
+    {
+      "id": "multianchor_glide_membrane",
+      "workstream": "vertebrate_locomotion",
+      "function": "Gliding across a limb-to-limb and tail web",
+      "compare_to": [
+        "bat_flight_wing",
+        "bat_tail_membrane",
+        "reptile_rib_patagium"
+      ],
+      "gap": "A continuous membrane terminates at all four limbs and extends along the tail, with anterior and lateral panels meeting at shared limb anchors. A wing and separate tail web leave discontinuities along those common boundaries.",
+      "reference_animal": "Sunda colugo (Galeopterus variegatus)",
+      "reference_query": "Scale-bearing dorsal and ventral spread specimen photographs with wrists, ankles, tail tip and every free membrane edge visible. Seek an additional folded pose.",
+      "model_scope": "One interconnected membrane, from wrist and ankle anchor patches to the central tail edge.",
+      "local_fixture": "Use torso, wrist, ankle and tail mounts. Check that panels remain joined in spread and folded poses and clear the limb tips."
+    },
+    {
+      "id": "nail_rim_cushion_foot",
+      "workstream": "vertebrate_locomotion",
+      "function": "Distributing load under a columnar limb",
+      "compare_to": [
+        "foot_hoof",
+        "paw_padded"
+      ],
+      "gap": "A deep continuous plantar cushion supports a broad foot under a columnar limb, with discrete nails inserted into the perimeter wall. Neither a hard hoof capsule nor discrete pads captures the shared cushion-to-wall interface.",
+      "reference_animal": "African savanna elephant (Loxodonta africana)",
+      "reference_query": "Measure a scale-bearing plantar and frontal forefoot specimen and a corresponding standing side view, with heel cushion boundary and nail roots exposed.",
+      "model_scope": "One forefoot shell, continuous plantar cushion and perimeter nail seats.",
+      "local_fixture": "Use an axial limb mount and floor plate. Check that the wall, cushion and nails meet continuously with only the expected surfaces touching the floor."
+    },
+    {
+      "id": "hoof_frog_heel_assembly",
+      "workstream": "vertebrate_locomotion",
+      "function": "Providing heel support inside a hoof capsule",
+      "compare_to": [
+        "foot_hoof",
+        "paw_padded"
+      ],
+      "gap": "An inset V-shaped frog divides paired grooves and joins the rear heel buttresses inside the hollow sole. A rounded hoof or split count cannot encode an internal heel-to-sole support interface.",
+      "reference_animal": "Domestic horse (Equus ferus caballus)",
+      "reference_query": "Scale-bearing cleaned solar view and heel-on profile of the same unshod adult hoof with frog apex, collateral grooves and heel buttresses visible.",
+      "model_scope": "Capsule rim, caudal heel buttresses, frog and sole recess.",
+      "local_fixture": "Use a straight distal leg mount and ground plate. Check the heel, frog and lower wall elevations against the measured hoof and keep the grooves open."
+    },
+    {
+      "id": "splayed_two_toe_sole",
+      "workstream": "vertebrate_locomotion",
+      "function": "Spreading weight on yielding ground",
+      "compare_to": [
+        "foot_hoof",
+        "paw_padded"
+      ],
+      "gap": "Two large toe-bearing lobes share a broad soft sole with a distal cleft and separate dorsal nails. Under stance the lobes can diverge while the proximal pad remains continuous.",
+      "reference_animal": "Dromedary (Camelus dromedarius)",
+      "reference_query": "Scale-bearing plantar and frontal adult forefoot photographs during lifted swing and loaded stance so the contour of the pad and both nails can be traced.",
+      "model_scope": "Two distal toe lobes, nail seats and continuous proximal pad.",
+      "local_fixture": "Use a distal leg socket and contact plate. Compare cleft widths between poses and check that the proximal pad remains joined."
+    },
+    {
+      "id": "suspensory_hook_manus",
+      "workstream": "vertebrate_locomotion",
+      "function": "Hanging beneath a branch",
+      "compare_to": [
+        "arm_grasping",
+        "hand_basic",
+        "claws"
+      ],
+      "gap": "An elongated narrow hand carries a close set of long hooks whose inner curves form the principal support against a branch. The proximal palm remains outside the branch-contact arc.",
+      "reference_animal": "Brown-throated three-toed sloth (Bradypus variegatus)",
+      "reference_query": "Volar close-up with scale and true lateral view of the same forefoot hooked over a branch of visible diameter.",
+      "model_scope": "Forefoot from wrist to hook row with reconstructed inner contact arcs.",
+      "local_fixture": "Use a wrist mount and two branch diameters. Check hook contact and palm clearance under the branch and during withdrawal."
+    },
+    {
+      "id": "rolling_trunk_band_armor",
+      "workstream": "vertebrate_locomotion",
+      "function": "Maintaining protective cover while the trunk curls",
+      "compare_to": [
+        "imbricated_scale_armor",
+        "chiton_valved_dorsum",
+        "carapace"
+      ],
+      "gap": "Near-transverse trunk bands connect fixed shoulder and pelvic shells and change overlap over a compliant waist during closure. The relative motion is carried by paired curved seams at the ends of the flexible belt.",
+      "reference_animal": "Southern three-banded armadillo (Tolypeutes matacus)",
+      "reference_query": "Seek calibrated dorsal, lateral and sectioned reference views that show all mobile bands between the fixed shells in extended and curled postures.",
+      "model_scope": "Fixed front and rear shield margins plus the mobile-band belt.",
+      "local_fixture": "Use two short trunk blocks and a flexing waist. Check overlap continuity in extension and curl, with no interpenetration between band rims."
+    },
+    {
+      "id": "contractile_defense_skirt",
+      "workstream": "vertebrate_locomotion",
+      "function": "Closing ventral gaps when a body curls",
+      "compare_to": [
+        "imbricated_scale_armor",
+        "urchin_radial_spines",
+        "shell"
+      ],
+      "gap": "A flexible perimeter around the spiny dorsal field contracts inward around the tucked underside. Closing the perimeter requires a deforming rim with inward roll, distinct from tilting individual spines.",
+      "reference_animal": "European hedgehog (Erinaceus europaeus)",
+      "reference_query": "Scale-bearing overhead and low lateral views of the same adult unrolled and curled, including the visible closure slit and the outer boundary of the spine field.",
+      "model_scope": "One circumferential soft-tissue skirt and its transition to a low-resolution spine-bearing surface.",
+      "local_fixture": "Use a domed torso and small ventral clearance proxies. Check that the rim rolls inward, closes around the underside and leaves a persistent seam."
+    },
+    {
+      "id": "posterior_burrow_plug",
+      "workstream": "vertebrate_locomotion",
+      "function": "Occluding a burrow opening with the rump",
+      "compare_to": [
+        "carapace",
+        "plate",
+        "leg_plantigrade"
+      ],
+      "gap": "A broad caudal shield follows the terminal pelvic contour and provides a continuous backward contact face above the flexed hindlimbs. A dorsal plate omits the vertical rump-to-tunnel fit.",
+      "reference_animal": "Common wombat (Vombatus ursinus)",
+      "reference_query": "Seek measured lateral and caudal standing views and authenticated anatomy of the dermal rump shield, plus hindlimb posture when backing into a tunnel.",
+      "model_scope": "Rump envelope over the caudal pelvis, ending at the outer boundaries of the hindlimb fold.",
+      "local_fixture": "Use a pelvic block, hinged upper legs and adjustable tunnel aperture. Check caudal wall overlap and a clear inward hinge path for the legs."
+    },
+    {
+      "id": "limb_girdle_skin_fold",
+      "workstream": "vertebrate_locomotion",
+      "function": "Accommodating motion under a thick external shoulder fold",
+      "compare_to": [
+        "plate",
+        "carapace",
+        "leg_plantigrade"
+      ],
+      "gap": "An external ridge has an adjacent deep crease running from a torso-fixed end onto the moving upper limb. In motion one lip can ride over the other while the continuous crease changes depth.",
+      "reference_animal": "Greater one-horned rhinoceros (Rhinoceros unicornis)",
+      "reference_query": "Scale-bearing lateral and three-quarter adult shoulder views with the same foreleg advanced and retracted, exposing the crease under the overhanging ridge.",
+      "model_scope": "One shoulder fold with torso-fixed and humerus-following attachment regions.",
+      "local_fixture": "Use a curved torso surface and rotating upper limb. Check fold continuity, clearance under the lip and crease depth across poses."
+    },
+    {
+      "id": "ventral_pouch_opening",
+      "workstream": "vertebrate_locomotion",
+      "function": "Supporting an offspring in a trunk-side recess",
+      "compare_to": [
+        "dewlap",
+        "nautilus_protective_hood"
+      ],
+      "gap": "A flexible rim surrounds an opening with depth and a directed entrance into a blind pocket. A projecting neck fold provides no route through the host surface into a bounded cavity.",
+      "reference_animal": "Common brushtail possum (Trichosurus vulpecula)",
+      "reference_query": "Seek a scale-bearing lateral and ventral anatomy record for an adult female, showing pouch entrance orientation, rim shape and cavity depth from a sectional view.",
+      "model_scope": "Pouch entrance, flexible lip and shallow cavity on a localized abdominal patch.",
+      "local_fixture": "Use a curved abdominal panel and an inert ellipsoid. Check passage in the open pose, controlled closure around the entrance and watertight rim attachment."
+    },
+    {
+      "id": "ventral_tail_contact_strip",
+      "workstream": "vertebrate_locomotion",
+      "function": "Wrapping and gripping a branch with a tail pad",
+      "compare_to": [
+        "tail_flexible",
+        "seahorse_grasping_tail",
+        "paw_padded"
+      ],
+      "gap": "A continuous distal ventral strip follows the inside of the coil and presents a compressed contact band to the branch. A uniformly skinned tail can coil without preserving a differentiated gripping surface.",
+      "reference_animal": "Common ringtail possum (Pseudocheirus peregrinus)",
+      "reference_query": "Scale-bearing ventral distal-tail view and lateral photographs of the same tail wrapped about a branch, with the bare lower strip and its terminal extent exposed.",
+      "model_scope": "One distal tail chain with a ventral contact strip and defined proximal transition.",
+      "local_fixture": "Use a tail root and branch cylinders. Check that only the ventral strip bears on the branch through a partial-to-full wrap and remains continuous under curvature."
+    },
+    {
+      "id": "inward_claw_bearing_forefoot",
+      "workstream": "vertebrate_locomotion",
+      "function": "Walking with claws clear of the ground",
+      "compare_to": [
+        "paw_padded",
+        "leg_plantigrade",
+        "claws"
+      ],
+      "gap": "The long digit claws turn in beneath the forefoot while a dorsal knuckle contact bears weight. The contact plane and resting claw recess are on different sides of the flexed digit chain.",
+      "reference_animal": "Giant anteater (Myrmecophaga tridactyla)",
+      "reference_query": "Scale-bearing frontal and lateral stance frames plus plantar and dorsal photographs of a specimen forefoot illustrating the reverted claws and walking contact surface.",
+      "model_scope": "Distal forelimb, flexed middle digit cluster and dorsal support landmarks.",
+      "local_fixture": "Use a wrist joint and floor plate. Check claw clearance in stance and compare ground contact at the knuckle line with a lifted reference pose."
+    },
+    {
+      "id": "hollow_quill_rattle",
+      "workstream": "vertebrate_locomotion",
+      "function": "Making a rattle with the tail",
+      "compare_to": [
+        "tail_tuft",
+        "urchin_radial_spines"
+      ],
+      "gap": "Short hollow quills have expanded cup-like ends on narrow stalks. The movable tips need wall thickness and a shared collision envelope rather than the taper and fixed spacing of pointed spines.",
+      "reference_animal": "Crested porcupine (Hystrix cristata)",
+      "reference_query": "Seek scale-bearing end-on and side views of the distal tail showing quill openings and stalk insertions. Find a close recording of the same cluster while shaking.",
+      "model_scope": "One small cluster of open-ended quills with individually attached stalks on a distal tail patch.",
+      "local_fixture": "Use an oscillating tail mount. Check that cup rims can touch neighboring quills during offset motion and that stalks and openings remain clear at rest."
+    },
+    {
+      "id": "partially_fused_perching_foot",
+      "workstream": "vertebrate_locomotion",
+      "function": "Perching with linked proximal digits",
+      "compare_to": [
+        "leg_bird",
+        "foot_grasping",
+        "talons"
+      ],
+      "gap": "Two forward digits share a proximal sleeve while separate terminal segments bend around the perch. Toe strings with only a basal pivot cannot represent the joined length and distal break point.",
+      "reference_animal": "Belted kingfisher (Megaceryle alcyon)",
+      "reference_query": "Measure a scale-bearing plantar mount and medial oblique view of an adult foot in repose and gripping a small perch, with the proximal union traced.",
+      "model_scope": "Tarsal tip, joined forward digit sleeve, free tips and rear countergrip.",
+      "local_fixture": "Use a small perch cylinder. Check paired proximal motion and available distal flexion without tearing the junction."
+    },
+    {
+      "id": "split_axis_bark_grip_foot",
+      "workstream": "vertebrate_locomotion",
+      "function": "Gripping opposing sides of a vertical support",
+      "compare_to": [
+        "leg_bird",
+        "foot_grasping",
+        "talons"
+      ],
+      "gap": "Two forward and two rear gripping rays originate in fore and aft pairs around one tarsal tip. These fixed opposition axes need joint placement distinct from a single opposable toe or a reversible outer talon.",
+      "reference_animal": "Great spotted woodpecker (Dendrocopos major)",
+      "reference_query": "Scale-bearing plantar specimen image and true side photographs of a bird on a vertical trunk. Require exposed origins for both rear toes and their positions at contact.",
+      "model_scope": "Tarsal tip and four digit bases arranged as opposing pairs with curved final joints.",
+      "local_fixture": "Use a tarsal hinge and two diameters of vertical cylinder. Check two opposing contact pairs and root clearance during release."
+    },
+    {
+      "id": "offset_two_toe_running_foot",
+      "workstream": "vertebrate_locomotion",
+      "function": "Carrying stance on a central toe with lateral support",
+      "compare_to": [
+        "leg_bird",
+        "foot_hoof",
+        "talons"
+      ],
+      "gap": "A large central support toe has a full longitudinal contact strip, with a shorter lateral toe making a separate off-axis contact. The toes have separate sole cushions and do not form a hard paired hoof.",
+      "reference_animal": "Common ostrich (Struthio camelus)",
+      "reference_query": "Seek scale-bearing adult dorsal and plantar specimens and frontal photographs at midstance, with both toe axes, their pad footprints and the raised tarsal axis.",
+      "model_scope": "Distal tarsus and both toe chains with their plantar contact regions.",
+      "local_fixture": "Use a ground plate and a tarsal rotation mount. Check load contact on the central toe and preservation of the separate lateral contact as the foot rolls."
+    },
+    {
+      "id": "bark_bracing_rectrix_pair",
+      "workstream": "vertebrate_locomotion",
+      "function": "Bracing below the feet during vertical climbing",
+      "compare_to": [
+        "tail_feather_fan",
+        "wing_feathered"
+      ],
+      "gap": "Stiff central rectrices project below the rump and terminate in a paired prop contact. Their overlapping neighbor feathers need clearance to follow the tail angle without taking over the main contact.",
+      "reference_animal": "Pileated woodpecker (Dryocopus pileatus)",
+      "reference_query": "Scale-bearing lateral photograph of an adult tail pressed against a vertical trunk and an underside spread skin view showing the central shaft axes and tip contact locations.",
+      "model_scope": "Rectrix root, central support pair and immediately adjacent feather margins.",
+      "local_fixture": "Use a movable rump block and rough vertical plane. Check two stable tail-tip contacts through the braced pose and clean release."
+    },
+    {
+      "id": "leading_edge_alula_hinge",
+      "workstream": "vertebrate_locomotion",
+      "function": "Opening an independently controlled wing leading-edge panel",
+      "compare_to": [
+        "wing_feathered",
+        "bat_flight_wing"
+      ],
+      "gap": "A digit-rooted feather cluster can lift ahead of the main leading edge and create a narrow gap independently of the primary feather fan. Its local pivot precedes the wrist-tip feather hinge.",
+      "reference_animal": "Rock pigeon (Columba livia)",
+      "reference_query": "Seek calibrated dorsal and anterior close-ups of the same distal wing with alula flush and elevated. The digit root and intervening slot need to be visible.",
+      "model_scope": "One tapered alula cluster, root hinge and short wing edge segment.",
+      "local_fixture": "Use a wing wrist mount and fixed leading-edge section. Check closure when flush and measurable slot height without feather-body clipping when raised."
+    },
+    {
+      "id": "free_climbing_wing_digits",
+      "workstream": "vertebrate_locomotion",
+      "function": "Gripping a branch with the juvenile wing",
+      "compare_to": [
+        "wing_feathered",
+        "bat_flight_wing",
+        "claws"
+      ],
+      "gap": "Two free clawed digits project from the juvenile wing hand and can wrap a branch while developing wing surfaces remain clear. A single free thumb or a continuous flight edge misses the two-digit reach and release.",
+      "reference_animal": "Hoatzin (Opisthocomus hoazin)",
+      "reference_query": "Find scale-bearing dorsal and side images of a climbing-age nestling wing and a branch-clinging view with both claw insertions and the wrist visible.",
+      "model_scope": "Two distal wing digits, unguals and transition into the wing hand.",
+      "local_fixture": "Use a wrist hinge, a short wing panel and a branch cylinder. Check that both tips can contact the cylinder without wing-edge collision."
+    },
+    {
+      "id": "stridulating_wing_feather_pair",
+      "workstream": "vertebrate_locomotion",
+      "function": "Making sound through contact between wings",
+      "compare_to": [
+        "wing_feathered",
+        "tail_feather_fan"
+      ],
+      "gap": "Two modified wing feathers include a ridged shaft region and an adjacent bent shaft that sweeps it. An aerodynamic feather array lacks a matching sliding contact pair.",
+      "reference_animal": "Club-winged manakin (Machaeropterus deliciosus)",
+      "reference_query": "Seek scale-bearing high-speed dorsal frames of male wing display plus close images of the modified secondary shafts showing the stridulatory ridge spacing and offset bend.",
+      "model_scope": "Two modified secondaries and their neighboring wing-root positions.",
+      "local_fixture": "Use a small moving wing plate. Check sweep overlap over the ridged zone and clear space before and after contact."
+    },
+    {
+      "id": "serrated_primary_leading_edge",
+      "workstream": "vertebrate_locomotion",
+      "function": "Modifying the exposed edge of a flight vane",
+      "compare_to": [
+        "wing_feathered",
+        "tail_feather_fan"
+      ],
+      "gap": "Discrete curved comb teeth rise along the exposed leading edge of an outer primary. These tooth roots must stay in the vane edge under bend, separate from slots between adjacent feather tips.",
+      "reference_animal": "Barn owl (Tyto alba)",
+      "reference_query": "Measure a scale-bearing isolated outer primary from above and edge-on, including a macro view giving the tooth pitch and inclination. Locate it in a spread wing view.",
+      "model_scope": "One primary leading-edge segment with a repeatable curved tooth row.",
+      "local_fixture": "Use a curved vane coupon and neighboring feather plane. Bend the coupon and check visible tooth pitch, lift and neighboring-vane clearance."
+    },
+    {
+      "id": "deployable_water_carrying_feather",
+      "workstream": "vertebrate_locomotion",
+      "function": "Holding water in abdominal plumage",
+      "compare_to": [
+        "wing_feathered",
+        "tail_feather_fan"
+      ],
+      "gap": "Distinct inner and outer barb regions change arrangement when wet so adjacent barbules create a volume between overlapping filaments. It requires an explicit deployable lattice instead of a solid vane.",
+      "reference_animal": "Namaqua sandgrouse (Pterocles namaqua)",
+      "reference_query": "Seek scale-bearing micrographs and cross-sectional views of male belly feathers from the same feather region in dry and saturated states.",
+      "model_scope": "A short shaft and an enlarged repeatable patch of adjacent inner and outer barbs.",
+      "local_fixture": "Use a shaft clamp and dry and wet target envelope gauges. Check geometry change and preservation of a measurable open volume between filaments."
+    },
+    {
+      "id": "ventral_brooding_drape",
+      "workstream": "vertebrate_locomotion",
+      "function": "Closing a warm cover over a foot-supported egg",
+      "compare_to": [
+        "dewlap",
+        "nautilus_protective_hood",
+        "leg_bird"
+      ],
+      "gap": "A dependent abdominal fold drapes over an object on top of the feet to form a three-sided enclosure. Its opening and contact path depend on a separate floor formed by the pes.",
+      "reference_animal": "Emperor penguin (Aptenodytes forsteri)",
+      "reference_query": "Seek a scale-bearing frontal and true lateral view of an adult balancing an egg, with fold attachment and foot-top clearance visible during transfer and coverage.",
+      "model_scope": "Abdominal drape, flexing lower edge and two foot-top contact proxies.",
+      "local_fixture": "Use a curved ventral mount, foot platform and egg ellipsoid. Check that the lip closes around the egg during coverage and clears it during transfer."
+    },
+    {
+      "id": "tarsal_spur_socket",
+      "workstream": "vertebrate_locomotion",
+      "function": "Carrying a contact projection on the leg shaft",
+      "compare_to": [
+        "leg_bird",
+        "claws",
+        "talons"
+      ],
+      "gap": "A separate sheath projects from the tarsal shaft above the toe roots, seated around a raised spur base. A terminal claw rotates with a digit and cannot represent this mid-shaft insertion.",
+      "reference_animal": "Red junglefowl (Gallus gallus)",
+      "reference_query": "Measure medial and caudomedial adult male tarsus photos and a specimen view of the spur core. Seek a ruler and an unambiguously visible spur axis and base.",
+      "model_scope": "One tarsal spur core, outer sheath and surrounding raised mount.",
+      "local_fixture": "Use a cylindrical tarsal segment plus hinged toe proxies. Check sheath seating and distal clearance through toe flexion."
+    },
+    {
+      "id": "paired_shaft_contour_feather",
+      "workstream": "vertebrate_locomotion",
+      "function": "Providing overlapping loose contour cover",
+      "compare_to": [
+        "wing_feathered",
+        "tail_feather_fan",
+        "mane"
+      ],
+      "gap": "Two effective feather shafts leave one calamus and carry loose barbs in separate branches. Overlap depends on their shared root and paired distal silhouettes, distinct from neighboring single-shaft feathers.",
+      "reference_animal": "Emu (Dromaius novaehollandiae)",
+      "reference_query": "Seek scale-bearing flat and edge-on views of a single adult body feather with the two shaft bases visible and a matched close-up of feather overlap on the torso.",
+      "model_scope": "One intact double-shaft body feather and a small repeatable overlap patch.",
+      "local_fixture": "Use a single root socket and two neighboring copies on a curved torso. Check separate contours and uninterrupted planned overlap at their free edges."
+    },
+    {
+      "id": "covert_train_elevation",
+      "workstream": "vertebrate_locomotion",
+      "function": "Raising a dorsal display while supporting it with the true tail",
+      "compare_to": [
+        "tail_feather_fan",
+        "crest_dorsal"
+      ],
+      "gap": "The dominant fan is formed by extended upper coverts rising in front of a shorter rectrix support plane. The two groups attach at different levels and move together during elevation.",
+      "reference_animal": "Indian peafowl (Pavo cristatus)",
+      "reference_query": "Seek calibrated true lateral and posterior frames of an adult male in lowered and full display, with both the short underlying rectrices and long covert bases visible.",
+      "model_scope": "One dorsal covert fan above a separate rectrix support plane and both root tiers.",
+      "local_fixture": "Use two roots on a rump block. Check the visible support overlap when elevated and ensure margin clearance when the train lowers."
+    },
+    {
+      "id": "interlocking_feather_vane_patch",
+      "workstream": "vertebrate_locomotion",
+      "function": "Maintaining a closed flight-feather vane under bending",
+      "compare_to": [
+        "wing_feathered",
+        "tail_feather_fan"
+      ],
+      "gap": "Opposing barbule edges mate via visible hooks across the gap between adjacent barbs, producing a reversible seam inside one feather. Feather outlines and row overlap do not capture this interface.",
+      "reference_animal": "Rock pigeon (Columba livia)",
+      "reference_query": "Seek calibrated microscopy of adjacent primary feather barbs and hooked barbules from a matched feather region, with oblique views of engaged and separated edges.",
+      "model_scope": "An enlarged local strip with two neighboring barbs and repeated opposed barbules.",
+      "local_fixture": "Use paired mounts on a vane bend jig. Check repeatable hook engagement at rest and measurable edge separation through the release pose."
+    },
+    {
+      "id": "compound_ventral_suction_disc",
+      "workstream": "aquatic_vertebrates",
+      "function": "Substrate adhesion",
+      "compare_to": [
+        "goby_pelvic_disc",
+        "suckers",
+        "fin_paired"
+      ],
+      "gap": "The adhesive footprint includes anterior and posterior regions formed at the pectoral and pelvic bases. Their extended rim and papilla fields require different seating from the goby pelvic-only rim.",
+      "reference_animal": "Northern clingfish (Gobiesox maeandricus)",
+      "reference_query": "Ventral specimen macro of the complete disc and girdle landmarks, lateral contact section and a released rim view.",
+      "model_scope": "One ventral disc rim, its supported anterior and posterior regions, and coarse papilla fields.",
+      "local_fixture": "A short belly saddle over a transparent plane and a convex cobble, with rim contact and release checked separately."
+    },
+    {
+      "id": "serial_caudal_finlets",
+      "workstream": "aquatic_vertebrates",
+      "function": "Posterior flow control",
+      "compare_to": [
+        "fin_median",
+        "tail_fin_heterocercal"
+      ],
+      "gap": "Short repeatable, independently rooted fins form dorsal and ventral rows separated by exposed skin. A common placement and angle rig must preserve the gaps and diminishing footprint.",
+      "reference_animal": "Yellowfin tuna (Thunnus albacares)",
+      "reference_query": "Direct side and rear three-quarter images from second dorsal and anal fin to caudal peduncle, with a swimming sequence showing root motion.",
+      "model_scope": "One finlet module and a repeated row with progressively smaller bases.",
+      "local_fixture": "A tapered posterior trunk section with opposing rows and clearance to the first caudal root throughout a tail beat."
+    },
+    {
+      "id": "segmented_spinelet_dorsal",
+      "workstream": "aquatic_vertebrates",
+      "function": "Dorsal support and folding",
+      "compare_to": [
+        "fin_median",
+        "crest_dorsal"
+      ],
+      "gap": "Each serial module carries its own leading spine and trailing membrane. A folding row must preserve the individual spine-to-web boundary and seat each base independently.",
+      "reference_animal": "Senegal bichir (Polypterus senegalus)",
+      "reference_query": "Lateral and dorsal close-ups of the posterior dorsal row raised and laid down, with one finlet base and free triangular membrane visible.",
+      "model_scope": "A spine-and-web module repeated along a short run, with separate pivots and shared root spacing control.",
+      "local_fixture": "A curved dorsal strip supporting three modules with controlled overlap at rest and separation when raised."
+    },
+    {
+      "id": "interlocking_dorsal_spines",
+      "workstream": "aquatic_vertebrates",
+      "function": "Defensive deployment",
+      "compare_to": [
+        "fin_median",
+        "stinger",
+        "horn_sweep"
+      ],
+      "gap": "A stout leading spine locks in its raised pose when the second spine engages its base. The paired pivots and contact surfaces define the assembly.",
+      "reference_animal": "Reef triggerfish (Rhinecanthus rectangulus)",
+      "reference_query": "Lateral and dorsal macro views of the first dorsal erected and recessed, plus a skeletal or anatomical view showing the first two spine bases.",
+      "model_scope": "Two articulated dorsal spines, their lock surfaces, and a shallow receiving groove.",
+      "local_fixture": "A short dorsal patch with the groove floor visible in section. Test raised lock contact, release, and the lowered silhouette."
+    },
+    {
+      "id": "pelvic_shield_spine_pair",
+      "workstream": "aquatic_vertebrates",
+      "function": "Ventral defense",
+      "compare_to": [
+        "plate",
+        "stinger",
+        "fin_paired"
+      ],
+      "gap": "Long pelvic spines seat on opposite sides of a shared ventral girdle plate. Each can clear the belly when erected, with its own seat and pivot.",
+      "reference_animal": "Three-spined stickleback (Gasterosteus aculeatus)",
+      "reference_query": "Ventral and oblique views of a fully armored adult showing the shield, each spine base and folded versus spread spine poses.",
+      "model_scope": "A single ventral pelvic shield and its two lateral spine seats, with movable spines.",
+      "local_fixture": "A belly strip keyed to one girdle plate. Check each spine clears the opposite side and folds to its own rest path."
+    },
+    {
+      "id": "folding_peduncular_scalpel",
+      "workstream": "aquatic_vertebrates",
+      "function": "Lateral defense",
+      "compare_to": [
+        "stinger",
+        "claws",
+        "tail_flexible"
+      ],
+      "gap": "A laterally mounted blade hinges from a body groove on the caudal peduncle. Blade deployment exposes a cutting edge and leaves a visible recessed seat.",
+      "reference_animal": "Blue tang (Acanthurus coeruleus)",
+      "reference_query": "Unobstructed caudal peduncle lateral and rear oblique specimen views, plus a documented extended and recessed scalpel comparison.",
+      "model_scope": "One peduncular blade, local pivot, and receiving slot, with a mirrored install.",
+      "local_fixture": "A short elliptical peduncle with blade on each flank. Check flush rest and clearance to the tail base on deployment."
+    },
+    {
+      "id": "barbed_caudal_sting",
+      "workstream": "aquatic_vertebrates",
+      "function": "Tail defense",
+      "compare_to": [
+        "stinger",
+        "tail_flexible"
+      ],
+      "gap": "A flattened, serrated blade has an extended root running along the dorsal tail surface. The exposed edges and tail seat require a different construction from a terminal tapering sting.",
+      "reference_animal": "Southern stingray (Hypanus americanus)",
+      "reference_query": "Dorsal and lateral views of the in-place caudal spine and a scale-bearing image of a shed spine showing the paired serrations.",
+      "model_scope": "One sting section with a buried longitudinal root and serrated margins, plus a coarse sheath only where visible.",
+      "local_fixture": "A flexible tail segment bending under the attachment. Check that the root stays seated and both free margins clear the tail."
+    },
+    {
+      "id": "fused_polygonal_trunk_armor",
+      "workstream": "aquatic_vertebrates",
+      "function": "Rigid trunk enclosure",
+      "compare_to": [
+        "carapace",
+        "shell",
+        "imbricated_scale_armor"
+      ],
+      "gap": "Fused polygonal scutes form a faceted enclosure whose rigid corners run across dorsal and ventral panels. Fin openings interrupt the plates.",
+      "reference_animal": "Yellow boxfish (Ostracion cubicus)",
+      "reference_query": "Subadult dorsal, ventral and end-on specimen views of armor corners, scute sutures and median-fin openings.",
+      "model_scope": "A trunk armor shell section with a dorsal and a ventrolateral corner, visible sutures, and one fin opening.",
+      "local_fixture": "A faceted torso mandrel with a replaceable fin root. Check uninterrupted corner, aperture clearance, and seam thickness."
+    },
+    {
+      "id": "five_row_bossed_scutes",
+      "workstream": "aquatic_vertebrates",
+      "function": "External armor",
+      "compare_to": [
+        "plate",
+        "imbricated_scale_armor",
+        "carapace"
+      ],
+      "gap": "Separate projecting bony scutes form one dorsal, two lateral and two ventrolateral rows, leaving substantial skin between rows. Root orientation differs at each row.",
+      "reference_animal": "Atlantic sturgeon (Acipenser oxyrinchus)",
+      "reference_query": "Juvenile dorsal, side and ventral views through the same trunk segment; close-ups of a lateral scute and neighboring skin.",
+      "model_scope": "A scute module with row-specific section and footprint, repeated over one short trunk station.",
+      "local_fixture": "A tapered five-sided trunk coupon with three scutes per row and flex sufficient to check neighboring scute clearance."
+    },
+    {
+      "id": "expandable_trunk_envelope",
+      "workstream": "aquatic_vertebrates",
+      "function": "Defensive inflation",
+      "compare_to": [
+        "bulge",
+        "shell",
+        "bell_radial"
+      ],
+      "gap": "The phenotype is a single skin envelope that expands around the trunk while fin roots and the anterior and posterior transitions remain constrained. A surface bulge leaves separate seams at these boundaries.",
+      "reference_animal": "Guineafowl puffer (Arothron meleagris)",
+      "reference_query": "Matched lateral and ventral views of relaxed and naturally inflated specimens showing the belly outline and unchanged fin insertions.",
+      "model_scope": "The abdominal and flank envelope with fixed attachment boundaries and an inflated shape key.",
+      "local_fixture": "Short shoulder and posterior rings with belly and flank sections between, using dummy fin roots to check displacement and clearance."
+    },
+    {
+      "id": "pressure_erectile_dermal_spine_field",
+      "workstream": "aquatic_vertebrates",
+      "function": "Inflation-linked defense",
+      "compare_to": [
+        "stinger",
+        "imbricated_scale_armor",
+        "plate"
+      ],
+      "gap": "Dermal spines rotate from a laid-back rest pose towards radial extension as the surrounding skin expands. Each spine needs an embedded base and a linked distribution over the deforming host.",
+      "reference_animal": "Long-spine porcupinefish (Diodon holocanthus)",
+      "reference_query": "Matched relaxed and naturally inflated flank macros showing spine bases, resting direction and standing projection.",
+      "model_scope": "A repeatable patch of spine roots and exposed shafts driven by local skin expansion.",
+      "local_fixture": "One elastic flank coupon with a bounded area change. Check skin penetration at both poses and tip clearance between neighbors."
+    },
+    {
+      "id": "closing_ventral_brood_folds",
+      "workstream": "aquatic_vertebrates",
+      "function": "External egg enclosure",
+      "compare_to": [
+        "bulge",
+        "web_interbrachial",
+        "vocal_sac"
+      ],
+      "gap": "Two elongated belly folds flank the incubation surface and meet along a longitudinal closure. That seam and its recessed interior require two separately seated edges.",
+      "reference_animal": "Broadnosed pipefish (Syngnathus typhle)",
+      "reference_query": "Adult male ventral and oblique views at empty and brooding stages, with labeled pouch cross-section showing the lateral folds.",
+      "model_scope": "One paired brood enclosure with seam edges and a shallow internal cavity.",
+      "local_fixture": "A narrow ventral trunk saddle with an interchangeable clutch volume. Check closure, fold clearance, and an empty pose."
+    },
+    {
+      "id": "external_egg_suspension_stalks",
+      "workstream": "aquatic_vertebrates",
+      "function": "External egg attachment",
+      "compare_to": [
+        "suckers",
+        "tentacle_fringe",
+        "imbricated_scale_armor"
+      ],
+      "gap": "Short maternal stalks connect the ventral skin to individual carried eggs. Each unit must carry a terminal body while leaving exposed skin between stalks.",
+      "reference_animal": "Banjo catfish (Aspredo aspredo)",
+      "reference_query": "Ventral macro and side-lit oblique view of a brooding female, plus labeled detail of one stalk and its egg interface.",
+      "model_scope": "A small repeatable set of ventral stalks with removable egg surrogates.",
+      "local_fixture": "A curved abdominal skin coupon with staggered stalks. Check stalk seating, egg separations and nearby belly clearance."
+    },
+    {
+      "id": "stalked_camouflage_blades",
+      "workstream": "aquatic_vertebrates",
+      "function": "Outline disruption",
+      "compare_to": [
+        "frill",
+        "fin_paired",
+        "tentacle_fringe"
+      ],
+      "gap": "Multiple decorative blades emerge on narrow stalks with individual roots distributed over flank and tail. Their leaf-like surfaces can remain distinct when the local host curves.",
+      "reference_animal": "Leafy seadragon (Phycodurus eques)",
+      "reference_query": "Lateral and opposite oblique close-ups of the same trunk-to-tail appendage group, including clear branch roots and blade edges.",
+      "model_scope": "One localized cluster of individually rooted stalked blades from the trunk-to-tail region.",
+      "local_fixture": "An armored taper coupon that bends laterally. Check stalk rooting and free blade clearance on concave and convex bends."
+    },
+    {
+      "id": "deployable_ray_fan_wing",
+      "workstream": "aquatic_vertebrates",
+      "function": "Gliding lift",
+      "compare_to": [
+        "fin_paired",
+        "bat_flight_wing",
+        "avian_swim_flipper"
+      ],
+      "gap": "Long segmented fin rays spread a collapsible membrane fan and close into a narrow flank-aligned bundle. The motion requires a ray fan at a compact fish fin root.",
+      "reference_animal": "Atlantic flyingfish (Cheilopogon melanurus)",
+      "reference_query": "Matched dorsal and lateral views of an adult with pectorals fully spread and closed. Include pectoral roots and ray spacing.",
+      "model_scope": "One ray-and-membrane pectoral fan with a shoulder seat and spread control.",
+      "local_fixture": "A curved flank strip with a reference pelvic-fin marker. Check the stored profile, full fan opening and clearance to the neighboring fin."
+    },
+    {
+      "id": "lobed_fin_with_distal_ray_fan",
+      "workstream": "aquatic_vertebrates",
+      "function": "Articulated swimming and orientation",
+      "compare_to": [
+        "fin_paired",
+        "avian_swim_flipper",
+        "leg_sprawling"
+      ],
+      "gap": "A thick fleshy proximal lobe has a movable distal transition into a fin-ray fan. The lobe, distal flex axis and terminal fan require distinct sections and articulation.",
+      "reference_animal": "West Indian Ocean coelacanth (Latimeria chalumnae)",
+      "reference_query": "In situ lateral and anteroventral swimming views, plus a preserved pectoral fin dorsal view exposing the fleshy lobe to ray boundary.",
+      "model_scope": "One proximal pectoral lobe, its distal flex region and the continuous ray fan.",
+      "local_fixture": "A lateral girdle puck with a curved trunk section behind it. Verify internal flex and folded fin-to-trunk clearance."
+    },
+    {
+      "id": "ground_contact_pectoral_crutch",
+      "workstream": "aquatic_vertebrates",
+      "function": "Amphibious support and propulsion",
+      "compare_to": [
+        "fin_paired",
+        "avian_swim_flipper",
+        "leg_sprawling"
+      ],
+      "gap": "A short, fleshy pectoral lever puts the distal ray fan onto a load-bearing contact plane, with the fin root and elbow-like bend turning independently.",
+      "reference_animal": "Great blue-spotted mudskipper (Boleophthalmus pectinirostris)",
+      "reference_query": "Low lateral and ventral-oblique close-ups of one pectoral through body support and recovery, retaining the base and substrate.",
+      "model_scope": "One pectoral crutch with seated proximal hinge, elbow-like flexion, and distal contact fan.",
+      "local_fixture": "A lower flank mount over a flat mud plane, with clearance and fore-aft contact checked through a paired step."
+    },
+    {
+      "id": "detached_pectoral_walking_rays",
+      "workstream": "aquatic_vertebrates",
+      "function": "Substrate walking",
+      "compare_to": [
+        "fin_paired",
+        "leg_sprawling",
+        "hand_basic"
+      ],
+      "gap": "The lowest pectoral rays are free, separately anchored and mobile below the main fin. Their attachment and stance must coexist with the intact webbed fin above.",
+      "reference_animal": "Northern sea robin (Prionotus carolinus)",
+      "reference_query": "In situ ventral-oblique walking sequence and a side view with the pectoral spread, showing free ray origins and tip contacts.",
+      "model_scope": "A pectoral root with a proxy fin web and the independent lower walking rays.",
+      "local_fixture": "An inclined sediment plane and a lateral girdle plate. Test alternating ray contacts while keeping the main web free of the surface."
+    },
+    {
+      "id": "shell_seated_foreflipper",
+      "workstream": "aquatic_vertebrates",
+      "function": "Underwater propulsion",
+      "compare_to": [
+        "fin_paired",
+        "avian_swim_flipper",
+        "shell"
+      ],
+      "gap": "A broad shoulder cuff seats within the shell's anterior notch and transitions into a long, flattened digit-supported blade. Its recovery stroke has a constrained passage along the shell lip.",
+      "reference_animal": "Green sea turtle (Chelonia mydas)",
+      "reference_query": "Underwater dorsal and frontal views at both stroke extrema, plus a specimen view showing the leading edge digits and shell notch.",
+      "model_scope": "One shoulder-to-tip foreflipper with elbow deformation and a broad trailing blade.",
+      "local_fixture": "A short anterior shell and plastron bridge around one shoulder mount. Check shell lip and neck-patch clearance on recovery."
+    },
+    {
+      "id": "rotating_hindflipper_foot",
+      "workstream": "aquatic_vertebrates",
+      "function": "Swimming and terrestrial support",
+      "compare_to": [
+        "foot_webbed_long",
+        "fin_paired",
+        "leg_plantigrade"
+      ],
+      "gap": "An ankle rotates a broad five-digit webbed paddle under the body for support and rearward for swimming. The outer rays frame the paddle as it changes both orientation and spread.",
+      "reference_animal": "California sea lion (Zalophus californianus)",
+      "reference_query": "Ventral hindflipper spread underwater and low lateral and rear views of the same joint during planted and lifted land steps.",
+      "model_scope": "One posterior ankle and webbed foot, with a rotation axis and adjustable spread.",
+      "local_fixture": "A pelvis stub over a floor plane with a companion foot proxy. Check stance, fold clearances, and the rearward swimming pose."
+    },
+    {
+      "id": "totipalmate_hallux_swim_web",
+      "workstream": "aquatic_vertebrates",
+      "function": "Foot-propelled diving",
+      "compare_to": [
+        "foot_webbed_long",
+        "leg_bird",
+        "foot_grasping"
+      ],
+      "gap": "A rear or medial hallux joins the web extending to all three forward digits, giving the paddle a membrane anchored on both sides of the foot base. A fourth forward-fanned toe leaves out that connection.",
+      "reference_animal": "Double-crested cormorant (Nannopterum auritum)",
+      "reference_query": "Plantar specimen images with all four digits exposed, plus underwater views of power-stroke spread and recovery collapse.",
+      "model_scope": "One foot extending from the ankle through the four connected digits, with poseable web junctions.",
+      "local_fixture": "A tarsus clamp that rolls through a stroke. Check the hallux-to-inner-digit web for twists and overlap."
+    },
+    {
+      "id": "individually_lobate_swim_toes",
+      "workstream": "aquatic_vertebrates",
+      "function": "Foot-propelled diving",
+      "compare_to": [
+        "foot_webbed_long",
+        "leg_bird",
+        "anuran_terminal_adhesive_pads"
+      ],
+      "gap": "Each toe carries its own elongate lobes with free lateral borders. Interdigital gaps remain open as the lobes turn edge-on on recovery and flare on the power stroke.",
+      "reference_animal": "Great crested grebe (Podiceps cristatus)",
+      "reference_query": "Ventral spread-foot macro with toe borders and lobe shapes visible, and underwater frames showing power and recovery.",
+      "model_scope": "One foot with several independently twisting lobed digits attached to a common ankle.",
+      "local_fixture": "An ankle gimbal in a projected stroke plane. Check free lobe edge clearance between adjacent toes."
+    },
+    {
+      "id": "terminal_clavus",
+      "workstream": "aquatic_vertebrates",
+      "function": "Rear trunk steering",
+      "compare_to": [
+        "tail_fin_heterocercal",
+        "fin_median",
+        "salamander_axial_fin"
+      ],
+      "gap": "A deep rear fan attaches across the blunt trunk margin and joins the ends of the dorsal and anal regions. The wide posterior seat replaces a narrow terminal peduncle root.",
+      "reference_animal": "Ocean sunfish (Mola mola)",
+      "reference_query": "Adult side and rear views centered on the clavus, with a skeletal or labeled margin view relating its upper and lower ends to the adjacent median fins.",
+      "model_scope": "The posterior truncation edge and clavus, with coarse marginal nodes where visible.",
+      "local_fixture": "A truncated disk-shaped body section with dorsal and anal fin markers at the two junctions."
+    },
+    {
+      "id": "traveling_wave_anal_ribbon",
+      "workstream": "aquatic_vertebrates",
+      "function": "Low-speed propulsion and reversal",
+      "compare_to": [
+        "fin_median",
+        "salamander_axial_fin"
+      ],
+      "gap": "A long, ventral anal ribbon sends an alternating wave along a continuous root while the trunk remains comparatively stable. The repeated ray stations and a controlled phase direction define the motion.",
+      "reference_animal": "Black ghost knifefish (Apteronotus albifrons)",
+      "reference_query": "Lateral and ventral swimming footage showing the entire anal root and opposite wave directions during forward and reverse motion.",
+      "model_scope": "A local length of anal ribbon with phased ray deformation and a fixed root edge.",
+      "local_fixture": "A gently curved belly rail with wave amplitude sampled along six stations. Check root motion and clearance at the posterior end."
+    },
+    {
+      "id": "joined_terminal_median_fin_rim",
+      "workstream": "aquatic_vertebrates",
+      "function": "Undulatory propulsion",
+      "compare_to": [
+        "salamander_axial_fin",
+        "fin_median",
+        "tail_fin_heterocercal"
+      ],
+      "gap": "Dorsal and anal fin membranes continue around the very tip through a caudal sector, preserving continuous ray-supported edging across a tight reversal. Verify whether a linked extension of the axial membrane draft can cover the terminal seam.",
+      "reference_animal": "European eel (Anguilla anguilla)",
+      "reference_query": "Close lateral views extending from dorsal and anal insertion through the tail tip, plus straight and sharply bent swimming frames.",
+      "model_scope": "The rear taper and a continuous rayed membrane around its terminal contour.",
+      "local_fixture": "A short segmented tail-end fixture. Check the dorsal, ventral and tip transitions at rest and maximum bend."
+    },
+    {
+      "id": "paired_caudal_peduncle_keels",
+      "workstream": "aquatic_vertebrates",
+      "function": "Caudal flow conditioning",
+      "compare_to": [
+        "tail_fin_heterocercal",
+        "fin_paired",
+        "crest_dorsal"
+      ],
+      "gap": "Thin longitudinal keels project from the lateral walls of the tail stalk. The paired bases taper into the peduncle immediately before the tail, with negligible spanwise movement at the root.",
+      "reference_animal": "Atlantic bluefin tuna (Thunnus thynnus)",
+      "reference_query": "Dorsal, posterior-oblique and cross-sectional views of the rear peduncle revealing the large lateral keels, smaller accessory keels, and their approach to the caudal base.",
+      "model_scope": "An opposed pair of long tapered keel surfaces, optionally with coarse accessory keels if shown.",
+      "local_fixture": "An elliptical tail-stalk coupon and a dummy caudal base. Check root overlap and the fading edges in side and top views."
+    },
+    {
+      "id": "ray_fan_with_ventral_sword",
+      "workstream": "aquatic_vertebrates",
+      "function": "Sexual display",
+      "compare_to": [
+        "tail_fin_heterocercal",
+        "tail_feather_fan"
+      ],
+      "gap": "A rounded ray fan has a ventral bundle that extends as a narrow sword. The bundle emerges from rays shared with the ventral fan rather than forming a second foil lobe.",
+      "reference_animal": "Green swordtail (Xiphophorus hellerii)",
+      "reference_query": "Direct lateral adult male fin spread, backlit macro of the ventral ray paths, and relaxed fin view.",
+      "model_scope": "One caudal ray fan with several continuous ventral rays forming the terminal extension.",
+      "local_fixture": "A small caudal peduncle hinge. Compare ray continuity, extension clearance, and change of fan spread."
+    },
+    {
+      "id": "segmented_caudad_clasper",
+      "workstream": "aquatic_vertebrates",
+      "function": "Reproductive coupling",
+      "compare_to": [
+        "fin_paired",
+        "tail_segmented",
+        "hand_pincer"
+      ],
+      "gap": "An elongate male pelvic appendage forms a groove and articulates from the inner rear sector of the pelvic fin. It shares the fin attachment area while retaining a distinct free shaft.",
+      "reference_animal": "Small-spotted catshark (Scyliorhinus canicula)",
+      "reference_query": "Ventral and oblique specimen views of adult male pelvic fins and claspers, with an anatomical view of the groove and folded opening.",
+      "model_scope": "One posterior pelvic-fin seat and an articulated grooved clasper.",
+      "local_fixture": "A pelvis coupon with matched support on the opposite side. Check folding beside the pelvic fin and free opening of the distal region."
+    },
+    {
+      "id": "modified_anal_ray_gonopodium",
+      "workstream": "aquatic_vertebrates",
+      "function": "Reproductive coupling",
+      "compare_to": [
+        "fin_median",
+        "fin_paired",
+        "tail_segmented"
+      ],
+      "gap": "Selected anal rays form a narrow hinged bundle that swings forward while adjacent fin tissue retains its own attachment. Small terminal hooks or folds should be represented where visible.",
+      "reference_animal": "Eastern mosquitofish (Gambusia holbrooki)",
+      "reference_query": "Adult male lateral and ventral views showing the modified anal-fin rays and the angle change in externalized poses, plus terminal anatomy macro.",
+      "model_scope": "An anal fin base, its modified articulated ray bundle, and simplified terminal details.",
+      "local_fixture": "A ventral strip with the pelvic fin edge as a clearance marker. Check resting and forward-rotated poses."
+    },
+    {
+      "id": "solid_axial_swim_paddle",
+      "workstream": "aquatic_vertebrates",
+      "function": "Lateral undulatory swimming",
+      "compare_to": [
+        "tail_flexible",
+        "salamander_axial_fin",
+        "fin_median"
+      ],
+      "gap": "The tail broadens within the continuous, flattened solid core, with broad flanks and a compressed trailing edge. Cross-section and taper must produce a load-bearing paddle without flanges split off from the core.",
+      "reference_animal": "Yellow-bellied sea snake (Hydrophis platurus)",
+      "reference_query": "Paired lateral and dorsal close-ups from precaudal taper through the tail tip in straight and curved swimming poses.",
+      "model_scope": "One distal axial paddle and a transition from the rounded rear trunk.",
+      "local_fixture": "A short proximal tail mount with two hinges and width markers. Check lateral bend and stable taper from both views."
+    },
+    {
+      "id": "paired_to_single_caudal_scute_crest",
+      "workstream": "aquatic_vertebrates",
+      "function": "Tail protection and outline",
+      "compare_to": [
+        "crest_dorsal",
+        "imbricated_scale_armor",
+        "salamander_axial_fin"
+      ],
+      "gap": "Paired raised dorsal scute rows transition into a single median scute row on the swimming tail. The geometry changes seating and count over one axial transition.",
+      "reference_animal": "Saltwater crocodile (Crocodylus porosus)",
+      "reference_query": "Dorsal and lateral views of the proximal-to-mid tail transition, with a curved swimming frame showing free scute margins.",
+      "model_scope": "A short dorsal caudal scute array through the two-to-one transition, with individual surface roots.",
+      "local_fixture": "A laterally bending oval tail coupon with adjoining row segments. Check the middle transition for gaps and clipping."
+    },
+    {
+      "id": "pedicled_ribbed_denticle_field",
+      "workstream": "aquatic_vertebrates",
+      "function": "Near-surface flow and abrasion resistance",
+      "compare_to": [
+        "imbricated_scale_armor",
+        "plate"
+      ],
+      "gap": "Each denticle rises on a buried pedicle to an exposed ribbed crown with a directed free margin. The continuous host skin remains visible between crowns at appropriate magnification.",
+      "reference_animal": "Shortfin mako (Isurus oxyrinchus)",
+      "reference_query": "Scale-bearing flank denticle micrographs from plan and side angles, plus a section showing the crown, neck and embedded base.",
+      "model_scope": "A flank microgeometry patch of repeatable denticles with two section profiles if supported by the images.",
+      "local_fixture": "Two gently curved skin coupons at macro scale. Check crown clearance, consistent direction and retained openings between bases."
+    },
+    {
+      "id": "opposed_toe_bundles",
+      "workstream": "reptiles_and_amphibians",
+      "function": "Branch grip",
+      "compare_to": [
+        "foot_grasping",
+        "talons"
+      ],
+      "gap": "Two opposing toe bundles act as broad grip faces with shared movement within each bundle.",
+      "reference_animal": "Veiled chameleon (Chamaeleo calyptratus)",
+      "reference_query": "Forefoot underside and side on a branch; record the two toe-bundle widths and their spread",
+      "model_scope": "One grasping foot with an opposing pair of fused-base toe bundles.",
+      "local_fixture": "Place on two branch diameters and check bundle closure and wrist rotation."
+    },
+    {
+      "id": "cervical_rib_hood",
+      "workstream": "reptiles_and_amphibians",
+      "function": "Defensive display",
+      "compare_to": [
+        "frill",
+        "reptile_rib_patagium"
+      ],
+      "gap": "Paired extending neck ribs spread an enclosing cervical hood alongside an elongated neck.",
+      "reference_animal": "Spectacled cobra (Naja naja)",
+      "reference_query": "Frontal and lateral views of the same animal with hood down and fully spread; locate the last supporting rib",
+      "model_scope": "One cervical hood panel assembly with paired ribs.",
+      "local_fixture": "Use a short flexible neck sleeve and check folded edge overlap and open clearance."
+    },
+    {
+      "id": "interlocking_caudal_rattle",
+      "workstream": "reptiles_and_amphibians",
+      "function": "Sound display",
+      "compare_to": [
+        "tail_segmented",
+        "tail_club"
+      ],
+      "gap": "Loose interlocking hollow segments hang from the tail tip with exposed gaps for limited independent movement.",
+      "reference_animal": "Western diamondback rattlesnake (Crotalus atrox)",
+      "reference_query": "Museum macro side and underside of an intact rattle and one naturally shed terminal segment",
+      "model_scope": "Rattle chain from its terminal tail seat with adjustable segment count.",
+      "local_fixture": "Use a short tail stump and check ring retention and visible clearance during a small tip oscillation."
+    },
+    {
+      "id": "spiny_tail_whorls",
+      "workstream": "reptiles_and_amphibians",
+      "function": "Tail protection",
+      "compare_to": [
+        "tail_segmented",
+        "tail_club",
+        "imbricated_scale_armor"
+      ],
+      "gap": "Repeated rigid spine-bearing rings wrap a flexible tail while keeping the underside and inter-ring bends open.",
+      "reference_animal": "Egyptian spiny-tailed lizard (Uromastyx aegyptia)",
+      "reference_query": "Dorsal, lateral and underside tail views with clear ring boundaries and a bent pose",
+      "model_scope": "One modular spine ring plus its repeated tail sleeve layout.",
+      "local_fixture": "Use a tapered two-joint tail segment and check neighboring rings at rest and bend."
+    },
+    {
+      "id": "flattened_leaf_tail",
+      "workstream": "reptiles_and_amphibians",
+      "function": "Crypsis",
+      "compare_to": [
+        "tail_flexible",
+        "salamander_axial_fin"
+      ],
+      "gap": "An asymmetric expanded tail forms a broad flattened leaf outline with irregular edge cutouts and almost no projecting axial ridge.",
+      "reference_animal": "Satanic leaf-tailed gecko (Uroplatus phantasticus)",
+      "reference_query": "Dorsal and side tail close-ups of an intact adult; note edge notches and root thickness",
+      "model_scope": "One flattened caudal blade rooted at a short stalk.",
+      "local_fixture": "Check two tail socket widths and that the notch silhouette survives moderate bend."
+    },
+    {
+      "id": "sand_fringe_digit",
+      "workstream": "reptiles_and_amphibians",
+      "function": "Loose sand traction",
+      "compare_to": [
+        "foot_webbed_long",
+        "claws"
+      ],
+      "gap": "Free lateral combs on individual toes increase contact width while the toe gaps stay open.",
+      "reference_animal": "Mojave fringe-toed lizard (Uma scoparia)",
+      "reference_query": "Underside and side view of hindfoot with splayed toes; distinguish separate fringe scales from webbing",
+      "model_scope": "One long toe with lateral fringe scale rows.",
+      "local_fixture": "Use a toe socket and ground plane to check loaded contact and neighboring toe clearance."
+    },
+    {
+      "id": "hinged_plastral_lobe",
+      "workstream": "reptiles_and_amphibians",
+      "function": "Shell closure",
+      "compare_to": [
+        "shell",
+        "nautilus_protective_hood"
+      ],
+      "gap": "An underside lobe rotates across a transverse plastral hinge and meets the edge of a fixed dorsal shell.",
+      "reference_animal": "Eastern box turtle (Terrapene carolina)",
+      "reference_query": "Ventral and side views with the anterior plastral lobe open and closed; locate the cross-shell hinge line",
+      "model_scope": "One anterior plastral door with its hinge seat.",
+      "local_fixture": "Use a short shell rim and plastron segment to check closed edge fit and hinge clearance."
+    },
+    {
+      "id": "flank_spike_fringe",
+      "workstream": "reptiles_and_amphibians",
+      "function": "Lateral defense",
+      "compare_to": [
+        "frill",
+        "horn_sweep",
+        "imbricated_scale_armor"
+      ],
+      "gap": "A narrow contour of short side-facing spikes follows the flank margin while leaving the dorsal armor and limb bases free.",
+      "reference_animal": "Texas horned lizard (Phrynosoma cornutum)",
+      "reference_query": "Low side and dorsal close-ups of exposed flank margin from forelimb to hindlimb",
+      "model_scope": "One tapered side strip with separately oriented spike roots.",
+      "local_fixture": "Use two curved flank patches and check spike clearance around forelimb and hindlimb cutouts."
+    },
+    {
+      "id": "ventral_traction_scute_row",
+      "workstream": "reptiles_and_amphibians",
+      "function": "Belly traction",
+      "compare_to": [
+        "imbricated_scale_armor",
+        "plate",
+        "tail_segmented"
+      ],
+      "gap": "Broad transverse belly scutes cover most of the contact width and overlap along the travel direction on an otherwise flexible body.",
+      "reference_animal": "Corn snake (Pantherophis guttatus)",
+      "reference_query": "Underside macro and side edge view of ventral scales during a bend; identify leading edges",
+      "model_scope": "Several repeatable transverse ventral scutes with a flexible carrier.",
+      "local_fixture": "Test flat contact and bend on two curved belly strips while preserving overlap direction."
+    },
+    {
+      "id": "raised_trunk_annuli",
+      "workstream": "reptiles_and_amphibians",
+      "function": "Burrowing body flexion",
+      "compare_to": [
+        "tail_segmented",
+        "imbricated_scale_armor"
+      ],
+      "gap": "Deep transverse skin furrows divide a continuous trunk into annuli without separate exposed hard plates.",
+      "reference_animal": "Iberian worm lizard (Blanus cinereus)",
+      "reference_query": "Scale-bearing side and ventral trunk macros, ideally straight and bent; note offset of grooves",
+      "model_scope": "Short body sleeve with raised annuli and continuous valleys.",
+      "local_fixture": "Test extension and bending on a tapered trunk sample with a solid interior surface."
+    },
+    {
+      "id": "dorsal_brood_cell_patch",
+      "workstream": "reptiles_and_amphibians",
+      "function": "Brood retention",
+      "compare_to": [
+        "plate",
+        "imbricated_scale_armor"
+      ],
+      "gap": "Individual recessed dorsal brood cells have soft raised rims lying in a continuous skin patch.",
+      "reference_animal": "Surinam toad (Pipa pipa)",
+      "reference_query": "Dorsal close-up of a female carrying young and comparable empty cells; record rim spacing",
+      "model_scope": "A reusable skin patch with rounded brood-cell recesses only.",
+      "local_fixture": "Use two dorsal curvatures and verify cell edges stay open without cutting through the host."
+    },
+    {
+      "id": "vascular_flank_filaments",
+      "workstream": "reptiles_and_amphibians",
+      "function": "External respiratory surface",
+      "compare_to": [
+        "paired_branchial_plumes",
+        "tentacle_fringe"
+      ],
+      "gap": "A dense skirt of simple filaments arises from the flank and hindlimb skin with distributed roots.",
+      "reference_animal": "Hairy frog (Trichobatrachus robustus)",
+      "reference_query": "Breeding adult male lateral and hindlimb macro, preserving local scale and filament root distribution",
+      "model_scope": "One small patch of coarse, tapered integumentary filaments.",
+      "local_fixture": "Use a hip or flank patch to verify coverage and avoid crossing the nearby leg joint."
+    },
+    {
+      "id": "passive_lateral_glide_fringe",
+      "workstream": "reptiles_and_amphibians",
+      "function": "Glide control",
+      "compare_to": [
+        "reptile_rib_patagium",
+        "frill"
+      ],
+      "gap": "A shallow passive skin sheet follows the flank and limb margins without an extended rib fan.",
+      "reference_animal": "Kuhl's flying gecko (Gekko kuhli)",
+      "reference_query": "Dorsal gliding pose and folded side specimen; identify where the lateral fringe ends at limbs",
+      "model_scope": "One flank membrane with proximal limb-edge attachment sites.",
+      "local_fixture": "Use a flank with one bent limb mount to check deployment and folding; reuse the patagium if its seat can reproduce this topology."
+    },
+    {
+      "id": "hindfoot_excavation_spade",
+      "workstream": "reptiles_and_amphibians",
+      "function": "Burrowing contact",
+      "compare_to": [
+        "claws",
+        "foot_hoof",
+        "paw_padded"
+      ],
+      "gap": "A hard cutting spade sits on the inner heel, leaving forward toes clear for traction.",
+      "reference_animal": "Eastern spadefoot (Scaphiopus holbrookii)",
+      "reference_query": "Hindfoot underside and side macro with identifiable metatarsal spade; include rearward excavation pose",
+      "model_scope": "One medial heel spade and adjoining heel seat.",
+      "local_fixture": "Fit it to a hindfoot base and check backwards substrate contact without crossing adjacent digits."
+    },
+    {
+      "id": "annular_suction_mouth",
+      "workstream": "heads_feeding_sensory",
+      "function": "Attachment and feeding",
+      "compare_to": [
+        "suckers",
+        "mouth_wide",
+        "jaws_toothed"
+      ],
+      "gap": "A complete annular lip carries concentric keratin tooth fields around a central oral opening, with separate marginal fimbriae along the attachment rim.",
+      "reference_animal": "Sea lamprey (Petromyzon marinus)",
+      "reference_query": "Adult oral disc straight on with teeth exposed, plus lateral views of the free and attached rim.",
+      "model_scope": "One annular oral disc with coarse tooth fields and the central opening.",
+      "local_fixture": "Ventral snout ring against flat and curved contact plates. Check that the lip seats continuously and that the oral opening and tooth fields stay inside the seal."
+    },
+    {
+      "id": "lateral_headfoil_sensor_seats",
+      "workstream": "heads_feeding_sensory",
+      "function": "Wide baseline vision and chemoreception",
+      "compare_to": [
+        "ray_cephalic_lobes",
+        "eye_camera",
+        "nostril_slit"
+      ],
+      "gap": "A continuous flattened head crossbar blends into the cranium and houses eyes at both distal ends and olfactory openings along its leading edge.",
+      "reference_animal": "Scalloped hammerhead (Sphyrna lewini)",
+      "reference_query": "Dorsal, forward and ventral head views of an adult, showing distal eye sockets, nare grooves and medial cranium transition.",
+      "model_scope": "One transverse head extension with bilateral eye and nare seats.",
+      "local_fixture": "Short rostral skull block with separate eye and nare proxies. Check symmetry, front edge sweep and exposed optical axes."
+    },
+    {
+      "id": "valved_dorsal_spiracle",
+      "workstream": "heads_feeding_sensory",
+      "function": "Water intake for respiration",
+      "compare_to": [
+        "gill_slits",
+        "nostril_slit",
+        "paired_branchial_plumes"
+      ],
+      "gap": "A dorsal intake aperture sits just behind the eye and uses a recessed flap to open or seal the passage.",
+      "reference_animal": "Little skate (Leucoraja erinacea)",
+      "reference_query": "Dorsal and grazing side close-ups of the eye and spiracle during an intake cycle, with a sectional view of the valve root if available.",
+      "model_scope": "One spiracle with the rim, short passage and moving intake flap.",
+      "local_fixture": "Dorsal eye and head patch with a guide volume inside the passage. Check open area, closed seating and eye clearance."
+    },
+    {
+      "id": "oral_jet_nozzle",
+      "workstream": "heads_feeding_sensory",
+      "function": "Directed prey capture with a water jet",
+      "compare_to": [
+        "tongue",
+        "mouth_wide",
+        "seahorse_suction_snout"
+      ],
+      "gap": "The tongue seats against a palatal channel and closes the sides of a short jet outlet that terminates at the mouth opening.",
+      "reference_animal": "Banded archerfish (Toxotes jaculatrix)",
+      "reference_query": "Palatal dissection from below, tongue from above, and lateral high-speed frames immediately before and during jet release.",
+      "model_scope": "Palatal channel, opposing tongue seat and the terminal lip opening.",
+      "local_fixture": "A jaw hinge and matching palate patch. Check near-closure along both channel edges, the anterior exit and available gape."
+    },
+    {
+      "id": "ventral_protrusible_suction_mouth",
+      "workstream": "heads_feeding_sensory",
+      "function": "Benthic suction feeding",
+      "compare_to": [
+        "seahorse_suction_snout",
+        "mouth_trunk",
+        "mouth_wide"
+      ],
+      "gap": "A ventral, initially tucked mouth emerges below the rostrum on a short protrusible linkage with a flexible collar and a downward-facing lip opening.",
+      "reference_animal": "White sturgeon (Acipenser transmontanus)",
+      "reference_query": "Side and underside views of the same head in tucked and protruded feeding poses, with a mouth linkage diagram showing travel direction.",
+      "model_scope": "The ventral lip ring, its collar and simplified protrusion carriers.",
+      "local_fixture": "Ventral rostrum patch with a clearance floor. Check that the collar folds at rest and that the projecting rim reaches and faces the substrate."
+    },
+    {
+      "id": "waterline_split_eye",
+      "workstream": "heads_feeding_sensory",
+      "function": "Simultaneous aerial and aquatic vision",
+      "compare_to": [
+        "eye_camera",
+        "eye_stalked"
+      ],
+      "gap": "A single eye presents two separate pupil openings and air-facing and water-facing optical zones within one globe, registered to the habitual surface line.",
+      "reference_animal": "Largescale four-eyes (Anableps anableps)",
+      "reference_query": "Macro side view of a level swimming adult eye at the waterline, frontal view of the two pupil openings and an optical-axis section.",
+      "model_scope": "One dual-aperture eye and its globe surface. Use neutral clay geometry for the surface and sectional evidence for hidden optics.",
+      "local_fixture": "Dorsolateral orbital socket with a waterline proxy. Check the aperture separator remains at the surface in a level swimming pose."
+    },
+    {
+      "id": "radial_crushing_tooth_plates",
+      "workstream": "heads_feeding_sensory",
+      "function": "Crushing hard prey",
+      "compare_to": [
+        "jaws_toothed",
+        "echinoid_oral_teeth"
+      ],
+      "gap": "Broad opposing mineralized tooth plates radiate from medial roots as connected ridges with valleys between them and meet across a crushing face.",
+      "reference_animal": "Australian lungfish (Neoceratodus forsteri)",
+      "reference_query": "Occlusal upper and lower plate photographs from the same adult plus a lateral section or articulated specimen showing engagement.",
+      "model_scope": "One pair of upper and lower crushing plates on one side, with linked radial ridges.",
+      "local_fixture": "A hinged jaw pair with palate and mandibular bases. Check opposing ridge registration and clearance as contact approaches."
+    },
+    {
+      "id": "intracranial_jaw_hinge",
+      "workstream": "heads_feeding_sensory",
+      "function": "Gape expansion during suction feeding",
+      "compare_to": [
+        "jaws_toothed",
+        "seahorse_suction_snout"
+      ],
+      "gap": "The anterior upper skull segment rocks relative to the posterior braincase around a second joint above the mandibular hinge, exposing a split across the roof.",
+      "reference_animal": "West Indian Ocean coelacanth (Latimeria chalumnae)",
+      "reference_query": "Side views of intact and CT-segmented adult skulls with the intracranial joint and lower jaw pivot identified, plus low and high gape poses when available.",
+      "model_scope": "Anterior cranial segment, its joint seat and adjacent roof seam.",
+      "local_fixture": "Posterior braincase block and lower jaw hinge. Sweep small upper rotations and verify roof-edge contact at rest and gape clearance."
+    },
+    {
+      "id": "crossed_bill_tips",
+      "workstream": "heads_feeding_sensory",
+      "function": "Prying open cone scales",
+      "compare_to": [
+        "beak_hooked",
+        "hand_pincer"
+      ],
+      "gap": "Upper and lower bill tips curve laterally past one another and create a crossing tip contact that changes under off-axis jaw motion.",
+      "reference_animal": "Red crossbill (Loxia curvirostra)",
+      "reference_query": "Frontal, dorsal and side close-ups of the same adult bill closed and levering a cone scale. Identify which tip crosses left.",
+      "model_scope": "Opposing bill tips with uninterrupted seats into the basal bill and lateral contact faces.",
+      "local_fixture": "Jaw hinge with limited lateral deflection and a wedge proxy. Check crossed clearance and a supported levering contact without tip collision."
+    },
+    {
+      "id": "immersed_lower_bill_blade",
+      "workstream": "heads_feeding_sensory",
+      "function": "Surface skimming prey capture",
+      "compare_to": [
+        "beak_hooked",
+        "jaws_toothed"
+      ],
+      "gap": "The laterally compressed lower blade extends well ahead of the upper bill and presents a long submerged cutting edge during a shallow open gape.",
+      "reference_animal": "Black skimmer (Rynchops niger)",
+      "reference_query": "Side and frontal adult head close-ups at rest and low-angle views of active skimming with a visible waterline.",
+      "model_scope": "Opposing bill shells including the elongated lower blade and its narrow cross section.",
+      "local_fixture": "A jaw pivot above a plane. Check that the lower blade enters the plane while the upper bill clears it in the working pose."
+    },
+    {
+      "id": "distal_bill_flexure",
+      "workstream": "heads_feeding_sensory",
+      "function": "Probing and tip pickup",
+      "compare_to": [
+        "beak_hooked",
+        "jaws_toothed"
+      ],
+      "gap": "A long upper bill bends in its distal region and opens a local tip gape while the narrow basal bill stays nearly closed.",
+      "reference_animal": "Common snipe (Gallinago gallinago)",
+      "reference_query": "Side macro sequence with closed and flexed distal bill during probing, plus dorsal view and a bill skeletal side image.",
+      "model_scope": "Upper bill with a local flex zone and opposing lower tip.",
+      "local_fixture": "Rigid basal bill and lower jaw on a probe channel. Measure local tip opening, heel alignment and substrate channel clearance."
+    },
+    {
+      "id": "deployable_feather_crown",
+      "workstream": "heads_feeding_sensory",
+      "function": "Threat and social display",
+      "compare_to": [
+        "mane",
+        "wing_feathered",
+        "crest_dorsal"
+      ],
+      "gap": "A row of independently seated long crown feathers changes from a nested, rear-folded stack to an elevated curved fan, preserving overlap around the skull.",
+      "reference_animal": "Sulphur-crested cockatoo (Cacatua galerita)",
+      "reference_query": "Side, front and top crops of the same adult with crest fully folded, half raised and erect. Show all visible crown feather roots.",
+      "model_scope": "One dorsal crown row with visible primary crest feathers and local root pivots.",
+      "local_fixture": "Skull crown patch with short cover feathers. Check overlap in both extreme poses and clearance over the forehead."
+    },
+    {
+      "id": "paired_nectar_trapping_tongue",
+      "workstream": "heads_feeding_sensory",
+      "function": "Nectar extraction",
+      "compare_to": [
+        "tongue",
+        "seahorse_suction_snout"
+      ],
+      "gap": "Two elongated tongue grooves terminate in compliant edges and fringed tips that open in liquid and close through withdrawal.",
+      "reference_animal": "Ruby-throated hummingbird (Archilochus colubris)",
+      "reference_query": "High-speed macro views of extended tongue from side and across the tips before immersion and on withdrawal, with tip sections.",
+      "model_scope": "A short distal tongue module with paired open grooves, compliant margins and coarse fringes.",
+      "local_fixture": "Slender bill-tip channel and a transparent liquid-surface proxy. Check both groove margins and retraction through the bill."
+    },
+    {
+      "id": "radial_acoustic_face_disc",
+      "workstream": "heads_feeding_sensory",
+      "function": "Directional hearing",
+      "compare_to": [
+        "ear_pinna",
+        "mane"
+      ],
+      "gap": "Shallow radial facial feather walls shape a broad acoustic funnel around the eyes and lead into recessed lateral ear entrances behind the ruff.",
+      "reference_animal": "Barn owl (Tyto alba)",
+      "reference_query": "Symmetric front and three-quarter adult face crops, plus lateral specimen view with ruff moved aside to expose recess and ear position.",
+      "model_scope": "One mirrored facial-disc hem with radial feather structure, raised perimeter segment and ear recess boundary.",
+      "local_fixture": "Orbital and cheek fixture with a recessed ear opening. Check facial edge continuity, ear access and clearance around the eye."
+    },
+    {
+      "id": "paired_dorsal_nasal_tubes",
+      "workstream": "heads_feeding_sensory",
+      "function": "Olfactory airflow",
+      "compare_to": [
+        "nostril_slit",
+        "beak_hooked",
+        "siphon"
+      ],
+      "gap": "Two forward-facing nasal passages sit side by side in a common raised dorsal bill housing, with a visible central partition and continuous base seam.",
+      "reference_animal": "Northern fulmar (Fulmarus glacialis)",
+      "reference_query": "Adult bill macro from forward, above and low side showing both open tube mouths, partition and bill saddle.",
+      "model_scope": "One dorsal double-barrel nasal housing and its basal saddle.",
+      "local_fixture": "Upper bill patch with two short airway proxies. Check partition thickness, parallel airway entrances and edge contact across taper."
+    },
+    {
+      "id": "bill_supported_hollow_casque",
+      "workstream": "heads_feeding_sensory",
+      "function": "Cranial display",
+      "compare_to": [
+        "seahorse_coronet",
+        "supraorbital_ridge",
+        "beak_hooked"
+      ],
+      "gap": "A roofed suprabill shell spans from forehead to proximal bill and joins the bill along a broad saddle, with a free raised edge and internal cavity.",
+      "reference_animal": "Great hornbill (Buceros bicornis)",
+      "reference_query": "Adult lateral, frontal and top intact profiles, plus specimen CT or section identifying basal contact, shell walls and cavity.",
+      "model_scope": "One dorsal casque shell with basal border and cavity.",
+      "local_fixture": "A forehead and upper bill saddle joined by a short facial patch. Verify the broad seat, free lip clearance and cavity wall thickness."
+    },
+    {
+      "id": "paired_cervical_display_sacs",
+      "workstream": "heads_feeding_sensory",
+      "function": "Inflated courtship display",
+      "compare_to": [
+        "vocal_sac",
+        "dewlap",
+        "frill"
+      ],
+      "gap": "Two anterior cervical membranes bulge through separate openings of a feathered collar, exposing a shared center divider and changing the display silhouette together.",
+      "reference_animal": "Greater sage-grouse (Centrocercus urophasianus)",
+      "reference_query": "Frontal and side close-ups of an adult male at rest and peak inflation, with the paired openings and center feather strip visible.",
+      "model_scope": "Two exposed sac membranes and their local collar opening boundaries.",
+      "local_fixture": "Upper throat and neck patch with a rigid center feather strip. Check flush seating at rest and synchronized expansion through separate apertures."
+    },
+    {
+      "id": "suspended_thermal_pit",
+      "workstream": "heads_feeding_sensory",
+      "function": "Infrared sensing",
+      "compare_to": [
+        "nostril_slit",
+        "tympanum",
+        "eye_camera"
+      ],
+      "gap": "A loreal cavity opens behind and below the nostril with a suspended sensory membrane separating internal chambers.",
+      "reference_animal": "Western diamondback rattlesnake (Crotalus atrox)",
+      "reference_query": "Macro oblique side view including eye and nostril to locate the pit, plus an anatomical section tracing membrane rim and chambers.",
+      "model_scope": "One pit aperture, its rim, chamber walls and membrane.",
+      "local_fixture": "Loreal cheek patch with eye and nare markers. Check distinct inferred landmarks, continuous membrane seat and chamber separation."
+    },
+    {
+      "id": "rotating_ocular_turret",
+      "workstream": "heads_feeding_sensory",
+      "function": "Independent wide-angle vision",
+      "compare_to": [
+        "eye_camera",
+        "eye_stalked",
+        "supraorbital_ridge"
+      ],
+      "gap": "A conical skin enclosure moves with most of the globe and leaves a small front aperture while the rounded base stays seated in the skull.",
+      "reference_animal": "Veiled chameleon (Chamaeleo calyptratus)",
+      "reference_query": "Close-up front and side views of the same adult eye in forward, lateral and elevated gaze, with a neutral head pose.",
+      "model_scope": "One moving cutaneous turret with pupil aperture, globe proxy and basal collar.",
+      "local_fixture": "Spherical orbit seat and brow patch. Sweep gaze and check aperture-to-globe alignment and continuous collar seating."
+    },
+    {
+      "id": "gular_palatal_seal",
+      "workstream": "heads_feeding_sensory",
+      "function": "Keeping water out of the throat during open-jaw submersion",
+      "compare_to": [
+        "mouth_wide",
+        "jaws_toothed",
+        "dewlap"
+      ],
+      "gap": "Opposing soft folds at the rear palate and tongue base form a seal across the pharynx while the front of the mouth can remain open.",
+      "reference_animal": "American alligator (Alligator mississippiensis)",
+      "reference_query": "Sagittal anatomy of the oral valve, rear-mouth photographs, and closed-valve views with a visibly open jaw where available.",
+      "model_scope": "One opposing dorsal and ventral valve pair around the rear mouth.",
+      "local_fixture": "Short palate, tongue bed and hinged jaw with pharynx opening. Check fold contact across the opening in submerged poses and passage clearance in the released pose."
+    },
+    {
+      "id": "paired_mobile_mandibular_rami",
+      "workstream": "heads_feeding_sensory",
+      "function": "Swallowing large prey",
+      "compare_to": [
+        "jaws_toothed",
+        "mouth_wide",
+        "dolphin_gape"
+      ],
+      "gap": "Left and right lower jaw rami have independent posterior articulation and a compliant midline connection that widens as either ramus advances.",
+      "reference_animal": "Ball python (Python regius)",
+      "reference_query": "Ventral and lateral skull views identifying both joints and mandibular tips, plus front or underside sequence of unilateral advance during swallowing.",
+      "model_scope": "Paired mandibular rami, anterior connective bridge and local joint seats.",
+      "local_fixture": "Rear skull block with bilateral carriers and a blunt prey proxy. Exercise independent movement and check bridge stretch, contact and gap."
+    },
+    {
+      "id": "retractile_chemosensory_tentacle",
+      "workstream": "heads_feeding_sensory",
+      "function": "Chemical sampling",
+      "compare_to": [
+        "whiskers",
+        "tentacle_fringe",
+        "nostril_slit"
+      ],
+      "gap": "A short sensory tentacle extends and retracts into a defined facial canal between the eye region and nostril, leaving a slit-shaped remnant at rest.",
+      "reference_animal": "Ringed caecilian (Siphonops annulatus)",
+      "reference_query": "Straight lateral and front three-quarter snout macros showing the tentacle opening, with protruded and retracted poses and a canal section.",
+      "model_scope": "One sensory tentacle, short canal lining and facial aperture.",
+      "local_fixture": "Snout patch with orbit and nare markers. Verify the rest pose seats close to the surface and the protruded tentacle clears adjacent structures."
+    },
+    {
+      "id": "tadpole_scraping_oral_disc",
+      "workstream": "heads_feeding_sensory",
+      "function": "Substrate grazing",
+      "compare_to": [
+        "suckers",
+        "mouth_wide",
+        "jaws_toothed"
+      ],
+      "gap": "A ventral disc carries successive transverse rows of small labial teeth and paired upper and lower keratin jaw sheaths inside marginal papillae.",
+      "reference_animal": "American bullfrog (Lithobates catesbeianus), premetamorphic larva",
+      "reference_query": "Ventral specimen macro of an intact oral disc with tooth rows resolved, plus grazing side view at a flat surface and a note of larval stage.",
+      "model_scope": "One complete oral disc with coarse tooth rows, sheaths and peripheral papillae.",
+      "local_fixture": "Short larval snout surface and flat feeding plane. Check scraper access, margin contact and opening between the two sheaths."
+    },
+    {
+      "id": "projectile_tongue_skeleton",
+      "workstream": "heads_feeding_sensory",
+      "function": "Long-range adhesive prey capture",
+      "compare_to": [
+        "tongue",
+        "odonate_prehensile_labium"
+      ],
+      "gap": "An internal tongue skeleton is carried out into a projected stalk ending in an expanded adhesive pad; a distinct oral storage section accommodates the retracted assembly.",
+      "reference_animal": "Ensatina (Ensatina eschscholtzii)",
+      "reference_query": "High-speed lateral frames at rest, peak projection and withdrawal, plus a sectional or cleared specimen view of the extended skeletal supports.",
+      "model_scope": "Tongue pad, projection stalk and simplified internal skeletal supports.",
+      "local_fixture": "Short jaw and oral pocket with a guide near the floor. Check pad clearance through the mouth and seat recovery in withdrawal."
+    },
+    {
+      "id": "swallowing_orbit_plunger",
+      "workstream": "heads_feeding_sensory",
+      "function": "Manipulating prey during swallowing",
+      "compare_to": [
+        "eye_camera",
+        "mouth_wide",
+        "tympanum"
+      ],
+      "gap": "The eye descends into an orbital opening and deforms the roof of the mouth as a broad contact surface during swallowing.",
+      "reference_animal": "Northern leopard frog (Lithobates pipiens)",
+      "reference_query": "Simultaneous head-side and underside oral or X-ray recording of eyes at rest and withdrawn with a prey bolus, plus a sagittal section.",
+      "model_scope": "One mobile orbit insert with a globe proxy and compliant palate-facing membrane.",
+      "local_fixture": "Orbit and palate patch with a soft bolus proxy. Verify retracted eye travel presses on the palate-facing layer without breaking its perimeter."
+    },
+    {
+      "id": "gape_interlocking_mandibular_tusks",
+      "workstream": "heads_feeding_sensory",
+      "function": "Intraspecific display and contact",
+      "compare_to": [
+        "horn_tusk",
+        "dolphin_gape",
+        "jaws_toothed"
+      ],
+      "gap": "A flattened mandibular tooth rises outside the upper jaw and then curls along its rostrum, imposing a narrow limit on the closed-to-open gape.",
+      "reference_animal": "Strap-toothed beaked whale (Mesoplodon layardii), adult male",
+      "reference_query": "Lateral, front and dorsal photographs of an adult male skull with erupted teeth and mandible seated; include a limited-open-gape specimen if available.",
+      "model_scope": "One bilateral pair of rooted strap-shaped teeth and their mandible interfaces.",
+      "local_fixture": "Short mandibular mount and upper rostrum with a hinge. Check medial passage around the rostrum and usable opening before impingement."
+    },
+    {
+      "id": "erectile_nectar_brush_tongue",
+      "workstream": "heads_feeding_sensory",
+      "function": "Nectar uptake and retention",
+      "compare_to": [
+        "tongue",
+        "tentacle_fringe"
+      ],
+      "gap": "A distal brush consists of many rows of coarse papillae that lie back in the retracted pose and stand off the tongue during nectar collection.",
+      "reference_animal": "Pallas's long-tongued bat (Glossophaga soricina)",
+      "reference_query": "Tip macro before and during immersion, with lateral high-speed contact frames and top view of papilla distribution.",
+      "model_scope": "One distal tongue segment with papilla rows and lay-flat and extended poses.",
+      "local_fixture": "Mouth-tip guide and liquid-surface proxy. Check papilla clearance during withdrawal and expanded brush reach."
+    },
+    {
+      "id": "nasal_tactile_rosette",
+      "workstream": "heads_feeding_sensory",
+      "function": "Tactile food search",
+      "compare_to": [
+        "nose_pad",
+        "whiskers",
+        "tentacle_fringe"
+      ],
+      "gap": "Individually rooted fleshy rays form an annulus around two nostrils, with shorter central ray pairs forming a distinct forward sampling region.",
+      "reference_animal": "Star-nosed mole (Condylura cristata)",
+      "reference_query": "Adult frontal view resolving all rays and both nostrils, side view in a neutral pose and grazing view during substrate contact.",
+      "model_scope": "One full nasal rosette with paired ray roots and a two-aperture hub.",
+      "local_fixture": "Short snout block and a contact plane. Check ray order, root overlap, and room for central rays to contact while leaving nostrils open."
+    },
+    {
+      "id": "pendulous_nasal_vestibule",
+      "workstream": "heads_feeding_sensory",
+      "function": "Warming and filtering inhaled air",
+      "compare_to": [
+        "nose_pad",
+        "nostril_slit",
+        "muzzle"
+      ],
+      "gap": "A deep pendulous nasal vestibule overhangs the upper mouth and supports two separately rimmed, anteroventral airway entries around a central slope.",
+      "reference_animal": "Saiga antelope (Saiga tatarica)",
+      "reference_query": "Adult lateral, forward and underside muzzle crops with both nostril rims visible, plus sagittal section of the folded vestibule if available.",
+      "model_scope": "One soft nasal exterior with paired rimmed passages and short internal extensions.",
+      "local_fixture": "Upper muzzle patch with lip and nare duct proxies. Check breathing passage continuity, overhang and clearance through lip opening."
+    },
+    {
+      "id": "externally_opening_cheek_pouch",
+      "workstream": "heads_feeding_sensory",
+      "function": "Collecting and carrying food",
+      "compare_to": [
+        "pelican_expandable_buccal_pouch",
+        "mouth_wide"
+      ],
+      "gap": "An external cheek slit leads into a blind, fur-lined pouch beside the mouth, forming a localized pocket with its own intake and independent fill volume.",
+      "reference_animal": "Plains pocket gopher (Geomys bursarius)",
+      "reference_query": "Adult front and side muzzle crops plus specimen section or everted pouch showing the separate external entrance and closed end.",
+      "model_scope": "One cheek pouch and its external lip, with empty and filled forms.",
+      "local_fixture": "Muzzle patch with oral corner marker and small seed proxies. Check independent entry and clearance of the filled pocket against the jaw."
+    },
+    {
+      "id": "interdigitating_sieve_teeth",
+      "workstream": "heads_feeding_sensory",
+      "function": "Retaining small prey while draining water",
+      "compare_to": [
+        "jaws_toothed",
+        "racked_baleen_plates"
+      ],
+      "gap": "Deep lobes and narrow gaps in the opposing postcanine rows interdigitate to leave a repeatable draining passage when the mouth is almost closed.",
+      "reference_animal": "Crabeater seal (Lobodon carcinophaga)",
+      "reference_query": "Articulated skull lateral and occlusal dentition macros plus a view through the near-closed tooth rows to expose gap pattern.",
+      "model_scope": "One upper and lower postcanine segment with coarse interlocking cusps.",
+      "local_fixture": "A small jaw hinge with matching alveolar strips. Sweep near closure and check for unblocked connecting gaps and cusp collision."
+    },
+    {
+      "id": "postincisor_oral_seal",
+      "workstream": "heads_feeding_sensory",
+      "function": "Excavation with the incisors",
+      "compare_to": [
+        "jaws_toothed",
+        "mouth_wide",
+        "muzzle"
+      ],
+      "gap": "Facial lip folds meet behind externally exposed incisors, allowing the teeth to protrude and contact substrate while the oral entrance seals behind them.",
+      "reference_animal": "Naked mole-rat (Heterocephalus glaber)",
+      "reference_query": "Adult front and side macro at rest and while incisor digging; underside or dissected view of the lip border behind the tooth roots.",
+      "model_scope": "Paired upper and lower lip seals and visible incisor seat proxies.",
+      "local_fixture": "Front muzzle and jaw hinge with a substrate proxy. Check the posterior lip seam closes independently of exposed incisor movement."
+    },
+    {
+      "id": "coiling_siphoning_proboscis",
+      "workstream": "arthropods",
+      "function": "Liquid feeding",
+      "compare_to": [
+        "antenna_segmented",
+        "mouth_trunk"
+      ],
+      "gap": "The paired galeae join into one flexible conduit that stores in a compact planar coil and straightens from its facial seat.",
+      "reference_animal": "Monarch butterfly (Danaus plexippus)",
+      "reference_query": "Lateral macro of the resting coil and extended feeding pose, plus anterior head crop showing the two galeal bases.",
+      "model_scope": "One joined flexible tube, its visible seam and paired proximal roots.",
+      "local_fixture": "Reuse a head-front patch with labial palp proxies. Check coil nesting and clearance as it unrolls toward a flat feeding surface."
+    },
+    {
+      "id": "paired_labellar_sponge",
+      "workstream": "arthropods",
+      "function": "Liquid uptake",
+      "compare_to": [
+        "mouth_trunk",
+        "mouth_palps"
+      ],
+      "gap": "Two broad terminal lobes spread side by side from a hinged proboscis and present a channelled contact face to the substrate.",
+      "reference_animal": "Housefly (Musca domestica)",
+      "reference_query": "Underside macro of spread labella and side macro of folded and applied poses, with the terminal hinge visible.",
+      "model_scope": "Paired labellar pads, coarse channel relief and the distal proboscis joint.",
+      "local_fixture": "Reuse a short proboscis tip and a flat plate. Check pad closure, spread and contact with the plate."
+    },
+    {
+      "id": "folding_rostral_sheath",
+      "workstream": "arthropods",
+      "function": "Sap feeding",
+      "compare_to": [
+        "mouth_trunk",
+        "mouth_palps",
+        "odonate_prehensile_labium"
+      ],
+      "gap": "A narrow multi-jointed labium folds back under the head and bends at its distal joints against the feeding surface, with a visible longitudinal groove.",
+      "reference_animal": "Brown marmorated stink bug (Halyomorpha halys)",
+      "reference_query": "Ventral macro of rostrum resting between the forelegs and side macro of feeding from a stem, with the head root visible.",
+      "model_scope": "External labial sheath, hinge seams and visible groove.",
+      "local_fixture": "Reuse a ventral head and thorax saddle with forecoxa proxies. Check fitted storage and articulation against a curved stem."
+    },
+    {
+      "id": "opposed_spined_foreleg",
+      "workstream": "arthropods",
+      "function": "Prey grasping",
+      "compare_to": [
+        "leg_arthropod",
+        "stomatopod_hammer_limb",
+        "arm_grasping"
+      ],
+      "gap": "A broadened spined femur and hinged spined tibia fold into an opposed clamp, carried on an elongated coxa.",
+      "reference_animal": "European mantis (Mantis religiosa)",
+      "reference_query": "Medial and lateral macros of a foreleg in folded and extended poses, showing spine rows, coxa and tibiofemoral hinge.",
+      "model_scope": "One foreleg from coxa through tarsal junction and the coarse opposed spine rows.",
+      "local_fixture": "Reuse a thorax forecoxa socket. Sweep tibial flexion and check spine interleaving and folded clearance."
+    },
+    {
+      "id": "fossorial_tibial_shovel",
+      "workstream": "arthropods",
+      "function": "Excavation",
+      "compare_to": [
+        "leg_arthropod",
+        "claws"
+      ],
+      "gap": "A broad toothed tibial shovel seats beside a small articulated tarsus, creating a rigid soil-contact edge proximal to the foot.",
+      "reference_animal": "European mole cricket (Gryllotalpa gryllotalpa)",
+      "reference_query": "Outer and inner foreleg macros with foreshortening minimized and side view of the digging stroke showing tibia and tarsal root.",
+      "model_scope": "One distal foreleg with shovel teeth, tarsal root and tarsus.",
+      "local_fixture": "Reuse a femoral hinge mount and a substrate plane. Check shovel pitch and tarsal clearance through a backward sweep."
+    },
+    {
+      "id": "split_waterline_compound_eye",
+      "workstream": "arthropods",
+      "function": "Aerial and submerged vision",
+      "compare_to": [
+        "eye_compound",
+        "eye_stalked"
+      ],
+      "gap": "Two externally separate compound-eye lobes occupy upper and lower surfaces of one lateral head seat, with a continuous intervening rim at the waterline.",
+      "reference_animal": "Whirligig beetle (Gyrinus substriatus)",
+      "reference_query": "Level lateral view at the waterline and paired dorsal and ventrolateral macros of one eye pair and its separating cuticle.",
+      "model_scope": "One dorsal and ventral lobe pair with the separating rim and shared saddle.",
+      "local_fixture": "Reuse a lateral head patch and a waterline plane. Check lobe placement and sightline clearance above and below."
+    },
+    {
+      "id": "rigid_eyestalk_antenna_crown",
+      "workstream": "arthropods",
+      "function": "Lateral sensory placement",
+      "compare_to": [
+        "eye_stalked",
+        "eye_compound",
+        "antenna_segmented"
+      ],
+      "gap": "A continuous rigid head projection carries both the terminal compound eye and an adjacent antennal socket on its distal expansion.",
+      "reference_animal": "Stalk-eyed fly (Teleopsis dalmanni)",
+      "reference_query": "Frontal macro across both crowns and posterolateral close-up of one stalk tip showing eye, antenna and the unjointed head root.",
+      "model_scope": "One rigid lateral head projection with terminal eye inset and an antennal socket.",
+      "local_fixture": "Reuse a head capsule patch and a short antenna stub. Check distal eye exposure and antennal socket clearance at different stalk lengths."
+    },
+    {
+      "id": "radially_folding_hindwing",
+      "workstream": "arthropods",
+      "function": "Compact flight-wing storage",
+      "compare_to": [
+        "wing_membrane_insect",
+        "elytron"
+      ],
+      "gap": "A ribbed wing fan collapses across radial and transverse fold lines into a short package behind its root.",
+      "reference_animal": "European earwig (Forficula auricularia)",
+      "reference_query": "Dorsal views of fully spread and packed hindwing, plus staged partial folds showing crease crossings and short forewing cover.",
+      "model_scope": "One fan membrane with coarse crease network, root and folded package.",
+      "local_fixture": "Reuse a hindwing hinge and forewing covers. Check the fan during folding and packed clearance under the covers."
+    },
+    {
+      "id": "clubbed_halter_balance_organ",
+      "workstream": "arthropods",
+      "function": "Flight sensing",
+      "compare_to": [
+        "wing_membrane_insect",
+        "antenna_segmented"
+      ],
+      "gap": "A short narrow stalk with a terminal club oscillates at a small basal joint behind the flight wing.",
+      "reference_animal": "Housefly (Musca domestica)",
+      "reference_query": "Lateral and ventrolateral thorax macro beneath raised wing, with sequential frames or a diagram of haltere resting and swept positions.",
+      "model_scope": "One stalk, terminal knob and basal bulb with its local hinge.",
+      "local_fixture": "Reuse a thorax patch with forewing root and calypter proxies. Sweep the club and check nearby clearances."
+    },
+    {
+      "id": "stiff_to_membranous_forewing",
+      "workstream": "arthropods",
+      "function": "Flight and dorsal coverage",
+      "compare_to": [
+        "elytron",
+        "wing_membrane_insect"
+      ],
+      "gap": "A thickened basal forewing plate continues into a thin distal membrane with a visible transition and overlapping distal tips.",
+      "reference_animal": "Brown marmorated stink bug (Halyomorpha halys)",
+      "reference_query": "Orthographic dorsal macro of closed forewings and inside view of one spread forewing showing the corium-to-membrane boundary.",
+      "model_scope": "One continuous forewing with thickened base, thin tip and overlap margin.",
+      "local_fixture": "Reuse paired thoracic hinges and dorsal abdomen arc. Check tip overlap and edge clearance when opening."
+    },
+    {
+      "id": "overlapping_acoustic_tegmina",
+      "workstream": "arthropods",
+      "function": "Sound production",
+      "compare_to": [
+        "elytron",
+        "wing_membrane_insect",
+        "tympanum"
+      ],
+      "gap": "Overlapping dorsal wings put a raised scraper opposite an underside file alongside an expanded resonating wing panel.",
+      "reference_animal": "Field cricket (Gryllus campestris)",
+      "reference_query": "Dorsal macro in rest and calling poses, plus an isolated underside view resolving the file, scraper and harp panel.",
+      "model_scope": "Two local tegmen regions with coarse raised contact features and nearby panel relief.",
+      "local_fixture": "Reuse paired forewing root mounts. Check file-to-scraper contact during a short wing sweep and clearance at rest."
+    },
+    {
+      "id": "folding_fringe_swimming_oar",
+      "workstream": "arthropods",
+      "function": "Swimming propulsion",
+      "compare_to": [
+        "leg_arthropod",
+        "crustacean_swimmerets",
+        "foot_webbed_long"
+      ],
+      "gap": "An elongated flattened tibia and tarsus bear a directional fringe that spreads into a blade and collapses along the leg for recovery.",
+      "reference_animal": "Lesser water boatman (Sigara striata)",
+      "reference_query": "Rear and lateral submerged macro of the hindleg on power and recovery strokes, showing blade profile and fringe direction.",
+      "model_scope": "One distal hindleg with coarse deployable fringe, its base and tarsal joint.",
+      "local_fixture": "Reuse an aquatic hindleg hinge and swept envelopes for body and opposite leg. Check folded and spread fringe clearance."
+    },
+    {
+      "id": "suction_disc_tarsal_palette",
+      "workstream": "arthropods",
+      "function": "Temporary attachment",
+      "compare_to": [
+        "suckers",
+        "leg_arthropod",
+        "anuran_terminal_adhesive_pads"
+      ],
+      "gap": "A broad flattened basal tarsal palette carries numerous stalked discs of visibly different sizes on its underside.",
+      "reference_animal": "Great diving beetle (Dytiscus marginalis)",
+      "reference_query": "Ventral macro of an adult male fore tarsus showing the major discs and smaller field, with a side view of disc stems and the tarsal hinge.",
+      "model_scope": "One fore tarsal palette and a coarse field of major and minor suction discs.",
+      "local_fixture": "Reuse a distal leg mount and a curved contact target. Check palette tilt and disc contact without forcing adjacent leg segments through the target."
+    },
+    {
+      "id": "tibial_basket_pollen_press",
+      "workstream": "arthropods",
+      "function": "Pollen carrying",
+      "compare_to": [
+        "leg_arthropod",
+        "mouth_palps"
+      ],
+      "gap": "A smooth exterior tibial basin sits inside a raised fringe and meets the expanded basitarsus at a visible loading joint.",
+      "reference_animal": "Western honey bee (Apis mellifera)",
+      "reference_query": "Anterior, posterior and side macros of an unloaded worker hind tibia and basitarsus, plus a lateral pose with the joint flexed.",
+      "model_scope": "One hind tibial basket with coarse marginal hairs and the attached basitarsal press.",
+      "local_fixture": "Reuse a distal leg fixture. Check basket exposure, press alignment and free rotation with an optional pollen load proxy."
+    },
+    {
+      "id": "bipectinate_sensory_antenna",
+      "workstream": "arthropods",
+      "function": "Airborne chemical sensing",
+      "compare_to": [
+        "antenna_segmented",
+        "pectines"
+      ],
+      "gap": "Paired lateral rami arise along successive flagellar segments and taper toward both ends, forming a two-sided comb on a continuous shaft.",
+      "reference_animal": "Silkworm moth (Bombyx mori)",
+      "reference_query": "Front macro of a fully extended adult male antenna and lateral close-up of its stalk and paired ramus roots across the shaft.",
+      "model_scope": "One antennal stalk and flagellum with paired macroscopic rami.",
+      "local_fixture": "Reuse a head antenna socket and opposing antenna proxy. Check clearances through basal swivel and at different ramus spreads."
+    },
+    {
+      "id": "sliding_sabre_ovipositor",
+      "workstream": "arthropods",
+      "function": "Egg placement",
+      "compare_to": [
+        "tail_segmented",
+        "stinger",
+        "mandibles"
+      ],
+      "gap": "Several longitudinal valves form a laterally flattened blade and slide relative to one another along shared interfaces.",
+      "reference_animal": "Great green bush-cricket (Tettigonia viridissima)",
+      "reference_query": "Lateral and dorsal macro of female terminal abdomen and sheathless blade, plus valve-separated specimen or labeled anatomical plate showing their seating.",
+      "model_scope": "One external blade assembly and its terminal seat, with coarse longitudinal valve boundaries.",
+      "local_fixture": "Reuse a terminal abdomen cradle and substrate slot. Check clearance during limited valve sliding and basal placement."
+    },
+    {
+      "id": "opposed_terminal_forceps",
+      "workstream": "arthropods",
+      "function": "Grasping and display",
+      "compare_to": [
+        "pincer_crescent",
+        "pincer_limb",
+        "mandibles"
+      ],
+      "gap": "Two curved cerci articulate from separate abdominal sockets and oppose each other across the midline with two movable arms.",
+      "reference_animal": "European earwig (Forficula auricularia)",
+      "reference_query": "Dorsal and oblique ventral macros of an adult male abdominal tip, with forceps open and closed and both roots visible.",
+      "model_scope": "Paired cerci and their terminal abdominal sockets.",
+      "local_fixture": "Reuse a posterior tergite patch. Check independent movement, tip alignment, and closure around cylinders of two widths."
+    },
+    {
+      "id": "latched_ventral_springfork",
+      "workstream": "arthropods",
+      "function": "Saltatorial propulsion",
+      "compare_to": [
+        "leg_jumping",
+        "tail_segmented",
+        "crustacean_tail_fan"
+      ],
+      "gap": "A bifurcated abdominal lever folds forward along the underside into a ventral catch and swings backward as a single root-driven springfork.",
+      "reference_animal": "Globular springtail (Dicyrtomina ornata)",
+      "reference_query": "Ventral macro of folded furcula and retinaculum contact, with a lateral high-speed frame sequence exposing extension and the root.",
+      "model_scope": "One ventral springfork with basal lever, paired distal prongs and a coarse catch interface.",
+      "local_fixture": "Reuse a curved abdomen underside with catch and substrate proxies. Check stowed seating and clearance through the release arc."
+    },
+    {
+      "id": "eversible_ventral_tube_pair",
+      "workstream": "arthropods",
+      "function": "Substrate adhesion",
+      "compare_to": [
+        "ambulacral_tube_feet",
+        "suckers",
+        "siphon"
+      ],
+      "gap": "A short cylindrical abdominal base bears two soft vesicles that evert through its distal rim to reach a contact surface.",
+      "reference_animal": "Globular springtail (Sminthurus viridis)",
+      "reference_query": "Ventral and oblique specimen macros of the collophore with vesicles retracted and everted, keeping the abdominal root visible.",
+      "model_scope": "One ventral tube and two eversible distal vesicles at coarse scale.",
+      "local_fixture": "Reuse an abdomen underside patch and a flat contact plane. Check retracted packing and paired reach at two body heights."
+    },
+    {
+      "id": "clustered_articulated_spinnerets",
+      "workstream": "arthropods",
+      "function": "Silk placement",
+      "compare_to": [
+        "mouth_palps",
+        "siphon",
+        "antenna_segmented"
+      ],
+      "gap": "Several short silk-placement appendages occupy independent sockets around the abdominal tip and present a grouped placement surface.",
+      "reference_animal": "Golden silk orb-weaver (Trichonephila clavipes)",
+      "reference_query": "Posteroventral macro of the spinneret cluster and lateral views in resting and silk-placement poses showing proximal segment steps.",
+      "model_scope": "Posterior abdominal patch and visible spinneret segments, without individual spigots.",
+      "local_fixture": "Reuse a tapered abdomen fixture and a small silk target proxy. Check joint clearance and convergence of the spinneret tips."
+    },
+    {
+      "id": "vertical_fang_chelicera",
+      "workstream": "arthropods",
+      "function": "Feeding articulation",
+      "compare_to": [
+        "mandibles",
+        "centipede_forcipules",
+        "beak_hooked"
+      ],
+      "gap": "A robust basal cheliceral segment carries a separately hinged fang that folds into its ventral groove and sweeps in a near fore-aft plane.",
+      "reference_animal": "Chilean rose tarantula (Grammostola rosea)",
+      "reference_query": "Ventral and lateral adult chelicera macros, including a naturally folded fang and a prepared open specimen showing the hinge and groove.",
+      "model_scope": "One cheliceral basal segment and articulated fang with its stow groove.",
+      "local_fixture": "Reuse a prosoma front underside and mirror the assembly. Check bilateral folding and passage through a neutral jaw-opening range."
+    },
+    {
+      "id": "antenniform_feeling_leg",
+      "workstream": "arthropods",
+      "function": "Tactile exploration",
+      "compare_to": [
+        "leg_arthropod",
+        "antenna_segmented"
+      ],
+      "gap": "A conventional lateral leg socket and proximal segments carry a much elongated distal chain with numerous short flexible joints.",
+      "reference_animal": "Tailless whip scorpion (Phrynus marginemaculatus)",
+      "reference_query": "Dorsal image of one full first leg and magnified dorsal and side crops of the hip, tibia-to-tarsus region and swept poses near the substrate.",
+      "model_scope": "One serial tactile foreleg with proximal leg geometry and a coarsely articulated distal chain.",
+      "local_fixture": "Reuse a lateral prosoma socket and walking-leg envelopes. Check sweeps along the substrate without intersection during a change in height."
+    },
+    {
+      "id": "eversible_palpal_adhesive_pad",
+      "workstream": "arthropods",
+      "function": "Temporary adhesion",
+      "compare_to": [
+        "leg_arthropod",
+        "mouth_palps",
+        "anuran_terminal_adhesive_pads"
+      ],
+      "gap": "A flexible adhesive face projects from the distal palp and folds back into a bordered terminal recess.",
+      "reference_animal": "Common sun spider (Galeodes arabs)",
+      "reference_query": "High-magnification tip views of the distal pedipalp in lateral and face-on orientation with the adhesive organ retracted and applied.",
+      "model_scope": "One distal palp housing and coarse eversible adhesive pad.",
+      "local_fixture": "Reuse a palp rod mount and a contact plate. Check housing closure and surface seating through extension."
+    },
+    {
+      "id": "hinged_book_gill_stack",
+      "workstream": "arthropods",
+      "function": "Respiratory water circulation",
+      "compare_to": [
+        "paired_branchial_plumes",
+        "crustacean_swimmerets",
+        "racked_baleen_plates"
+      ],
+      "gap": "Broad ventral appendage plates carry recessed stacks of overlapping leaf-like lamellae that move together as the plates hinge.",
+      "reference_animal": "Atlantic horseshoe crab (Limulus polyphemus)",
+      "reference_query": "Ventral and oblique close-ups of two adjacent gill-bearing appendages, with relaxed and fanned poses and a side cut at the plate edge.",
+      "model_scope": "One gill-bearing plate with coarse repeated lamellae, mounted beside simple neighbor proxies.",
+      "local_fixture": "Reuse ventral abdominal hinge blocks. Check adjacent plate overlap and lamellar stack clearance through the ventilatory stroke."
+    },
+    {
+      "id": "petalled_pusher_foot",
+      "workstream": "arthropods",
+      "function": "Purchase in soft sediment",
+      "compare_to": [
+        "leg_arthropod",
+        "foot_webbed_long",
+        "claws"
+      ],
+      "gap": "Paddle-like terminal flaps spread around a distal pusher-leg segment, increasing its contact area, and fold back alongside the segment.",
+      "reference_animal": "Atlantic horseshoe crab (Limulus polyphemus)",
+      "reference_query": "Distal and lateral macros of the last walking leg with pusher flaps spread and gathered, including the short proximal segment.",
+      "model_scope": "One pusher-leg extremity with individually seated terminal flaps.",
+      "local_fixture": "Reuse a distal leg mount and loose-substrate proxy. Check deployment and clearance when pushing and withdrawing."
+    },
+    {
+      "id": "nested_antennal_shovels",
+      "workstream": "arthropods",
+      "function": "Sediment displacement and shielding",
+      "compare_to": [
+        "antenna_segmented",
+        "carapace",
+        "plate"
+      ],
+      "gap": "Successive antenna segments are flattened into overlapping plates, with an expanded free edge and an articulated seat ahead of the eyes.",
+      "reference_animal": "European slipper lobster (Scyllarides latus)",
+      "reference_query": "Dorsal and ventral frontal close-ups of an antenna with its broad distal plates, their overlap and the joint behind the eyes visible.",
+      "model_scope": "One flattened antennal assembly with its proximal attachment and coarse plate seams.",
+      "local_fixture": "Reuse a cephalic front patch and eye stalk proxy. Check plate overlap and swept clearance at the eye and opposite antenna."
+    },
+    {
+      "id": "setal_antennal_capture_scoop",
+      "workstream": "arthropods",
+      "function": "Suspension feeding",
+      "compare_to": [
+        "antenna_segmented",
+        "tentacle_fringe",
+        "crustacean_swimmerets"
+      ],
+      "gap": "Paired second antennae extend as curved setose scoops that project ahead of a buried head and fold inward toward its ventral side.",
+      "reference_animal": "Pacific mole crab (Emerita analoga)",
+      "reference_query": "Dorsal and frontal submerged macro of an animal in sediment with antennae deployed, plus side crop of one antenna folded toward the mouth.",
+      "model_scope": "One curved secondary antenna with coarse setal field and a mirrored partner.",
+      "local_fixture": "Reuse a head patch, sediment surface and mouth target. Check the scoops clear the sediment when open and converge toward the mouth without crossing."
+    },
+    {
+      "id": "multicirral_filter_fan",
+      "workstream": "arthropods",
+      "function": "Suspension feeding",
+      "compare_to": [
+        "crustacean_swimmerets",
+        "sabellid_radiolar_crown",
+        "tentacle_fringe"
+      ],
+      "gap": "Several serial pairs of jointed biramous cirri deploy together through a narrow shell opening and curve into a three-dimensional cup.",
+      "reference_animal": "Acorn barnacle (Semibalanus balanoides)",
+      "reference_query": "Lateral and end-on macro video of cirri fully cupped and retracting through the opercular aperture, with a specimen plate showing root order.",
+      "model_scope": "One mirrored serial array of coarse paired cirri, with ramus fork and setal outlines.",
+      "local_fixture": "Reuse a tapered opening rim and soft body root rail. Check retraction packing and deployment sweep through two aperture shapes."
+    },
+    {
+      "id": "paired_shell_aperture_valves",
+      "workstream": "arthropods",
+      "function": "Closing a protective shell opening",
+      "compare_to": [
+        "carapace",
+        "plate",
+        "chiton_valved_dorsum"
+      ],
+      "gap": "Two mirrored sets of scutal and tergal plates occupy a shell aperture and move together to close it along a central seam.",
+      "reference_animal": "Acorn barnacle (Semibalanus balanoides)",
+      "reference_query": "Top macro of an open and closed aperture, plus isolated lateral and underside views showing scutum-to-tergum boundaries and the shell rim seat.",
+      "model_scope": "Two scuta and two terga with coarse seams and soft edge seat.",
+      "local_fixture": "Reuse a shallow conical shell rim and a cirral emergence envelope. Check closure at the seam and usable open clearance."
+    },
+    {
+      "id": "subchelate_palm_fold",
+      "workstream": "arthropods",
+      "function": "Local grasping",
+      "compare_to": [
+        "pincer_limb",
+        "leg_arthropod",
+        "mandibles"
+      ],
+      "gap": "A single hinged dactyl presses across a broad propodal palm with a stepped contact margin and no projecting fixed finger.",
+      "reference_animal": "Beachflea (Orchestia gammarellus)",
+      "reference_query": "Medial and lateral close-ups of an adult male second gnathopod opened and folded, with palm outline and distal hinge visible.",
+      "model_scope": "One propodal palm and its folding dactyl, authored with the preceding segment stub.",
+      "local_fixture": "Reuse an appendage socket and contact cylinders. Check folded contact along the palm and sweep clearance against the preceding segment."
+    },
+    {
+      "id": "asymmetric_shell_holdfast",
+      "workstream": "arthropods",
+      "function": "Anchoring within a borrowed shell",
+      "compare_to": [
+        "crustacean_tail_fan",
+        "tail_segmented",
+        "claws"
+      ],
+      "gap": "Unequal terminal uropods bend into the shell interior, presenting coarse rasp surfaces on an offset twist of the terminal abdomen.",
+      "reference_animal": "Common hermit crab (Pagurus bernhardus)",
+      "reference_query": "Ventral and rear macro of an extracted specimen with both uropods visible, plus profile or cutaway showing their seat inside a coiled shell.",
+      "model_scope": "Terminal abdominal stub and asymmetric uropods with coarse distal rasp pads.",
+      "local_fixture": "Reuse a compliant terminal abdomen mount and a helical cavity insert. Check holdfast contact and free withdrawal across two shell sizes."
+    },
+    {
+      "id": "paired_antennal_breathing_tube",
+      "workstream": "arthropods",
+      "function": "Respiratory water intake",
+      "compare_to": [
+        "antenna_segmented",
+        "siphon",
+        "gill_slits"
+      ],
+      "gap": "Two forward antennae align their opposed setal margins into a temporary tube continuous with a groove between the eyes.",
+      "reference_animal": "Masked crab (Corystes cassivelaunus)",
+      "reference_query": "Anterior and lateral macros of apposed antennae in buried posture, plus a separate specimen view showing the head-base channel and opened pair.",
+      "model_scope": "Paired antennal elements with coarse opposed fringe and shared channel seat.",
+      "local_fixture": "Reuse a forward head saddle with substrate plane. Check channel continuity when apposed and separation through the opening arc."
+    },
+    {
+      "id": "folding_pleonal_apron",
+      "workstream": "arthropods",
+      "function": "Abdominal coverage and brood shelter",
+      "compare_to": [
+        "carapace",
+        "plate",
+        "tail_segmented"
+      ],
+      "gap": "A broad segmented pleon folds under the body, wrapping onto the sternum along a defined edge and opening on its posterior hinge.",
+      "reference_animal": "European green crab (Carcinus maenas)",
+      "reference_query": "Ventral macro of an adult female with apron seated and oblique ventral view with it raised, showing hinge and overlapping margins.",
+      "model_scope": "One female pleonal apron with major segment seams and hinge edge.",
+      "local_fixture": "Reuse a sternum plate and posterior hinge. Check closed fit, edge clearance and useful opening with two body widths."
+    },
+    {
+      "id": "rolling_overlap_tergite_row",
+      "workstream": "arthropods",
+      "function": "Protective enrolment",
+      "compare_to": [
+        "chiton_valved_dorsum",
+        "imbricated_scale_armor",
+        "carapace"
+      ],
+      "gap": "Adjacent arched tergites and their lateral flanges maintain overlap as the ventral joints flex and the dorsal series wraps around a tight curve.",
+      "reference_animal": "Common pill woodlouse (Armadillidium vulgare)",
+      "reference_query": "Lateral and dorsal macros of three consecutive trunk tergites flat, part-flexed and rolled, showing how the side flanges meet.",
+      "model_scope": "Three consecutive tergites with flanges and repeatable intersegment interfaces.",
+      "local_fixture": "Reuse a three-ring flexible trunk rail. Check overlap and collision from flat posture through tightly curled posture."
+    },
+    {
+      "id": "overhanging_pronotal_crown",
+      "workstream": "arthropods",
+      "function": "Display silhouette",
+      "compare_to": [
+        "carapace",
+        "crest_dorsal",
+        "frill"
+      ],
+      "gap": "A rigid stalked crown rises from a small pronotal base and branches into free rounded terminals with large open spaces around the structure.",
+      "reference_animal": "Brazilian treehopper (Bocydium globulare)",
+      "reference_query": "True frontal, lateral and rear-oblique macros of the crown showing median arch, lateral terminals and the pronotal attachment.",
+      "model_scope": "One branched pronotal crown and its small thoracic seat.",
+      "local_fixture": "Reuse a head and anterior thorax mock-up with wing-root proxies. Check free ends overhang the head and thorax while the base seats locally."
+    },
+    {
+      "id": "lateral_abdominal_display_flaps",
+      "workstream": "arthropods",
+      "function": "Visual display",
+      "compare_to": [
+        "frill",
+        "tail_feather_fan",
+        "reptile_rib_patagium"
+      ],
+      "gap": "Bilateral soft side flaps spread from a raised central abdominal plate into a broad display fan, then wrap close against the abdominal sides.",
+      "reference_animal": "Peacock spider (Maratus volans)",
+      "reference_query": "Frontal display image and dorsal and lateral close-ups of the same sex at rest, plus staged opening showing both flap roots.",
+      "model_scope": "Abdominal display plate and paired lateral flaps with fold lines.",
+      "local_fixture": "Reuse an abdomen patch on a pitching stalk. Check side clearance and silhouette as both flaps spread and refold."
+    },
+    {
+      "id": "hooked_soft_abdominal_proleg",
+      "workstream": "arthropods",
+      "function": "Substrate grasping",
+      "compare_to": [
+        "leg_arthropod",
+        "ambulacral_tube_feet",
+        "claws"
+      ],
+      "gap": "A compressible unsegmented abdominal lobe terminates in a soft pad with a curved row of fine hooks at its edge.",
+      "reference_animal": "Tobacco hornworm (Manduca sexta)",
+      "reference_query": "Ventral and lateral macros of a mid-abdominal proleg attaching around a narrow twig and lifting, plus a pad-face crop showing the crochet row.",
+      "model_scope": "One fleshy abdominal lobe, compliant sole and coarse crochet row.",
+      "local_fixture": "Reuse an abdomen underside patch and two twig sizes. Check pad compression, root seating and hook clearance on lift."
+    },
+    {
+      "id": "eversible_forked_osmeterium",
+      "workstream": "arthropods",
+      "function": "Defensive display",
+      "compare_to": [
+        "tongue",
+        "arm_hydrostatic",
+        "siphon"
+      ],
+      "gap": "A forked soft organ emerges through a single dorsal slit behind the head and retracts into that seam, with both branches opening from a common base.",
+      "reference_animal": "Black swallowtail (Papilio polyxenes)",
+      "reference_query": "Dorsal and lateral macro of a caterpillar with the osmeterium fully extended, plus a resting crop resolving the slit just behind the head.",
+      "model_scope": "One forked eversible form with an anterior thoracic slit rim.",
+      "local_fixture": "Reuse a curved prothorax patch and head envelope. Check base seating, branch separation, and closure at the retracted pose."
+    },
+    {
+      "id": "distal_tentacle_club",
+      "workstream": "other_invertebrates",
+      "function": "Prey capture",
+      "compare_to": [
+        "arm_hydrostatic",
+        "suckers",
+        "nautilus_digital_tentacles"
+      ],
+      "gap": "A narrow strike stalk carries a flattened, expanded distal grip club with discrete sucker zones on one face.",
+      "reference_animal": "European squid (Loligo vulgaris)",
+      "reference_query": "Isolated feeding tentacle in oral and edge views, showing stalk-to-club widening and relaxed versus extended poses.",
+      "model_scope": "One stalk-to-club transition, the distal club and representative sucker seats.",
+      "local_fixture": "Seat the stalk on an oral-ring sector and check club orientation, reach and clearance against two adjacent arm stubs."
+    },
+    {
+      "id": "mantle_ribbon_fin",
+      "workstream": "other_invertebrates",
+      "function": "Swimming by fin undulation",
+      "compare_to": [
+        "fin_paired",
+        "fin_median",
+        "ray_continuous_pectoral_disc"
+      ],
+      "gap": "A narrow fin ribbon has a long continuous mantle seam and a free edge that can carry a traveling bend along one side.",
+      "reference_animal": "Common cuttlefish (Sepia officinalis)",
+      "reference_query": "Overhead and low flank views of one full lateral fin margin during level hovering, through several wave phases.",
+      "model_scope": "One lateral ribbon with its root seam and tapered ends.",
+      "local_fixture": "Reuse a curved mantle flank and check seam contact and free-edge displacement along the complete ribbon at two scales."
+    },
+    {
+      "id": "hinged_bivalve_valves",
+      "workstream": "other_invertebrates",
+      "function": "Protection and controlled shell opening",
+      "compare_to": [
+        "shell",
+        "carapace",
+        "chiton_valved_dorsum"
+      ],
+      "gap": "Two cupped valves face one another and rotate around a shared dorsal line, with an opposing closure rim and hinge ears.",
+      "reference_animal": "Great scallop (Pecten maximus)",
+      "reference_query": "Hinge-facing and rim-on views of paired valves closed and slightly open, showing hinge ears and umbo alignment.",
+      "model_scope": "A pair of unequal valve shells, their opposed rims and a shared hinge axis.",
+      "local_fixture": "Use an adjustable hinge bar and compressed mantle proxy to check closed rim contact, open clearance and preserved hinge alignment."
+    },
+    {
+      "id": "expandable_burrowing_foot_wedge",
+      "workstream": "other_invertebrates",
+      "function": "Burrowing anchorage",
+      "compare_to": [
+        "chiton_pedal_sole",
+        "foot_hoof",
+        "arm_hydrostatic"
+      ],
+      "gap": "An extensible compressed foot passes through the valve gap and expands distally into a broad sediment anchor.",
+      "reference_animal": "Atlantic jackknife clam (Ensis leei)",
+      "reference_query": "Lateral and end-on outer views of the pedal tip protruding, expanded for anchoring and withdrawing between valves.",
+      "model_scope": "One extensible pedal wedge, its base, and the expanded distal profile.",
+      "local_fixture": "Use two adjustable valve lips and a substrate plane to check deployed anchor width and withdrawal clearance."
+    },
+    {
+      "id": "fused_double_siphon",
+      "workstream": "other_invertebrates",
+      "function": "Intake and discharge through a shared extension",
+      "compare_to": [
+        "siphon",
+        "mouth_trunk"
+      ],
+      "gap": "A common extensible sheath encloses two externally visible apertures with distinct rim contours separated by a bridge.",
+      "reference_animal": "Pacific geoduck (Panopea generosa)",
+      "reference_query": "Terminal plan and flank views of both open rims and the shared sheath, with siphon shortened and extended.",
+      "model_scope": "One shared sleeve, the septal edge and two short aperture recesses.",
+      "local_fixture": "Use a soft circular mantle collar and test tight and loose sleeve bends, keeping the two rim openings and separating bridge clear."
+    },
+    {
+      "id": "byssal_tether_fan",
+      "workstream": "other_invertebrates",
+      "function": "Substrate anchorage",
+      "compare_to": [
+        "claws",
+        "annelid_terminal_holdfast_discs",
+        "tentacle_fringe"
+      ],
+      "gap": "Several slender external tethers leave a common ventral notch and terminate separately in flat substrate plaques.",
+      "reference_animal": "Blue mussel (Mytilus edulis)",
+      "reference_query": "Ventral close-up from byssal notch to substrate and oblique views of individual terminal plaques on a hard irregular surface.",
+      "model_scope": "A root bundle, a small fan of discrete tethers and one plaque per tether.",
+      "local_fixture": "Fit the fan through an adjustable valve notch and seat plaques on stepped substrate faces with slack and taut configurations."
+    },
+    {
+      "id": "foot_carried_shell_operculum",
+      "workstream": "other_invertebrates",
+      "function": "Aperture closure",
+      "compare_to": [
+        "shell",
+        "nautilus_protective_hood",
+        "plate"
+      ],
+      "gap": "A foot-mounted rigid plate seats into a shell opening during withdrawal, with a shell aperture rim that constrains its path.",
+      "reference_animal": "Tapestry turban snail (Turbo petholatus)",
+      "reference_query": "Rear oblique views exposing the operculum on the extended foot and matched aperture-facing views during withdrawal and closure.",
+      "model_scope": "The opercular plate, its attachment pad and the local closure edge.",
+      "local_fixture": "Use a foot stub and variable shell lip, and test plate alignment, edge seating and clearance along the withdrawal path."
+    },
+    {
+      "id": "retractile_lamellate_rhinophore",
+      "workstream": "other_invertebrates",
+      "function": "Chemical sensing",
+      "compare_to": [
+        "antenna_segmented",
+        "paired_branchial_plumes"
+      ],
+      "gap": "An upright stalk has overlapping transverse lamellae and retracts into a dedicated dorsal pocket rim.",
+      "reference_animal": "Sea lemon (Doris pseudoargus)",
+      "reference_query": "Lateral close-up of lamellae, plan view of the dorsal pocket, and matched extended and retracted views.",
+      "model_scope": "One rhinophore, coarse lamellae and a pocket collar.",
+      "local_fixture": "Fit to a dorsal mantle patch with different curvatures and check clearance at the pocket rim in both states."
+    },
+    {
+      "id": "ceratal_field",
+      "workstream": "other_invertebrates",
+      "function": "Exposed respiratory surface",
+      "compare_to": [
+        "tentacle_fringe",
+        "paired_branchial_plumes"
+      ],
+      "gap": "Separate tapered papillae emerge in dense staggered rows from lateral mantle surfaces along a body section.",
+      "reference_animal": "Opalescent nudibranch (Hermissenda opalescens)",
+      "reference_query": "Dorsal and low lateral views of an intact midbody ceratal cluster, including root rows and papilla tip profiles.",
+      "model_scope": "One repeatable lateral sector with discrete papilla roots and tapered papillae.",
+      "local_fixture": "Use a curved body strip with adjustable root spacing and check silhouette, host contact and clearance between rows."
+    },
+    {
+      "id": "retractile_circumanal_gill_wreath",
+      "workstream": "other_invertebrates",
+      "function": "Respiration",
+      "compare_to": [
+        "paired_branchial_plumes",
+        "sabellid_radiolar_crown"
+      ],
+      "gap": "A ring of branchial plumes around a central opening shares a dorsal pocket and can withdraw as a group.",
+      "reference_animal": "Willan’s dorid (Chromodoris willani)",
+      "reference_query": "Dorsal and low-angle posterior macro views of the spread branchial groups, common pocket and central opening during withdrawal.",
+      "model_scope": "An annular pocket rim and a representative set of pinnate plumes around a central recess.",
+      "local_fixture": "Seat the pocket in a domed mantle patch and check plume nesting and central clearance in spread and withdrawn states."
+    },
+    {
+      "id": "pedal_swimming_wings",
+      "workstream": "other_invertebrates",
+      "function": "Flapping propulsion",
+      "compare_to": [
+        "fin_paired",
+        "foot_webbed_long",
+        "wing_membrane_insect"
+      ],
+      "gap": "Paired broad muscular lobes join the front of a shell-less body and flap through a short, fleshy root without a supporting ray skeleton.",
+      "reference_animal": "Sea angel (Clione limacina)",
+      "reference_query": "Anterior and side views of a swimming adult showing paired roots and both stroke extremes.",
+      "model_scope": "One paddle lobe, its fleshy root and a mirrored mount.",
+      "local_fixture": "Use a flexible neck cylinder to check paired roots and leading-edge clearance through the stroke at two widths."
+    },
+    {
+      "id": "perforated_shell_vent_row",
+      "workstream": "other_invertebrates",
+      "function": "Water exchange through the shell",
+      "compare_to": [
+        "shell",
+        "gill_slits",
+        "plate"
+      ],
+      "gap": "A single curvature-matched shell band carries a row of through-holes with raised collars and a sequence of closed former openings.",
+      "reference_animal": "Red abalone (Haliotis rufescens)",
+      "reference_query": "Dorsal, inner shell and grazing-light views along the vent row showing open rims, closure traces and wall thickness.",
+      "model_scope": "A shell sector containing open collars and sealed predecessors.",
+      "local_fixture": "Mount the sector on matched mantle and shell edge proxies and verify that open sites have clear through-passages across different curvatures."
+    },
+    {
+      "id": "open_ended_tusk_shell",
+      "workstream": "other_invertebrates",
+      "function": "Protection with two exposed ends",
+      "compare_to": [
+        "shell",
+        "nautilus_coiled_shell",
+        "siphon"
+      ],
+      "gap": "A rigid curved shell forms a taper with open unequal ends and a continuous through-channel.",
+      "reference_animal": "Elephant tusk shell (Antalis elephantina)",
+      "reference_query": "Side profile and aligned views into the broad and narrow apertures of an intact shell, with the small end undamaged.",
+      "model_scope": "The curved tapered shell and two finished lips.",
+      "local_fixture": "Pass an axial body proxy through the shell and check fit at the broad end, narrow aperture clearance and wall thickness."
+    },
+    {
+      "id": "sediment_lunule_test_sector",
+      "workstream": "other_invertebrates",
+      "function": "Test perforation in burrowing",
+      "compare_to": [
+        "urchin_test",
+        "plate",
+        "gill_slits"
+      ],
+      "gap": "An elongated full-depth window interrupts a flattened rigid test and carries a rounded load-bearing rim through the wall.",
+      "reference_animal": "Five-slotted sand dollar (Mellita quinquiesperforata)",
+      "reference_query": "Oral, aboral and grazing views of a complete lunule with both ends, surrounding margins and wall thickness visible.",
+      "model_scope": "One flattened test sector and a lunule with both surface rims and a continuous inner wall.",
+      "local_fixture": "Mount the sector in flat and shallow-curved test proxies and inspect unobstructed passage and rim seating."
+    },
+    {
+      "id": "dendritic_oral_collecting_tentacle",
+      "workstream": "other_invertebrates",
+      "function": "Particle collection and delivery to the mouth",
+      "compare_to": [
+        "oral_arms",
+        "sabellid_radiolar_crown",
+        "arm_hydrostatic"
+      ],
+      "gap": "A tree-branched soft oral tentacle spreads distal collection branches then folds them together as the stem bends toward the mouth.",
+      "reference_animal": "Orange-footed sea cucumber (Cucumaria frondosa)",
+      "reference_query": "Oral and lateral macrophotography of a single expanded tentacle and its folded posture as it enters the mouth.",
+      "model_scope": "One complete branch tree, supple stalk and oral-ring root.",
+      "local_fixture": "Use a ring around a mouth opening, add adjacent stems and check folded branch clearance through the mouth rim."
+    },
+    {
+      "id": "crinoid_pinnulate_arm",
+      "workstream": "other_invertebrates",
+      "function": "Suspension feeding and particle transport",
+      "compare_to": [
+        "sabellid_radiolar_crown",
+        "arm_hydrostatic",
+        "sea_star_rayed_core"
+      ],
+      "gap": "A jointed axis carries two rows of separately seated side pinnules with surface collecting grooves leading to the arm groove.",
+      "reference_animal": "Rosy feather star (Antedon bifida)",
+      "reference_query": "Oral and lateral close-ups of one arm sector showing axial joints, alternate pinnule roots and shallow open grooves.",
+      "model_scope": "A repeatable articulated arm section with several pinnules and coarse visible grooves.",
+      "local_fixture": "Use an arm-base hinge and neighboring arm proxy to check joint bending and pinnule spacing at two segment sizes."
+    },
+    {
+      "id": "segmented_grasping_cirrus",
+      "workstream": "other_invertebrates",
+      "function": "Skeletal grasp of a support",
+      "compare_to": [
+        "tail_segmented",
+        "foot_grasping",
+        "claws"
+      ],
+      "gap": "A chain of discrete short segments curls from a compact cirrus socket and terminates in a hooked contact segment.",
+      "reference_animal": "Rosy feather star (Antedon bifida)",
+      "reference_query": "Aboral close-up of one cirrus socket and side views of a cirrus open and wrapped around a natural support.",
+      "model_scope": "One socket, the segmented chain and the terminal hook.",
+      "local_fixture": "Seat the root on a small calyx patch and compare contact wrap and clearance around two support diameters."
+    },
+    {
+      "id": "ophiuroid_jointed_arm",
+      "workstream": "other_invertebrates",
+      "function": "Walking and bracing",
+      "compare_to": [
+        "arm_hydrostatic",
+        "sea_star_rayed_core",
+        "tail_segmented"
+      ],
+      "gap": "An articulated side-bending arm carries repeating dorsal, ventral and lateral plates and separate lateral spine rows.",
+      "reference_animal": "Common brittle star (Ophiothrix fragilis)",
+      "reference_query": "Dorsal, ventral and close lateral views of a mid-arm sector, plus a top view during a sideways walking bend.",
+      "model_scope": "A repeatable plate-covered arm segment series with lateral spine seats.",
+      "local_fixture": "Use a central disc edge socket and thin substrate to check spine clearance, plate overlap and allowable bend with ground contact."
+    },
+    {
+      "id": "recursive_basket_arm_fork",
+      "workstream": "other_invertebrates",
+      "function": "Branching suspension capture",
+      "compare_to": [
+        "sea_star_rayed_core",
+        "oral_arms",
+        "sabellid_radiolar_crown"
+      ],
+      "gap": "A skeletal arm divides repeatedly into separately curling daughter branches, preserving joints across each bifurcation.",
+      "reference_animal": "Northern basket star (Gorgonocephalus arcticus)",
+      "reference_query": "Top and oblique views tracing one arm through two successive forks, with relaxed and contracted branches.",
+      "model_scope": "A parent-to-daughter junction template and two stages of repeated branching.",
+      "local_fixture": "Use an arm stub with a neighboring branch proxy to test paired branch curl, branch-root fit and clearance in contracted and spread states."
+    },
+    {
+      "id": "perianal_tooth_ring",
+      "workstream": "other_invertebrates",
+      "function": "Aperture defense",
+      "compare_to": [
+        "echinoid_oral_teeth",
+        "jaws_toothed",
+        "plate"
+      ],
+      "gap": "Five spaced rigid plates project from the rear margin of a soft extensible aperture, leaving clear gaps between their free tips.",
+      "reference_animal": "Surf redfish sea cucumber (Actinopyga mauritiana)",
+      "reference_query": "Axial and oblique close-up of the aboral end showing exposed teeth and aperture dimensions at different contractions.",
+      "model_scope": "A ring of external tooth plates, their contact bases and a soft rim patch.",
+      "local_fixture": "Use a deformable rear opening of two diameters and verify free-tip spacing and plate seat through opening and contraction."
+    },
+    {
+      "id": "biramous_chaetal_parapodium",
+      "workstream": "other_invertebrates",
+      "function": "Segmental crawling and paddling",
+      "compare_to": [
+        "leg_arthropod",
+        "crustacean_swimmerets",
+        "paired_branchial_plumes"
+      ],
+      "gap": "One lateral fleshy mount divides into two rami ending in separated chaetal fans, with clear spaces between both contact rows.",
+      "reference_animal": "King ragworm (Alitta virens)",
+      "reference_query": "Anterior, lateral and distal views of a midbody parapodium showing both rami, chaetal rows and the root against the body.",
+      "model_scope": "One paired-ramus mount and coarse chaetal fans with visible root spacing.",
+      "local_fixture": "Use a short annelid trunk section and adjacent parapodium proxy to check ramus spacing and sweep clearance."
+    },
+    {
+      "id": "everting_jaw_crown",
+      "workstream": "other_invertebrates",
+      "function": "Prey grasp during pharynx eversion",
+      "compare_to": [
+        "mouth_trunk",
+        "jaws_toothed",
+        "mandibles"
+      ],
+      "gap": "A soft sleeve rolls through the mouth rim and presents four hook jaws radially on its newly exposed distal crown.",
+      "reference_animal": "Bloodworm (Glycera dibranchiata)",
+      "reference_query": "Anterior and lateral close-ups of the naturally everted pharynx showing the rolled wall and jaw positions at full exposure.",
+      "model_scope": "The visible everted cuff and four jaw seats with coarse hook forms.",
+      "local_fixture": "Use an annelid mouth ring and test sleeve extrusion and jaw clearance at the free end of the everted cuff."
+    },
+    {
+      "id": "stalked_dorsal_elytral_scale",
+      "workstream": "other_invertebrates",
+      "function": "Overlapping dorsal protection",
+      "compare_to": [
+        "elytron",
+        "imbricated_scale_armor",
+        "plate"
+      ],
+      "gap": "A broad flexible scale sits on a discrete underside stalk and overlaps scales on neighboring trunk segments.",
+      "reference_animal": "Imbricated scale worm (Harmothoe imbricata)",
+      "reference_query": "Dorsal and oblique close-up of adjacent scales in place, plus a lifted-scale view showing its stalk and underside seat.",
+      "model_scope": "One scale, its flexible underside stalk and the overlap margin.",
+      "local_fixture": "Use two trunk segments with staggered dorsal sockets and side limb stubs to check overlap and clearance over body bends."
+    },
+    {
+      "id": "stalked_tube_operculum",
+      "workstream": "other_invertebrates",
+      "function": "Tube closure",
+      "compare_to": [
+        "nautilus_protective_hood",
+        "plate",
+        "sabellid_radiolar_crown"
+      ],
+      "gap": "A funnel-shaped stopper is carried on an elongate flexible stalk at the crown base and seats against the protective tube opening during withdrawal.",
+      "reference_animal": "Common serpulid worm (Serpula vermicularis)",
+      "reference_query": "Axial and side close-ups of the stopper face, free stalk and collar, with open tube and fully seated states.",
+      "model_scope": "One stopper crown, flexible stalk and attachment pad.",
+      "local_fixture": "Use two tube bore sizes and a crown-base insert to check stalk clearance and a flush stopper seat during retraction."
+    },
+    {
+      "id": "bifid_proboscis_gutter",
+      "workstream": "other_invertebrates",
+      "function": "Surface deposit gathering",
+      "compare_to": [
+        "tongue",
+        "mouth_trunk",
+        "oral_arms"
+      ],
+      "gap": "A flat ribbon splits into two broad distal lobes while a continuous exposed collecting gutter leads back toward the mouth.",
+      "reference_animal": "Green spoon worm (Bonellia viridis)",
+      "reference_query": "Overhead and edge views of an extended adult female proboscis, showing fork geometry, the open groove and the trunk-side root.",
+      "model_scope": "The distal fork and a length of the main gutter-bearing ribbon.",
+      "local_fixture": "Use a head-ring mount and sediment plane to assess lobe contact and whether both groove branches remain open in a bent pose."
+    },
+    {
+      "id": "subumbrella_velarial_shelf",
+      "workstream": "other_invertebrates",
+      "function": "Jet flow constriction during swimming",
+      "compare_to": [
+        "bell_radial",
+        "siphon"
+      ],
+      "gap": "An inward-facing flexible shelf creates a smaller outlet inside a box-shaped bell rim and deforms as the bell pulses.",
+      "reference_animal": "Mangrove box jellyfish (Tripedalia cystophora)",
+      "reference_query": "Direct oral underside and low side views of the free shelf lip and bell corners at relaxed and contracted phases.",
+      "model_scope": "One continuous inward shelf band with corner transitions and a free outlet edge.",
+      "local_fixture": "Use a four-cornered bell-rim fixture and check continuous attachment and outlet clearance when the fixture contracts."
+    },
+    {
+      "id": "cubomedusan_tentacle_pedalium",
+      "workstream": "other_invertebrates",
+      "function": "Load transfer at a tentacle root",
+      "compare_to": [
+        "tentacle_fringe",
+        "bell_radial",
+        "arm_hydrostatic"
+      ],
+      "gap": "A flattened, branched blade runs from a bell corner and carries several tentacle seats away from the bell margin.",
+      "reference_animal": "Four-handed box jellyfish (Chiropsalmus quadrumanus)",
+      "reference_query": "Oblique and underside views of one bell corner showing blade cross-section, curved reach and the distal tentacle-root cluster.",
+      "model_scope": "One pedaliar blade with its bell seat and branching tentacle seats.",
+      "local_fixture": "Use a corner of a square bell and short tentacle stubs to check seated alignment and clearance during corner flex."
+    },
+    {
+      "id": "surface_float_sail",
+      "workstream": "other_invertebrates",
+      "function": "Surface flotation and wind-driven drift",
+      "compare_to": [
+        "crest_dorsal",
+        "bell_radial",
+        "wing_membrane_insect"
+      ],
+      "gap": "A buoyant elongate sac carries a continuous raised sail seam along its top and supports dependent attachments along the underside.",
+      "reference_animal": "Portuguese man o’ war (Physalia physalis)",
+      "reference_query": "Waterline side and end views of an intact inflated float, with the sail profile and ventral attachment line visible.",
+      "model_scope": "The inflatable sac envelope, dorsal sail and short attachment strip.",
+      "local_fixture": "Use a waterline plane and two ventral colony stubs to check sail freeboard, ventral seating and profile across leeward bends."
+    },
+    {
+      "id": "stalked_jet_nectophore",
+      "workstream": "other_invertebrates",
+      "function": "Modular jet propulsion",
+      "compare_to": [
+        "bell_radial",
+        "siphon"
+      ],
+      "gap": "An asymmetric lateral bell on a colony-axis seat contains a separately oriented outlet and can direct the jet away from its attachment axis.",
+      "reference_animal": "Siphonophore (Nanomia bijuga)",
+      "reference_query": "Lateral and outlet-on views of one exposed nectophore on the nectosome, including attachment and thrust or reverse-jet poses.",
+      "model_scope": "One bell module with its exterior cavity, outlet lip and offset colony seat.",
+      "local_fixture": "Use a short colony stalk and a neighboring bell stub to compare outlet directions and clearance as the lip deflects."
+    },
+    {
+      "id": "septate_coral_polyp_cup",
+      "workstream": "other_invertebrates",
+      "function": "Skeletal support and refuge for a polyp",
+      "compare_to": [
+        "shell",
+        "urchin_test",
+        "plate"
+      ],
+      "gap": "A rigid cup carries radial septa projecting inward from its wall and supports a retracting soft polyp by the full enclosing circumference.",
+      "reference_animal": "Devonshire cup coral (Caryophyllia smithii)",
+      "reference_query": "End-on and oblique views of a bare corallite showing the septa and rim, matched to an extended and contracted live polyp.",
+      "model_scope": "One corallite wall, coarse septa and outer basal seat.",
+      "local_fixture": "Seat the cup on a variable-angle rock wedge and check rim and septal clearance against a soft polyp proxy."
+    },
+    {
+      "id": "basal_pedal_attachment_disc",
+      "workstream": "other_invertebrates",
+      "function": "Adhesion by the column base",
+      "compare_to": [
+        "annelid_terminal_holdfast_discs",
+        "goby_pelvic_disc",
+        "chiton_pedal_sole"
+      ],
+      "gap": "A broad continuous flange spreads from the whole base of a flexible column and conforms locally to an uneven substrate.",
+      "reference_animal": "Frilled anemone (Metridium senile)",
+      "reference_query": "Lateral and substrate-facing views of the pedal disc attached to glass or rock, showing the perimeter in settled and peeling poses.",
+      "model_scope": "One column-to-disc transition with a flexible outer flange.",
+      "local_fixture": "Use a soft column mount and planar and stepped substrates to check spread contact and local edge lift."
+    },
+    {
+      "id": "pinnate_polyp_bearing_leaf",
+      "workstream": "other_invertebrates",
+      "function": "Positioning feeding polyps into flow",
+      "compare_to": [
+        "fin_paired",
+        "zooid_lophophore_crown",
+        "plate"
+      ],
+      "gap": "A soft triangular lateral leaf carries several independent polyp seats along a common plate rooted on a colony rachis.",
+      "reference_animal": "Phosphorescent sea pen (Pennatula phosphorea)",
+      "reference_query": "Oblique, upper and edge-on views of one polyp leaf, including the rachis seam and the expanded versus contracted polyp-bearing edge.",
+      "model_scope": "One leaf with a short rachis mount and representative polyp seats.",
+      "local_fixture": "Use a spine cylinder and neighboring leaves to test mount rotation and clearance for expanded polyps."
+    },
+    {
+      "id": "staggered_ascidian_siphon_pair",
+      "workstream": "other_invertebrates",
+      "function": "Separate intake and excurrent flow",
+      "compare_to": [
+        "siphon",
+        "gill_slits",
+        "mouth_wide"
+      ],
+      "gap": "Two separately contractile apertures join one tunic patch at different heights and axes, with individually closing lobed lips.",
+      "reference_animal": "Clubbed tunicate (Styela clava)",
+      "reference_query": "Apical and three-quarter views of both siphon lips and nearby tunic, showing fully open and contracted states.",
+      "model_scope": "A tunic sector with two independent short siphon collars and their rims.",
+      "local_fixture": "Use a tapered tunic sac to check offset seating and exercise opening and closure of each aperture independently."
+    },
+    {
+      "id": "shared_colonial_cloacal_rim",
+      "workstream": "other_invertebrates",
+      "function": "Shared colonial excurrent outlet",
+      "compare_to": [
+        "siphon",
+        "zooid_lophophore_crown"
+      ],
+      "gap": "Several separate zooid intake rims sit around a single shared external excurrent rim in a continuous low tunic sheet.",
+      "reference_animal": "Star ascidian (Botryllus schlosseri)",
+      "reference_query": "Top-down and low oblique macrophotos of an intact star-shaped cluster showing the outer intake openings and central communal opening.",
+      "model_scope": "One tunic tile with a common raised outlet and a surrounding ring of simple intake rims.",
+      "local_fixture": "Mount onto a flat or mildly curved panel and join two tiles to check rim clearance and continuity of the communal sheet between them."
+    },
+    {
+      "id": "valve_foramen_pedicle",
+      "workstream": "other_invertebrates",
+      "function": "Flexible shell tether",
+      "compare_to": [
+        "shell",
+        "annelid_terminal_holdfast_discs",
+        "tail_flexible"
+      ],
+      "gap": "A soft single stalk passes through a small rigid valve opening and broadens at the substrate attachment.",
+      "reference_animal": "European lamp shell (Terebratulina retusa)",
+      "reference_query": "Hinge-end, side and substrate-facing views of the pedicle where it exits the valve foramen and meets rock.",
+      "model_scope": "One flexible pedicle, its flared attachment and an isolated valve-foramen collar.",
+      "local_fixture": "Use two rigid shell patches and alternate rock profiles to check pedicle bend and contact without fouling the shell lips."
+    },
+    {
+      "id": "barrel_osculum_funnel",
+      "workstream": "other_invertebrates",
+      "function": "Excurrent water release",
+      "compare_to": [
+        "siphon",
+        "mouth_wide",
+        "bell_radial"
+      ],
+      "gap": "A broad terminal rim opens down into a tapered surface cavity continuous with a thick vertical wall.",
+      "reference_animal": "Giant barrel sponge (Xestospongia muta)",
+      "reference_query": "Vertical plan and raking side views over the osculum showing rim irregularity and the visible cavity taper.",
+      "model_scope": "A rim and short external wall funnel with a visible recess.",
+      "local_fixture": "Attach to a thick wall cylinder and inspect lip seating and cavity continuity at two wall thicknesses."
+    },
+    {
+      "id": "sheathed_tentacle_with_tentilla",
+      "workstream": "other_invertebrates",
+      "function": "Suspension prey capture and tentacle storage",
+      "compare_to": [
+        "tentacle_fringe",
+        "arm_hydrostatic",
+        "ctenophore_comb_tracks"
+      ],
+      "gap": "A main retractable filament with repeated side branches leaves an individual body-side sheath aperture.",
+      "reference_animal": "Sea gooseberry (Pleurobrachia pileus)",
+      "reference_query": "Side and close oblique views of the visible sheath exit and the tentilla on a fully streamed tentacle, with a withdrawn state for comparison.",
+      "model_scope": "One superficial sheath collar and a length of tentacle with representative tentilla.",
+      "local_fixture": "Use a curved comb-jelly wall and a pair of neighboring comb-row strips to check tentacle seating and clearance through deployment."
+    },
+    {
+      "id": "folded_anterior_pseudotentacles",
+      "workstream": "other_invertebrates",
+      "function": "Sensory positioning",
+      "compare_to": [
+        "antenna_segmented",
+        "crest_dorsal",
+        "frill"
+      ],
+      "gap": "The two visible points are folds of one continuous anterior sheet margin, with the same margin forming their connecting valley.",
+      "reference_animal": "Bifurcated flatworm (Pseudoceros bifurcus)",
+      "reference_query": "Direct front, overhead and grazing side views of relaxed and raised anterior margin folds in a crawling adult.",
+      "model_scope": "An anterior sheet segment with two raised folds and a continuous free perimeter.",
+      "local_fixture": "Use a low flexible body sheet and substrate plane to check fold continuity, profile and free-edge clearance during a turn."
+    },
+    {
+      "id": "eversible_scalid_introvert",
+      "workstream": "other_invertebrates",
+      "function": "Temporary sediment anchorage",
+      "compare_to": [
+        "mouth_trunk",
+        "claws",
+        "imbricated_scale_armor"
+      ],
+      "gap": "An eversible anterior sleeve exposes several ordered rows of outward hooks around the cylindrical body surface.",
+      "reference_animal": "Priapulid worm (Priapulus caudatus)",
+      "reference_query": "Anterior and side macrophotos of the protruded introvert, showing the first hook rows and the fold into the trunk when shortened.",
+      "model_scope": "One external rolling sleeve and several coarse rows of hook-shaped scalids.",
+      "local_fixture": "Use a compliant trunk collar and sediment tube proxy to check sleeve expansion, contact order and clearance during retraction."
+    },
+    {
+      "id": "unicorn_spiral_horn",
+      "workstream": "game_fantasy",
+      "function": "Species recognition",
+      "compare_to": [
+        "horn_sweep"
+      ],
+      "gap": "A forehead horn with surface spiral relief around its axis. The twisted surface differs from a sweep or coiled ram horn.",
+      "reference_animal": "Unicorn design, with narwhal tusk as the helix reference",
+      "reference_url": "https://www.nhm.ac.uk/discover/narwhals-mysterious-unicorns-of-the-sea.html",
+      "model_scope": "Single tapered forehead horn with one raised spiral.",
+      "local_fixture": "Sample a convex forehead seat. Check a centered inset root and free external tip at both scales."
+    },
+    {
+      "id": "wyvern_tail_spade",
+      "workstream": "game_fantasy",
+      "function": "Species recognition",
+      "compare_to": [
+        "tail_club"
+      ],
+      "gap": "A flattened bilateral tail-end blade on a single continuous shank, with swept shoulders and one distal point.",
+      "reference_animal": "Wyvern design, with Rhamphorhynchus fossil tail vane as the construction reference",
+      "reference_url": "https://www.cpr.cuhk.edu.hk/en/press/cuhk-and-university-of-edinburgh-palaeobiologists-solve-tail-function-mystery-in-the-earliest-flying-vertebrates-revealing-never-seen-before-soft-tissue-details-using-laser-imaging/",
+      "model_scope": "Rounded spade-shaped tail tip with an integrated tapered stalk.",
+      "local_fixture": "Mount a tapered tail tip on a short rearward chain. Check the inset and transform when the final segment direction changes."
+    },
+    {
+      "id": "dragon_cheek_frill",
+      "workstream": "game_fantasy",
+      "function": "Species recognition",
+      "compare_to": [
+        "frill"
+      ],
+      "gap": "Compact lateral cheek web with raised radiating ridges and scalloped margins, mirrored across the head in recipes.",
+      "reference_animal": "Dragon design, with frill-necked lizard membrane folds as the construction reference",
+      "reference_url": "https://commons.wikimedia.org/wiki/File:Frill_anatomy.jpg",
+      "model_scope": "One small swept cheek membrane with radial relief and a single fleshy root.",
+      "local_fixture": "Use a mirrored convex cheek seat. Check the inward edge and free swept membrane at compact and spread settings."
+    },
+    {
+      "id": "suid_rostral_disc",
+      "workstream": "game_farm",
+      "function": "Species recognition",
+      "compare_to": [
+        "nose_pad"
+      ],
+      "gap": "A flared working face with paired forward-facing recessed vestibules and a full thick rim needs a distinct terminal outline and recess geometry.",
+      "reference_animal": "Sus scrofa domesticus",
+      "reference_url": "https://commons.wikimedia.org/wiki/File:Domestic_pig_nose.jpg",
+      "model_scope": "A single oval terminal pad blends into a compact proximal collar. The paired blind recesses record the visible openings.",
+      "local_fixture": "Use a local host surface or distal limb seat. Check the embedding of the root and exposed identifying features at two scales."
+    },
+    {
+      "id": "bovine_four_quarter_udder",
+      "workstream": "game_farm",
+      "function": "Species recognition",
+      "compare_to": [
+        "bulge"
+      ],
+      "gap": "The broad ventral seat, paired quarter relief and four continuous teat branches are outside a generic bulk primitive.",
+      "reference_animal": "Bos taurus",
+      "reference_url": "https://commons.wikimedia.org/wiki/File:Cow_behind_udder_DSC04046.jpg",
+      "model_scope": "One fused gland body with a recessed midline and each teat fused into its ventral base.",
+      "local_fixture": "Use a local host surface or distal limb seat. Check the embedding of the root and exposed identifying features at two scales."
+    },
+    {
+      "id": "chicken_single_comb",
+      "workstream": "game_farm",
+      "function": "Species recognition",
+      "compare_to": [
+        "crest_dorsal"
+      ],
+      "gap": "A midline cranial seat with a fleshy continuous web, uneven points and a free blade is distinct from a dorsal body crest.",
+      "reference_animal": "Gallus gallus domesticus",
+      "reference_url": "https://commons.wikimedia.org/wiki/File:Rooster_03.jpg",
+      "model_scope": "One crown-seat mesh, caliper-like skin thickness, and a height/cant variation for the free portion.",
+      "local_fixture": "Use a local host surface or distal limb seat. Check the embedding of the root and exposed identifying features at two scales."
+    },
+    {
+      "id": "chicken_paired_wattles",
+      "workstream": "game_farm",
+      "function": "Species recognition",
+      "compare_to": [
+        "dewlap"
+      ],
+      "gap": "Two lobes drop from bilateral cranial seats with a full-length medial gap. A dewlap is a single throat fold.",
+      "reference_animal": "Gallus gallus domesticus",
+      "reference_url": "https://commons.wikimedia.org/wiki/File:Rooster_03.jpg",
+      "model_scope": "Two mirrored continuous lenticular lobes with paired upper seats and independent distal margins. Drop and splay are static shape controls.",
+      "local_fixture": "Use a local host surface or distal limb seat. Check the embedding of the root and exposed identifying features at two scales."
+    },
+    {
+      "id": "square_stop_canine_muzzle",
+      "workstream": "game_pets",
+      "function": "Species recognition",
+      "compare_to": [
+        "muzzle"
+      ],
+      "gap": "The existing fox-derived muzzle tapers gradually beyond the cheek pads. The draft holds tip breadth, changes the curvature into an explicit stop and straight bridge, and seats two rimmed nostrils above a closed lip commissure.",
+      "reference_animal": "Canis lupus familiaris",
+      "reference_url": "https://nationalbeagleclub.org/page-18097",
+      "model_scope": "A closed rostral shell with a shaped commissure and a seated nostril-bearing rhinarium.",
+      "local_fixture": "Use a local host surface or distal limb seat. Check the embedding of the root and exposed identifying features at two scales."
+    },
+    {
+      "id": "pendulous_folded_pinna",
+      "workstream": "game_pets",
+      "function": "Species recognition",
+      "compare_to": [
+        "ear_pinna"
+      ],
+      "gap": "The upright outward-facing cup in ear_pinna cannot make a close-hanging ear with a continuous basal rollover, thin distal flap and asymmetric turned leading edge by changing cup or flatness.",
+      "reference_animal": "Canis lupus familiaris",
+      "reference_url": "https://nationalbeagleclub.org/page-18097",
+      "model_scope": "One closed variable-thickness cartilage sheet with a proximal roll and a shallow asymmetrical cup.",
+      "local_fixture": "Use a local host surface or distal limb seat. Check the embedding of the root and exposed identifying features at two scales."
+    },
+    {
+      "id": "bilateral_mystacial_pads",
+      "workstream": "game_pets",
+      "function": "Species recognition",
+      "compare_to": [
+        "whiskers"
+      ],
+      "gap": "The whiskers family emits a unilateral boss with an upright fan of fibres. The generic muzzle has subdued cheek swellings. The draft uses one broad attachment seat and two short lobe fields with integrated follicle dimples and a medial furrow.",
+      "reference_animal": "Felis catus",
+      "reference_url": "https://commons.wikimedia.org/wiki/File:Cat_whiskers_closeup.jpg",
+      "model_scope": "A shallow continuous surface with paired lobe relief and simplified visible follicle dimples. Separate whiskers can be placed on top.",
+      "local_fixture": "Use a local host surface or distal limb seat. Check the embedding of the root and exposed identifying features at two scales."
+    },
+    {
+      "id": "elongate_lagomorph_hindfoot",
+      "workstream": "game_pets",
+      "function": "Species recognition",
+      "compare_to": [
+        "paw_padded"
+      ],
+      "gap": "The carnivoran paw emphasizes a short rounded metapodium and discrete plantar pads. The draft elongates and lowers the heel-to-toe body, keeps the plantar surface continuous, and branches into four low unequal distal digits.",
+      "reference_animal": "Oryctolagus cuniculus",
+      "reference_url": "https://commons.wikimedia.org/wiki/File:Domestic_mini_lop_rabbit_standing_on_its_hind_feet.jpg",
+      "model_scope": "One closed skin from ankle cuff through the metatarsus to four contiguous toes with shallow commissures. Claws and plantar fur are omitted from the clay part.",
+      "local_fixture": "Use a local host surface or distal limb seat. Check the embedding of the root and exposed identifying features at two scales."
+    }
+  ],
+  "legacy_groups": {
+    "beetle": "insects",
+    "canine": "terrestrial_mammals",
+    "crab": "crustaceans",
+    "feline": "terrestrial_mammals",
+    "frog": "amphibians",
+    "jellyfish": "cnidarians",
+    "lizard": "reptiles",
+    "octopus": "molluscs",
+    "primate": "terrestrial_mammals",
+    "raptor": "birds",
+    "scorpion": "other_arthropods",
+    "shark": "cartilaginous_fish",
+    "worm": "worms"
+  },
+  "groups": [
+    {
+      "id": "terrestrial_mammals",
+      "label": "Terrestrial, arboreal and semiaquatic mammals",
+      "gap": "The baseline concentrates on digitigrade carnivorans and an ape.",
+      "next_sources": "Compare monotreme feet, xenarthran armor, ungulate feet and digging specialists with scale-bearing museum views."
+    },
+    {
+      "id": "flying_mammals",
+      "label": "Bats",
+      "gap": "The complementary membrane-wing family has no underlying bat species record in the original research.",
+      "next_sources": "Compare wing, thumb, tail membrane and nose-leaf landmarks across families with spread and folded specimen views."
+    },
+    {
+      "id": "marine_mammals",
+      "label": "Cetaceans, pinnipeds and sirenians",
+      "gap": "The original species census has no marine mammals.",
+      "next_sources": "Compare fluke, flipper, blowhole, baleen and muzzle architectures across these groups."
+    },
+    {
+      "id": "birds",
+      "label": "Birds",
+      "gap": "The legacy bird model rests on a raptor. Bill, foot and wing diversity is poorly sampled.",
+      "next_sources": "Use museum specimen views and feeding studies of shorebirds, waterfowl, penguins, parrots, pelicans and nectar feeders."
+    },
+    {
+      "id": "reptiles",
+      "label": "Reptiles",
+      "gap": "The original reptile evidence is one iguana. Snake, crocodilian, gecko and turtle mechanics lack numeric source rows.",
+      "next_sources": "Capture gecko toe underside, turtle shell profile, crocodilian jaw articulation and snake scale or jaw landmarks."
+    },
+    {
+      "id": "amphibians",
+      "label": "Amphibians",
+      "gap": "The frog baseline excludes salamanders and caecilians.",
+      "next_sources": "Find larval-to-adult gill views, toe-pad structures, and limbless head morphology in specimen collections."
+    },
+    {
+      "id": "cartilaginous_fish",
+      "label": "Sharks, rays and chimaeras",
+      "gap": "One shark dominates the legacy description of fins and gill openings.",
+      "next_sources": "Document ray pectoral continuity and cephalic lobes, sawfish rostra and chimaera fin and face morphology."
+    },
+    {
+      "id": "bony_fish",
+      "label": "Ray-finned and lobe-finned fishes",
+      "gap": "The original fish sample contains no bony fish.",
+      "next_sources": "Sample caudal alternatives, opercula, hinged hyoids, suction attachments, lures and benthic fin supports."
+    },
+    {
+      "id": "insects",
+      "label": "Insects",
+      "gap": "The beetle supplies most legacy insect features.",
+      "next_sources": "Compare dorsal and ventral wing, mouthpart, leg and ovipositor structures across contrasting orders and life stages."
+    },
+    {
+      "id": "crustaceans",
+      "label": "Crustaceans",
+      "gap": "The legacy crab has no published comparison against swimmers, filter feeders or non-chelate grasping limbs.",
+      "next_sources": "Measure separated swimmerets, tail fans, raptorial appendages, barnacle cirri and scraper mouthparts."
+    },
+    {
+      "id": "other_arthropods",
+      "label": "Arachnids, horseshoe crabs, myriapods and sea spiders",
+      "gap": "Original evidence covers one scorpion only.",
+      "next_sources": "Gather reference views of spider pedipalps and spinnerets, book gills, ovigers and anterior centipede limb modifications."
+    },
+    {
+      "id": "molluscs",
+      "label": "Molluscs",
+      "gap": "The legacy octopus does not cover shelled cephalopods, walking or crawling molluscs, hinged shells, or gilled mantle openings.",
+      "next_sources": "Capture gastropod opercula, bivalve valves and hinges, segmented chiton plates and nautilus shell-to-hood contact."
+    },
+    {
+      "id": "echinoderms",
+      "label": "Echinoderms",
+      "gap": "The original project has no echinoderm source rows.",
+      "next_sources": "Compare oral and aboral views of sea stars, brittle stars, urchins, crinoids and sea cucumbers."
+    },
+    {
+      "id": "cnidarians",
+      "label": "Cnidarians and ctenophores",
+      "gap": "The legacy census has a single scyphozoan and no attached or branching body plans.",
+      "next_sources": "Record marginal appendage patterns, comb rows and colonial modules using licensing-verified microscopy or drawings."
+    },
+    {
+      "id": "worms",
+      "label": "Annelids, nemerteans, flatworms and allied worm forms",
+      "gap": "Existing records cover one earthworm.",
+      "next_sources": "Find scale-bearing views for parapodia, chaeta arrangements, sucker discs, branchial crowns and eversible structures."
+    },
+    {
+      "id": "other_invertebrates",
+      "label": "Other invertebrate body plans",
+      "gap": "Sponges, bryozoans, tunicates and several other visible structural groups are unrepresented in the legacy data.",
+      "next_sources": "Sample specimen scans or anatomy diagrams for siphon pairs, skeletal fans, lophophores and colony-to-module joints."
+    },
+    {
+      "id": "jawless_fish",
+      "label": "Lampreys and hagfish",
+      "gap": "Jawless attachment and feeding structures are distinct from paired jaws and gill covers.",
+      "next_sources": "Use oral-disc views and resting versus attached profiles for living jawless fish."
+    }
+  ]
+}

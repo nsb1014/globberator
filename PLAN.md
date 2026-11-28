@@ -29,7 +29,7 @@ reference image ──► AI ──► recipe.json ◄── editor (user)
                procedural animation ──► GLB export
 ```
 
-- A **recipe** is small, versioned, human-readable JSON. It holds the spine, the parts, their attachments, the shape parameters and the paint. The same recipe always builds the same character.
+- A **recipe** is small, versioned, human-readable JSON. It holds the spine, the parts, their attachments, and the shape parameters. The same recipe always builds the same character.
 - The **editor and the AI use the same operation API**: `add_part`, `move_part`, `set_param`, `set_spine_point`, `set_symmetry`, `remove_part`. The AI never writes mesh data; it writes recipes.
 - **The style lives in the library.** Matching an image means choosing parts and parameters within their allowed ranges. Anything outside those ranges is, by definition, outside the style.
 
@@ -66,9 +66,9 @@ library/parts/horn_curl/
 - The first library is deliberately small: about 40 parts that cover distinct silhouettes. A library-gap report from the AI loop (milestone 6) decides what to add next.
 - All parts are code-generated in Blender in one consistent style: sculpted matte clay. Each part is built from smooth lofts and ovals, carved with booleans, voxel-remeshed, smoothed and decimated, as the original bull was. Parameters are shape keys, and the GLBs are loaded by Godot at runtime.
 
-### 4. Paint
+### 4. Clay finish
 
-Spore-style paint: base, accent and detail colors, plus a pattern mask (stripes, spots, gradient) projected along the spine coordinates. It is stored in the recipe and applied with one shared shader.
+One neutral clay material covers the assembled model and the parts. Coloring is handled downstream.
 
 ### 5. Auto-rig
 
@@ -115,13 +115,12 @@ Rendering needs a GPU context. In the container this is Xvfb plus Mesa llvmpipe 
 
 The orchestrator is in Python and uses the Claude API with vision and tool use. Library and recipe schemas are passed as tool definitions, so every output is a valid recipe.
 
-1. **Analyze.** A vision model describes the subject in library terms: body plan (biped, quadruped, hexapod, serpent, blob), spine curve and thickness profile, the limbs and where they attach, distinctive features in order of importance (big horns, long neck, three eyes), the dominant colors, and the camera view. Background removal gives a silhouette mask.
+1. **Analyze.** A vision model describes the subject in library terms: body plan (biped, quadruped, hexapod, serpent, blob), spine curve and thickness profile, the limbs and where they attach, distinctive features in order of importance (big horns, long neck, three eyes), and the camera view. Background removal gives a silhouette mask.
 2. **Retrieve.** For each feature, shortlist candidate parts from the catalog by category, style tags and thumbnails. The model then picks one from the thumbnails.
 3. **Draft.** The model writes an initial recipe.
 4. **Render and compare.** Render the recipe from the camera estimated in step 1, plus front, side and three-quarter views. Score it:
    - silhouette IoU and a chamfer distance against the reference mask (global proportions)
    - feature checklist: the vision model compares the renders with the reference and confirms each feature from step 1 (recognizability)
-   - palette distance in Lab space
    - optional embedding similarity (DINOv2 or CLIP) as a tie-breaker
 5. **Refine.** Two update paths:
    - The model proposes a few structured edits per iteration: swap a part, move an attachment, change a parameter.
@@ -130,7 +129,7 @@ The orchestrator is in Python and uses the Claude API with vision and tool use. 
    Stop when the score passes the **style tolerance** or stops improving, with a cap of N iterations.
 6. **Output.** The recipe, a GLB with baked clips, turntable and walk previews, a score report, and a **library-gap report**: features that no part could express within tolerance.
 
-**Style tolerance.** The final score is a weighted sum. Weights are about 0.4 feature checklist, 0.3 silhouette, 0.2 proportions and 0.1 palette. The tolerance is the threshold the user accepts. Fine detail such as texture, fur and exact facial expression is not scored. The checklist weighs the most visible features most, so a stylized result that keeps the recognizable traits beats a closer silhouette with the wrong horns.
+**Style tolerance.** The final score is a weighted sum. Feature checklist, silhouette and proportions are weighted in a 4:3:2 ratio. The tolerance is the threshold the user accepts. Fine detail such as texture, fur and exact facial expression is not scored. The checklist weighs the most visible features most, so a stylized result that keeps the recognizable traits beats a closer silhouette with the wrong horns.
 
 **Optional path B (later).** Run an image-to-3D model on the reference to get a rough mesh. Then fit the spine and limbs to it in 3D, using a skeleton from medial-axis extraction. This replaces guessing from a single view and helps with the hidden back side. The library still defines the style.
 
@@ -147,7 +146,7 @@ Each milestone ends with something you can look at and an automated check.
 | 2 | **Limbs and parts.** Limb chains, surface attachment, symmetry, rigid parts with params; first ~15 parts | Hand-assembled biped, quadruped and hexapod render from one library |
 | 3 | **Locomotion.** Role detection, gait planner, IK, body support, 0–8 legs | Walk clips for the 3 test creatures; planted-foot drift < 5% foot length (measured test) |
 | 4 | **Life.** Spine/tail springs, look-at, breathing, 3 role-based authored clips, GLB bake/export | Exported GLB plays idle/walk/roar in a fresh Godot project and in a glTF viewer |
-| 5 | **Editor UX.** Palette, drag-snap, handles, paint, test drive, undo | A person builds a new creature in under 10 minutes without touching JSON |
+| 5 | **Editor UX.** Palette, drag-snap, handles, test drive, undo | A person builds a new creature in under 10 minutes without touching JSON |
 | 6 | **AI v1.** Analyze → draft → render → critique loop; scoring; gap report | On the known-recipe benchmark, recovered recipes score ≥ 0.8; first real-image results reviewed |
 | 7 | **Library growth.** Use gap reports to add parts until ~40; tune tolerance weights | Real-image benchmark median score up, gap count down release over release |
 | 8 | **Beyond creatures (optional).** Reuse the rigid-part assembler for buildings and vehicles (no spine, grid/socket snapping, wheels as a motion role) | One building and one vehicle built from a shared assembler |

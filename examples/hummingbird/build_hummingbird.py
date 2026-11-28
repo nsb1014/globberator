@@ -18,40 +18,18 @@ from scipy.interpolate import PchipInterpolator
 ROOT = Path(__file__).resolve().parents[2]
 OUT = ROOT / "out" / "hummingbird"
 sys.path.insert(0, str(ROOT))
-from polyforge import builder, export, finish, kit, render
-from polyforge.kit import V, UP, BACK, RIGHT, smoothstep, lerp
+from polyforge import export, finish, kit, render
+from polyforge.kit import V, UP, BACK, RIGHT
 
 CAMERA = V(0.897, .078, .435).normalized()
 BILL_ROOT = V(0,.426,.700)
 BILL_TIP = V(0,.526,1.402)
-COL = "Plumage"
 objects = []
 bones = []
 anchors = {}
 
 
-def rgb(value):
-    return Vector(builder.hex_rgb(value))
-
-
-def surface(name, color=None, roughness=.48, metallic=.0, vertex=False):
-    mat = bpy.data.materials.new(name)
-    mat.use_nodes = True
-    mat.roughness = roughness
-    bsdf = mat.node_tree.nodes.get("Principled BSDF")
-    bsdf.inputs["Roughness"].default_value = roughness
-    bsdf.inputs["Metallic"].default_value = metallic
-    if color is not None:
-        bsdf.inputs["Base Color"].default_value = (*rgb(color),1)
-        mat.diffuse_color = (*rgb(color),1)
-    if vertex:
-        attr = mat.node_tree.nodes.new("ShaderNodeVertexColor")
-        attr.layer_name = COL
-        mat.node_tree.links.new(attr.outputs["Color"],bsdf.inputs["Base Color"])
-    return mat
-
-
-def mesh(name, verts, faces, material, owner, subdiv=0, painter=None):
+def mesh(name, verts, faces, owner, subdiv=0):
     ob = finish.new_object(name,verts,faces)
     b = bmesh.new()
     b.from_mesh(ob.data)
@@ -64,17 +42,13 @@ def mesh(name, verts, faces, material, owner, subdiv=0, painter=None):
     if subdiv:
         mod = ob.modifiers.new("Sculpt subdivision","SUBSURF")
         mod.levels = mod.render_levels = subdiv
-    ob.data.materials.append(material)
-    if painter is not None:
-        colors = ob.data.color_attributes.new(COL,"FLOAT_COLOR","POINT")
-        values = [v for i,p in enumerate(verts) for v in (*painter(V(p),i),1.)]
-        colors.data.foreach_set("color", values)
+    ob.data.materials.append(finish.clay_material())
     ob["owner_bone"] = owner
     objects.append(ob)
     return ob
 
 
-def rings_mesh(name, rings, material, owner, subdiv=0, painter=None):
+def rings_mesh(name, rings, owner, subdiv=0):
     count = len(rings[0])
     faces = [tuple(reversed(range(count)))]
     verts = [v for ring in rings for v in ring]
@@ -84,20 +58,20 @@ def rings_mesh(name, rings, material, owner, subdiv=0, painter=None):
             j = (i+1) % count
             faces.append((a+i,a+j,a+count+j,a+count+i))
     faces.append(tuple(range(len(verts)-count,len(verts))))
-    return mesh(name,verts,faces,material,owner,subdiv,painter)
+    return mesh(name,verts,faces,owner,subdiv)
 
 
-def oval(name, center, radii, material, owner, normal=None):
+def oval(name, center, radii, owner, normal=None):
     piece = kit.Piece()
     basis = None if normal is None else V(normal).to_track_quat("Z","Y").to_matrix()
     piece.oval(V(center),V(radii),basis,segs=28,rings=16)
-    return mesh(name,*piece.cage(),material,owner)
+    return mesh(name,*piece.cage(),owner)
 
 
-def tube(name, points, radii, mat, owner, paint=None, sides=19):
+def tube(name, points, radii, owner, sides=19):
     piece = kit.Piece()
     piece.loft([V(p) for p in points],radii,sides=sides,up=RIGHT,density=4)
-    return mesh(name,*piece.cage(),mat,owner,painter=paint)
+    return mesh(name,*piece.cage(),owner)
 
 
 def bone(name, parent, head, tail):
@@ -132,20 +106,7 @@ def build_body():
         rings.append(ring)
 
     channel_normal=V(0,.87,-.49)
-    jade,olive,turquoise,blue,buff=map(rgb,["#16905c","#7ca735","#087e79","#174780","#bca585"])
-    def body_color(v, i):
-        stored = i % 40
-        dorsal=math.sin(math.tau*stored/40)
-        upper=smoothstep(-.25,.9,dorsal)
-        olive_patch=upper*(.48+.32*smoothstep(.32,.68,v.z))
-        green=jade.lerp(olive,olive_patch)
-        throat=smoothstep(.08,.42,v.z)*(1-smoothstep(-.54,.19,dorsal))
-        throat*=1-.18*smoothstep(.62,.74,v.z)
-        throat_color=turquoise.lerp(blue,smoothstep(.18,.64,v.z)*.88)
-        rear=(1-smoothstep(-.53,-.29,v.z))*(1-.65*upper)
-        gentle=1+.065*math.sin(19*v.z+37*v.x)*math.cos(24*v.y-8*v.z)
-        return green.lerp(throat_color,throat).lerp(buff,rear)*gentle
-    body = rings_mesh("Continuous head, throat and torso",rings,PLUMAGE,"Body",2,body_color)
+    body = rings_mesh("Continuous head, throat and torso",rings,"Body",2)
     # Build an evaluated cage BVH for physically seated landmarks and plumage.
     dg=bpy.context.evaluated_depsgraph_get()
     evaluated=body.evaluated_get(dg)
@@ -161,15 +122,9 @@ def build_bill():
     root=BILL_ROOT
     mid=V(0,.467,.950)
     tip=BILL_TIP
-    dark, coral, shade=map(rgb,["#2b3034","#e85f49","#752b29"])
-    def bill_color(v, _):
-        length=(v.z-root.z)/(tip.z-root.z)
-        base=coral.lerp(shade,smoothstep(.29,.93,length)*.37)
-        line=math.exp(-((v.y-(.419+.151*(v.z-.70)))/.0045)**2)
-        return base.lerp(dark,.16*line + .84*smoothstep(.52,.88,length))
-    tube("Coral bill with graphite tip",[root- V(0,.011,.057),root,mid,V(0,.507,1.23), tip],
+    tube("Tapered bill",[root- V(0,.011,.057),root,mid,V(0,.507,1.23), tip],
          [(.045,.031),(.038,.023),(.022,.013),(.010,.007),(.0018,.0011)],
-         BILL,"Head",bill_color,24)
+         "Head",sides=24)
     anchors["bill_root"]=root
     anchors["bill_tip"]=tip
 
@@ -181,12 +136,12 @@ def build_eyes(body_tree):
         assert seat is not None and normal.x*side>.40,(side,seat,normal)
         normal=(normal + V(side*.28,.025,.03)).normalized()
         center=seat-normal*.012
-        oval(f"{name} orbital skin",center-normal*.006,(.067,.064,.030),ORBIT,"Head",normal)
-        oval(f"{name} glossy eye",center+normal*.010,(.054,.053,.040),EYEBALL,"Head",normal)
+        oval(f"{name} orbital skin",center-normal*.006,(.067,.064,.030),"Head",normal)
+        oval(f"{name} eye",center+normal*.010,(.054,.053,.040),"Head",normal)
         anchors[f"eye_{name.lower()}"]=center
 
 
-def blade(name,start,end,width,depth,normal,owner,mats,shape=None):
+def blade(name,start,end,width,depth,normal,owner):
     # Closed feather master. Root and tip remain narrow while chord and
     # thickness form a cambered airfoil in each station.
     start,end=V(start),V(end)
@@ -195,7 +150,7 @@ def blade(name,start,end,width,depth,normal,owner,mats,shape=None):
     across=forward.cross(normal).normalized()
     normal=across.cross(forward).normalized()
     rings=[]
-    layout=shape or ((0,.12),(.17,.61),(.34,.94),(.53,1),(.71,.87),(.86,.60),(.96,.27),(1,.035))
+    layout=((0,.12),(.17,.61),(.34,.94),(.53,1),(.71,.87),(.86,.60),(.96,.27),(1,.035))
     for t,w in layout:
         root=start.lerp(end,t)
         root+=normal*(math.sin(math.pi*t)*.018*min(1,(end-start).length))
@@ -207,18 +162,11 @@ def blade(name,start,end,width,depth,normal,owner,mats,shape=None):
             ring.append(root+across*(width*w*u*(1+.16*u))+
                         normal*(thickness*math.sin(a)*(1-.22*u*u)))
         rings.append(ring)
-    c0,c1=map(rgb,mats)
-    def paint(v,i):
-        t=i//16/(len(rings)-1)
-        feather_face=math.sin(math.tau*(i%16)/16)
-        central=abs(math.cos(math.tau*(i%16)/16))
-        line=(1-smoothstep(.025,.31,central))*.14*(.40+.6*smoothstep(0,.55,t))
-        return c0.lerp(c1,smoothstep(.12,1,t)).lerp(c1,line)*(1+.08*feather_face)
-    return rings_mesh(name,rings,PLUMAGE,owner,1,paint)
+    return rings_mesh(name,rings,owner,1)
 
 
 def surface_feathers(body_tree,dorsal):
-    # Shallow flush coverts bring a readable sculpt rhythm into the iridescent
+    # Shallow flush coverts bring a readable sculpt rhythm into the throat
     # patch. No raised detail crosses the eye seats or the crown silhouette.
     rows = [
         (.56,.283,-.20,22,.023,.051),(.50,.236,-.27,22,.027,.057),
@@ -245,10 +193,7 @@ def surface_feathers(body_tree,dorsal):
             delta=flow*length
             root=seat-delta*.36-n*.007
             tip=seat+delta*.64+n*.0048
-            tint=("#14578a","#2f96aa") if row<3 else ("#167856","#43a588")
-            if (k+row)%4==0:
-                tint=("#146776","#35a3a6") if row<4 else ("#137e57","#74b469")
-            blade(f"Gorget covert {row+1}.{k+1:02}",root,tip,width*.88,.0048,n,"Body",tint)
+            blade(f"Gorget covert {row+1}.{k+1:02}",root,tip,width*.88,.0048,n,"Body")
 
 
 def wing(label, control, chord_axis):
@@ -279,9 +224,7 @@ def wing(label, control, chord_axis):
             p=position(t,.70*width*(.5+.5*math.cos(a)))+n*(bulk*math.sin(a))
             ring.append(p)
         rings.append(ring)
-    shade0,shade1=rgb("#508d45"),rgb("#4a493e")
-    wing_skin=rings_mesh(f"{label} shoulder and leading edge",rings,PLUMAGE,hinge,2,
-                         lambda _,i:shade0.lerp(shade1,smoothstep(.8,7.4,i//24)))
+    wing_skin=rings_mesh(f"{label} shoulder and leading edge",rings,hinge,2)
     anchors[f"wing_{label.lower()}"]=start
     # Span stations and the offsets of the tips along the trailing chord lay
     # out the tapered hand rather than using a circular feather fan.
@@ -296,31 +239,27 @@ def wing(label, control, chord_axis):
         n=normal_at(sr)
         root=position(sr,cr*.70)-n*.006
         tip=position(te,ce)-n*(.017+.002*(i%3))
-        colors=("#4d4b43","#77746e") if i<2 else (
-                "#71685c",("#b8ad98","#a99d87","#bdb3a3")[i%3])
         owner=flight_bone if i<6 else hinge
-        blade(f"{label} flight feather {i+1:02}",root,tip,width,.010,n,owner,colors)
+        blade(f"{label} flight feather {i+1:02}",root,tip,width,.010,n,owner)
 
     for i in range(4):
         t=.045+.043*i
         n=normal_at(t)
         blade(f"{label} inner secondary {i+1:02}",position(t,.092)-n*.009,
               position(t+.138,.287+.018*i)-n*.014,
-              .067,.009,n,hinge,("#635e4c","#9f9381"))
+              .067,.009,n,hinge)
     for i in range(11):
         t=.074+.051*i
         n=normal_at(t)
         root=position(t,.058)+n*.016
         tip=position(t+.113,.159-.028*t)+n*.012
-        colors=("#4c7843","#847d54") if i<7 else ("#586a47","#9b927f")
-        blade(f"{label} median covert {i+1:02}",root,tip,.040,.007,n,hinge,colors)
+        blade(f"{label} median covert {i+1:02}",root,tip,.040,.007,n,hinge)
     for i in range(8):
         t=.040+.048*i
         n=normal_at(t)
         root=position(t,.028)+n*.023
         tip=position(t+.102,.135-.05*t)+n*.019
-        blade(f"{label} shoulder covert {i+1:02}",root,tip,.033,.006,n,hinge,
-              ("#427b44","#6b9b4a"))
+        blade(f"{label} shoulder covert {i+1:02}",root,tip,.033,.006,n,hinge)
     return wing_skin,start,far
 
 
@@ -331,12 +270,12 @@ def tail():
         x=(i-3)/3
         start=root+V(.072*x,.022*(1-abs(x)),.030*abs(x))
         end=V(.142*x,-.487+.040*abs(x),-1.067+.105*abs(x))
-        blade(f"Tail rectrix {i+1:02}",start,end,.061,.011,V(.57,.83,0),"Tail",("#4f5e3d","#262c32"))
+        blade(f"Tail rectrix {i+1:02}",start,end,.061,.011,V(.57,.83,0),"Tail")
     for i in range(5):
         x=(i-2)/2
         start=root+V(.057*x,-.029,.037)
         end=V(.082*x,-.416+.015*abs(x),-.766+.031*abs(x))
-        blade(f"Undertail covert {i+1:02}",start,end,.044,.009,UP,"Tail",("#aa9473","#c3ad87"))
+        blade(f"Undertail covert {i+1:02}",start,end,.044,.009,UP,"Tail")
 
 
 def feet(body_tree):
@@ -353,10 +292,10 @@ def feet(body_tree):
         bone(foot,leg,hock,ball)
         # A rounded joint on the leg overlaps the tarsus at its pivot.
         tube(f"{label} lower leg",[anchor,seat,hock],
-             [.017,.017,.0095],FOOT,leg,sides=14)
-        oval(f"{label} hock",hock,(.011,.011,.011),FOOT,leg)
+             [.017,.017,.0095],leg,sides=14)
+        oval(f"{label} hock",hock,(.011,.011,.011),leg)
         tube(f"{label} tarsus",[hock,hock.lerp(ball,.55)-UP*.003,ball],
-             [.008,.009,.010],FOOT,foot,sides=14)
+             [.008,.009,.010],foot,sides=14)
 
         # Three forward toes curl under the ball. The hallux sits medially
         # and sweeps the opposite way. Each toe has a continuous keratin tip.
@@ -378,14 +317,7 @@ def feet(body_tree):
 
 
 def digit(name,points,owner):
-    skin,claw=rgb("#6d665d"),rgb("#383a35")
-    start=points[2]
-    tip=points[3]
-    direction=tip-start
-    def color(p,_):
-        t=(p-start).dot(direction)/direction.length_squared
-        return skin.lerp(claw,smoothstep(-.22,.7,t))
-    tube(name,points,[.0065,.0058,.0036,.0009],TOE,owner,color,sides=12)
+    tube(name,points,[.0065,.0058,.0036,.0009],owner,sides=12)
 
 
 def make_rig():
@@ -425,9 +357,9 @@ def camera_studio():
     return cam,focus
 
 
-def area(name,location,energy,size,color,aim=V(0,.3,0)):
+def area(name,location,energy,size,aim=V(0,.3,0)):
     data=bpy.data.lights.new(name,type="AREA")
-    data.energy,data.shape,data.size,data.color=energy,"DISK",size,color
+    data.energy,data.shape,data.size=energy,"DISK",size
     ob=bpy.data.objects.new(name,data)
     bpy.context.scene.collection.objects.link(ob)
     ob.location=kit.to_blender(V(location))
@@ -437,12 +369,6 @@ def area(name,location,energy,size,color,aim=V(0,.3,0)):
 if __name__ == "__main__":
     OUT.mkdir(parents=True, exist_ok=True)
     bpy.ops.wm.read_factory_settings(use_empty=True)
-    PLUMAGE=surface("Iridescent satin plumage",roughness=.43,metallic=.24,vertex=True)
-    BILL=surface("Coral keratin",roughness=.34,metallic=.04,vertex=True)
-    ORBIT=surface("Muted olive eye margin","#5b6542",.72)
-    EYEBALL=surface("Black glass eye","#101a1f",.20,.02)
-    FOOT=surface("Warm slate tarsi","#68635b",.65)
-    TOE=surface("Tapered slate toes and graphite claws",roughness=.55,vertex=True)
     bone("Body",None,(0,-.29,-.45),(0,.18,.25))
     bone("Head","Body",(0,.24,.35),(0,.412,.67))
     body,body_tree,dorsal=build_body()
@@ -479,9 +405,9 @@ if __name__ == "__main__":
     rig=make_rig()
     cam,focus=camera_studio()
     scene=bpy.context.scene
-    area("Broad warm key",(2.8,3.2,2.6),470,4.8,(1.0,.925,.80))
-    area("Cool fill",(2.4,.45,-3.0),220,3.1,(.66,.83,1.))
-    area("Wing rim",(-2.6,2.2,.0),370,3.3,(.80,.93,1.))
+    area("Broad key",(2.8,3.2,2.6),470,4.8)
+    area("Fill",(2.4,.45,-3.0),220,3.1)
+    area("Wing rim",(-2.6,2.2,.0),370,3.3)
     scene.world=bpy.data.worlds.new("Studio fill")
     scene.world.use_nodes=True
     scene.world.node_tree.nodes.get("Background").inputs["Strength"].default_value=.23

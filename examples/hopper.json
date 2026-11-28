@@ -1,89 +1,290 @@
 {
+  "format": "polyforge.recipe",
+  "version": 2,
   "name": "Hopper",
+  "construction": "solid",
   "spine": [
     {
-      "y": 0.8,
-      "z": -0.3,
-      "w": 0.35,
-      "h": 0.33
+      "id": "rump_tip",
+      "y": 1.59,
+      "z": -1.263,
+      "w": 0.051,
+      "h": 0.047
     },
     {
-      "y": 0.88,
-      "z": 0.0,
-      "w": 0.45,
-      "h": 0.42
+      "id": "rump",
+      "y": 1.59,
+      "z": -1.08,
+      "w": 0.37,
+      "h": 0.295
     },
     {
-      "y": 0.9,
-      "z": 0.3,
-      "w": 0.38,
-      "h": 0.36
+      "id": "lower_back",
+      "y": 1.61,
+      "z": -0.8,
+      "w": 0.61,
+      "h": 0.47
+    },
+    {
+      "id": "barrel",
+      "y": 1.64,
+      "z": -0.19,
+      "w": 0.7,
+      "h": 0.57
+    },
+    {
+      "id": "shoulders",
+      "y": 1.64,
+      "z": 0.27,
+      "w": 0.64,
+      "h": 0.55
+    },
+    {
+      "id": "orbits",
+      "y": 1.64,
+      "z": 0.64,
+      "w": 0.52,
+      "h": 0.45
+    },
+    {
+      "id": "face",
+      "y": 1.64,
+      "z": 0.83,
+      "w": 0.43,
+      "h": 0.34
+    },
+    {
+      "id": "muzzle",
+      "y": 1.64,
+      "z": 0.98,
+      "w": 0.39,
+      "h": 0.27
     }
   ],
   "limbs": [
     {
-      "uid": "leg",
-      "u": 0.45,
+      "uid": "spring_leg",
+      "u": 0.47,
       "theta": -90,
+      "scale": 1.42,
       "segments": [
         [
-          0.0,
+          0,
           -0.22,
-          -0.1
+          -0.075
         ],
         [
-          0.0,
-          -0.22,
-          0.1
+          0,
+          -0.155,
+          0.045
+        ],
+        [
+          0,
+          -0.145,
+          0.163
+        ],
+        [
+          0,
+          -0.155,
+          -0.07
+        ],
+        [
+          0,
+          -0.174,
+          -0.046
         ]
       ],
       "radii": [
-        0.13,
-        0.1,
+        0.23,
+        0.127,
+        0.105,
+        0.116,
+        0.102,
         0.08
       ],
-      "tip": "foot_pad",
+      "tip": "foot_hoof",
       "tip_params": {
-        "size": 1.2
+        "size": 3,
+        "split": 0
       }
     }
   ],
   "parts": [
     {
-      "uid": "eye",
-      "part": "eye_cyclops",
-      "u": 0.93,
-      "theta": 90.0,
+      "uid": "smiling_muzzle",
+      "part": "mouth_wide",
+      "u": 0.977,
+      "theta": -90,
+      "scale": 2.87,
+      "offset": -0.31,
       "params": {
-        "size": 1.2
+        "curve": 0.63
+      },
+      "rot": [
+        12,
+        0,
+        0
+      ]
+    },
+    {
+      "uid": "nostrils",
+      "part": "nostril_slit",
+      "u": 0.98,
+      "theta": 59,
+      "scale": 0.78,
+      "offset": 0.025,
+      "params": {
+        "size": 0.61,
+        "flap": 0.62
       }
     },
     {
-      "uid": "mouth",
-      "part": "mouth_smile",
-      "u": 0.97,
-      "theta": -90.0,
+      "uid": "eye_rims",
+      "part": "eye_bug",
+      "u": 0.893,
+      "theta": 48,
+      "scale": 1.06,
+      "offset": -0.014,
       "params": {
-        "width": 1.5,
-        "curve": 0.8
-      }
+        "size": 1.72,
+        "bulge": 0.83
+      },
+      "rot": [
+        -21,
+        0,
+        -19
+      ]
     },
     {
       "uid": "antennae",
       "part": "antenna",
-      "u": 0.7,
-      "theta": 75,
+      "u": 0.847,
+      "theta": 69,
+      "scale": 1.78,
+      "offset": -0.07,
       "params": {
-        "length": 0.9
+        "length": 1.37,
+        "curve": -0.6,
+        "bulb": 2
+      },
+      "rot": [
+        3,
+        0,
+        -7
+      ]
+    },
+    {
+      "uid": "high_dorsal_knob",
+      "part": "bulge",
+      "u": 0.518,
+      "theta": 90,
+      "scale": 1.41,
+      "offset": -0.042,
+      "params": {
+        "width": 0.78,
+        "height": 3.55,
+        "length": 0.94,
+        "taper": 0
       }
+    },
+    {
+      "uid": "middle_dorsal_knob",
+      "part": "bulge",
+      "u": 0.391,
+      "theta": 90,
+      "scale": 1.21,
+      "offset": -0.036,
+      "params": {
+        "width": 0.7,
+        "height": 3.1,
+        "length": 0.84,
+        "taper": 0
+      }
+    },
+    {
+      "uid": "low_dorsal_knob",
+      "part": "bulge",
+      "u": 0.281,
+      "theta": 90,
+      "scale": 1.06,
+      "offset": -0.041,
+      "params": {
+        "width": 0.64,
+        "height": 2.92,
+        "length": 0.79,
+        "taper": 0
+      }
+    },
+    {
+      "uid": "rear_dorsal_knob",
+      "part": "bulge",
+      "u": 0.198,
+      "theta": 90,
+      "scale": 0.92,
+      "offset": -0.043,
+      "params": {
+        "width": 0.55,
+        "height": 2.04,
+        "length": 0.66,
+        "taper": 0
+      }
+    },
+    {
+      "uid": "shoulder_scale",
+      "part": "bulge",
+      "u": 0.53,
+      "theta": 16,
+      "scale": 1,
+      "offset": -0.033,
+      "params": {
+        "width": 0.42,
+        "height": 1.25,
+        "length": 0.77,
+        "taper": 0
+      },
+      "rot": [
+        0,
+        18,
+        0
+      ]
+    },
+    {
+      "uid": "side_scale",
+      "part": "bulge",
+      "u": 0.342,
+      "theta": -1,
+      "scale": 1,
+      "offset": -0.029,
+      "params": {
+        "width": 0.36,
+        "height": 1.1,
+        "length": 0.67,
+        "taper": 0
+      },
+      "rot": [
+        0,
+        23,
+        0
+      ]
+    },
+    {
+      "uid": "rear_scale",
+      "part": "bulge",
+      "u": 0.232,
+      "theta": 11,
+      "scale": 1,
+      "offset": -0.031,
+      "params": {
+        "width": 0.36,
+        "height": 1.25,
+        "length": 0.67,
+        "taper": 0
+      },
+      "rot": [
+        0,
+        24,
+        0
+      ]
     }
-  ],
-  "paint": {
-    "base": "#8c63c9",
-    "accent": "#5b3c8c",
-    "detail": "#e9dcff",
-    "pattern": "spots",
-    "pattern_scale": 1.0,
-    "belly": true
-  }
+  ]
 }

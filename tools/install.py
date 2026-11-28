@@ -30,7 +30,8 @@ for sub in ("examples", os.path.join("library", "thumbs")):
         shutil.copytree(src, os.path.join(addons, "_data", sub), dirs_exist_ok=True)
 research = os.path.join(addons, "_data", "research")
 os.makedirs(research, exist_ok=True)
-shutil.copy2(os.path.join(ROOT, "research", "part_library.json"), research)
+for name in ("part_library.json", "qualification.json"):
+    shutil.copy2(os.path.join(ROOT, "research", name), research)
 import addon_utils  # noqa: E402
 bpy.utils.refresh_script_paths()
 if os.path.dirname(addons) not in sys.path:

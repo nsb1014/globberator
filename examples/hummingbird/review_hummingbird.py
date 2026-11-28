@@ -35,7 +35,9 @@ with (OUT/"hummingbird.glb").open("rb") as file:
     file.read(12)
     n,_=struct.unpack("<II",file.read(8))
     manifest=json.loads(file.read(n))
-assert any("COLOR_0" in p["attributes"] for m in manifest["meshes"] for p in m["primitives"])
+assert len(manifest["materials"]) == 1 and not manifest.get("textures")
+assert all(not attr.startswith("COLOR_") for m in manifest["meshes"]
+           for p in m["primitives"] for attr in p["attributes"])
 audit={"max_extent_m":round(physical_max,4),"bones":len(rig.data.bones),"triangles":0,"boundary_edges":0}
 for ob in meshes:
     ob.data.calc_loop_triangles()
@@ -88,8 +90,7 @@ scene.render.engine="BLENDER_WORKBENCH"
 scene.display.render_aa="8"
 sh=scene.display.shading
 sh.light="STUDIO"
-sh.color_type="SINGLE"
-sh.single_color=(.77,.78,.79)
+sh.color_type="MATERIAL"
 sh.background_type="WORLD"
 sh.show_cavity=True
 sh.cavity_type="WORLD"

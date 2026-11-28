@@ -7,7 +7,7 @@ import bpy
 from mathutils import Vector
 
 
-def check(path):
+def measure(path):
     manifest = json.loads(path.with_suffix(".report.json").read_text())["contact"]
     bpy.ops.wm.read_factory_settings(use_empty=True)
     bpy.ops.import_scene.gltf(filepath=str(path))
@@ -25,8 +25,11 @@ def check(path):
                 continue
             bone = mesh.vertex_groups[v.groups[0].group].name
             if bone in points:
-                points[bone].append((mesh, v.index, (mesh.matrix_world @ v.co).z))
-    probes = {bone: min(vertices, key=lambda p: p[2])[:2] for bone, vertices in points.items()}
+                points[bone].append((mesh, v.index, mesh.matrix_world @ v.co))
+    flat = {bone: min(vertices, key=lambda p: p[2].z) for bone, vertices in points.items()}
+    toes = {bone: min((p for p in vertices if p[2].z <= flat[bone][2].z + 1e-5), key=lambda p: p[2].y)
+            for bone, vertices in points.items()}
+    probes = {bone: item[:2] for bone, item in flat.items()}
     starts, peak, worst_y, worst_slip = {}, dict.fromkeys(probes, 0.0), 0., 0.
     scene = bpy.context.scene
     for frame in manifest["frames"]:
@@ -35,17 +38,27 @@ def check(path):
         dg = bpy.context.evaluated_depsgraph_get()
         x, y, z = frame["travel"]
         for bone, (mesh, index) in probes.items():
+            rolling = bone in frame.get("toe_stance", [])
+            if rolling:
+                mesh, index, _ = toes[bone]
             ob = mesh.evaluated_get(dg)
             p = ob.matrix_world @ ob.data.vertices[index].co + Vector((x, -z, y))
             length = manifest["legs"][bone]
             if bone in frame["stance"]:
                 worst_y = max(worst_y, abs(p.z) / length)
-                worst_slip = max(worst_slip, (p - starts.setdefault(bone, p.copy())).length / length)
+                worst_slip = max(worst_slip, (p - starts.setdefault((bone, rolling), p.copy())).length / length)
             else:
-                starts.pop(bone, None)
+                starts.pop((bone, False), None)
+                starts.pop((bone, True), None)
                 peak[bone] = max(peak[bone], p.z / length)
-    print(path.stem, "stance height / drift", worst_y, worst_slip, "swing clearance", peak)
-    assert probes and worst_y < .05 and worst_slip < .05 and min(peak.values()) > .025
+    return {"stance_height": worst_y, "stance_drift": worst_slip, "swing_clearance": peak}
+
+
+def check(path):
+    result = measure(path)
+    lift = result["swing_clearance"]
+    print(path.stem, "stance height / drift", result["stance_height"], result["stance_drift"], "swing clearance", lift)
+    assert lift and result["stance_height"] < .05 and result["stance_drift"] < .05 and min(lift.values()) > .025
 
 
 if __name__ == "__main__":

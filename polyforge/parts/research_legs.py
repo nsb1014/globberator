@@ -218,8 +218,11 @@ def _plantigrade(g, p, joints):
            [(.020, .021), (.086, .078), (.14, .125), (.151, .136), (.127, .111), (.098, .092),
             (.115, .102), (.093, .092), (.061, .055), (.049, .049), (.044, .043), (.038, .036)], up=RIGHT, sides=26)
     g.oval(knee + V(0, .009, .060), (.067, .080, .049))
-    if not p.get("bare_foot", 1):
-        return
+    if p.get("bare_foot", 1):
+        plantigrade_foot(g, ankle)
+
+
+def plantigrade_foot(g, ankle):
     _plantar_surface(g, ankle)
     # The lateral malleolus lies lower and farther back than the medial one.
     g.loft([ankle + V(.041, .050, -.002), ankle + V(.046, .015, -.008),

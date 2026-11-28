@@ -1,6 +1,5 @@
 """Image side of the fitter: reference segmentation and render-vs-reference scores."""
 from collections import deque
-import colorsys
 import math
 
 import numpy as np
@@ -19,7 +18,7 @@ def segment(path, max_side=384):
     Uses alpha when the image has transparency; otherwise treats the colour of
     the image border as background, keeps the largest connected blob and fills
     its holes. Works for renders, drawings and product-style photos on a plain
-    background. Returns (mask bool HxW, rgb float HxWx3).
+    background. Returns a boolean mask.
     """
     img = Image.open(path).convert("RGBA")
     s = max_side / max(img.size)
@@ -37,7 +36,7 @@ def segment(path, max_side=384):
         fg = dist > max(0.12, spread * 2.0)
     fg = largest_component(fg)
     fg = fill_holes(fg)
-    return fg, rgb
+    return fg
 
 
 def _neighbors(h, w, y, x):
@@ -135,51 +134,6 @@ def silhouette_score(ref_mask, render_mask):
     b, ar_b = normalized(render_mask)
     prop = math.exp(-abs(math.log(max(ar_a, 1e-3) / max(ar_b, 1e-3))) * 2.0)
     return iou(a, b), prop
-
-
-def _lab(rgb):
-    rgb = np.where(rgb > 0.04045, ((rgb + 0.055) / 1.055) ** 2.4, rgb / 12.92)
-    m = np.array([[0.4124, 0.3576, 0.1805], [0.2126, 0.7152, 0.0722], [0.0193, 0.1192, 0.9505]])
-    xyz = rgb @ m.T / np.array([0.9505, 1.0, 1.089])
-    f = np.where(xyz > 0.008856, np.cbrt(xyz), 7.787 * xyz + 16 / 116)
-    return np.stack([116 * f[..., 1] - 16, 500 * (f[..., 0] - f[..., 1]), 200 * (f[..., 1] - f[..., 2])], -1)
-
-
-def dominant_colors(rgb, mask, k=3, iters=12):
-    """k-means in Lab over foreground pixels; returns [(hex, share)] sorted by share."""
-    px = rgb[mask]
-    if len(px) == 0:
-        return []
-    if len(px) > 6000:
-        px = px[np.linspace(0, len(px) - 1, 6000).astype(int)]
-    lab = _lab(px)
-    cent = lab[np.linspace(0, len(lab) - 1, k).astype(int)].copy()
-    for _ in range(iters):
-        d = ((lab[:, None, :] - cent[None]) ** 2).sum(-1)
-        lbl = d.argmin(1)
-        for j in range(k):
-            if (lbl == j).any():
-                cent[j] = lab[lbl == j].mean(0)
-    out = []
-    for j in range(k):
-        sel = lbl == j
-        if sel.any():
-            c = px[sel].mean(0)
-            out.append(("#%02x%02x%02x" % tuple(int(round(v * 255)) for v in c), float(sel.mean()), cent[j]))
-    out.sort(key=lambda t: -t[1])
-    return out
-
-
-def palette_score(ref_rgb, ref_mask, render_rgb, render_mask):
-    a = dominant_colors(ref_rgb, ref_mask)
-    b = dominant_colors(render_rgb, render_mask)
-    if not a or not b:
-        return 0.0
-    total = 0.0
-    for _, share, lab in a:
-        d = min(np.linalg.norm(lab - lb) for _, _, lb in b)
-        total += share * math.exp(-d / 25.0)
-    return float(total)
 
 
 def contact_sheet(paths, labels, out, cell=128, cols=8):

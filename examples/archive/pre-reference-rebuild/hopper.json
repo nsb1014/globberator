@@ -1,0 +1,82 @@
+{
+  "construction": "solid",
+  "name": "Hopper",
+  "spine": [
+    {
+      "y": 0.8,
+      "z": -0.3,
+      "w": 0.35,
+      "h": 0.33
+    },
+    {
+      "y": 0.88,
+      "z": 0.0,
+      "w": 0.45,
+      "h": 0.42
+    },
+    {
+      "y": 0.9,
+      "z": 0.3,
+      "w": 0.38,
+      "h": 0.36
+    }
+  ],
+  "limbs": [
+    {
+      "uid": "leg",
+      "u": 0.45,
+      "theta": -90,
+      "segments": [
+        [
+          0.0,
+          -0.22,
+          -0.1
+        ],
+        [
+          0.0,
+          -0.22,
+          0.1
+        ]
+      ],
+      "radii": [
+        0.13,
+        0.1,
+        0.08
+      ],
+      "tip": "foot_pad",
+      "tip_params": {
+        "size": 1.2
+      }
+    }
+  ],
+  "parts": [
+    {
+      "uid": "eye",
+      "part": "eye_cyclops",
+      "u": 0.93,
+      "theta": 90.0,
+      "params": {
+        "size": 1.2
+      }
+    },
+    {
+      "uid": "mouth",
+      "part": "mouth_smile",
+      "u": 0.97,
+      "theta": -90.0,
+      "params": {
+        "width": 1.5,
+        "curve": 0.8
+      }
+    },
+    {
+      "uid": "antennae",
+      "part": "antenna",
+      "u": 0.7,
+      "theta": 75,
+      "params": {
+        "length": 0.9
+      }
+    }
+  ]
+}

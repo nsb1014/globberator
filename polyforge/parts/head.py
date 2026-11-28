@@ -116,10 +116,11 @@ def ear_fan(g, p):
 def swept_horn(g, p):
     """An outward shaft with an independently adjustable tip lift and forward sweep."""
     length, radius = p["length"], p["width"] * 0.5
+    hook = p["hook"]
     ts = [i / 10 for i in range(11)]
     points = [V(length * p["splay"] * (t - 0.48 * t ** 3),
-                length * (t * (1 - p["splay"]) + p["lift"] * t ** 2.5) - radius * 0.35,
-                length * p["sweep"] * t * t) for t in ts]
+                length * (t * (1 - p["splay"]) + p["lift"] * t ** 2.5 - .18 * hook * t ** 7) - radius * 0.35,
+                length * (p["sweep"] * t * t + .22 * hook * t ** 7)) for t in ts]
     g.slot("horn")
     g.loft(points, [max(0.002, radius * (1 - t) ** p["taper"]) for t in ts], sides=22, up=BACK)
 
@@ -159,9 +160,10 @@ LEGACY = [
 
 
 PARTS = [
-    Part("horn_sweep", "horn", "Tapered shaft with adjustable sweep, lift and splay.", [],
+    Part("horn_sweep", "horn", "Tapered shaft with adjustable sweep, lift, splay and tip hook.", [],
          {"length": (0.07, 1.2, 0.42), "width": (0.025, 0.38, 0.13), "splay": (0.0, 1.0, 0.45),
-          "lift": (-0.6, 1.6, 0.3), "sweep": (-1.2, 1.2, 0.15), "taper": (0.4, 2.0, 0.85)},
+          "lift": (-0.6, 1.6, 0.3), "sweep": (-1.2, 1.2, 0.15), "taper": (0.4, 2.0, 0.85),
+          "hook": (0.0, 1.0, 0.0)},
          swept_horn, hint={"u": 0.92, "theta": 45.0}),
     Part("ear_leaf", "ear", "Cupped leaf with round, pointed, long or drooping profile.", [],
          {"length": (0.055, 0.65, 0.19), "width": (0.045, 0.48, 0.14), "point": (0, 1, 0.4),

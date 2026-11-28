@@ -19,22 +19,17 @@ LIMITS = {
     "limbs": 12, "segments": [1, 5], "segment_len": [0.02, 3.5], "limb_radius": [0.02, 1.2],
     "parts": 80, "scale": [0.2, 4.0], "offset": [-0.6, 0.6],
 }
-PATTERNS = ["none", "stripes", "spots", "patches", "gradient"]
-
-
-def default_paint():
-    return {"base": "#6f9a52", "accent": "#35552b", "detail": "#e9dcae", "pattern": "stripes", "pattern_scale": 1.0, "belly": True}
 
 
 def default_recipe():
     return {
-        "format": FORMAT, "version": VERSION, "name": "Blob",
+        "format": FORMAT, "version": VERSION, "name": "Blob", "construction": "solid",
         "spine": [
             {"y": 0.55, "z": -0.6, "w": 0.32, "h": 0.32}, {"y": 0.6, "z": -0.2, "w": 0.45, "h": 0.42},
             {"y": 0.62, "z": 0.25, "w": 0.45, "h": 0.42}, {"y": 0.7, "z": 0.65, "w": 0.33, "h": 0.32},
             {"y": 0.75, "z": 0.95, "w": 0.26, "h": 0.25},
         ],
-        "limbs": [], "parts": [], "paint": default_paint(),
+        "limbs": [], "parts": [],
     }
 
 
@@ -74,20 +69,6 @@ def _vec(v, d):
     return list(d)
 
 
-def _hex(c, d, what, warns):
-    s = str(c).strip().lstrip("#")
-    try:
-        if len(s) == 3:
-            s = "".join(ch * 2 for ch in s)
-        int(s[:6], 16)
-        if len(s) < 6:
-            raise ValueError
-        return "#" + s[:6].lower()
-    except ValueError:
-        warns.append("%s '%s' invalid" % (what, c))
-        return d
-
-
 def _unique(uid, used):
     uid = str(uid).strip() or "x"
     base, k = uid, 2
@@ -114,6 +95,12 @@ def normalize(src):
         return {**base, **item}
 
     r = {"format": FORMAT, "version": VERSION, "name": str(src.get("name", "Untitled"))}
+    if src.get("construction") in ("solid", "metaball"):
+        r["construction"] = src["construction"]
+    if src.get("locomotion") in ("axial_vertical", "axial_lateral", "paddling", "flight", "crawl"):
+        r["locomotion"] = src["locomotion"]
+    elif src.get("locomotion"):
+        w.append("unknown locomotion profile %s" % src["locomotion"])
     if src.get("gait") == "humanoid":
         r["gait"] = "humanoid"
     if isinstance(src.get("ground_y"), (float, int)):
@@ -210,6 +197,8 @@ def normalize(src):
         # Symmetry rules: author on the +X side; near the midline snaps to centre (x = 0).
         raw = wrap_angle(_num(l.get("theta"), -45.0))
         theta, centre = placement.centred(raw, placement.symmetry(family) if family else "any")
+        if l.get("mirror") is False and src.get("version", 1) >= 2:
+            theta, centre = raw, False
         if src.get("version", 1) == 1 and abs(raw) > 90.0:
             segs = [[-sg[0], sg[1], sg[2]] for sg in segs]
         limb_rot = [wrap_angle(a) for a in _vec(l.get("rot"), [0, 0, 0])]
@@ -219,12 +208,33 @@ def normalize(src):
             "uid": uid, "u": _clamp(_num(l.get("u"), 0.5), [0.0, 1.0], "limb %s u" % uid, w),
             "theta": round(theta, 4), "segments": segs, "radii": radii,
             "tip": tip, "tip_params": tip_params,
-            "motion": "tail" if shape.get("motion") == "tail" or l.get("motion") == "tail" else "auto",
+            "motion": l["motion"] if l.get("motion") in ("tail", "fin", "wing") else shape.get("motion", "auto"),
             "scale": _clamp(_num(l.get("scale"), 1.0), LIMITS["scale"], uid + ".scale", w),
             "rot": limb_rot,
         })
+        if l.get("mirror") is False and src.get("version", 1) >= 2:
+            limbs[-1]["mirror"] = False
+        if "bend_limits" in l:
+            limits = l["bend_limits"]
+            if (isinstance(limits, list) and len(limits) == len(segs) - 1
+                    and all(value is None or (isinstance(value, list) and len(value) == 2
+                            and all(type(x) in (float, int) for x in value)
+                            and 0 <= value[0] <= value[1] < 180) for value in limits)):
+                limbs[-1]["bend_limits"] = limits
+            else:
+                w.append("limb %s: bend_limits needs one [min,max] degree range or null per internal joint" % uid)
         if family:
             limbs[-1].update(family=family.id, params=shape_params)
+        else:
+            for key in ("root_blend", "glute_shape"):
+                if key in l:
+                    limbs[-1][key] = _clamp(_num(l[key], 0), [0.0, 1.0], uid + "." + key, w)
+            if l.get("ball_hip") is True:
+                limbs[-1]["ball_hip"] = True
+                if "ball_hip_inset" in l:
+                    limbs[-1]["ball_hip_inset"] = _clamp(
+                        _num(l["ball_hip_inset"], 0), [0.0, 0.75], uid + ".ball_hip_inset", w
+                    )
         locate(l, limbs[-1])
     r["limbs"] = limbs
     limb_ids = {l["uid"] for l in limbs}
@@ -263,7 +273,8 @@ def normalize(src):
             on = "body"
         rot = _vec(p.get("rot", [0, 0, 0]), [0.0, 0.0, 0.0])
         theta = wrap_angle(_num(p.get("theta"), 90.0))
-        if on == "body":
+        single = p.get("mirror") is False and src.get("version", 1) >= 2
+        if on == "body" and not single:
             raw = theta
             mode = "any"
             if part.symmetry is not None or src.get("version", 1) == 1:
@@ -284,6 +295,8 @@ def normalize(src):
             "scale": _clamp(_num(p.get("scale"), 1.0), LIMITS["scale"], "part %s scale" % uid, w),
             "params": catalog.normalize_params(part, p.get("params", {}), "part %s" % uid, w),
         })
+        if single:
+            parts[-1]["mirror"] = False
         locate(p, parts[-1])
     placed_muzzles = {p["uid"] for p in parts if p["part"] == "muzzle"}
     for p in parts:
@@ -292,15 +305,4 @@ def normalize(src):
             p.update(on="body", **catalog.get("nose_pad").hint)
             locate({}, p)
     r["parts"] = parts
-    pa = src.get("paint") if isinstance(src.get("paint"), dict) else {}
-    dp = default_paint()
-    paint = {k: _hex(pa.get(k, dp[k]), dp[k], "paint." + k, w) for k in ("base", "accent", "detail")}
-    pat = str(pa.get("pattern", dp["pattern"]))
-    if pat not in PATTERNS:
-        w.append("unknown pattern '%s'" % pat)
-        pat = "none"
-    paint["pattern"] = pat
-    paint["pattern_scale"] = _clamp(_num(pa.get("pattern_scale"), 1.0), [0.25, 4.0], "paint.pattern_scale", w)
-    paint["belly"] = bool(pa.get("belly", True))
-    r["paint"] = paint
     return r, w

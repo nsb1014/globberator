@@ -1,4 +1,4 @@
-"""Studio renders: fast Workbench with vertex colors, or Cycles.
+"""Studio renders: clay in Workbench or Cycles.
 
 Camera views use the same convention as the recipe: yaw 0 looks at the
 creature's face, yaw 90 shows its +X side, pitch is elevation in degrees.
@@ -29,10 +29,12 @@ def setup(engine="workbench", size=512, samples=24):
     sc.render.image_settings.file_format = "PNG"
     sc.render.image_settings.color_mode = "RGBA"
     if engine == "cycles":
+        import _cycles
+
         sc.render.engine = "CYCLES"
         sc.cycles.samples = samples
         sc.cycles.device = "CPU"
-        sc.cycles.use_denoising = True
+        sc.cycles.use_denoising = getattr(_cycles, "with_openimagedenoise", False)
         world = sc.world or bpy.data.worlds.new("World")
         sc.world = world
         world.color = (0.05, 0.06, 0.07)
@@ -40,12 +42,7 @@ def setup(engine="workbench", size=512, samples=24):
         sc.render.engine = "BLENDER_WORKBENCH"
         sh = sc.display.shading
         sh.light = "STUDIO"
-        for name in ("VERTEX", "ATTRIBUTE"):
-            try:
-                sh.color_type = name
-                break
-            except TypeError:
-                continue
+        sh.color_type = "MATERIAL"
         sh.show_shadows = True
         sh.shadow_intensity = 0.35
         sh.show_cavity = True
@@ -77,8 +74,9 @@ def floor(on=True):
         me = bpy.data.meshes.new("PF_floor")
         s = 60
         me.from_pydata([(-s, -s, 0), (s, -s, 0), (s, s, 0), (-s, s, 0)], [], [(0, 1, 2, 3)])
-        col = me.color_attributes.new("Col", "FLOAT_COLOR", "POINT")
-        col.data.foreach_set("color", [0.32, 0.34, 0.36, 1.0] * 4)
+        material = bpy.data.materials.new("Studio Floor")
+        material.diffuse_color = (0.24, 0.24, 0.24, 1.0)
+        me.materials.append(material)
         ob = bpy.data.objects.new("PF_floor", me)
         bpy.context.scene.collection.objects.link(ob)
     ob.hide_render = not on
@@ -118,8 +116,6 @@ def clay_camera(cam, objects, yaw, pitch):
     """Frame a standalone clay sculpt from its actual render silhouette."""
     scene = bpy.context.scene
     shading = scene.display.shading
-    shading.color_type = "SINGLE"
-    shading.single_color = (0.78, 0.79, 0.80)
     shading.background_type = "WORLD"
     if scene.world is None:
         scene.world = bpy.data.worlds.new("Clay Background")
@@ -127,6 +123,7 @@ def clay_camera(cam, objects, yaw, pitch):
     lo, hi = bounds(objects)
     frame(cam, lo, hi, yaw, pitch)
     cam.data.type = "ORTHO"
+    cam.data.clip_start = min(.01, max(1e-6, .01 * (hi - lo).length))
     basis = cam.rotation_euler.to_matrix().transposed()
     points = [basis @ (obj.matrix_world @ v.co) for obj in objects for v in obj.data.vertices]
     left, right = min(p.x for p in points), max(p.x for p in points)

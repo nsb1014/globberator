@@ -501,6 +501,7 @@ def _closed_rings(g, rings):
 
 def elytron(g, p):
     s, dome = p["size"], p["dome"]
+    vault = p.get("vault", 0.0)
     hinge = rot(BACK, math.radians(p["open_deg"]))
     rings = []
     # A straight sutural edge, opposed by the bowed lateral margin of the case.
@@ -512,7 +513,14 @@ def elytron(g, p):
             a = math.tau * j / 20
             x = width * .5 * (1 - math.cos(a))
             arch = math.sin(a)
-            y = arch * (crown * dome if arch >= 0 else .014) + .009 * (1 - x / width)
+            across = x / width
+            y = arch * (crown * dome if arch >= 0 else .014) + .009 * (1 - across)
+            if vault:
+                # The sutural edge sits near the crown and the outer rim
+                # drops towards the flank, joining the two cases into a dome.
+                shoulder = crown * dome * (.58 - 1.07 * across ** 1.55)
+                thickness = arch * (crown * dome * .27 if arch >= 0 else .024)
+                y = lerp(y, shoulder + thickness, vault)
             ring.append(hinge @ V(x, y, z) * s)
         rings.append(ring)
     g.setup(finish="subsurf")
@@ -785,5 +793,7 @@ OVERRIDES = {
     "foot_grasping": {"cap": "foot"},
     "wing_feathered": {"cap": "flap"},
     "wing_membrane_insect": {"cap": "flap"},
+    "fin_paired": {"cap": "paddle"},
 }
 PRESETS = {"wing_feathered": feathered_wing_preset, "tail_flexible": flexible_tail_preset}
+EXTRA_PARAMS = {"elytron": {"vault": (0.0, 1.0, 0.0)}}

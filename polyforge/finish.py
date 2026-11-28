@@ -8,10 +8,25 @@ from mathutils import Vector
 
 from . import kit
 
+CLAY_NAME = "Globberator Clay"
+CLAY_TONE = (0.55, 0.55, 0.55, 1.0)
 FACE_BUDGET = 1100
 SCULPT_LEVELS = {"sculpt": 2, "sculpt_low": 1}
 SUBDIVISION_LEVELS = {"subsurf": 2, "subsurf_low": 1, **SCULPT_LEVELS}
 _cache = {}
+
+
+def clay_material():
+    material = bpy.data.materials.get(CLAY_NAME)
+    if material is None:
+        material = bpy.data.materials.new(CLAY_NAME)
+        material.diffuse_color = CLAY_TONE
+        material.roughness = 0.85
+        material.use_nodes = True
+        surface = material.node_tree.nodes.get("Principled BSDF")
+        surface.inputs["Base Color"].default_value = CLAY_TONE
+        surface.inputs["Roughness"].default_value = material.roughness
+    return material
 
 
 def new_object(name, verts, faces, collection=None):
@@ -62,10 +77,11 @@ def remesh(ob, voxel):
     bake(ob)
 
 
-def smooth(ob, factor, iterations=4):
+def smooth(ob, factor, iterations=4, vertex_group=""):
     s = ob.modifiers.new("smooth", "SMOOTH")
     s.factor = factor
     s.iterations = iterations
+    s.vertex_group = vertex_group
     bake(ob)
 
 

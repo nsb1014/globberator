@@ -1,168 +1,312 @@
 {
+  "format": "polyforge.recipe",
+  "version": 2,
   "name": "Minotaur",
+  "construction": "solid",
+  "gait": "humanoid",
   "spine": [
     {
-      "y": 1.05,
-      "z": -0.02,
-      "w": 0.3,
-      "h": 0.24
+      "id": "pelvis_base",
+      "y": 1.43,
+      "z": -0.05,
+      "w": 0.19,
+      "h": 0.18
     },
     {
-      "y": 1.32,
-      "z": 0.0,
-      "w": 0.33,
-      "h": 0.25
+      "id": "pelvis",
+      "y": 1.61,
+      "z": -0.07,
+      "w": 0.48,
+      "h": 0.33
     },
     {
-      "y": 1.62,
-      "z": 0.02,
-      "w": 0.51,
-      "h": 0.32
-    },
-    {
+      "id": "waist",
       "y": 1.88,
-      "z": 0.05,
-      "w": 0.58,
-      "h": 0.3
+      "z": -0.04,
+      "w": 0.43,
+      "h": 0.27
     },
     {
-      "y": 2.05,
+      "id": "ribs",
+      "y": 2.19,
+      "z": 0.01,
+      "w": 0.6,
+      "h": 0.37
+    },
+    {
+      "id": "chest",
+      "y": 2.5,
+      "z": 0.08,
+      "w": 0.73,
+      "h": 0.42
+    },
+    {
+      "id": "trapezius",
+      "y": 2.72,
+      "z": 0.08,
+      "w": 0.56,
+      "h": 0.33
+    },
+    {
+      "id": "collar",
+      "y": 2.88,
+      "z": 0.1,
+      "w": 0.34,
+      "h": 0.28
+    },
+    {
+      "id": "jaw",
+      "y": 3.06,
+      "z": 0.17,
+      "w": 0.362,
+      "h": 0.337
+    },
+    {
+      "id": "cheek",
+      "y": 3.22,
+      "z": 0.22,
+      "w": 0.426,
+      "h": 0.389
+    },
+    {
+      "id": "temple",
+      "y": 3.44,
+      "z": 0.2,
+      "w": 0.43,
+      "h": 0.31
+    },
+    {
+      "id": "crown",
+      "y": 3.59,
       "z": 0.16,
-      "w": 0.2,
-      "h": 0.2
+      "w": 0.29,
+      "h": 0.23
     },
     {
-      "y": 2.16,
-      "z": 0.38,
-      "w": 0.24,
-      "h": 0.25
+      "id": "scalp",
+      "y": 3.65,
+      "z": 0.14,
+      "w": 0.1,
+      "h": 0.08
     }
   ],
   "limbs": [
     {
-      "uid": "leg",
-      "u": 0.1,
-      "theta": -10,
-      "segments": [
-        [
-          0.08,
-          -0.45,
-          0.08
-        ],
-        [
-          0.0,
-          -0.45,
-          -0.1
-        ]
-      ],
-      "radii": [
-        0.17,
-        0.12,
-        0.08
-      ],
-      "tip": "foot_hoof",
-      "tip_params": {
-        "size": 1.2
-      }
-    },
-    {
-      "uid": "arm",
-      "u": 0.62,
-      "theta": 5,
+      "uid": "thigh",
+      "u": 0.078,
+      "theta": -7,
       "segments": [
         [
           0.22,
-          -0.32,
-          -0.02
+          -0.58,
+          0.26
         ],
         [
-          0.05,
-          -0.34,
-          0.12
+          0.025,
+          -0.55,
+          -0.35
+        ],
+        [
+          0.08,
+          -0.27,
+          0.21
         ]
       ],
       "radii": [
-        0.15,
-        0.11,
-        0.08
+        0.285,
+        0.185,
+        0.133,
+        0.12
+      ],
+      "tip": "foot_hoof",
+      "tip_params": {
+        "size": 2.02,
+        "split": 0.52
+      },
+      "ball_hip": true,
+      "ball_hip_inset": 0.23
+    },
+    {
+      "uid": "graspers",
+      "u": 0.5,
+      "theta": 4,
+      "segments": [
+        [
+          0.28,
+          -0.47,
+          -0.07
+        ],
+        [
+          0.05,
+          -0.48,
+          0.13
+        ]
+      ],
+      "radii": [
+        0.33,
+        0.231,
+        0.112
       ],
       "tip": "hand_basic",
       "tip_params": {
-        "size": 1.4
+        "size": 3,
+        "fingers": 0.83,
+        "curl": 0.81
       }
+    },
+    {
+      "uid": "switch",
+      "u": 0.105,
+      "theta": 90,
+      "segments": [
+        [
+          0,
+          -0.16,
+          -0.24
+        ],
+        [
+          0,
+          -0.24,
+          -0.27
+        ],
+        [
+          0,
+          -0.3,
+          -0.15
+        ],
+        [
+          0,
+          -0.16,
+          0.02
+        ]
+      ],
+      "radii": [
+        0.115,
+        0.091,
+        0.07,
+        0.061,
+        0.084
+      ],
+      "tip": "",
+      "tip_params": {},
+      "motion": "tail"
     }
   ],
   "parts": [
     {
       "uid": "horns",
       "part": "horn_sweep",
-      "u": 0.903,
-      "theta": 47,
+      "u": 0.904,
+      "theta": 18,
+      "offset": -0.09,
+      "scale": 1.39,
+      "rot": [
+        -28.2,
+        14.62,
+        -31.88
+      ],
       "params": {
-        "length": 0.59,
-        "width": 0.19,
-        "splay": 0.86,
-        "lift": 1.09,
-        "sweep": 0.1,
-        "taper": 0.75
-      },
-      "offset": -0.026
-    },
-    {
-      "uid": "eyes",
-      "part": "eye_slit",
-      "u": 0.95,
-      "theta": 15,
-      "params": {
-        "size": 0.9
+        "length": 1.15,
+        "width": 0.329,
+        "splay": 0.18,
+        "lift": -0.036,
+        "sweep": 0.11,
+        "taper": 0.75,
+        "hook": 0.98
       }
-    },
-    {
-      "uid": "snout",
-      "part": "mouth_snout",
-      "u": 0.985,
-      "theta": -90.0,
-      "params": {
-        "length": 0.72,
-        "width": 1.65
-      },
-      "offset": -0.045
     },
     {
       "uid": "ears",
       "part": "ear_leaf",
-      "u": 0.93,
-      "theta": 30,
+      "u": 0.849,
+      "theta": 10,
+      "offset": -0.061,
+      "scale": 1,
       "rot": [
+        10,
         0,
-        0,
-        -50
+        -20
       ],
       "params": {
-        "length": 0.19,
-        "width": 0.14,
-        "droop": 0.37,
-        "point": 0.75
+        "length": 0.28,
+        "width": 0.17,
+        "droop": 0.48,
+        "cup": 0.73,
+        "point": 0.63
       }
     },
     {
-      "uid": "mane",
-      "part": "mane",
-      "u": 0.78,
-      "theta": 80,
+      "uid": "eyes",
+      "part": "eye_round",
+      "u": 0.856,
+      "theta": -53,
+      "offset": -0.032,
+      "scale": 1,
+      "rot": [
+        0,
+        12,
+        0
+      ],
       "params": {
-        "size": 1.4,
-        "length": 1.0
+        "size": 0.96,
+        "brow": 0.67,
+        "lid": 0.84,
+        "pupil": 0.49
+      }
+    },
+    {
+      "uid": "muzzle",
+      "part": "mouth_snout",
+      "u": 0.792,
+      "theta": -90,
+      "offset": -0.079,
+      "scale": 1.18,
+      "rot": [
+        -9,
+        0,
+        0
+      ],
+      "params": {
+        "length": 1.23,
+        "width": 2.11,
+        "nostrils": 0.89
+      }
+    },
+    {
+      "uid": "neck_mane",
+      "part": "mane",
+      "u": 0.799,
+      "theta": 90,
+      "offset": -0.102,
+      "scale": 1,
+      "rot": [
+        -10,
+        0,
+        0
+      ],
+      "params": {
+        "size": 2.34,
+        "length": 1.4,
+        "spread": 1.03
+      }
+    },
+    {
+      "uid": "cheek_locks",
+      "part": "mane",
+      "u": 0.75,
+      "theta": -46,
+      "offset": -0.131,
+      "scale": 0.78,
+      "rot": [
+        0,
+        0,
+        9
+      ],
+      "params": {
+        "size": 1.54,
+        "length": 1.19,
+        "spread": 0.83
       }
     }
-  ],
-  "paint": {
-    "base": "#7a5236",
-    "accent": "#3a2618",
-    "detail": "#cfb38f",
-    "pattern": "none",
-    "pattern_scale": 1.0,
-    "belly": true
-  },
-  "version": 2
+  ]
 }

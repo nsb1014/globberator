@@ -82,13 +82,5 @@
         "tilt": 0.6
       }
     }
-  ],
-  "paint": {
-    "base": "#5d8a3a",
-    "accent": "#2f4f22",
-    "detail": "#e3d58e",
-    "pattern": "stripes",
-    "pattern_scale": 1.6,
-    "belly": true
-  }
+  ]
 }

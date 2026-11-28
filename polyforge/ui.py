@@ -78,7 +78,7 @@ def rebuild_creature(scene, quality="preview"):
         mats = [m for m in getattr(data, "materials", []) if m is not None]
         bpy.data.objects.remove(ob, do_unlink=True)
         if data is not None and data.users == 0:
-            # Free the mesh / armature datablock and any skin material it used, so
+            # Free the mesh / armature datablock and the clay material it used, so
             # rebuild-on-edit does not pile up orphan data.
             (bpy.data.armatures if isinstance(data, bpy.types.Armature) else bpy.data.meshes).remove(data)
         for m in mats:
@@ -155,21 +155,8 @@ def sync_edit(scene):
             for i, (k, (lo, hi, d)) in enumerate(part.params.items()):
                 if i < PARAM_SLOTS:
                     setattr(e, "p%d" % i, (params.get(k, d) - lo) / max(hi - lo, 1e-6))
-        pa = r["paint"]
-        e.base, e.accent, e.detail = (builder.hex_rgb(pa[k]) for k in ("base", "accent", "detail"))
-        e.pattern = pa["pattern"]
-        e.pattern_scale = pa["pattern_scale"]
-        e.belly = pa["belly"]
     finally:
         _busy = False
-
-
-def _hex(c):
-    def enc(v):
-        v = max(0.0, min(1.0, v))
-        v = v * 12.92 if v <= 0.0031308 else 1.055 * v ** (1 / 2.4) - 0.055
-        return int(round(v * 255))
-    return "#%02x%02x%02x" % tuple(enc(x) for x in c[:3])
 
 
 def _edit_update(field):
@@ -180,11 +167,7 @@ def _edit_update(field):
         r = get_recipe(scene)
         p, l = selected_part(scene, r), selected_limb(scene, r)
         op = None
-        if field in ("base", "accent", "detail"):
-            op = {"op": "set_paint", field: _hex(getattr(self, field))}
-        elif field in ("pattern", "pattern_scale", "belly"):
-            op = {"op": "set_paint", field: getattr(self, field)}
-        elif p is not None:
+        if p is not None:
             part = catalog.get(p["part"])
             op = {"op": "set_part", "uid": p["uid"]}
             if field.startswith("p") and field[1:].isdigit():
@@ -247,12 +230,6 @@ class PF_Edit(bpy.types.PropertyGroup):
     hoof_split: FloatProperty(name="Groove width", description="Set to zero for a closed, boot-shaped toe",
                               min=0.0, max=1.0, default=0.6, update=_edit_update("hoof_split"))
     radius: FloatProperty(name="Thickness", min=0.02, max=1.2, default=0.1, update=_edit_update("radius"))
-    base: FloatVectorProperty(name="Base", subtype="COLOR", min=0, max=1, update=_edit_update("base"))
-    accent: FloatVectorProperty(name="Accent", subtype="COLOR", min=0, max=1, update=_edit_update("accent"))
-    detail: FloatVectorProperty(name="Detail", subtype="COLOR", min=0, max=1, update=_edit_update("detail"))
-    pattern: EnumProperty(name="Pattern", items=[(p, p.title(), "") for p in R.PATTERNS], update=_edit_update("pattern"))
-    pattern_scale: FloatProperty(name="Pattern scale", min=0.25, max=4.0, default=1.0, update=_edit_update("pattern_scale"))
-    belly: BoolProperty(name="Light belly", default=True, update=_edit_update("belly"))
 
 
 for _i in range(PARAM_SLOTS):
@@ -320,7 +297,7 @@ class PF_OT_save(bpy.types.Operator):
         return {"RUNNING_MODAL"}
 
     def execute(self, context):
-        R.save(get_recipe(context.scene), self.filepath)
+        R.save(R.normalize(get_recipe(context.scene))[0], self.filepath)
         return {"FINISHED"}
 
 
@@ -592,16 +569,21 @@ class PF_OT_play(bpy.types.Operator):
     clip: StringProperty()
 
     def execute(self, context):
+        from .baker import SMOOTH_LOOPS
+
         arm = creature_armature(context.scene)
         if arm is None or arm.animation_data is None:
             self.report({"WARNING"}, "Bake animations first")
             return {"CANCELLED"}
         ad = arm.animation_data
+        track = ad.nla_tracks.get(self.clip)
+        if track is None or not track.strips:
+            self.report({"WARNING"}, "Bake the available animations first")
+            return {"CANCELLED"}
         for t in ad.nla_tracks:
             t.mute = t.name != self.clip
-            for st in t.strips:
-                if t.name == self.clip:
-                    context.scene.frame_start, context.scene.frame_end = int(st.frame_start), int(st.frame_end)
+        context.scene.frame_start = int(track.strips[0].frame_start)
+        context.scene.frame_end = int(track.strips[-1].frame_end) - int(self.clip in SMOOTH_LOOPS)
         context.scene.frame_set(context.scene.frame_start)
         if not context.screen.is_animation_playing:
             bpy.ops.screen.animation_play()
@@ -774,28 +756,23 @@ class PF_PT_spine(PF_PT_base, bpy.types.Panel):
             o.action, o.index = "remove", i
 
 
-class PF_PT_paint(PF_PT_base, bpy.types.Panel):
-    bl_label = "Paint"
-    bl_options = {"DEFAULT_CLOSED"}
-
-    def draw(self, context):
-        e = context.scene.pf_edit
-        for k in ("base", "accent", "detail", "pattern", "pattern_scale", "belly"):
-            self.layout.prop(e, k)
-
-
 class PF_PT_animate(PF_PT_base, bpy.types.Panel):
     bl_label = "Animate & export"
     bl_options = {"DEFAULT_CLOSED"}
 
     def draw(self, context):
+        from .animator import LEGACY_CLIPS, available_clips
+        from .baker import rig_of
+
         lay = self.layout
         lay.operator("polyforge.review_views")
         lay.operator("polyforge.accept_review")
         lay.operator("polyforge.bake", icon="ACTION")
         grid = lay.grid_flow(columns=3, align=True)
-        for c in ("idle", "walk", "run", "roar", "wave", "hop"):
-            grid.operator("polyforge.play", text=c.title()).clip = c
+        arm = creature_armature(context.scene)
+        clips = available_clips(rig_of(arm)) if arm is not None else LEGACY_CLIPS
+        for c in clips:
+            grid.operator("polyforge.play", text=c.replace("_", " ").title()).clip = c
         row = lay.row(align=True)
         for f in ("glb", "fbx", "usdz", "obj"):
             row.operator("polyforge.export", text=f.upper()).fmt = f
@@ -803,7 +780,7 @@ class PF_PT_animate(PF_PT_base, bpy.types.Panel):
 
 CLASSES = [PF_Edit, PF_OT_new, PF_OT_example, PF_OT_open, PF_OT_save, PF_OT_build, PF_OT_reground, PF_OT_place, PF_OT_select,
            PF_OT_remove, PF_OT_vertebra, PF_OT_review_views, PF_OT_accept_review, PF_OT_bake, PF_OT_play, PF_OT_export,
-           PF_PT_creature, PF_PT_palette, PF_PT_edit, PF_PT_spine, PF_PT_paint, PF_PT_animate]
+           PF_PT_creature, PF_PT_palette, PF_PT_edit, PF_PT_spine, PF_PT_animate]
 
 
 def _solo_changed(scene, context):

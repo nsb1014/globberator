@@ -1,0 +1,40 @@
+{
+  "format": "polyforge.recipe",
+  "version": 2,
+  "name": "Bottlenose Dolphin",
+  "construction": "metaball",
+  "locomotion": "axial_vertical",
+  "ground_y": 0,
+  "spine": [
+    {"id": "fluke_insert", "y": 0.63, "z": -1.77, "w": 0.067, "h": 0.055},
+    {"id": "distal_stock", "y": 0.65, "z": -1.59, "w": 0.042, "h": 0.078},
+    {"id": "tail_stock", "y": 0.70, "z": -1.36, "w": 0.051, "h": 0.133},
+    {"id": "proximal_stock", "y": 0.74, "z": -1.11, "w": 0.083, "h": 0.168},
+    {"id": "postanal", "y": 0.77, "z": -0.83, "w": 0.132, "h": 0.213},
+    {"id": "dorsal_trailing", "y": 0.80, "z": -0.52, "w": 0.177, "h": 0.283},
+    {"id": "dorsal_peak", "y": 0.82, "z": -0.20, "w": 0.233, "h": 0.348},
+    {"id": "ribcage", "y": 0.83, "z": 0.12, "w": 0.267, "h": 0.363},
+    {"id": "shoulder", "y": 0.85, "z": 0.45, "w": 0.284, "h": 0.340},
+    {"id": "neck", "y": 0.88, "z": 0.76, "w": 0.277, "h": 0.297},
+    {"id": "melon", "y": 0.92, "z": 1.06, "w": 0.254, "h": 0.246},
+    {"id": "melon_lip", "y": 0.90, "z": 1.26, "w": 0.212, "h": 0.190},
+    {"id": "rostrum_root", "y": 0.84, "z": 1.42, "w": 0.152, "h": 0.102},
+    {"id": "rostrum_mid", "y": 0.83, "z": 1.57, "w": 0.112, "h": 0.067},
+    {"id": "rostrum_tip", "y": 0.83, "z": 1.72, "w": 0.070, "h": 0.051}
+  ],
+  "limbs": [],
+  "parts": [
+    {"uid": "tail_flukes", "part": "flukes_cetacean", "u": 0.017, "theta": 90, "offset": -0.075,
+     "params": {"span": 1.04, "chord": 0.245}},
+    {"uid": "dorsal", "part": "dolphin_dorsal", "u": 0.5, "theta": 90, "offset": -0.031,
+     "params": {"size": 0.88}},
+    {"uid": "flipper", "part": "fin_paired", "u": 0.675, "theta": -43, "offset": -0.065,
+     "scale": 1.14, "params": {"droop_deg": 30, "sweep": 0.72}},
+    {"uid": "eyes", "part": "eye_camera", "u": 0.841, "theta": -9, "offset": -0.011,
+     "scale": 0.48, "params": {"facing_deg": 62, "bulge": 0.14, "slit": 1}},
+    {"uid": "lip_line", "part": "dolphin_gape", "u": 0.876, "theta": -17, "offset": 0.004,
+     "params": {"size": 1}},
+    {"uid": "blowhole", "part": "nostril_slit", "u": 0.769, "theta": 90, "offset": -0.008,
+     "rot": [-85, 0, 0], "scale": 0.32, "params": {"flap": 0.28}}
+  ]
+}

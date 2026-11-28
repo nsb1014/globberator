@@ -11,13 +11,13 @@ note after you have looked at the review views. Without it, a --no-llm run
 writes recipe.json, the review views and report.json, and says export was skipped.
 
 Loop: segment the reference -> Claude drafts a recipe from the part library ->
-render -> score (silhouette, proportions, palette, Claude feature checklist) ->
+render -> score (silhouette, proportions, Claude feature checklist) ->
 Claude proposes edit ops -> numeric proportion fit -> repeat until the score
 reaches the style tolerance or stops improving. Writes the best recipe, a
 rigged GLB with baked clips, preview images/videos, and report.json (scores,
 history and library gaps).
 
-Score = 0.4 features + 0.3 silhouette IoU + 0.2 proportions + 0.1 palette.
+Scores weight feature match, silhouette IoU and proportions in a 4:3:2 ratio.
 """
 import argparse
 import json
@@ -40,7 +40,7 @@ import optimize  # noqa: E402
 import pf  # noqa: E402
 import vision  # noqa: E402
 
-WEIGHTS = {"features": 0.4, "silhouette": 0.3, "proportion": 0.2, "palette": 0.1}
+WEIGHTS = {"features": 4, "silhouette": 3, "proportion": 2}
 
 
 def total(s):
@@ -72,21 +72,19 @@ class Run:
         res = pf.render_jobs([{"recipe": path, "out": os.path.join(self.work, tag), "views": views, "mask": True, "quality": "final"}], 384)[0]
         self.renders += 2 * len(views)
         imgs = res["images"]
-        return {"color": imgs[0], "mask": imgs[1], "extra": [(v, imgs[2 + 2 * i]) for i, v in enumerate(extra_views)], "report": res["report"]}
+        return {"preview": imgs[0], "mask": imgs[1], "extra": [(v, imgs[2 + 2 * i]) for i, v in enumerate(extra_views)], "report": res["report"]}
 
     def numeric_scores(self, rnd):
         m = vision.load_mask(rnd["mask"])
         iou, prop = vision.silhouette_score(self.ref_mask, m)
-        rgb = np.asarray(Image.open(rnd["color"]).convert("RGB"), np.float32) / 255.0
-        pal = vision.palette_score(self.ref_rgb, self.ref_mask, rgb, m)
-        return {"silhouette": round(iou, 4), "proportion": round(prop, 4), "palette": round(pal, 4)}
+        return {"silhouette": round(iou, 4), "proportion": round(prop, 4)}
 
     # ---- main --------------------------------------------------------
     def go(self):
         a = self.args
         t0 = time.time()
         shutil.copy(a.image, os.path.join(self.out, "reference" + os.path.splitext(a.image)[1]))
-        self.ref_mask, self.ref_rgb = vision.segment(a.image)
+        self.ref_mask = vision.segment(a.image)
         Image.fromarray((self.ref_mask * 255).astype(np.uint8)).save(os.path.join(self.out, "reference_mask.png"))
         self.log("reference segmented: %d%% foreground" % int(self.ref_mask.mean() * 100))
         catalog = pf.describe()
@@ -165,7 +163,7 @@ class Run:
             scores = self.numeric_scores(rnd)
             critique = None
             if use_llm:
-                critique, usage = claude.critique(a.image, [("reference view", rnd["color"])] + rnd["extra"], analysis, recipe, scores, warnings, catalog)
+                critique, usage = claude.critique(a.image, [("reference view", rnd["preview"])] + rnd["extra"], analysis, recipe, scores, warnings, catalog)
                 self._usage(usage)
                 fc = critique["feature_checks"]
                 imp = {f["name"]: f["importance"] for f in analysis["features"]}
@@ -249,7 +247,7 @@ class Run:
     def finish(self, best, analysis, gaps, seconds):
         rp = os.path.join(self.out, "recipe.json")
         json.dump(best["recipe"], open(rp, "w"), indent=2, sort_keys=True)
-        shutil.copy(best["render"]["color"], os.path.join(self.out, "best_view.png"))
+        shutil.copy(best["render"]["preview"], os.path.join(self.out, "best_view.png"))
         for v, p in best["render"]["extra"]:
             shutil.copy(p, os.path.join(self.out, "best_%s.png" % v))
         name = (best["recipe"].get("name") or "creature").lower().replace(" ", "_")
@@ -289,7 +287,10 @@ def one_shot(args):
     else:
         import claude
 
-        brief, usage = claude.character_brief(image)
+        if getattr(args, "general", False):
+            brief, usage = claude.character_brief(image, general=True)
+        else:
+            brief, usage = claude.character_brief(image)
         model = claude.MODEL
     validate(brief)
     out = Path(args.out).resolve()
@@ -314,7 +315,8 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("image")
     ap.add_argument("--out", required=True)
-    ap.add_argument("--one-shot", action="store_true", help="one image classification followed by a deterministic humanoid rig with runtime motion")
+    ap.add_argument("--one-shot", action="store_true", help="classify an image once and compile a rigged clay model")
+    ap.add_argument("--general", action="store_true", help="use general creature classification and baked Blender motion with --one-shot")
     ap.add_argument("--brief", help="use a previously classified image brief with --one-shot")
     ap.add_argument("--part-rounds", type=int, default=1, help="maximum isolated shape revisions; 0 disables")
     ap.add_argument("--iterations", type=int, default=4)
@@ -332,12 +334,14 @@ def main():
     if args.one_shot:
         if args.init or args.no_llm or args.accept or args.no_export:
             ap.error("--one-shot exports automatically and accepts --brief to run without an API call")
+        if args.general and args.brief:
+            ap.error("--general selects a classifier; --brief already specifies the output format")
         try:
             one_shot(args)
         except (OSError, RuntimeError, ValueError) as exc:
             ap.exit(1, f"{ap.prog}: {exc}\n")
-    elif args.brief:
-        ap.error("--brief requires --one-shot")
+    elif args.brief or args.general:
+        ap.error("--brief and --general require --one-shot")
     else:
         Run(args).go()
 

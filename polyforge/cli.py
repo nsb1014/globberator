@@ -37,7 +37,7 @@ from mathutils import Matrix, Vector
 
 from . import builder, catalog, export, finish, kit, ops, render
 from . import recipe as R
-from .animator import Animator, C4, C4i, write_pose
+from .animator import FREE_CLIPS, GROUND_CLIPS, Animator, C4, C4i, write_pose
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -67,7 +67,7 @@ def pose_at(res, spec):
     an = Animator(res["rig"])
     if spec:
         clip, _, t = spec.partition("@")
-        an.play(clip)
+        play_clip(an, clip)
         an.advance_to(float(t or 0.5))
     else:
         an.play("idle")
@@ -76,6 +76,11 @@ def pose_at(res, spec):
     write_pose(res["armature"], an)
     bpy.context.view_layer.update()
     return an
+
+
+def play_clip(anim, clip):
+    if not anim.play(clip):
+        raise ValueError(f"Clip {clip!r} is unavailable. Available clips: {', '.join(anim.clips)}")
 
 
 def head_bounds(res):
@@ -145,11 +150,12 @@ def cmd_search(a):
     if a.limit < 1:
         raise ValueError("--limit must be positive")
     results = []
-    for part in catalog.search(a.query, a.limit):
-        host = "limb" if part.attach == "tip" else part.host
+    for part in catalog.search(a.query, min(a.limit, 5), host=a.host, function=a.function, shape=a.shape):
+        metadata = catalog.metadata(part)
+        metadata["shape_terms"] = metadata.pop("shape")
         result = {"id": part.id, "description": part.desc, "category": part.category,
-                  "attach": part.attach, "host": host,
-                  "shape": catalog.search_shape(part, a.query)}
+                  "attach": part.attach, "capability": part.cap, **metadata,
+                  "shape": catalog.search_shape(part, " ".join(filter(None, (a.query, a.shape))))}
         for key, folder in (("thumbnail", "thumbs"), ("part_reference", "references")):
             path = os.path.join("library", folder, part.id + ".png")
             if os.path.isfile(os.path.join(ROOT, path)):
@@ -172,7 +178,6 @@ def cmd_describe(a):
     if not a.part or a.full:
         d["placement"] = "u from first to last spine ring, including caps [0,1]; theta around the local spine frame"
         d["recipe_limits"] = R.LIMITS
-        d["patterns"] = R.PATTERNS
         d["ops"] = ops.SPEC
     text = json.dumps(d, indent=2, sort_keys=True)
     if a.out:
@@ -271,7 +276,10 @@ def cmd_build(a):
     report = dict(res["report"])
     if baked:
         contact_frames = [] if a.contacts else None
-        report["clips"] = baker.bake_all(res["armature"], contacts=contact_frames)
+        travel = {} if res["recipe"].get("construction") == "metaball" else None
+        report["clips"] = baker.bake_all(res["armature"], contacts=contact_frames, travel=travel)
+        if travel:
+            report["root_travel"] = travel
         if a.contacts:
             rig = res["rig"]
             report["contact"] = {"frames": contact_frames, "legs": {
@@ -298,7 +306,7 @@ def cmd_build(a):
 def cmd_render(a):
     reset()
     res = build(a.recipe, "preview" if a.preview else "final")
-    pose_at(res, a.pose)
+    an = pose_at(res, a.pose)
     views = a.views.split(";") if ";" in a.views else a.views.split(",") if all(v in render.VIEWS for v in a.views.split(",")) else [a.views]
     cam = render.setup(a.engine, a.size)
     lo, hi = head_bounds(res) if a.focus == "head" else render.bounds(objs(res))
@@ -308,7 +316,7 @@ def cmd_render(a):
         yaw, pitch = render.view_angles(v)
         render.frame(cam, lo, hi, yaw, pitch)
         tag = v.replace(",", "_")
-        render.floor(True)
+        render.floor(an.clip not in FREE_CLIPS)
         out.append(render.render(os.path.join(a.out, tag + ".png")))
         if a.mask:
             render.floor(False)
@@ -331,7 +339,7 @@ def cmd_renderjobs(a):
             yaw, pitch = render.view_angles(v)
             render.frame(cam, lo, hi, yaw, pitch)
             tag = v.replace(",", "_")
-            if job.get("color", True):
+            if job.get("preview", job.get("color", True)):
                 render.floor(True)
                 imgs.append(render.render(os.path.join(job["out"], tag + ".png")))
             if job.get("mask", False):
@@ -347,20 +355,37 @@ def _video(a, kind):
     res = build(a.recipe, "preview" if a.preview else "final")
     an = Animator(res["rig"])
     clip = getattr(a, "clip", "idle") if kind == "animate" else "idle"
-    an.play(clip)
-    follow = kind == "animate" and clip in ("walk", "run") and not a.inplace
+    play_clip(an, clip)
+    free = clip in FREE_CLIPS
+    follow = kind == "animate" and (free or clip in GROUND_CLIPS) and not a.inplace
     cam = render.setup(a.engine, a.size)
     write_pose(res["armature"], an)
     bpy.context.view_layer.update()
     lo, hi = render.bounds(objs(res))
+    if free:
+        # Hold the camera on one framing that includes the full stroke.
+        sample = Animator(res["rig"])
+        sample.play(clip)
+        duration = a.seconds if follow else min(a.seconds, sample.cycle_length())
+        for _ in range(12):
+            sample.step(duration / 12)
+            write_pose(res["armature"], sample)
+            if follow:
+                set_world(res, sample)
+            bpy.context.view_layer.update()
+            sample_lo, sample_hi = render.bounds(objs(res))
+            lo = Vector(map(min, lo, sample_lo))
+            hi = Vector(map(max, hi, sample_hi))
     yaw, pitch = render.view_angles(a.view)
     fps = 30
     frames = tempfile.mkdtemp(prefix="pf_frames_")
     n = int(a.seconds * fps)
-    if follow:
+    if follow and not free:
         travel = kit.to_blender(Vector((0, 0, an.speed * a.seconds)))
         render.frame(cam, Vector(map(min, lo, lo + travel)), Vector(map(max, hi, hi + travel)), yaw, pitch)
-    render.floor(True)
+    elif free:
+        render.frame(cam, lo, hi, yaw, pitch)
+    render.floor(not free)
     for f in range(n):
         an.step(1.0 / fps)
         write_pose(res["armature"], an)
@@ -369,7 +394,7 @@ def _video(a, kind):
         bpy.context.view_layer.update()
         if kind == "turntable":
             render.frame(cam, lo, hi, 360.0 * f / n, 14.0)
-        elif not follow:
+        elif not follow and not free:
             render.frame(cam, lo, hi, yaw, pitch)
         render.render(os.path.join(frames, "f%04d.png" % f))
     frames_to_video(frames, a.out, fps)
@@ -392,12 +417,12 @@ def cmd_gallery(a):
     for i, path in enumerate(a.recipes):
         reset()
         res = build(path, "preview" if a.preview else "final")
-        pose_at(res, a.pose)
+        an = pose_at(res, a.pose)
         cam = render.setup(a.engine, a.size)
         lo, hi = render.bounds(objs(res))
         yaw, pitch = render.view_angles(a.view)
         render.frame(cam, lo, hi, yaw, pitch)
-        render.floor(True)
+        render.floor(an.clip not in FREE_CLIPS)
         tiles.append(render.render(os.path.join(tmp, "%02d.png" % i)))
         for w in res["report"]["warnings"]:
             print(os.path.basename(path), ":", w, file=sys.stderr)
@@ -437,13 +462,8 @@ def library_selection(part_id):
     return [part]
 
 
-def library_objects(part):
-    _, regions = finish.part_regions(part, part.defaults())
-    clay = bpy.data.materials.get("Globberator Clay")
-    if clay is None:
-        clay = bpy.data.materials.new("Globberator Clay")
-        clay.diffuse_color = (*builder.hex_rgb("#c4c5c6"), 1.0)
-        clay.roughness = 0.85
+def library_objects(part, params=None):
+    _, regions = finish.part_regions(part, part.defaults() if params is None else params)
     objects = []
     for piece, slots in regions.items():
         verts, faces = [], []
@@ -454,7 +474,7 @@ def library_objects(part):
         if faces:
             name = part.id if piece == "self" else f"{part.id}__{piece}"
             ob = finish.new_object(name, verts, faces)
-            ob.data.materials.append(clay)
+            ob.data.materials.append(finish.clay_material())
             ob.data.shade_smooth()
             objects.append(ob)
     if not objects:
@@ -502,7 +522,10 @@ def main(argv=None):
     s = sub.add_parser("new", help="start a blank recipe")
     s.add_argument("--out", required=True); s.add_argument("--name", default="Creature")
     s = sub.add_parser("search", help="find active part families using plain language")
-    s.add_argument("query"); s.add_argument("--limit", type=int, default=5)
+    s.add_argument("query", nargs="?", default=""); s.add_argument("--limit", type=int, default=5)
+    s.add_argument("--host", help="eligible attachment host")
+    s.add_argument("--function", help="required biological function")
+    s.add_argument("--shape", help="silhouette keywords")
     s = sub.add_parser("part", help="preview a local shape or extract one instance")
     s.add_argument("input"); s.add_argument("--uid"); s.add_argument("--out", required=True)
     s.add_argument("--size", type=int, default=384); s.add_argument("--views", default="front,side,threequarter")
@@ -514,7 +537,7 @@ def main(argv=None):
     s = sub.add_parser("describe"); s.add_argument("--out"); s.add_argument("--part"); s.add_argument("--full", action="store_true")
     s = sub.add_parser("surface", help="estimate body attachment coordinates from a recipe-space landmark")
     s.add_argument("recipe"); s.add_argument("point", metavar="XYZ", type=float, nargs=3)
-    s = sub.add_parser("character", help="compile a classified humanoid into a clay GLB with runtime motion bindings")
+    s = sub.add_parser("character", help="compile a classified creature into neutral-clay assets")
     s.add_argument("brief"); s.add_argument("--out", required=True)
     s = sub.add_parser("normalize"); s.add_argument("recipe"); s.add_argument("--out")
     s = sub.add_parser("apply"); s.add_argument("recipe"); s.add_argument("ops"); s.add_argument("--out", required=True)
@@ -535,7 +558,7 @@ def main(argv=None):
             s.add_argument("--review"); s.add_argument("--seconds", type=float, default=4.0 if name == "animate" else 6.0)
             s.add_argument("--view", default="threequarter"); s.add_argument("--inplace", action="store_true")
             if name == "animate":
-                s.add_argument("--clip", default="walk")
+                s.add_argument("--clip", default="walk", help="e.g. walk, crawl, swim, fly, or glide when supported")
     s = sub.add_parser("renderjobs"); s.add_argument("jobs"); s.add_argument("--size", type=int, default=256)
     s = sub.add_parser("gallery"); s.add_argument("recipes", nargs="+"); s.add_argument("--out", required=True)
     s.add_argument("--size", type=int, default=320); s.add_argument("--cols", type=int, default=0); s.add_argument("--view", default="threequarter")

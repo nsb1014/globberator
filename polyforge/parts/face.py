@@ -1,7 +1,7 @@
 """Eyes, mouths and noses. "face" frame: +Y out of the head, +Z up, +X lateral.
 
 Sculpted clay style: eyeballs sit under lofted lids, muzzles have carved
-nostrils, jaws are rounded masses. Each paint slot is remeshed separately.
+nostrils, jaws are rounded masses. Each sculpt region is remeshed separately.
 """
 import math
 from ..kit import V, UP, BACK, RIGHT, FORWARD, rot, curve_points, taper, lerp
@@ -203,7 +203,7 @@ PARTS = [
          {"size": (0.4, 3.0, 1.0), "pupil": (0.3, 0.9, 0.55), "brow": (0.0, 1.0, 0.3), "lid": (0.0, 1.0, 0.3)}, eye_round, cap="look", mirror=True, hint={"u": 0.93, "theta": 35.0}, **F),
     Part("eye_bug", "eye", "Large compound eye, dark and glossy (insects, aliens).", ["insect", "alien", "creepy"],
          {"size": (0.4, 3.0, 1.0), "bulge": (0.4, 1.2, 0.8)}, eye_bug, cap="look", mirror=True, hint={"u": 0.93, "theta": 30.0}, **F),
-    Part("eye_slit", "eye", "Reptile eye: colored iris with a vertical slit pupil under hooded lids.", ["reptile", "cat", "menacing"],
+    Part("eye_slit", "eye", "Reptile eye: raised iris with a vertical slit pupil under hooded lids.", ["reptile", "cat", "menacing"],
          {"size": (0.4, 3.0, 1.0), "slit": (0.1, 0.6, 0.25), "lid": (0.0, 1.0, 0.4)}, eye_slit, cap="look", mirror=True, hint={"u": 0.92, "theta": 40.0}, **F),
     Part("eye_stalk", "eye", "Eyeball on a bendy stalk (snails, crabs, aliens).", ["alien", "mollusk", "silly"],
          {"size": (0.4, 3.0, 1.0), "height": (0.1, 0.8, 0.3), "lean": (-0.6, 0.6, 0.2)}, eye_stalk, cap="look", mirror=True, hint={"u": 0.95, "theta": 70.0}, **F),

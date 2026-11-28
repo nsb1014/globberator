@@ -18,10 +18,7 @@ def _configure():
                     sh = space.shading
                     sh.type = "SOLID"
                     sh.light = "STUDIO"
-                    try:
-                        sh.color_type = "VERTEX"
-                    except TypeError:
-                        sh.color_type = "ATTRIBUTE"
+                    sh.color_type = "MATERIAL"
                     sh.show_cavity = True
                     space.overlay.show_floor = True
     scene = bpy.context.scene
